@@ -1,0 +1,44 @@
+# Frontend Requirements (Node packages)
+# This file lists npm packages for React frontend
+# Install with: npm install
+
+# React & Framework
+react=18.2.0
+react-dom=18.2.0
+react-router-dom=6.20.1
+vite=5.0.8
+@vitejs/plugin-react=4.2.1
+
+# State Management (optional, for complex apps)
+zustand=4.4.2
+react-query=3.39.3
+
+# UI & Styling
+tailwindcss=3.4.1
+postcss=8.4.32
+autoprefixer=10.4.17
+lucide-react=0.292.0
+
+# HTTP Client
+axios=1.6.2
+
+# Toast Notifications
+react-hot-toast=2.4.1
+
+# Form Handling (optional)
+react-hook-form=7.49.0
+zod=3.22.4
+
+# Utilities
+date-fns=2.30.0
+clsx=2.0.0
+classnames=2.3.2
+
+# Development Tools
+eslint=8.56.0
+prettier=3.1.0
+@typescript-eslint/eslint-plugin=6.16.0
+@typescript-eslint/parser=6.16.0
+
+# TypeScript (if using TS)
+typescript=5.3.3
