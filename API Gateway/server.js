@@ -41,7 +41,7 @@ app.use(
 
 // ─── Proxy helpers ────────────────────────────────────────────────────────────
 function onError(err, req, res, target) {
-  const name = target === AUTH_SERVICE_URL ? 'Auth Service' : 'CV Service';
+  const name = target === AUTH_SERVICE_URL ? 'Core Service' : 'CV Service';
   console.error(`[Gateway] Error reaching ${name}:`, err.message);
   res.status(502).json({
     success: false,
@@ -71,6 +71,18 @@ app.use(
   })
 );
 
+// ─── Route: /api/profile/* → Module 1 (Core Service — Profile Builder) ───────
+app.use(
+  '/api/profile',
+  createProxyMiddleware({
+    target: AUTH_SERVICE_URL,
+    changeOrigin: true,
+    onError: (err, req, res) => onError(err, req, res, AUTH_SERVICE_URL),
+    onProxyRes: stripDownstreamCors,
+    logLevel: 'silent',
+  })
+);
+
 // ─── Route: /api/cv/* → Module 2 (CV Parsing Service) ────────────────────────
 app.use(
   '/api/cv',
@@ -90,8 +102,9 @@ app.get('/health', (_req, res) => {
     gateway: 'MUQAYYIM API Gateway',
     version: '1.0.0',
     routes: {
-      '/api/auth/*': AUTH_SERVICE_URL,
-      '/api/cv/*':   CV_SERVICE_URL,
+      '/api/auth/*':    AUTH_SERVICE_URL,
+      '/api/profile/*': AUTH_SERVICE_URL,
+      '/api/cv/*':      CV_SERVICE_URL,
     },
   });
 });
@@ -101,7 +114,7 @@ app.get('/', (_req, res) => {
   res.json({
     message: 'MUQAYYIM API Gateway',
     version: '1.0.0',
-    endpoints: ['/api/auth', '/api/cv', '/health'],
+    endpoints: ['/api/auth', '/api/profile', '/api/cv', '/health'],
   });
 });
 
@@ -115,7 +128,8 @@ app.listen(PORT, () => {
   console.log('');
   console.log('🌐  MUQAYYIM API Gateway');
   console.log(`    Listening on   → http://localhost:${PORT}`);
-  console.log(`    /api/auth/*    → ${AUTH_SERVICE_URL}  (Module 1)`);
-  console.log(`    /api/cv/*      → ${CV_SERVICE_URL}  (Module 2)`);
+  console.log(`    /api/auth/*    → ${AUTH_SERVICE_URL}  (Core Service)`);
+  console.log(`    /api/profile/* → ${AUTH_SERVICE_URL}  (Core Service)`);
+  console.log(`    /api/cv/*      → ${CV_SERVICE_URL}  (AI Service)`);
   console.log('');
 });

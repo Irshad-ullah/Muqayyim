@@ -1,79 +1,76 @@
-# MUQAYYIM — AI-Powered CV Intelligence Platform
+# Muqayyim — AI-Powered CV Intelligence Platform
 
-A microservices-based Final Year Project that automates CV parsing, skill extraction, and user profile management using NLP and a secure API Gateway.
+A microservices-based platform that automates CV parsing, skill extraction, and professional profile management. Built as a Final Year Project using a React SPA, an Express API Gateway, a Node.js Core Service, and a Python AI Service.
 
 ---
 
-## System Architecture
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                          CLIENT LAYER                               │
-│                                                                     │
-│   Module 1 Frontend          Module 2 Frontend                      │
-│   React + Tailwind            React + Tailwind                      │
-│   http://localhost:5174       http://localhost:5173                 │
-└──────────────────┬───────────────────────┬──────────────────────────┘
-                   │                       │
-                   └──────────┬────────────┘
-                              │  All API traffic
+┌─────────────────────────────────────────────────────────────┐
+│                    PRESENTATION LAYER                       │
+│                                                             │
+│              Unified React Frontend (SPA)                   │
+│              React + Vite + Tailwind CSS                    │
+│              http://localhost:5174                          │
+│                                                             │
+│   Routes: /login  /register  /dashboard  /cv-parsing       │
+│           /profile-builder  /profile  /forgot-password      │
+└──────────────────────────┬──────────────────────────────────┘
+                           │  All API calls via Gateway
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     API GATEWAY :8080                       │
+│              Express + http-proxy-middleware                │
+│                                                             │
+│   /api/auth/*     ──────────▶  CoreServices  :3000         │
+│   /api/profile/*  ──────────▶  CoreServices  :3000         │
+│   /api/cv/*       ──────────▶  AIServices    :8000         │
+└──────────────┬──────────────────────────────┬──────────────┘
+               │                              │
+               ▼                              ▼
+┌──────────────────────────┐   ┌─────────────────────────────┐
+│   CoreServices           │   │   AIServices                │
+│   Node.js + Express      │   │   FastAPI + Python          │
+│   http://localhost:3000  │   │   http://localhost:8000     │
+│                          │   │                             │
+│   • Register / Login     │   │   • Upload CV (PDF/DOCX)    │
+│   • JWT issuance         │   │   • NLP skill extraction    │
+│   • User profile CRUD    │   │   • Education / experience  │
+│   • Password reset       │   │   • Verify & save data      │
+│   • CV status tracking   │   │                             │
+│   • Profile Builder      │   │                             │
+│   • GitHub integration   │   │                             │
+└──────────────┬───────────┘   └──────────────┬──────────────┘
+               │                              │
+               └──────────────┬───────────────┘
                               ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                        API GATEWAY                                  │
-│                     Express (http-proxy-middleware)                 │
-│                       http://localhost:8080                         │
-│                                                                     │
-│    /api/auth/*  ──────────────────────────▶  Module 1 Backend      │
-│    /api/cv/*    ──────────────────────────▶  Module 2 Backend      │
-└──────────────────────────────────────────────────────────────────────┘
-                   │                                    │
-                   ▼                                    ▼
-┌──────────────────────────┐          ┌─────────────────────────────┐
-│   MODULE 1               │          │   MODULE 2                  │
-│   User Management        │          │   CV Parsing Service        │
-│   Node.js + Express      │          │   FastAPI + Python          │
-│   http://localhost:3000  │          │   http://localhost:8000     │
-│                          │          │                             │
-│   • Register / Login     │          │   • Upload CV (PDF/DOCX)   │
-│   • JWT issuance         │          │   • NLP skill extraction   │
-│   • Profile management   │          │   • Education / experience │
-│   • Password reset       │          │   • Verify & save data     │
-│   • CV status tracking   │          │                             │
-└──────────────┬───────────┘          └──────────────┬──────────────┘
-               │                                     │
-               └─────────────────┬───────────────────┘
-                                 ▼
-                    ┌────────────────────────┐
-                    │   MongoDB              │
-                    │   Database: muqayyim   │
-                    │                        │
-                    │   collections:         │
-                    │   • users              │
-                    │   • cv_parsed_data     │
-                    └────────────────────────┘
+               ┌──────────────────────────┐
+               │   MongoDB                │
+               │   Database: muqayyim     │
+               │                          │
+               │   Collections:           │
+               │   • users                │
+               │   • profiles             │
+               │   • cv_parsed_data       │
+               └──────────────────────────┘
 ```
 
-**Identity flow:** Module 1 issues a JWT containing `userId` and `role`. Every request to Module 2 carries that JWT in the `Authorization: Bearer` header. The API Gateway proxies it through. Module 2 decodes the JWT to get `user_id` — it never accepts `user_id` from the request body.
+> **JWT flow:** CoreServices issues a JWT containing `userId` and `role`. Every request to AIServices carries that token in `Authorization: Bearer`. The gateway proxies it unchanged. AIServices decodes the JWT to get `user_id` — it never accepts `user_id` from the request body.
 
 ---
 
 ## Repository Structure
 
 ```
-Module 1,2/
-│
-├── README.md                        ← You are here
-│
-├── API Gateway/                     ← Express proxy (port 8080)
+Muqayyim/
+├── README.md
+├── API Gateway/                       ← Express proxy (port 8080)
+│   ├── server.js
+│   └── package.json
+├── CoreServices/                      ← Module 1: Auth + Profile + GitHub
 │   ├── server.js
 │   ├── package.json
-│   └── .env
-│
-├── Module 1/                        ← User Management Service
-│   ├── README.md                    ← Backend-specific docs
-│   ├── server.js
-│   ├── package.json
-│   ├── .env
 │   ├── backend/
 │   │   ├── config/db.js
 │   │   ├── controllers/authController.js
@@ -81,57 +78,36 @@ Module 1,2/
 │   │   ├── models/User.js
 │   │   ├── routes/authRoutes.js
 │   │   └── utils/emailService.js
-│   └── frontend/                    ← React auth frontend (port 5174)
-│       ├── README.md                ← Frontend-specific docs
-│       ├── src/
-│       │   ├── pages/               (Login, Register, Dashboard, Profile, ...)
-│       │   ├── components/          (Navbar, CVStatusBadge, ...)
-│       │   ├── context/AuthContext.jsx
-│       │   └── services/authService.js
-│       └── .env
-│
-└── Module 2/                        ← CV Parsing Service
-    ├── backend/                     ← FastAPI service (port 8000)
+│   └── frontend/                      ← Unified React SPA (port 5174)
+│       └── src/
+│           ├── pages/
+│           ├── components/
+│           ├── services/
+│           └── context/
+└── AIServices/                        ← Module 2: CV Parsing
+    ├── backend/
     │   ├── app/
     │   │   ├── main.py
-    │   │   ├── routes/cv_routes.py
-    │   │   ├── middleware/auth.py   ← JWT verification
-    │   │   ├── services/            (cv_parser, nlp_extractor)
+    │   │   ├── config/
     │   │   ├── models/
+    │   │   ├── routes/
     │   │   ├── schemas/
-    │   │   └── config/
-    │   ├── requirements.txt
-    │   └── .env
-    └── frontend/                    ← React CV frontend (port 5173)
-        ├── src/
-        │   ├── pages/CVParsingPage.jsx
-        │   ├── components/          (CVUpload, ParsedSummary, ...)
-        │   └── services/cvService.js
-        └── .env
+    │   │   ├── services/
+    │   │   └── utils/
+    │   └── requirements.txt
+    └── frontend/
+        └── src/
 ```
 
 ---
 
 ## Prerequisites
 
-Install these before anything else.
-
-| Tool | Version | Download |
-|---|---|---|
-| Node.js | 18 or higher | https://nodejs.org |
-| Python | 3.9 or higher | https://python.org |
-| MongoDB | 6 or higher | https://www.mongodb.com/try/download/community |
-| Git | any | https://git-scm.com |
-
-Verify your installs:
-
-```bash
-node -v        # should print v18.x.x or higher
-npm -v         # should print 9.x.x or higher
-python --version   # should print 3.9.x or higher
-pip --version
-mongod --version
-```
+| Tool | Version | Check |
+|------|---------|-------|
+| Node.js | 18+ | `node -v` |
+| Python | 3.9+ | `python --version` |
+| MongoDB | 6+ | `mongod --version` |
 
 ---
 
@@ -139,64 +115,63 @@ mongod --version
 
 ### 1. Start MongoDB
 
-MongoDB must be running before you start any service.
-
-**Windows (if installed as a Windows Service):**
 ```powershell
+# Windows — if installed as a service
 net start MongoDB
-```
 
-**Windows (manual):**
-```powershell
+# Windows — manual
 mongod --dbpath "C:\data\db"
 ```
 
-**macOS / Linux:**
 ```bash
-brew services start mongodb-community   # macOS with Homebrew
-sudo systemctl start mongod             # Linux
-```
+# macOS
+brew services start mongodb-community
 
----
+# Linux
+sudo systemctl start mongod
+```
 
 ### 2. Configure environment variables
 
-Each service has its own `.env` file. The files already exist with sensible defaults. The only values you **must** change before running are the JWT secret (must match between Module 1 and Module 2) and the email credentials (for password reset).
+Copy each `.env.example` to `.env` and fill in the required values.
 
-**`Module 1/.env`** — open and edit:
+**`CoreServices/.env`**
 ```env
-JWT_SECRET=pick-a-long-random-string-and-use-the-same-value-in-module-2
+MONGODB_URI=mongodb://localhost:27017/muqayyim
+JWT_SECRET=pick-a-long-random-string    # must match AIServices
 EMAIL_USER=your-gmail@gmail.com
-EMAIL_PASSWORD=your-16-char-gmail-app-password
+EMAIL_PASSWORD=your-16-char-app-password
+# GITHUB_TOKEN=ghp_...  (optional — raises rate limit to 5000 req/hour)
 ```
 
-**`Module 2/backend/.env`** — open and edit:
+**`AIServices/backend/.env`**
 ```env
-JWT_SECRET=same-string-you-used-in-module-1
+HOST=0.0.0.0
+PORT=8000
+DEBUG=False
+MONGODB_URL=mongodb://localhost:27017
+DATABASE_NAME=muqayyim
+SECRET_KEY=same-string-you-used-in-coreservices
+CORS_ORIGINS=["http://localhost:5173","http://localhost:8080"]
 ```
 
-> All other values (ports, MongoDB URL, database name) are pre-configured and do not need to change for local development.
+**`API Gateway/.env`**
+```env
+PORT=8080
+AUTH_SERVICE_URL=http://localhost:3000
+CV_SERVICE_URL=http://localhost:8000
+MODULE1_FRONTEND_URL=http://localhost:5174
+MODULE2_FRONTEND_URL=http://localhost:5173
+```
 
-**How to generate a Gmail App Password:**
-1. Go to [myaccount.google.com](https://myaccount.google.com) → Security
-2. Enable 2-Step Verification if not already on
-3. Search for "App Passwords" → create one for "Mail"
-4. Paste the 16-character password into `EMAIL_PASSWORD`
+> **Gmail App Password:** Google Account → Security → 2-Step Verification → App Passwords.
 
----
+### 3. Install Python dependencies
 
-### 3. Install Python dependencies for Module 2
-
-```bash
-cd "Module 2/backend"
+```powershell
+cd AIServices\backend
 python -m venv venv
-
-# Windows
 venv\Scripts\activate
-
-# macOS / Linux
-source venv/bin/activate
-
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
@@ -205,176 +180,100 @@ python -m spacy download en_core_web_sm
 
 ## Running the Project
 
-You need **5 terminals** running simultaneously. Open them all, then start each service in the order shown below.
+Four terminals are needed.
 
----
-
-### Terminal 1 — Module 1 Backend (Auth Service)
-
-```bash
-cd "Module 1"
+**Terminal 1 — CoreServices backend**
+```powershell
+cd CoreServices
 npm install
 npm run dev
+# ✅ MongoDB connected  •  🚀 running on port 3000
 ```
 
-Expected output:
-```
-✅ MongoDB connected successfully
-🚀 Auth Service running on port 3000
-```
-
----
-
-### Terminal 2 — Module 2 Backend (CV Parsing Service)
-
-```bash
-cd "Module 2/backend"
-
-# Activate virtual environment (Windows)
+**Terminal 2 — AIServices backend**
+```powershell
+cd AIServices\backend
 venv\Scripts\activate
-
-# macOS / Linux
-# source venv/bin/activate
-
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+# INFO: Uvicorn running on http://0.0.0.0:8000
 ```
 
-Expected output:
-```
-INFO:     Started server process
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8000
-```
-
----
-
-### Terminal 3 — API Gateway
-
-```bash
+**Terminal 3 — API Gateway**
+```powershell
 cd "API Gateway"
 npm install
-npm run dev
+npm start
+# 🌐  MUQAYYIM API Gateway  →  http://localhost:8080
 ```
 
-Expected output:
-```
-🌐  MUQAYYIM API Gateway
-    Listening on   → http://localhost:8080
-    /api/auth/*    → http://localhost:3000  (Module 1)
-    /api/cv/*      → http://localhost:8000  (Module 2)
-```
-
----
-
-### Terminal 4 — Module 1 Frontend
-
-```bash
-cd "Module 1/frontend"
+**Terminal 4 — Unified Frontend**
+```powershell
+cd CoreServices\frontend
 npm install
 npm run dev
+# ➜  Local: http://localhost:5174/
 ```
 
-Expected output:
-```
-  VITE v5.x.x  ready in xxx ms
-  ➜  Local:   http://localhost:5174/
-```
-
----
-
-### Terminal 5 — Module 2 Frontend
-
-```bash
-cd "Module 2/frontend"
-npm install
-npm run dev
-```
-
-Expected output:
-```
-  VITE v5.x.x  ready in xxx ms
-  ➜  Local:   http://localhost:5173/
-```
-
----
-
-## Using the Application
-
-Once all five services are running:
-
-1. Open **http://localhost:5174** in your browser
-2. Click **Create one** to register a new account
-3. After logging in you will see the **Dashboard**
-4. Click **Upload CV** — this opens the CV Parsing module at port 5173 with your session automatically transferred
-5. Upload a PDF, DOC, or DOCX file (max 5 MB)
-6. The AI extracts your skills, education, and experience
-7. Review and confirm the extracted data
-8. Return to the Dashboard — your CV Status updates to **Verified**
+Open **http://localhost:5174** in your browser.
 
 ---
 
 ## Port Reference
 
-| Service | URL | Notes |
-|---|---|---|
-| API Gateway | http://localhost:8080 | Single entry point for all API calls |
-| Module 1 Backend | http://localhost:3000 | Never called directly by the frontend |
-| Module 2 Backend | http://localhost:8000 | Never called directly by the frontend |
-| Module 1 Frontend | http://localhost:5174 | Login, Register, Dashboard, Profile |
-| Module 2 Frontend | http://localhost:5173 | CV Upload and Parsing |
+| Service | URL |
+|---------|-----|
+| Unified Frontend | http://localhost:5174 |
+| API Gateway | http://localhost:8080 |
+| CoreServices API | http://localhost:3000 |
+| AIServices API | http://localhost:8000 |
+| AIServices API Docs | http://localhost:8000/docs |
 
 ---
 
-## API Endpoints (via Gateway)
-
-All requests go through `http://localhost:8080`.
+## API Reference (via Gateway at :8080)
 
 ### Authentication — `/api/auth`
 
 | Method | Path | Auth | Description |
-|---|---|:---:|---|
-| POST | `/api/auth/register` | No | Create account |
-| POST | `/api/auth/login` | No | Get JWT token |
-| POST | `/api/auth/forgot-password` | No | Send reset email |
-| POST | `/api/auth/reset-password/:token` | No | Set new password |
-| GET | `/api/auth/profile` | Yes | Get user profile |
-| PUT | `/api/auth/profile` | Yes | Update name / email |
-| GET | `/api/auth/cv-status` | Yes | Get CV status |
-| PATCH | `/api/auth/cv-status` | Yes | Update CV status |
+|--------|------|:----:|-------------|
+| POST | `/api/auth/register` | | Create account |
+| POST | `/api/auth/login` | | Get JWT token |
+| POST | `/api/auth/forgot-password` | | Send reset email |
+| POST | `/api/auth/reset-password/:token` | | Set new password |
+| GET | `/api/auth/profile` | ✓ | Get user account info |
+| PUT | `/api/auth/profile` | ✓ | Update name / email |
+| GET | `/api/auth/cv-status` | ✓ | Get CV processing status |
+| PATCH | `/api/auth/cv-status` | ✓ | Update CV status |
+
+### Profile Builder — `/api/profile`
+
+| Method | Path | Auth | Description |
+|--------|------|:----:|-------------|
+| GET | `/api/profile` | ✓ | Get full profile |
+| PUT | `/api/profile` | ✓ | Create or update profile |
+| POST | `/api/profile/github` | ✓ | Fetch GitHub repos & extract skills |
 
 ### CV Parsing — `/api/cv`
 
 | Method | Path | Auth | Description |
-|---|---|:---:|---|
-| POST | `/api/cv/upload` | Yes | Upload CV file |
-| POST | `/api/cv/parse/:file_id` | Yes | Run NLP extraction |
-| PUT | `/api/cv/verify` | Yes | Save verified data |
-| GET | `/api/cv/summary/:user_id` | Yes | Fetch CV summary |
+|--------|------|:----:|-------------|
+| POST | `/api/cv/upload` | ✓ | Upload CV file (PDF/DOC/DOCX) |
+| POST | `/api/cv/parse/:file_id` | ✓ | Run NLP extraction |
+| PUT | `/api/cv/verify` | ✓ | Save verified CV data |
+| GET | `/api/cv/summary/:user_id` | ✓ | Fetch CV summary |
 
-**Auth** = requires `Authorization: Bearer <JWT>` header.
+Auth = `Authorization: Bearer <JWT>` header required.
 
 ---
 
 ## Troubleshooting
 
-**Module 2 returns 401 Unauthorized on upload**
-Make sure you are opening Module 2 by clicking the **Upload CV** button on the Dashboard — not by navigating to `localhost:5173` directly. The Dashboard injects your session token into the URL so Module 2 can authenticate you.
-
-**"Auth Service is unavailable" from the gateway**
-Module 1 backend is not running. Start Terminal 1 first.
-
-**"CV Service is unavailable" from the gateway**
-Module 2 backend is not running or the virtual environment is not activated. Check Terminal 2.
-
-**MongoDB connection error**
-MongoDB is not running. Start it before launching any backend service.
-
-**spaCy model not found**
-Run `python -m spacy download en_core_web_sm` inside the activated virtual environment.
-
-**Password reset emails not arriving**
-Check `Module 1/.env` — `EMAIL_USER` and `EMAIL_PASSWORD` must be set. Use a Gmail App Password, not your account password.
-
-**Port already in use**
-Another process is using the port. On Windows: `netstat -ano | findstr :<port>` then `taskkill /PID <pid> /F`.
+| Problem | Fix |
+|---------|-----|
+| `401 Unauthorized` on CV upload | Make sure you are logged in through the app |
+| `"Core Service is unavailable"` | CoreServices backend is not running — start Terminal 1 |
+| `"CV Service is unavailable"` | AIServices backend is not running or venv not activated |
+| MongoDB connection error | MongoDB is not running — start it before any backend |
+| spaCy model not found | `python -m spacy download en_core_web_sm` inside activated venv |
+| GitHub fetch returns 403 | Add `GITHUB_TOKEN` to `CoreServices/.env` |
+| Port already in use | `netstat -ano \| findstr :<port>` then `taskkill /PID <pid> /F` |
