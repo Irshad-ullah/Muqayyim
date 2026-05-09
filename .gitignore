@@ -65,3 +65,4 @@ logs/
 *.tmp
 *.temp
 generate_ch4_ch5.py
+_gen_doc.py
