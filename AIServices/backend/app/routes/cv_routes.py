@@ -158,6 +158,12 @@ async def parse_cv(
         experience = extractor.extract_experience(cv_text)
         projects = extractor.extract_projects(cv_text)
 
+        logger.info(
+            f"Extraction results for {file_id}: "
+            f"skills={len(skills)}, education={len(education)}, "
+            f"experience={len(experience)}, projects={len(projects)}"
+        )
+
         # Normalize extracted items to satisfy schema requirements even when
         # spaCy NER is unavailable (e.g. company names may be missing).
         normalized_experience = []

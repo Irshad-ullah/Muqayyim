@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, MapPin, Globe, Linkedin, Github, Plus, X, Award } from 'lucide-react';
+import { Phone, MapPin, Linkedin, Github, Plus, X, Award } from 'lucide-react';
 
 export default function Step1BasicInfo({ profile, onChange }) {
   const [newCert, setNewCert] = useState({ name: '', issuer: '', date: '', url: '' });
@@ -18,10 +18,25 @@ export default function Step1BasicInfo({ profile, onChange }) {
   const removeCert = (i) =>
     onChange({ certifications: profile.certifications.filter((_, idx) => idx !== i) });
 
+  const [phoneError, setPhoneError] = useState('');
+
+  const handlePhoneChange = (raw) => {
+    // Allow only digits; preserve a leading + for country code
+    const hasPlus = raw.startsWith('+');
+    const digits  = raw.replace(/\D/g, '');
+    const filtered = (hasPlus ? '+' : '') + digits;
+    updateInfo('phone', filtered);
+
+    if (filtered && (digits.length < 7 || digits.length > 15)) {
+      setPhoneError('Enter a valid phone number (7–15 digits)');
+    } else {
+      setPhoneError('');
+    }
+  };
+
   const infoFields = [
     { key: 'phone',    Icon: Phone,    type: 'tel',  placeholder: '+1 (555) 000-0000',          label: 'Phone' },
     { key: 'location', Icon: MapPin,   type: 'text', placeholder: 'City, Country',               label: 'Location' },
-    { key: 'website',  Icon: Globe,    type: 'url',  placeholder: 'https://yourwebsite.com',     label: 'Website' },
     { key: 'linkedin', Icon: Linkedin, type: 'text', placeholder: 'linkedin.com/in/yourprofile', label: 'LinkedIn' },
     { key: 'github',   Icon: Github,   type: 'text', placeholder: 'github.com/yourusername',     label: 'GitHub' },
   ];
@@ -41,11 +56,18 @@ export default function Step1BasicInfo({ profile, onChange }) {
                 <input
                   type={type}
                   value={profile.personalInfo?.[key] || ''}
-                  onChange={(e) => updateInfo(key, e.target.value)}
+                  onChange={(e) =>
+                    key === 'phone'
+                      ? handlePhoneChange(e.target.value)
+                      : updateInfo(key, e.target.value)
+                  }
                   placeholder={placeholder}
-                  className="input-field pl-9"
+                  className={`input-field pl-9 ${key === 'phone' && phoneError ? 'border-red-400 focus:ring-red-400' : ''}`}
                 />
               </div>
+              {key === 'phone' && phoneError && (
+                <p className="text-xs text-red-500 mt-1">{phoneError}</p>
+              )}
             </div>
           ))}
         </div>

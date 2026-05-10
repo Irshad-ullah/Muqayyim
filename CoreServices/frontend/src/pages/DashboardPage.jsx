@@ -16,6 +16,7 @@ import {
   BarChart3,
   BookOpen,
   PenSquare,
+  Eye,
 } from 'lucide-react';
 
 const quickActions = [
@@ -34,6 +35,14 @@ const quickActions = [
     to: '/profile-builder',
     color: 'text-emerald-600',
     bg: 'bg-emerald-50',
+  },
+  {
+    icon: Eye,
+    label: 'View Profile',
+    description: 'Preview your built professional profile',
+    to: '/view-profile',
+    color: 'text-rose-600',
+    bg: 'bg-rose-50',
   },
   {
     icon: User,

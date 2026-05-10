@@ -4,6 +4,7 @@ Handles CV text extraction and processing
 """
 
 import logging
+import re
 from typing import Dict, Optional, Tuple
 import PyPDF2
 from docx import Document
@@ -120,22 +121,34 @@ class CVParser:
     @staticmethod
     def clean_text(text: str) -> str:
         """
-        Clean extracted text
-        Remove extra whitespace, normalize line breaks, etc.
+        Clean extracted text while preserving line structure.
+
+        IMPORTANT: do NOT collapse the whole text with ' '.join(text.split()).
+        That destroys every newline, which makes _split_sections unable to find
+        any section heading (it relies on ^ anchors with re.MULTILINE).
+        Clean each line individually instead.
         """
-        # Remove extra whitespace
-        text = " ".join(text.split())
-        
-        # Normalize line breaks
+        import re
+
+        # Normalise Windows / old-Mac line endings first
+        text = text.replace("\r\n", "\n").replace("\r", "\n")
+
+        # Replace literal escape sequences that sometimes survive PDF extraction
         text = text.replace("\\n", "\n")
         text = text.replace("\\t", "\t")
-        
-        # Remove special characters but keep structure
-        text = text.replace("•", "-")
-        text = text.replace("●", "-")
-        text = text.replace("◦", "-")
-        
-        return text
+
+        # Normalise bullet characters so the NLP layer sees plain hyphens
+        for bullet in ("•", "●", "◦", "▪", "▸", "→", "✓", "✔"):
+            text = text.replace(bullet, "-")
+
+        # Clean each line independently: collapse intra-line whitespace only
+        cleaned_lines = [" ".join(line.split()) for line in text.split("\n")]
+        text = "\n".join(cleaned_lines)
+
+        # Collapse runs of 3+ blank lines to a single blank line
+        text = re.sub(r"\n{3,}", "\n\n", text)
+
+        return text.strip()
 
 
 # Helper function for quick parsing

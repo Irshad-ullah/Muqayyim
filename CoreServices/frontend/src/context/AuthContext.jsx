@@ -9,8 +9,16 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const stored = authService.getStoredUser();
-    if (stored && authService.getToken()) {
+    const tok    = authService.getToken();
+    if (stored && tok) {
       setUser(stored);
+      // Silently refresh from DB so cvStatus is always current
+      authService.getProfile()
+        .then(({ user: fresh }) => {
+          setUser(fresh);
+          localStorage.setItem('user', JSON.stringify(fresh));
+        })
+        .catch(() => {}); // fail silently — keep cached user on network errors
     }
     setLoading(false);
   }, []);

@@ -10,6 +10,7 @@ import DashboardPage from './pages/DashboardPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import CVParsingPage from './pages/CVParsingPage.jsx';
 import ProfileBuilderPage from './pages/ProfileBuilderPage.jsx';
+import ViewProfilePage from './pages/ViewProfilePage.jsx';
 
 export default function App() {
   const { isAuthenticated } = useAuth();
@@ -58,6 +59,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <ProfileBuilderPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/view-profile"
+        element={
+          <ProtectedRoute>
+            <ViewProfilePage />
           </ProtectedRoute>
         }
       />

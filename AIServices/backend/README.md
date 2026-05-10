@@ -22,7 +22,7 @@ python -m spacy download en_core_web_sm
 
 ```bash
 # Development (with auto-reload)
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+c
 
 # Production
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4

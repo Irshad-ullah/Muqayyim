@@ -1,8 +1,9 @@
-import React from 'react';
-import { AlertCircle, CheckCircle2, Clock } from 'lucide-react';
-import SkillsSection from './SkillsSection';
-import EducationSection from './EducationSection';
-import ExperienceSection from './ExperienceSection';
+import React from "react";
+import { AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import SkillsSection from "./SkillsSection";
+import EducationSection from "./EducationSection";
+import ExperienceSection from "./ExperienceSection";
+import ProjectsSection from "./ProjectsSection";
 
 /**
  * ParsedSummary Component (FE-3: Parsing Summary Display)
@@ -10,13 +11,7 @@ import ExperienceSection from './ExperienceSection';
  * - Highlight uncertain extractions for user review
  * - Display loading skeleton while parsing
  */
-const ParsedSummary = ({
-  parsedData,
-  isLoading,
-  onEdit,
-  onSave,
-  onDelete,
-}) => {
+const ParsedSummary = ({ parsedData, isLoading, onEdit, onSave, onDelete }) => {
   if (isLoading) {
     return <LoadingSkeleton />;
   }
@@ -40,7 +35,7 @@ const ParsedSummary = ({
           CV Parsing Summary
         </h2>
         <p className="text-gray-600">
-          Review and edit the extracted information below. Items marked with{' '}
+          Review and edit the extracted information below. Items marked with{" "}
           <span className="inline-flex items-center gap-1">
             <AlertCircle className="w-4 h-4 text-yellow-600" />
             <span>require your attention</span>
@@ -84,6 +79,13 @@ const ParsedSummary = ({
         onDelete={onDelete}
       />
 
+      {/* Projects Section */}
+      <ProjectsSection
+        projects={parsedData.projects || []}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+
       {/* Save Button */}
       <div className="mt-8 flex justify-end gap-3 pt-4 border-t">
         <button
@@ -113,7 +115,8 @@ const LoadingSkeleton = () => {
           </h2>
         </div>
         <p className="text-gray-600">
-          Our AI is analyzing your CV and extracting key information. This should take 10-30 seconds.
+          Our AI is analyzing your CV and extracting key information. This
+          should take 10-30 seconds.
         </p>
       </div>
 

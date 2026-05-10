@@ -1,7 +1,9 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import User from '../models/User.js';
+import CvData from '../models/CvData.js';
 import { sendPasswordResetEmail } from '../utils/emailService.js';
+import { validateEmail } from '../utils/emailValidator.js';
 
 // Generate JWT token
 const generateToken = (userId, role) => {
@@ -29,6 +31,15 @@ export const register = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Passwords do not match',
+      });
+    }
+
+    // Email validation: format → disposable domain → DNS MX record
+    const emailCheck = await validateEmail(email);
+    if (!emailCheck.valid) {
+      return res.status(400).json({
+        success: false,
+        message: emailCheck.reason,
       });
     }
 
@@ -148,6 +159,18 @@ export const getProfile = async (req, res) => {
       });
     }
 
+    // If the stored status implies data exists, verify it actually does.
+    // Auto-reset to "Not Uploaded" when the parsed data has been deleted.
+    let cvStatus = user.cvStatus;
+    if (cvStatus !== 'Not Uploaded') {
+      const record = await CvData.findOne({ user_id: user._id.toString() });
+      if (!record) {
+        cvStatus = 'Not Uploaded';
+        user.cvStatus = 'Not Uploaded';
+        await user.save();
+      }
+    }
+
     return res.status(200).json({
       success: true,
       user: {
@@ -155,7 +178,7 @@ export const getProfile = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        cvStatus: user.cvStatus,
+        cvStatus,
         createdAt: user.createdAt,
       },
     });
@@ -186,8 +209,15 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    // Check if new email is already in use
+    // Check if new email is valid and not already in use
     if (email && email !== user.email) {
+      const emailCheck = await validateEmail(email);
+      if (!emailCheck.valid) {
+        return res.status(400).json({
+          success: false,
+          message: emailCheck.reason,
+        });
+      }
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         return res.status(400).json({
@@ -356,9 +386,19 @@ export const getCVStatus = async (req, res) => {
       });
     }
 
+    let cvStatus = user.cvStatus;
+    if (cvStatus !== 'Not Uploaded') {
+      const record = await CvData.findOne({ user_id: user._id.toString() });
+      if (!record) {
+        cvStatus = 'Not Uploaded';
+        user.cvStatus = 'Not Uploaded';
+        await user.save();
+      }
+    }
+
     return res.status(200).json({
       success: true,
-      cvStatus: user.cvStatus,
+      cvStatus,
       userId: user._id,
     });
   } catch (error) {

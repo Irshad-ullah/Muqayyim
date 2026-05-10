@@ -84,12 +84,12 @@ class NLPExtractor:
         headers = [
             "professional summary", "summary", "objective", "profile",
             "education", "educational background", "academic background",
-            "skills", "technical skills", "projects", "personal projects", "academic projects", "side projects", "project experience",
+            "skills", "technical skills", "projects", "personal projects", "academic projects", "key projects", "side projects", "project experience",
             "experience", "work experience", "professional experience", "employment",
             "certifications", "awards", "contact"
         ]
         header_regex = re.compile(
-            r"^(?P<header>" + "|".join(re.escape(h) for h in headers) + r")\s*(?:[:\-\–]|$)",
+            r"^\s*(?P<header>" + "|".join(re.escape(h) for h in headers) + r")\s*(?:[:\-\–]|$)",
             flags=re.IGNORECASE | re.MULTILINE,
         )
         matches = [match for match in header_regex.finditer(text)]
@@ -358,7 +358,69 @@ class NLPExtractor:
         
         return None
 
-    # ── Project extraction (Task 2 extension) ─────────────────────────────────
+    def _looks_like_project_title(self, line: str) -> bool:
+        """Heuristic to determine if a line is likely a project title."""
+        if not line or len(line) > 120:
+            return False
+        words = line.split()
+        if not words:
+            return False
+
+        if re.match(r'^(using|with|developed|built|created|technologies|tech stack|tools|description|role|responsibilities|\*|\u2022|\u2023|\u25E6|\u2043|\u2219|\d+\.)', line, re.IGNORECASE):
+            return False
+
+        if re.search(r'\b(project|project experience|app|website|platform|dashboard|tool|system|prototype|solution)\b', line, re.IGNORECASE):
+            return True
+
+        if re.search(r'[:\-–—]', line) and len(line.split()) <= 12:
+            return True
+
+        return line[0].isupper()
+
+    def _split_project_title_line(self, line: str) -> Tuple[str, str]:
+        """Split a title line into project name and description when possible."""
+        separators = [r'\s+[-–—]\s+', r'\s*:\s*']
+        for sep in separators:
+            parts = re.split(sep, line, maxsplit=1)
+            if len(parts) == 2 and len(parts[0].split()) >= 2:
+                return parts[0].strip(), parts[1].strip()
+        return line.strip(), ''
+
+    def _extract_project_blocks(self, section: str) -> List[List[str]]:
+        """Split the projects section into blocks of candidate project lines."""
+        blocks: List[List[str]] = []
+        current: List[str] = []
+
+        for raw_line in section.splitlines():
+            line = raw_line.strip()
+            if not line:
+                if current:
+                    blocks.append(current)
+                    current = []
+                continue
+
+            cleaned = re.sub(r'^[\-\*\u2022\u2023\u25E6\u2043\u2219\d\.\)\s]+', '', line)
+            if not cleaned:
+                continue
+
+            if re.match(r'^[\-\*\u2022\u2023\u25E6\u2043\u2219]|^\d+\.', line):
+                if current:
+                    blocks.append(current)
+                current = [cleaned]
+            elif not current and self._looks_like_project_title(cleaned):
+                current = [cleaned]
+            elif self._looks_like_project_title(cleaned):
+                # New project title: save the current block and start fresh
+                if current:
+                    blocks.append(current)
+                current = [cleaned]
+            else:
+                current.append(cleaned)
+
+        if current:
+            blocks.append(current)
+
+        return blocks
 
     def extract_projects(self, text: str) -> List[Dict]:
         """
@@ -371,53 +433,40 @@ class NLPExtractor:
         section = self._get_section(
             text,
             ["projects", "personal projects", "academic projects",
-             "side projects", "project experience"]
+             "key projects", "side projects", "project experience"]
         )
+
         if not section:
             return projects
 
-        lines = [l.strip() for l in section.split('\n') if l.strip()]
+        blocks = self._extract_project_blocks(section)
 
-        current_name: Optional[str] = None
-        desc_lines:   List[str]     = []
+        for block in blocks:
+            if not block:
+                continue
 
-        CONTINUATION_PREFIXES = re.compile(
-            r'^(using|with|developed|built|created|technologies|tech stack|tools|'
-            r'responsibilities|description|role|•|-|·|\*|\d+\.)',
-            re.IGNORECASE,
-        )
+            title_line = block[0]
+            description_lines = block[1:]
+            name, title_description = self._split_project_title_line(title_line)
+            description = ' '.join(filter(None, [title_description] + description_lines)).strip()
 
-        def flush():
-            if current_name:
-                desc = ' '.join(desc_lines).strip()
-                techs = self._extract_technologies_from_text(current_name + ' ' + desc)
-                projects.append({
-                    'name':         current_name.strip(),
-                    'description':  desc,
-                    'technologies': techs,
-                })
+            if not description and len(block) > 1:
+                description = ' '.join(block[1:]).strip()
 
-        for line in lines:
-            line = re.sub(r'^[\-\*\u2022\u2023\u25E6\u2043\u2219\d\.\)\s]+', '', line)
-            is_name_candidate = (
-                len(line) < 100
-                and not CONTINUATION_PREFIXES.match(line)
-                and len(line.split()) >= 2
-                and not re.match(r'^\d{4}', line)   # not a year line
-            )
+            if not name:
+                continue
 
-            if is_name_candidate and current_name is None:
-                current_name = line
-            elif is_name_candidate and len(desc_lines) >= 1:
-                flush()
-                current_name = line
-                desc_lines   = []
-            else:
-                if current_name is not None:
-                    desc_lines.append(line)
+            technologies = self._extract_technologies_from_text(f'{name} {description}')
+            projects.append({
+                'name': name,
+                'description': description,
+                'technologies': technologies,
+            })
 
-        flush()
-        return projects[:10]
+            if len(projects) >= 10:
+                break
+
+        return projects
 
     def _extract_technologies_from_text(self, text: str) -> List[str]:
         found: set = set()

@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { CheckCircle, AlertCircle } from 'lucide-react';
-import CVUpload from '../components/CVUpload';
-import ParsedSummary from '../components/ParsedSummary';
-import { cvService } from '../services/cvService';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { CheckCircle, AlertCircle } from "lucide-react";
+import CVUpload from "../components/CVUpload";
+import ParsedSummary from "../components/ParsedSummary";
+import { cvService } from "../services/cvService";
+import toast from "react-hot-toast";
 
 // VITE_API_URL points to the API Gateway (port 8080).
 // The gateway routes /api/auth/* → Module 1, so we can update CV status from here.
-const GATEWAY_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const GATEWAY_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const readToken = () => {
   const match = document.cookie.match(/(?:^|;\s*)muqayyim_jwt=([^;]+)/);
-  return match ? match[1] : localStorage.getItem('authToken');
+  return match ? match[1] : localStorage.getItem("authToken");
 };
 
 // Notify Module 1 of a CV status change. Fire-and-forget — never breaks the CV flow.
@@ -20,9 +20,9 @@ const updateCVStatus = async (cvStatus) => {
   if (!token) return;
   try {
     await fetch(`${GATEWAY_URL}/api/auth/cv-status`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ cvStatus }),
@@ -38,7 +38,7 @@ const updateCVStatus = async (cvStatus) => {
  * Orchestrates the flow: Upload -> Parse -> Review -> Save
  */
 const CVParsingPage = () => {
-  const [currentStep, setCurrentStep] = useState('upload'); // upload, parsing, review, success
+  const [currentStep, setCurrentStep] = useState("upload"); // upload, parsing, review, success
   const [fileId, setFileId] = useState(null);
   const [parsedData, setParsedData] = useState(null);
   const [editedData, setEditedData] = useState(null);
@@ -52,18 +52,18 @@ const CVParsingPage = () => {
   const handleUploadSuccess = async (uploadResponse) => {
     try {
       setFileId(uploadResponse.file_id);
-      setCurrentStep('parsing');
+      setCurrentStep("parsing");
       setError(null);
-      toast.success('File uploaded! Starting CV parsing...');
-      await updateCVStatus('Uploaded');
+      toast.success("File uploaded! Starting CV parsing...");
+      await updateCVStatus("Uploaded");
 
       // Trigger NLP parsing
       await triggerParsing(uploadResponse.file_id);
     } catch (err) {
-      const errorMsg = err.message || 'Failed to process upload';
+      const errorMsg = err.message || "Failed to process upload";
       setError(errorMsg);
       toast.error(errorMsg);
-      setCurrentStep('upload');
+      setCurrentStep("upload");
     }
   };
 
@@ -80,22 +80,22 @@ const CVParsingPage = () => {
       if (data.skills) {
         const uniqueSkills = Array.from(
           new Map(
-            data.skills.map((skill) => [skill.name.toLowerCase(), skill])
-          ).values()
+            data.skills.map((skill) => [skill.name.toLowerCase(), skill]),
+          ).values(),
         );
         data.skills = uniqueSkills;
       }
 
       setParsedData(data);
       setEditedData(JSON.parse(JSON.stringify(data))); // Deep copy for editing
-      setCurrentStep('review');
-      await updateCVStatus('Processing');
-      toast.success('CV parsed successfully!');
+      setCurrentStep("review");
+      await updateCVStatus("Processing");
+      toast.success("CV parsed successfully!");
     } catch (err) {
-      const errorMsg = err.message || 'Parsing failed';
+      const errorMsg = err.message || "Parsing failed";
       setError(errorMsg);
       toast.error(errorMsg);
-      setCurrentStep('upload');
+      setCurrentStep("upload");
     } finally {
       setIsLoading(false);
     }
@@ -109,36 +109,45 @@ const CVParsingPage = () => {
     const newData = JSON.parse(JSON.stringify(editedData));
 
     switch (editAction.type) {
-      case 'skill_add':
+      case "skill_add":
         if (!newData.skills) newData.skills = [];
         newData.skills.push(editAction.data);
         break;
-      case 'skill_update':
+      case "skill_update":
         if (newData.skills) {
           const skillIndex = newData.skills.findIndex(
-            (s) => s.name.toLowerCase() === editAction.oldName.toLowerCase()
+            (s) => s.name.toLowerCase() === editAction.oldName.toLowerCase(),
           );
           if (skillIndex !== -1) {
             newData.skills[skillIndex] = editAction.data;
           }
         }
         break;
-      case 'education_add':
+      case "education_add":
         if (!newData.education) newData.education = [];
         newData.education.push(editAction.data);
         break;
-      case 'education_update':
+      case "education_update":
         if (newData.education && newData.education[editAction.index]) {
           newData.education[editAction.index] = editAction.data;
         }
         break;
-      case 'experience_add':
+      case "experience_add":
         if (!newData.experience) newData.experience = [];
         newData.experience.push(editAction.data);
         break;
-      case 'experience_update':
+      case "experience_update":
         if (newData.experience && newData.experience[editAction.index]) {
           newData.experience[editAction.index] = editAction.data;
+        }
+        break;
+      case "project_add":
+        if (!newData.projects) newData.projects = [];
+        newData.projects.push(editAction.data);
+        break;
+      case "project_update":
+        if (newData.projects && newData.projects[editAction.index]) {
+          newData.projects[editAction.index] = editAction.data;
         }
         break;
       default:
@@ -156,24 +165,31 @@ const CVParsingPage = () => {
     const newData = JSON.parse(JSON.stringify(editedData));
 
     switch (deleteAction.type) {
-      case 'skill':
+      case "skill":
         if (newData.skills) {
           newData.skills = newData.skills.filter(
-            (s) => s.name !== deleteAction.name
+            (s) => s.name !== deleteAction.name,
           );
         }
         break;
-      case 'education':
+      case "education":
         if (newData.education) {
           newData.education = newData.education.filter(
-            (_, index) => index !== deleteAction.index
+            (_, index) => index !== deleteAction.index,
           );
         }
         break;
-      case 'experience':
+      case "experience":
         if (newData.experience) {
           newData.experience = newData.experience.filter(
-            (_, index) => index !== deleteAction.index
+            (_, index) => index !== deleteAction.index,
+          );
+        }
+        break;
+      case "project":
+        if (newData.projects) {
+          newData.projects = newData.projects.filter(
+            (_, index) => index !== deleteAction.index,
           );
         }
         break;
@@ -192,11 +208,11 @@ const CVParsingPage = () => {
     try {
       setIsLoading(true);
       await cvService.verifyCVData(fileId, editedData);
-      await updateCVStatus('Verified');
-      setCurrentStep('success');
-      toast.success('CV data saved to your profile!');
+      await updateCVStatus("Verified");
+      setCurrentStep("success");
+      toast.success("CV data saved to your profile!");
     } catch (err) {
-      const errorMsg = err.message || 'Failed to save data';
+      const errorMsg = err.message || "Failed to save data";
       setError(errorMsg);
       toast.error(errorMsg);
     } finally {
@@ -216,7 +232,7 @@ const CVParsingPage = () => {
    * Reset and start over
    */
   const handleReset = () => {
-    setCurrentStep('upload');
+    setCurrentStep("upload");
     setFileId(null);
     setParsedData(null);
     setEditedData(null);
@@ -232,35 +248,40 @@ const CVParsingPage = () => {
             CV Parsing & Skill Extraction
           </h1>
           <p className="text-gray-600 text-lg">
-            Upload your CV to automatically extract skills, education, and experience
+            Upload your CV to automatically extract skills, education, and
+            experience
           </p>
         </div>
 
         {/* Progress Steps */}
         <div className="flex items-center justify-center gap-4 mb-12 flex-wrap">
           {[
-            { step: 'upload', label: 'Upload' },
-            { step: 'parsing', label: 'Parsing' },
-            { step: 'review', label: 'Review' },
-            { step: 'success', label: 'Success' },
+            { step: "upload", label: "Upload" },
+            { step: "parsing", label: "Parsing" },
+            { step: "review", label: "Review" },
+            { step: "success", label: "Success" },
           ].map((s, index) => (
             <React.Fragment key={s.step}>
               <div
                 className={`flex items-center justify-center w-10 h-10 rounded-full font-bold transition-all ${
                   currentStep === s.step
-                    ? 'bg-blue-600 text-white scale-110'
-                    : ['parsing', 'review', 'success'].includes(currentStep) &&
-                      ['upload', 'parsing', 'review', 'success'].indexOf(s.step) <
-                        ['upload', 'parsing', 'review', 'success'].indexOf(
-                          currentStep
-                        )
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-200 text-gray-600'
+                    ? "bg-blue-600 text-white scale-110"
+                    : ["parsing", "review", "success"].includes(currentStep) &&
+                        ["upload", "parsing", "review", "success"].indexOf(
+                          s.step,
+                        ) <
+                          ["upload", "parsing", "review", "success"].indexOf(
+                            currentStep,
+                          )
+                      ? "bg-green-600 text-white"
+                      : "bg-gray-200 text-gray-600"
                 }`}
               >
-                {['parsing', 'review', 'success'].includes(currentStep) &&
-                ['upload', 'parsing', 'review', 'success'].indexOf(s.step) <
-                  ['upload', 'parsing', 'review', 'success'].indexOf(currentStep) ? (
+                {["parsing", "review", "success"].includes(currentStep) &&
+                ["upload", "parsing", "review", "success"].indexOf(s.step) <
+                  ["upload", "parsing", "review", "success"].indexOf(
+                    currentStep,
+                  ) ? (
                   <span>✓</span>
                 ) : (
                   index + 1
@@ -269,15 +290,13 @@ const CVParsingPage = () => {
               {index < 3 && (
                 <div
                   className={`h-1 w-12 transition-all ${
-                    ['parsing', 'review', 'success'].includes(currentStep) &&
-                    ['upload', 'parsing', 'review', 'success'].indexOf(
-                      s.step
-                    ) <
-                      ['upload', 'parsing', 'review', 'success'].indexOf(
-                        currentStep
+                    ["parsing", "review", "success"].includes(currentStep) &&
+                    ["upload", "parsing", "review", "success"].indexOf(s.step) <
+                      ["upload", "parsing", "review", "success"].indexOf(
+                        currentStep,
                       )
-                      ? 'bg-green-600'
-                      : 'bg-gray-200'
+                      ? "bg-green-600"
+                      : "bg-gray-200"
                   }`}
                 />
               )}
@@ -288,7 +307,7 @@ const CVParsingPage = () => {
         {/* Main Content */}
         <div className="bg-white rounded-lg shadow-lg p-8">
           {/* Upload Step */}
-          {currentStep === 'upload' && (
+          {currentStep === "upload" && (
             <div className="space-y-6">
               <CVUpload
                 onUploadSuccess={handleUploadSuccess}
@@ -298,7 +317,7 @@ const CVParsingPage = () => {
           )}
 
           {/* Parsing Step */}
-          {currentStep === 'parsing' && (
+          {currentStep === "parsing" && (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="animate-spin mb-4">
                 <svg
@@ -327,7 +346,7 @@ const CVParsingPage = () => {
                     strokeDasharray="60"
                     strokeDashoffset="0"
                     style={{
-                      animation: 'spin 2s linear infinite',
+                      animation: "spin 2s linear infinite",
                     }}
                   />
                 </svg>
@@ -338,12 +357,14 @@ const CVParsingPage = () => {
               <p className="text-gray-600">
                 Our AI is extracting skills, education, and experience.
               </p>
-              <p className="text-gray-500 text-sm mt-2">This usually takes 10-30 seconds</p>
+              <p className="text-gray-500 text-sm mt-2">
+                This usually takes 10-30 seconds
+              </p>
             </div>
           )}
 
           {/* Review Step */}
-          {currentStep === 'review' && (
+          {currentStep === "review" && (
             <div className="space-y-6">
               <ParsedSummary
                 parsedData={editedData}
@@ -356,15 +377,15 @@ const CVParsingPage = () => {
           )}
 
           {/* Success Step */}
-          {currentStep === 'success' && (
+          {currentStep === "success" && (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <CheckCircle className="w-16 h-16 text-green-600 mb-4" />
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
                 Success!
               </h3>
               <p className="text-gray-600 mb-6">
-                Your CV has been parsed and saved to your profile. You can now proceed to
-                the next step in your career development journey.
+                Your CV has been parsed and saved to your profile. You can now
+                proceed to the next step in your career development journey.
               </p>
               <button
                 onClick={handleReset}
@@ -376,7 +397,7 @@ const CVParsingPage = () => {
           )}
 
           {/* Error Display */}
-          {error && currentStep !== 'upload' && (
+          {error && currentStep !== "upload" && (
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3 mt-6">
               <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
               <div>

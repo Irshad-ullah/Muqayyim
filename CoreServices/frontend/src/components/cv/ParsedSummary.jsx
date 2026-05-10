@@ -3,14 +3,15 @@ import { AlertCircle, CheckCircle2, Clock } from 'lucide-react';
 import SkillsSection from './SkillsSection';
 import EducationSection from './EducationSection';
 import ExperienceSection from './ExperienceSection';
+import ProjectsSection from './ProjectsSection';
 
 const ParsedSummary = ({ parsedData, isLoading, onEdit, onSave, onDelete }) => {
   if (isLoading) return <LoadingSkeleton />;
   if (!parsedData) return null;
 
   const hasUncertainItems = (items) => items?.some((item) => item.confidence && item.confidence < 0.8);
-  const uncertainSkills = hasUncertainItems(parsedData.skills);
-  const uncertainEducation = hasUncertainItems(parsedData.education);
+  const uncertainSkills     = hasUncertainItems(parsedData.skills);
+  const uncertainEducation  = hasUncertainItems(parsedData.education);
   const uncertainExperience = hasUncertainItems(parsedData.experience);
 
   return (
@@ -31,14 +32,17 @@ const ParsedSummary = ({ parsedData, isLoading, onEdit, onSave, onDelete }) => {
           <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
           <div>
             <h3 className="font-semibold text-yellow-800">Some items need your review</h3>
-            <p className="text-yellow-700 text-sm mt-1">Please check highlighted items for accuracy before saving.</p>
+            <p className="text-yellow-700 text-sm mt-1">
+              Please check highlighted items for accuracy before saving.
+            </p>
           </div>
         </div>
       )}
 
-      <SkillsSection skills={parsedData.skills || []} onEdit={onEdit} onDelete={onDelete} />
-      <EducationSection education={parsedData.education || []} onEdit={onEdit} onDelete={onDelete} />
+      <SkillsSection     skills={parsedData.skills     || []} onEdit={onEdit} onDelete={onDelete} />
+      <EducationSection  education={parsedData.education  || []} onEdit={onEdit} onDelete={onDelete} />
       <ExperienceSection experience={parsedData.experience || []} onEdit={onEdit} onDelete={onDelete} />
+      <ProjectsSection   projects={parsedData.projects   || []} onEdit={onEdit} onDelete={onDelete} />
 
       <div className="mt-8 flex justify-end gap-3 pt-4 border-t">
         <button
@@ -62,7 +66,7 @@ const LoadingSkeleton = () => (
       </div>
       <p className="text-gray-600">Our AI is analyzing your CV. This should take 10–30 seconds.</p>
     </div>
-    {[1, 2, 3].map((i) => (
+    {[1, 2, 3, 4].map((i) => (
       <div key={i} className="space-y-4">
         <div className="h-6 bg-gray-200 rounded w-1/4 animate-pulse" />
         <div className="space-y-3">

@@ -4,28 +4,15 @@ import { CheckCircle, AlertCircle, Upload, ArrowLeft, X } from 'lucide-react';
 import Navbar from '../components/Navbar.jsx';
 import ParsedSummary from '../components/cv/ParsedSummary.jsx';
 import { cvService } from '../services/cvService.js';
+import { authService } from '../services/authService.js';
+import { useAuth } from '../context/AuthContext.jsx';
 import toast from 'react-hot-toast';
-
-const GATEWAY_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-
-const updateCVStatus = async (cvStatus) => {
-  const token = localStorage.getItem('token');
-  if (!token) return;
-  try {
-    await fetch(`${GATEWAY_URL}/api/auth/cv-status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ cvStatus }),
-    });
-  } catch {
-    // Non-critical
-  }
-};
 
 const STEPS = ['upload', 'parsing', 'review', 'success'];
 
 const CVParsingPage = () => {
   const navigate = useNavigate();
+  const { updateUser } = useAuth();
   const [currentStep, setCurrentStep] = useState('upload');
   const [fileId, setFileId] = useState(null);
   const [parsedData, setParsedData] = useState(null);
@@ -38,6 +25,16 @@ const CVParsingPage = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState(null);
+
+  const updateCVStatus = async (cvStatus) => {
+    try {
+      await authService.updateCVStatus(cvStatus);
+      const stored = authService.getStoredUser() || {};
+      updateUser({ ...stored, cvStatus });
+    } catch {
+      // Non-critical
+    }
+  };
 
   const ALLOWED = ['pdf', 'doc', 'docx'];
   const MAX_SIZE = 5 * 1024 * 1024;
@@ -139,6 +136,12 @@ const CVParsingPage = () => {
       case 'experience_update':
         if (d.experience?.[editAction.index]) d.experience[editAction.index] = editAction.data;
         break;
+      case 'project_add':
+        (d.projects = d.projects || []).push(editAction.data);
+        break;
+      case 'project_update':
+        if (d.projects?.[editAction.index]) d.projects[editAction.index] = editAction.data;
+        break;
       default:
         break;
     }
@@ -156,6 +159,9 @@ const CVParsingPage = () => {
         break;
       case 'experience':
         d.experience = d.experience?.filter((_, i) => i !== deleteAction.index);
+        break;
+      case 'project':
+        d.projects = d.projects?.filter((_, i) => i !== deleteAction.index);
         break;
       default:
         break;
