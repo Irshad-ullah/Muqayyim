@@ -120,6 +120,14 @@ export const login = async (req, res) => {
       });
     }
 
+    // Reject deactivated accounts
+    if (user.isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account has been deactivated. Please contact support.',
+      });
+    }
+
     // Generate token
     const token = generateToken(user._id, user.role);
 

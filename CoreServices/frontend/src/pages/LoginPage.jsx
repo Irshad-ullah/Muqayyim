@@ -43,9 +43,9 @@ export default function LoginPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      await login(form.email, form.password);
+      const data = await login(form.email, form.password);
       toast.success('Welcome back!');
-      navigate('/dashboard');
+      navigate(data.user?.role === 'Admin' ? '/admin/dashboard' : '/dashboard');
     } catch (err) {
       const msg = err?.response?.data?.message || 'Invalid email or password';
       toast.error(msg);

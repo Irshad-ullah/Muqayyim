@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import connectDB from './backend/config/db.js';
 import authRoutes from './backend/routes/authRoutes.js';
 import profileRoutes from './backend/routes/profileRoutes.js';
+import adminRoutes from './backend/admin/routes/adminRoutes.js';
+import { seedAdmin } from './backend/admin/utils/adminSeed.js';
 
 dotenv.config();
 
@@ -28,11 +30,12 @@ app.use(
 );
 
 // Connect to MongoDB
-connectDB();
+connectDB().then(() => seedAdmin());
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

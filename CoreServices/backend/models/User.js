@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
       enum: ['Not Uploaded', 'Uploaded', 'Processing', 'Verified'],
       default: 'Not Uploaded',
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
     resetToken: String,
     resetTokenExpiry: Date,
     createdAt: {

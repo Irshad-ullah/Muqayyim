@@ -95,6 +95,18 @@ app.use(
   })
 );
 
+// ─── Route: /api/admin/* → Module 10 (Admin Panel — Core Service) ─────────────
+app.use(
+  '/api/admin',
+  createProxyMiddleware({
+    target: AUTH_SERVICE_URL,
+    changeOrigin: true,
+    onError: (err, req, res) => onError(err, req, res, AUTH_SERVICE_URL),
+    onProxyRes: stripDownstreamCors,
+    logLevel: 'silent',
+  })
+);
+
 // ─── Gateway health check ─────────────────────────────────────────────────────
 app.get('/health', (_req, res) => {
   res.json({
@@ -105,6 +117,7 @@ app.get('/health', (_req, res) => {
       '/api/auth/*':    AUTH_SERVICE_URL,
       '/api/profile/*': AUTH_SERVICE_URL,
       '/api/cv/*':      CV_SERVICE_URL,
+      '/api/admin/*':   AUTH_SERVICE_URL,
     },
   });
 });
@@ -114,7 +127,7 @@ app.get('/', (_req, res) => {
   res.json({
     message: 'MUQAYYIM API Gateway',
     version: '1.0.0',
-    endpoints: ['/api/auth', '/api/profile', '/api/cv', '/health'],
+    endpoints: ['/api/auth', '/api/profile', '/api/cv', '/api/admin', '/health'],
   });
 });
 
@@ -130,6 +143,7 @@ app.listen(PORT, () => {
   console.log(`    Listening on   → http://localhost:${PORT}`);
   console.log(`    /api/auth/*    → ${AUTH_SERVICE_URL}  (Core Service)`);
   console.log(`    /api/profile/* → ${AUTH_SERVICE_URL}  (Core Service)`);
+  console.log(`    /api/admin/*   → ${AUTH_SERVICE_URL}  (Core Service — Admin Panel)`);
   console.log(`    /api/cv/*      → ${CV_SERVICE_URL}  (AI Service)`);
   console.log('');
 });
