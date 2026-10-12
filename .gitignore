@@ -32,6 +32,9 @@ MANIFEST
 .mypy_cache/
 
 # ── Environment / secrets ─────────────────────────────────────
+.env
+.env.*
+!.env.example
 
 # ── Frontend build output ─────────────────────────────────────
 dist/
