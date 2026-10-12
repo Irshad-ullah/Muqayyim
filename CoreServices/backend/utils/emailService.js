@@ -1,8 +1,9 @@
 import nodemailer from 'nodemailer';
+import { logError } from '../services/errorLogger.js';
 
-const sendEmail = async (email, subject, htmlContent) => {
+// Sends one email; resolves to { ok, error } and never throws.
+const trySend = async (email, subject, htmlContent) => {
   try {
-    // Create transporter
     const transporter = nodemailer.createTransport({
       service: process.env.EMAIL_SERVICE,
       auth: {
@@ -11,7 +12,6 @@ const sendEmail = async (email, subject, htmlContent) => {
       },
     });
 
-    // Send email
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
@@ -19,11 +19,31 @@ const sendEmail = async (email, subject, htmlContent) => {
       html: htmlContent,
     });
 
-    return true;
+    return { ok: true };
   } catch (error) {
-    console.error('Email send error:', error);
-    return false;
+    console.error('Email send error:', error.message);
+    return { ok: false, error };
   }
+};
+
+// Low-level send: true/false, never writes to the error log. Used by critical
+// alerts, so a mail outage can't cause an alert loop.
+const sendEmailRaw = async (email, subject, htmlContent) => (await trySend(email, subject, htmlContent)).ok;
+
+// Normal send: failures are recorded in the error log (module 'mailer').
+// The recipient address and message body are not logged.
+const sendEmail = async (email, subject, htmlContent) => {
+  const { ok, error } = await trySend(email, subject, htmlContent);
+  if (!ok) {
+    logError({
+      level: 'error',
+      module: 'mailer',
+      errorType: error?.code || error?.name || 'MAIL_SEND_FAILED',
+      message: `Failed to send "${subject}": ${error?.message || 'unknown error'}`,
+      stack: error?.stack,
+    });
+  }
+  return ok;
 };
 
 const sendPasswordResetEmail = async (email, resetToken) => {
@@ -54,4 +74,4 @@ const sendPasswordChangedEmail = async (email, name) => {
   return sendEmail(email, 'Your MUQAYYIM password was changed', html);
 };
 
-export { sendEmail, sendPasswordResetEmail, sendPasswordChangedEmail };
+export { sendEmail, sendEmailRaw, sendPasswordResetEmail, sendPasswordChangedEmail };

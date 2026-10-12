@@ -4,6 +4,7 @@ import { jest } from '@jest/globals';
 // Must be imported before app.js.
 export const mail = {
   sendEmail: jest.fn(async () => true),
+  sendEmailRaw: jest.fn(async () => true),
   sendPasswordResetEmail: jest.fn(async () => true),
   sendPasswordChangedEmail: jest.fn(async () => true),
 };

@@ -20,6 +20,7 @@ import CVGeneratorPage from './pages/CVGeneratorPage.jsx';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx';
 import AdminUsersPage from './pages/admin/AdminUsersPage.jsx';
 import AdminSystemPage from './pages/admin/AdminSystemPage.jsx';
+import AdminLogsPage from './pages/admin/AdminLogsPage.jsx';
 
 export default function App() {
   const { isAuthenticated, user } = useAuth();
@@ -131,6 +132,14 @@ export default function App() {
         element={
           <AdminRoute>
             <AdminSystemPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/logs"
+        element={
+          <AdminRoute>
+            <AdminLogsPage />
           </AdminRoute>
         }
       />

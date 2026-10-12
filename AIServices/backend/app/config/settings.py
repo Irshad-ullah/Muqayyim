@@ -50,6 +50,9 @@ class Settings(BaseSettings):
     # Suspensions/password changes reach this service within this window.
     AUTH_CACHE_TTL_SECONDS: int = int(os.getenv("AUTH_CACHE_TTL_SECONDS", "30"))
     
+    # Error-log retention (TTL index on error_logs.timestamp), in days.
+    LOG_RETENTION_DAYS: int = int(os.getenv("LOG_RETENTION_DAYS", "30"))
+
     # CORS Configuration
     # Include both localhost and 127.0.0.1 since dev servers may use either.
     CORS_ORIGINS: list = [

@@ -10,15 +10,39 @@ import { loadConfig, CV_UPLOAD_PATH, pathOf } from './config.js';
 import { requestId } from './middleware/requestId.js';
 import { createSizeLimit } from './middleware/sizeLimit.js';
 import { createRateLimiters } from './middleware/rateLimits.js';
+import { createErrorReporter } from './services/errorReporter.js';
+import { createSpikeDetector } from './services/rateLimitSpike.js';
+import { createErrorHandler } from './middleware/errorHandler.js';
 
 // The gateway routes, limits and protects traffic. It does NOT verify JWTs:
 // each service verifies tokens and the user's live state itself.
 //
 // createApp() reads configuration from the environment at call time, so tests
 // can build apps with different limits; server.js uses the default instance.
-export function createApp(config = loadConfig()) {
+export function createApp(config = loadConfig(), { errorReporter } = {}) {
   const app = express();
-  const limiters = createRateLimiters(config);
+
+  // Gateway errors go to CoreServices' error log (batched, fire-and-forget).
+  const reporter =
+    errorReporter ||
+    createErrorReporter({ coreUrl: config.authServiceUrl, internalKey: config.internalApiKey });
+  app.locals.errorReporter = reporter;
+
+  const spikes = createSpikeDetector({
+    threshold: config.spikeThreshold,
+    windowMs: config.spikeWindowMs,
+    onSpike: ({ ip, count, windowMs, limit, requestId }) =>
+      reporter.report({
+        level: 'warning',
+        module: 'rate-limit',
+        errorType: 'RATE_LIMIT_SPIKE',
+        message: `IP ${ip} hit rate limits ${count} times in ${Math.round(windowMs / 60000)} minutes (latest: ${limit})`,
+        requestId,
+      }),
+  });
+  const limiters = createRateLimiters(config, {
+    onLimitHit: (name, req) => spikes.record(req.ip, { limit: name, requestId: req.requestId }),
+  });
 
   // Trust X-Forwarded-For only from known proxies so req.ip is the real client
   // (used for rate limiting and logs; behind Railway/Render's proxy).
@@ -109,6 +133,16 @@ export function createApp(config = loadConfig()) {
       console.error(
         `[Gateway] ${name} ${timedOut ? 'timed out' : 'unreachable'} (${err.code || err.message}) rid=${req.requestId}`,
       );
+      reporter.report({
+        level: 'error',
+        module: 'proxy',
+        errorType: timedOut ? 'UPSTREAM_TIMEOUT' : 'UPSTREAM_UNAVAILABLE',
+        message: `${name} ${timedOut ? 'did not respond in time' : 'is unreachable'} (${err.code || err.message})`,
+        requestId: req.requestId,
+        method: req.method,
+        path: pathOf(req),
+        statusCode: timedOut ? 504 : 502,
+      });
       res.status(timedOut ? 504 : 502).json({
         success: false,
         code: timedOut ? 'UPSTREAM_TIMEOUT' : 'UPSTREAM_UNAVAILABLE',
@@ -179,6 +213,9 @@ export function createApp(config = loadConfig()) {
   app.use((_req, res) => {
     res.status(404).json({ success: false, message: 'Route not found on gateway' });
   });
+
+  // ─── Unhandled gateway errors → error log + clean JSON 500 ────────────────────
+  app.use(createErrorHandler(reporter));
 
   return app;
 }

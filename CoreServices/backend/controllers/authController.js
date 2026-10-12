@@ -9,6 +9,7 @@ import { MAX_LOGIN_ATTEMPTS, LOCK_DURATION_MS } from '../config/security.js';
 import { logSecurityEvent } from '../utils/securityLog.js';
 import { normalizeEmail, isDuplicateKeyError, emailInUse } from '../utils/apiErrors.js';
 import { passwordChangedTimestamp } from '../utils/passwordChangedAt.js';
+import { handleServerError } from '../utils/serverError.js';
 
 const INVALID_CREDENTIALS = 'Invalid email or password';
 
@@ -100,12 +101,7 @@ export const register = async (req, res) => {
     });
   } catch (error) {
     if (isDuplicateKeyError(error)) return emailInUse(res);
-    console.error('Registration error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Registration failed',
-      error: error.message,
-    });
+    return handleServerError(res, req, error, { module: 'auth', message: 'Registration failed' });
   }
 };
 
@@ -220,12 +216,7 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Login failed',
-      error: error.message,
-    });
+    return handleServerError(res, req, error, { module: 'auth', message: 'Login failed' });
   }
 };
 
@@ -256,12 +247,7 @@ export const getProfile = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get profile error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to fetch profile',
-      error: error.message,
-    });
+    return handleServerError(res, req, error, { module: 'auth', message: 'Failed to fetch profile' });
   }
 };
 
@@ -315,12 +301,7 @@ export const updateProfile = async (req, res) => {
     });
   } catch (error) {
     if (isDuplicateKeyError(error)) return emailInUse(res);
-    console.error('Update profile error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to update profile',
-      error: error.message,
-    });
+    return handleServerError(res, req, error, { module: 'auth', message: 'Failed to update profile' });
   }
 };
 
@@ -371,12 +352,7 @@ export const forgotPassword = async (req, res) => {
       message: 'Password reset link sent to email',
     });
   } catch (error) {
-    console.error('Forgot password error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to process forgot password',
-      error: error.message,
-    });
+    return handleServerError(res, req, error, { module: 'auth', message: 'Failed to process forgot password' });
   }
 };
 
@@ -446,12 +422,7 @@ export const resetPassword = async (req, res) => {
       message: 'Password reset successful',
     });
   } catch (error) {
-    console.error('Reset password error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to reset password',
-      error: error.message,
-    });
+    return handleServerError(res, req, error, { module: 'auth', message: 'Failed to reset password' });
   }
 };
 
@@ -522,11 +493,7 @@ export const changePassword = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.error('Change password error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to change password',
-    });
+    return handleServerError(res, req, error, { module: 'auth', message: 'Failed to change password' });
   }
 };
 
@@ -550,11 +517,6 @@ export const getCVStatus = async (req, res) => {
       userId: user._id,
     });
   } catch (error) {
-    console.error('Get CV status error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to fetch CV status',
-      error: error.message,
-    });
+    return handleServerError(res, req, error, { module: 'auth', message: 'Failed to fetch CV status' });
   }
 };

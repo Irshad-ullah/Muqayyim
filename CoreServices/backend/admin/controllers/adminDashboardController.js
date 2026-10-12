@@ -1,4 +1,5 @@
 import { metricsAggregator } from '../services/metricsService.js';
+import { handleServerError } from '../../utils/serverError.js';
 
 // @route   GET /api/admin/dashboard/metrics
 // @desc    Full metrics breakdown from all registered providers
@@ -12,8 +13,7 @@ export const getDashboardMetrics = async (req, res) => {
       metrics,
     });
   } catch (error) {
-    console.error('Dashboard metrics error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch metrics' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to fetch metrics' });
   }
 };
 
@@ -50,7 +50,6 @@ export const getDashboardSummary = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Dashboard summary error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch summary' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to fetch summary' });
   }
 };

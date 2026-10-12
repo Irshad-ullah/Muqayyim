@@ -10,7 +10,8 @@ import { pathOf } from '../config.js';
 
 const passThrough = (_req, _res, next) => next();
 
-const logLimitHit = (name, req) => {
+const logLimitHit = (name, req, onLimitHit) => {
+  onLimitHit?.(name, req);
   console.warn(
     `[RateLimit] ${JSON.stringify({
       limit: name,
@@ -21,7 +22,7 @@ const logLimitHit = (name, req) => {
   );
 };
 
-const createLimiter = (enabled, name, { max, windowMs }, extra = {}) => {
+const createLimiter = (enabled, name, { max, windowMs }, extra = {}, onLimitHit = undefined) => {
   if (!enabled) return passThrough;
   return rateLimit({
     windowMs,
@@ -33,7 +34,7 @@ const createLimiter = (enabled, name, { max, windowMs }, extra = {}) => {
       const resetAt = req.rateLimit?.resetTime?.getTime?.() ?? Date.now() + windowMs;
       const retryAfterSeconds = Math.max(1, Math.ceil((resetAt - Date.now()) / 1000));
       const mins = Math.max(1, Math.ceil(retryAfterSeconds / 60));
-      logLimitHit(name, req);
+      logLimitHit(name, req, onLimitHit);
       res.setHeader('Retry-After', String(retryAfterSeconds));
       res.status(429).json({
         success: false,
@@ -47,14 +48,15 @@ const createLimiter = (enabled, name, { max, windowMs }, extra = {}) => {
 };
 
 // One set of limiters (each with its own in-memory counter) per app instance.
-export const createRateLimiters = ({ rateLimitEnabled: enabled, rateLimits }) => ({
-  global: createLimiter(enabled, 'global', rateLimits.global),
+// `onLimitHit(name, req)` is called for every blocked request (spike detection).
+export const createRateLimiters = ({ rateLimitEnabled: enabled, rateLimits }, { onLimitHit } = {}) => ({
+  global: createLimiter(enabled, 'global', rateLimits.global, {}, onLimitHit),
   // Counts only failed logins (status >= 400): express-rate-limit decides
   // success from the final response status, which the proxy sets from the
   // upstream response, so successful logins never use up the budget.
-  login: createLimiter(enabled, 'login', rateLimits.login, { skipSuccessfulRequests: true }),
-  register: createLimiter(enabled, 'register', rateLimits.register),
+  login: createLimiter(enabled, 'login', rateLimits.login, { skipSuccessfulRequests: true }, onLimitHit),
+  register: createLimiter(enabled, 'register', rateLimits.register, {}, onLimitHit),
   // One shared budget for forgot-password and reset-password.
-  passwordReset: createLimiter(enabled, 'passwordReset', rateLimits.passwordReset),
-  cvUpload: createLimiter(enabled, 'cvUpload', rateLimits.cvUpload),
+  passwordReset: createLimiter(enabled, 'passwordReset', rateLimits.passwordReset, {}, onLimitHit),
+  cvUpload: createLimiter(enabled, 'cvUpload', rateLimits.cvUpload, {}, onLimitHit),
 });

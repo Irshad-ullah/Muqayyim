@@ -7,6 +7,7 @@ import adminRoutes from './backend/admin/routes/adminRoutes.js';
 import internalRoutes from './backend/routes/internalRoutes.js';
 import { parseTrustProxy } from './backend/utils/trustProxy.js';
 import requestId from './backend/middleware/requestId.js';
+import errorHandler from './backend/middleware/errorHandler.js';
 
 // Express app without DB connection or listen(), so tests can import it.
 const app = express();
@@ -55,14 +56,8 @@ app.get('/', (req, res) => {
   });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error',
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined,
-  });
-});
+// Error handling middleware (last): logs to error_logs, answers a clean 500
+// with a reference request ID — never a stack trace.
+app.use(errorHandler);
 
 export default app;

@@ -1,5 +1,19 @@
 import app, { AUTH_SERVICE_URL, CV_SERVICE_URL } from './app.js';
 
+// Process-level failures are reported to CoreServices' error log.
+const reporter = app.locals.errorReporter;
+process.on('unhandledRejection', (reason) => {
+  const err = reason instanceof Error ? reason : new Error(String(reason));
+  reporter.report({ level: 'critical', module: 'process', errorType: 'UnhandledRejection', message: err.message, stack: err.stack });
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err);
+  reporter.report({ level: 'critical', module: 'process', errorType: err?.name || 'UncaughtException', message: err?.message || String(err), stack: err?.stack });
+  const exit = () => process.exit(1);
+  setTimeout(exit, 2500).unref();
+  reporter.flush().finally(exit);
+});
+
 const PORT = process.env.PORT || 8080;
 
 // ─── Start ────────────────────────────────────────────────────────────────────

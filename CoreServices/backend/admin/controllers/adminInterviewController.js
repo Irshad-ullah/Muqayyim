@@ -1,6 +1,7 @@
 import InterviewDomain from '../models/InterviewDomain.js';
 import QuestionBank from '../models/QuestionBank.js';
 import { auditLog } from '../utils/auditLog.js';
+import { handleServerError } from '../../utils/serverError.js';
 
 // ─── Interview Domains ────────────────────────────────────────────────────────
 
@@ -14,8 +15,7 @@ export const listDomains = async (req, res) => {
       .sort({ name: 1 });
     return res.json({ success: true, data: domains });
   } catch (error) {
-    console.error('List domains error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch domains' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to fetch domains' });
   }
 };
 
@@ -29,8 +29,7 @@ export const createDomain = async (req, res) => {
     await auditLog(req.user.userId, 'CREATE_INTERVIEW_DOMAIN', 'InterviewDomain', domain._id, { name }, req);
     return res.status(201).json({ success: true, data: domain });
   } catch (error) {
-    console.error('Create domain error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to create domain' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to create domain' });
   }
 };
 
@@ -46,8 +45,7 @@ export const updateDomain = async (req, res) => {
     await auditLog(req.user.userId, 'UPDATE_INTERVIEW_DOMAIN', 'InterviewDomain', domain._id, {}, req);
     return res.json({ success: true, data: domain });
   } catch (error) {
-    console.error('Update domain error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to update domain' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to update domain' });
   }
 };
 
@@ -69,8 +67,7 @@ export const deleteDomain = async (req, res) => {
     await auditLog(req.user.userId, 'DELETE_INTERVIEW_DOMAIN', 'InterviewDomain', domain._id, { name: domain.name }, req);
     return res.json({ success: true, message: 'Domain deleted' });
   } catch (error) {
-    console.error('Delete domain error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to delete domain' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to delete domain' });
   }
 };
 
@@ -103,8 +100,7 @@ export const listQuestions = async (req, res) => {
       pagination: { total, page: parseInt(page), limit: parseInt(limit), pages: Math.ceil(total / parseInt(limit)) },
     });
   } catch (error) {
-    console.error('List questions error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch questions' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to fetch questions' });
   }
 };
 
@@ -130,8 +126,7 @@ export const createQuestion = async (req, res) => {
     await auditLog(req.user.userId, 'CREATE_QUESTION', 'QuestionBank', q._id, { domain }, req);
     return res.status(201).json({ success: true, data: q });
   } catch (error) {
-    console.error('Create question error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to create question' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to create question' });
   }
 };
 
@@ -147,8 +142,7 @@ export const updateQuestion = async (req, res) => {
     await auditLog(req.user.userId, 'UPDATE_QUESTION', 'QuestionBank', q._id, {}, req);
     return res.json({ success: true, data: q });
   } catch (error) {
-    console.error('Update question error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to update question' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to update question' });
   }
 };
 
@@ -161,7 +155,6 @@ export const deleteQuestion = async (req, res) => {
     await auditLog(req.user.userId, 'DELETE_QUESTION', 'QuestionBank', q._id, {}, req);
     return res.json({ success: true, message: 'Question deleted' });
   } catch (error) {
-    console.error('Delete question error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to delete question' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to delete question' });
   }
 };

@@ -24,6 +24,14 @@ export const adminService = {
   getSystemHealth: () => adminAPI.get('/system/health').then((r) => r.data),
   getLogs: (params) => adminAPI.get('/system/logs', { params }).then((r) => r.data),
 
+  // ── Error logs & security events (all services) ────────────────────────────
+  getErrorLogs: (params) => adminAPI.get('/logs/errors', { params }).then((r) => r.data),
+  getErrorLog: (service, id) => adminAPI.get(`/logs/errors/${service}/${id}`).then((r) => r.data),
+  acknowledgeErrorLog: (service, id) =>
+    adminAPI.patch(`/logs/errors/${service}/${id}/acknowledge`).then((r) => r.data),
+  getSecurityEvents: (params) => adminAPI.get('/logs/security', { params }).then((r) => r.data),
+  getLogSummary: () => adminAPI.get('/logs/summary').then((r) => r.data),
+
   // ── Users ──────────────────────────────────────────────────────────────────
   getUsers: (params) => adminAPI.get('/users', { params }).then((r) => r.data),
   getUserById: (id) => adminAPI.get(`/users/${id}`).then((r) => r.data),

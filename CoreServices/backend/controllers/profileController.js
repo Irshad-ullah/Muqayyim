@@ -3,6 +3,7 @@ import {
   fetchUserRepos,
   extractSkillsFromRepos,
 } from "../services/githubService.js";
+import { handleServerError } from '../utils/serverError.js';
 
 const ALLOWED_FIELDS = [
   "personalInfo",
@@ -23,10 +24,7 @@ export const getProfile = async (req, res) => {
     const profile = await Profile.findOne({ userId: req.user.userId });
     return res.status(200).json({ success: true, profile: profile || null });
   } catch (error) {
-    console.error("Get profile error:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch profile" });
+    return handleServerError(res, req, error, { module: 'profile', message: "Failed to fetch profile" });
   }
 };
 
@@ -48,10 +46,7 @@ export const upsertProfile = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Profile saved successfully", profile });
   } catch (error) {
-    console.error("Upsert profile error:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to save profile" });
+    return handleServerError(res, req, error, { module: 'profile', message: "Failed to save profile" });
   }
 };
 
@@ -109,9 +104,6 @@ export const extractSkills = async (req, res) => {
 
     return res.status(200).json({ success: true, skills: merged });
   } catch (error) {
-    console.error("Extract skills error:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to extract skills" });
+    return handleServerError(res, req, error, { module: 'profile', message: "Failed to extract skills" });
   }
 };

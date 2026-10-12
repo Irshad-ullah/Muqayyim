@@ -13,6 +13,7 @@ import {
   LogOut,
   Shield,
   Clock,
+  AlertTriangle,
 } from 'lucide-react';
 
 const navItems = [
@@ -30,6 +31,11 @@ const navItems = [
     label: 'System Health',
     to: '/admin/system',
     icon: Activity,
+  },
+  {
+    label: 'Error Logs',
+    to: '/admin/logs',
+    icon: AlertTriangle,
   },
   {
     label: 'Configuration',

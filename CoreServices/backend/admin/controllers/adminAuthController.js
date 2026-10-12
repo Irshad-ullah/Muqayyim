@@ -1,7 +1,9 @@
 import User from '../../models/User.js';
 import { auditLog } from '../utils/auditLog.js';
+import { markAdminEmailsStale } from '../../services/alertService.js';
 import { validatePassword, passwordErrorResponse } from '../../utils/passwordPolicy.js';
 import { normalizeEmail, isDuplicateKeyError, emailInUse } from '../../utils/apiErrors.js';
+import { handleServerError } from '../../utils/serverError.js';
 
 // @route   POST /api/admin/auth/create-admin
 // @desc    Promote an existing user to Admin OR create a new Admin account
@@ -26,6 +28,7 @@ export const createAdminUser = async (req, res) => {
       await user.save();
 
       await auditLog(req.user.userId, 'PROMOTE_TO_ADMIN', 'User', user._id, { email }, req);
+      markAdminEmailsStale();
 
       return res.json({
         success: true,
@@ -55,6 +58,7 @@ export const createAdminUser = async (req, res) => {
     });
 
     await auditLog(req.user.userId, 'CREATE_ADMIN', 'User', user._id, { email }, req);
+    markAdminEmailsStale();
 
     return res.status(201).json({
       success: true,
@@ -63,7 +67,6 @@ export const createAdminUser = async (req, res) => {
     });
   } catch (error) {
     if (isDuplicateKeyError(error)) return emailInUse(res);
-    console.error('Create admin error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to create admin user' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to create admin user' });
   }
 };

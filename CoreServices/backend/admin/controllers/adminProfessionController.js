@@ -1,6 +1,7 @@
 import Profession from '../models/Profession.js';
 import SkillTaxonomy from '../models/SkillTaxonomy.js';
 import { auditLog } from '../utils/auditLog.js';
+import { handleServerError } from '../../utils/serverError.js';
 
 // ─── Professions ──────────────────────────────────────────────────────────────
 
@@ -26,8 +27,7 @@ export const listProfessions = async (req, res) => {
       pagination: { total, page: parseInt(page), limit: parseInt(limit), pages: Math.ceil(total / parseInt(limit)) },
     });
   } catch (error) {
-    console.error('List professions error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch professions' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to fetch professions' });
   }
 };
 
@@ -45,8 +45,7 @@ export const createProfession = async (req, res) => {
     await auditLog(req.user.userId, 'CREATE_PROFESSION', 'Profession', profession._id, { title }, req);
     return res.status(201).json({ success: true, data: profession });
   } catch (error) {
-    console.error('Create profession error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to create profession' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to create profession' });
   }
 };
 
@@ -63,8 +62,7 @@ export const updateProfession = async (req, res) => {
     await auditLog(req.user.userId, 'UPDATE_PROFESSION', 'Profession', profession._id, {}, req);
     return res.json({ success: true, data: profession });
   } catch (error) {
-    console.error('Update profession error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to update profession' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to update profession' });
   }
 };
 
@@ -77,8 +75,7 @@ export const deleteProfession = async (req, res) => {
     await auditLog(req.user.userId, 'DELETE_PROFESSION', 'Profession', profession._id, { title: profession.title }, req);
     return res.json({ success: true, message: 'Profession deleted' });
   } catch (error) {
-    console.error('Delete profession error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to delete profession' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to delete profession' });
   }
 };
 
@@ -106,8 +103,7 @@ export const listSkills = async (req, res) => {
       pagination: { total, page: parseInt(page), limit: parseInt(limit), pages: Math.ceil(total / parseInt(limit)) },
     });
   } catch (error) {
-    console.error('List skills error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch skills' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to fetch skills' });
   }
 };
 
@@ -128,8 +124,7 @@ export const createSkill = async (req, res) => {
     if (error.code === 11000) {
       return res.status(409).json({ success: false, message: 'Skill name already exists' });
     }
-    console.error('Create skill error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to create skill' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to create skill' });
   }
 };
 
@@ -146,8 +141,7 @@ export const updateSkill = async (req, res) => {
     await auditLog(req.user.userId, 'UPDATE_SKILL', 'SkillTaxonomy', skill._id, {}, req);
     return res.json({ success: true, data: skill });
   } catch (error) {
-    console.error('Update skill error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to update skill' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to update skill' });
   }
 };
 
@@ -160,7 +154,6 @@ export const deleteSkill = async (req, res) => {
     await auditLog(req.user.userId, 'DELETE_SKILL', 'SkillTaxonomy', skill._id, { name: skill.name }, req);
     return res.json({ success: true, message: 'Skill deleted' });
   } catch (error) {
-    console.error('Delete skill error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to delete skill' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to delete skill' });
   }
 };

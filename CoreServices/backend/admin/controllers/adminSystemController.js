@@ -5,6 +5,7 @@ import https from 'https';
 import AdminLog from '../models/AdminLog.js';
 import User from '../../models/User.js';
 import Profile from '../../models/Profile.js';
+import { handleServerError } from '../../utils/serverError.js';
 
 // ── Internal helper: HTTP(S) ping with timeout ────────────────────────────────
 // Uses Node built-in http/https — no extra dependencies.
@@ -203,7 +204,6 @@ export const getAdminLogs = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Get admin logs error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch logs' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to fetch logs' });
   }
 };

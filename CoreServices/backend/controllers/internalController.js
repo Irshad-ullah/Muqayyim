@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import User from '../models/User.js';
 import { CV_STATUS_VALUES, isValidCvStatus } from '../constants/cvStatus.js';
+import { handleServerError } from '../utils/serverError.js';
 
 // @route   GET /internal/users/:userId/auth-state
 // @desc    Current auth-relevant user state, for other services' per-request checks
@@ -20,8 +21,7 @@ export const getUserAuthState = async (req, res) => {
       passwordChangedAt: user.passwordChangedAt || null,
     });
   } catch (error) {
-    console.error('Internal auth-state error:', error.message);
-    return res.status(500).json({ success: false, message: 'Failed to read auth state' });
+    return handleServerError(res, req, error, { module: 'internal', message: 'Failed to read auth state' });
   }
 };
 
@@ -54,7 +54,6 @@ export const setUserCvStatus = async (req, res) => {
 
     return res.status(200).json({ success: true, userId: user._id, cvStatus: user.cvStatus });
   } catch (error) {
-    console.error('Internal set CV status error:', error.message);
-    return res.status(500).json({ success: false, message: 'Failed to update CV status' });
+    return handleServerError(res, req, error, { module: 'internal', message: 'Failed to update CV status' });
   }
 };

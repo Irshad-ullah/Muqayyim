@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import User from '../models/User.js';
 import { isTokenRevoked } from '../utils/passwordChangedAt.js';
+import { handleServerError } from '../utils/serverError.js';
 
 // Verifies the JWT, then checks the user's current state in the database on
 // every request (one projected, lean lookup). Authorization downstream uses
@@ -75,8 +76,7 @@ const authMiddleware = async (req, res, next) => {
     req.user = { id, userId: id, role: user.role, isActive: user.isActive !== false };
     return next();
   } catch (error) {
-    console.error('Auth middleware user lookup failed:', error.message);
-    return res.status(500).json({ success: false, message: 'Authentication check failed' });
+    return handleServerError(res, req, error, { module: 'auth', message: 'Authentication check failed' });
   }
 };
 

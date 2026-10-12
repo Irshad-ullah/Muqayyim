@@ -32,6 +32,7 @@ from app.config.database import get_database
 from app.config.settings import settings
 from app.middleware.auth import get_current_user
 from app.services.core_client import push_cv_status
+from app.services.error_logger import is_db_connection_error, log_error
 from app.constants.cv_status import UPLOADED, PROCESSING, PARSED, VERIFIED, FAILED
 
 logger = logging.getLogger(__name__)
@@ -118,6 +119,12 @@ async def upload_cv(
         raise
     except Exception as e:
         logger.error(f"Error uploading file: {e}")
+        log_error(
+            level="critical" if is_db_connection_error(e) else "error",
+            module="cv-upload",
+            exc=e,
+            status_code=500,
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to upload file"
@@ -171,6 +178,13 @@ async def parse_cv(
         
         if not extraction_success or not cv_text.strip():
             logger.warning(f"Failed to extract text from CV: {file_id}")
+            log_error(
+                level="warning",
+                module="cv-parsing",
+                error_type="CV_TEXT_EXTRACTION_FAILED",
+                message=f"No text could be extracted from {ext.upper()} file {file_id} (empty, image-only or corrupted)",
+                status_code=422,
+            )
             await _mark_failed(user_id)
             error_detail = "Failed to extract text from CV. The file might be:"
             if ext == "doc":
@@ -247,6 +261,12 @@ async def parse_cv(
         raise
     except Exception as e:
         logger.error(f"Error parsing CV: {e}")
+        log_error(
+            level="critical" if is_db_connection_error(e) else "warning",
+            module="cv-parsing",
+            exc=e,
+            status_code=500,
+        )
         if processing_started:
             await _mark_failed(current_user["user_id"])
         raise HTTPException(
@@ -331,6 +351,12 @@ async def verify_cv_data(
         raise
     except Exception as e:
         logger.error(f"Error verifying CV data: {e}")
+        log_error(
+            level="critical" if is_db_connection_error(e) else "error",
+            module="cv-parsing",
+            exc=e,
+            status_code=500,
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to verify CV data"
@@ -422,6 +448,12 @@ async def get_cv_summary(
         raise
     except Exception as e:
         logger.error(f"Error fetching CV summary: {e}")
+        log_error(
+            level="critical" if is_db_connection_error(e) else "error",
+            module="cv-parsing",
+            exc=e,
+            status_code=500,
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to fetch CV summary"

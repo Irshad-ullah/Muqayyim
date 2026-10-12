@@ -65,6 +65,15 @@ async def notify_cv_status(user_id: str, status: str) -> bool:
         status,
         last_error,
     )
+    from app.services.error_logger import log_error
+
+    log_error(
+        level="warning",
+        module="internal-client",
+        error_type="CV_STATUS_SYNC_FAILED",
+        message=f"Could not sync CV status '{status}' to CoreServices after {MAX_ATTEMPTS} attempts: {last_error}",
+        user_id=user_id,
+    )
     return False
 
 
@@ -84,13 +93,52 @@ async def get_auth_state(user_id: str) -> dict:
         async with httpx.AsyncClient(timeout=AUTH_STATE_TIMEOUT_SECONDS) as client:
             response = await client.get(url, headers=headers)
     except httpx.HTTPError as exc:
+        _auth_state_warning(f"{type(exc).__name__}")
         raise CoreUnavailable(f"{type(exc).__name__}") from exc
 
     if response.status_code == 404:
         return {"exists": False}
     if response.status_code != 200:
+        _auth_state_warning(f"HTTP {response.status_code}")
         raise CoreUnavailable(f"HTTP {response.status_code}")
     return response.json()
+
+
+def _auth_state_warning(reason: str) -> None:
+    from app.services.error_logger import log_error
+
+    # One entry per minute while Core is down, not one per request.
+    log_error(
+        dedupe_key=f"auth-state:{reason}",
+        level="warning",
+        module="internal-client",
+        error_type="CORE_UNAVAILABLE",
+        message=f"Auth-state lookup at CoreServices failed: {reason}",
+    )
+
+
+async def send_alert(entry: dict) -> bool:
+    """Ask CoreServices to email admins about a critical error. Never raises;
+    failures go to the console only (no error-log entry, to avoid loops)."""
+    url = f"{settings.CORE_SERVICE_URL.rstrip('/')}/internal/alerts"
+    payload = {
+        "service": "ai",
+        "module": entry.get("module"),
+        "errorType": entry.get("errorType"),
+        "message": entry.get("message"),
+        "requestId": entry.get("requestId"),
+        "timestamp": entry["timestamp"].isoformat() if hasattr(entry.get("timestamp"), "isoformat") else None,
+    }
+    try:
+        async with httpx.AsyncClient(timeout=httpx.Timeout(2.0, connect=1.0)) as client:
+            response = await client.post(url, json=payload, headers={"X-Internal-Key": settings.INTERNAL_API_KEY})
+        if response.status_code >= 400:
+            logger.error("CoreServices rejected critical alert (%s): HTTP %s", entry.get("errorType"), response.status_code)
+            return False
+        return True
+    except httpx.HTTPError as exc:
+        logger.error("Could not send critical alert to CoreServices (%s): %s", entry.get("errorType"), type(exc).__name__)
+        return False
 
 
 async def push_cv_status(user_id: str, status: str) -> None:

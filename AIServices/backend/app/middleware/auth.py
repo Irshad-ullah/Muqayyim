@@ -20,6 +20,7 @@ from jose import ExpiredSignatureError, JWTError, jwt
 from app.config.settings import settings
 from app.services.auth_state_cache import get_auth_state_cached
 from app.services.core_client import CoreUnavailable
+from app.services.error_logger import set_request_context
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +79,7 @@ async def get_current_user(
     if not user_id:
         raise AuthError(status.HTTP_401_UNAUTHORIZED, "TOKEN_INVALID", "Invalid token. Please login again.")
     user_id = str(user_id)
+    set_request_context(user_id=user_id)
 
     try:
         state = await get_auth_state_cached(user_id)

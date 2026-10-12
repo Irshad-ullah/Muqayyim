@@ -1,5 +1,6 @@
 import SystemConfig from '../models/SystemConfig.js';
 import { auditLog } from '../utils/auditLog.js';
+import { handleServerError } from '../../utils/serverError.js';
 
 const ALLOWED_CATEGORIES = ['general', 'matching', 'scoring', 'parser', 'features'];
 const ALLOWED_DATA_TYPES = ['string', 'number', 'boolean', 'json'];
@@ -14,8 +15,7 @@ export const getAllConfigs = async (req, res) => {
     const configs = await SystemConfig.find(filter).sort({ category: 1, key: 1 });
     return res.json({ success: true, data: configs });
   } catch (error) {
-    console.error('Get configs error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch configs' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to fetch configs' });
   }
 };
 
@@ -53,8 +53,7 @@ export const createConfig = async (req, res) => {
     await auditLog(req.user.userId, 'CREATE_CONFIG', 'SystemConfig', config._id, { key }, req);
     return res.status(201).json({ success: true, data: config });
   } catch (error) {
-    console.error('Create config error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to create config' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to create config' });
   }
 };
 
@@ -85,8 +84,7 @@ export const updateConfig = async (req, res) => {
     await auditLog(req.user.userId, 'UPDATE_CONFIG', 'SystemConfig', config._id, { key: req.params.key, value }, req);
     return res.json({ success: true, data: config });
   } catch (error) {
-    console.error('Update config error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to update config' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to update config' });
   }
 };
 
@@ -103,7 +101,6 @@ export const deleteConfig = async (req, res) => {
     await auditLog(req.user.userId, 'DELETE_CONFIG', 'SystemConfig', config._id, { key: req.params.key }, req);
     return res.json({ success: true, message: 'Config deleted' });
   } catch (error) {
-    console.error('Delete config error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to delete config' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to delete config' });
   }
 };

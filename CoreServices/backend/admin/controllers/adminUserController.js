@@ -1,7 +1,9 @@
 import User from '../../models/User.js';
 import Profile from '../../models/Profile.js';
 import { auditLog } from '../utils/auditLog.js';
+import { markAdminEmailsStale } from '../../services/alertService.js';
 import { normalizeEmail, isDuplicateKeyError, emailInUse } from '../../utils/apiErrors.js';
+import { handleServerError } from '../../utils/serverError.js';
 
 const SAFE_FIELDS = '-password -resetToken -resetTokenExpiry';
 
@@ -70,8 +72,7 @@ export const listUsers = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('List users error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch users' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to fetch users' });
   }
 };
 
@@ -89,8 +90,7 @@ export const getUserById = async (req, res) => {
 
     return res.json({ success: true, data: { user: withLockState(user), profile: profile || null } });
   } catch (error) {
-    console.error('Get user error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch user' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to fetch user' });
   }
 };
 
@@ -115,6 +115,7 @@ export const updateUser = async (req, res) => {
 
     await user.save();
     await auditLog(req.user.userId, 'UPDATE_USER', 'User', user._id, { name, email }, req);
+    markAdminEmailsStale();
 
     return res.json({
       success: true,
@@ -123,8 +124,7 @@ export const updateUser = async (req, res) => {
     });
   } catch (error) {
     if (isDuplicateKeyError(error)) return emailInUse(res);
-    console.error('Update user error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to update user' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to update user' });
   }
 };
 
@@ -151,8 +151,7 @@ export const unlockUser = async (req, res) => {
     if (error.name === 'CastError') {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
-    console.error('Unlock user error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to unlock user' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to unlock user' });
   }
 };
 
@@ -183,6 +182,7 @@ export const toggleUserStatus = async (req, res) => {
 
     const action = isActive ? 'ACTIVATE_USER' : 'DEACTIVATE_USER';
     await auditLog(req.user.userId, action, 'User', user._id, { isActive }, req);
+    markAdminEmailsStale();
 
     return res.json({
       success: true,
@@ -190,8 +190,7 @@ export const toggleUserStatus = async (req, res) => {
       data: { userId: user._id, isActive: user.isActive },
     });
   } catch (error) {
-    console.error('Toggle user status error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to update user status' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to update user status' });
   }
 };
 
@@ -226,6 +225,7 @@ export const updateUserRole = async (req, res) => {
     await user.save();
 
     await auditLog(req.user.userId, 'CHANGE_USER_ROLE', 'User', user._id, { previousRole, newRole: role }, req);
+    markAdminEmailsStale();
 
     return res.json({
       success: true,
@@ -233,8 +233,7 @@ export const updateUserRole = async (req, res) => {
       data: { userId: user._id, role: user.role },
     });
   } catch (error) {
-    console.error('Update user role error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to update user role' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to update user role' });
   }
 };
 
@@ -263,7 +262,6 @@ export const deleteUser = async (req, res) => {
 
     return res.json({ success: true, message: 'User deleted successfully' });
   } catch (error) {
-    console.error('Delete user error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to delete user' });
+    return handleServerError(res, req, error, { module: 'admin', message: 'Failed to delete user' });
   }
 };

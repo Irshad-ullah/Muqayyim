@@ -5,6 +5,9 @@ import { createAdminUser } from '../controllers/adminAuthController.js';
 import { getDashboardMetrics, getDashboardSummary } from '../controllers/adminDashboardController.js';
 import { listUsers, getUserById, updateUser, toggleUserStatus, updateUserRole, deleteUser, unlockUser } from '../controllers/adminUserController.js';
 import { getSystemHealth, getSystemStatus, getAdminLogs } from '../controllers/adminSystemController.js';
+import {
+  listErrorLogs, getErrorLog, acknowledgeErrorLog, listSecurityEvents, getLogSummary,
+} from '../controllers/adminLogController.js';
 import { getAllConfigs, createConfig, updateConfig, deleteConfig } from '../controllers/adminConfigController.js';
 import {
   listProfessions, createProfession, updateProfession, deleteProfession,
@@ -39,6 +42,13 @@ router.delete('/users/:id', adminAuthMiddleware, deleteUser);
 router.get('/system/health', adminAuthMiddleware, getSystemHealth);
 router.get('/system/status', adminAuthMiddleware, getSystemStatus);
 router.get('/system/logs', adminAuthMiddleware, getAdminLogs);
+
+// ─── Error logs & security events (all services) ──────────────────────────────
+router.get('/logs/errors', adminAuthMiddleware, listErrorLogs);
+router.get('/logs/errors/:service/:id', adminAuthMiddleware, getErrorLog);
+router.patch('/logs/errors/:service/:id/acknowledge', adminAuthMiddleware, acknowledgeErrorLog);
+router.get('/logs/security', adminAuthMiddleware, listSecurityEvents);
+router.get('/logs/summary', adminAuthMiddleware, getLogSummary);
 
 // ─── System Configuration ─────────────────────────────────────────────────────
 router.get('/config', adminAuthMiddleware, getAllConfigs);

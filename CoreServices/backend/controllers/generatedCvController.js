@@ -7,6 +7,7 @@ import {
   sanitizeTemplate,
   validateCvData,
 } from '../utils/cvSanitizer.js';
+import { handleServerError } from '../utils/serverError.js';
 
 const MAX_SAVED_CVS = 50;
 
@@ -43,8 +44,7 @@ export const getCvSource = async (req, res) => {
       warnings: validateCvData(clean),
     });
   } catch (error) {
-    console.error('CV source error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to load your profile data' });
+    return handleServerError(res, req, error, { module: 'cv-generator', message: 'Failed to load your profile data' });
   }
 };
 
@@ -57,8 +57,7 @@ export const listCvs = async (req, res) => {
       .lean();
     return res.status(200).json({ success: true, cvs });
   } catch (error) {
-    console.error('List CVs error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch saved CVs' });
+    return handleServerError(res, req, error, { module: 'cv-generator', message: 'Failed to fetch saved CVs' });
   }
 };
 
@@ -69,8 +68,7 @@ export const getCv = async (req, res) => {
     if (!cv) return res.status(404).json({ success: false, message: 'CV not found' });
     return res.status(200).json({ success: true, cv });
   } catch (error) {
-    console.error('Get CV error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch CV' });
+    return handleServerError(res, req, error, { module: 'cv-generator', message: 'Failed to fetch CV' });
   }
 };
 
@@ -103,8 +101,7 @@ export const createCv = async (req, res) => {
 
     return res.status(201).json({ success: true, message: 'CV saved', cv });
   } catch (error) {
-    console.error('Create CV error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to save CV' });
+    return handleServerError(res, req, error, { module: 'cv-generator', message: 'Failed to save CV' });
   }
 };
 
@@ -132,8 +129,7 @@ export const updateCv = async (req, res) => {
     if (error.name === 'CastError') {
       return res.status(404).json({ success: false, message: 'CV not found' });
     }
-    console.error('Update CV error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to update CV' });
+    return handleServerError(res, req, error, { module: 'cv-generator', message: 'Failed to update CV' });
   }
 };
 
@@ -149,7 +145,6 @@ export const deleteCv = async (req, res) => {
     }
     return res.status(200).json({ success: true, message: 'CV deleted' });
   } catch (error) {
-    console.error('Delete CV error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to delete CV' });
+    return handleServerError(res, req, error, { module: 'cv-generator', message: 'Failed to delete CV' });
   }
 };

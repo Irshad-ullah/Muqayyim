@@ -12,6 +12,7 @@ import {
   Activity,
   ArrowRight,
   AlertCircle,
+  AlertTriangle,
 } from 'lucide-react';
 
 const MODULE_LABELS = {
@@ -39,6 +40,47 @@ function StatCard({ icon: Icon, label, value, color, sub }) {
         <p className="text-sm text-slate-500 mt-0.5">{label}</p>
         {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
       </div>
+    </div>
+  );
+}
+
+// Errors in the last 24 hours across all services (links to Error Logs).
+function ErrorSummaryCard({ data, failed, onOpen }) {
+  const totals = data?.totals;
+  const chips = [
+    { key: 'critical', label: 'Critical', cls: 'bg-red-600 text-white' },
+    { key: 'error', label: 'Errors', cls: 'bg-red-100 text-red-700' },
+    { key: 'warning', label: 'Warnings', cls: 'bg-amber-100 text-amber-800' },
+  ];
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 p-5 mb-7" data-testid="error-summary-card">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-slate-500" />
+          <h3 className="font-semibold text-slate-800 text-sm">Errors in the last 24 hours</h3>
+        </div>
+        <button type="button" onClick={onOpen} className="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700">
+          View error logs <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+      {failed ? (
+        <p className="text-sm text-slate-400 mt-3">Error summary is unavailable right now.</p>
+      ) : !totals ? (
+        <div className="h-8 mt-3 bg-slate-100 rounded animate-pulse" />
+      ) : (
+        <div className="flex flex-wrap gap-3 mt-3">
+          {chips.map(({ key, label, cls }) => (
+            <span key={key} className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold ${cls}`}>
+              {totals[key]} {label}
+            </span>
+          ))}
+        </div>
+      )}
+      {data?.partial && (
+        <p className="text-xs text-amber-700 mt-3 flex items-center gap-1.5">
+          <AlertCircle className="w-3.5 h-3.5" /> {data.notice || 'Some services could not be reached; counts are partial.'}
+        </p>
+      )}
     </div>
   );
 }
@@ -71,6 +113,8 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [errorSummary, setErrorSummary] = useState(null);
+  const [errorSummaryFailed, setErrorSummaryFailed] = useState(false);
 
   const greet = () => {
     const h = new Date().getHours();
@@ -83,6 +127,13 @@ export default function AdminDashboardPage() {
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
     setError(null);
+
+    // Loaded separately so a log-summary problem never blocks the dashboard.
+    setErrorSummaryFailed(false);
+    adminService
+      .getLogSummary()
+      .then((data) => setErrorSummary(data))
+      .catch(() => setErrorSummaryFailed(true));
 
     try {
       const [summaryData, statusData] = await Promise.all([
@@ -174,6 +225,8 @@ export default function AdminDashboardPage() {
           />
         </div>
       )}
+
+      <ErrorSummaryCard data={errorSummary} failed={errorSummaryFailed} onOpen={() => navigate('/admin/logs')} />
 
       {/* Bottom section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

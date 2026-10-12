@@ -39,6 +39,10 @@ export const loadConfig = (env = process.env) => ({
   uploadTimeoutMs: positiveInt(env.GATEWAY_UPLOAD_TIMEOUT_MS, 60000),
   authServiceUrl: env.AUTH_SERVICE_URL || 'http://localhost:3000',
   cvServiceUrl: env.CV_SERVICE_URL || 'http://localhost:8000',
+  // Used to report gateway errors to CoreServices (POST /internal/logs).
+  internalApiKey: env.INTERNAL_API_KEY || '',
+  spikeThreshold: positiveInt(env.RATE_LIMIT_SPIKE_THRESHOLD, 20),
+  spikeWindowMs: minutes(env.RATE_LIMIT_SPIKE_WINDOW_MINUTES, 10),
 });
 
 export const CV_UPLOAD_PATH = '/api/cv/upload';
