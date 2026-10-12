@@ -208,6 +208,16 @@ const ProjectsSection = ({ projects = [], onEdit, onDelete }) => {
                       <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap">{project.description}</p>
                     )}
                     <TechTags technologies={project.technologies} />
+                    {(project.githubUrl || project.liveUrl) && (
+                      <p className="text-xs mt-1 space-x-3">
+                        {project.githubUrl && (
+                          <a href={project.githubUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">GitHub</a>
+                        )}
+                        {project.liveUrl && (
+                          <a href={project.liveUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">Live</a>
+                        )}
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
                     <button

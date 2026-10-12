@@ -10,7 +10,9 @@ import {
 import { cvService } from "../../../services/cvService.js";
 import { CV_STATUS } from "../../../constants/cvStatus.js";
 import EntriesEditor from "../EntriesEditor.jsx";
-import { errorsUnder, splitDateRange } from "../../../validation/validateProfile.js";
+import { errorsUnder } from "../../../validation/validateProfile.js";
+import { mapEducation, mapExperience, mapParsedCvToProfile } from "../../../validation/cvImport.js";
+import { formatRange } from "../../cvgen/cvModel.js";
 
 const SOURCE_BADGE = (
   <span className="inline-flex items-center gap-1 text-xs font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
@@ -72,6 +74,7 @@ function ImportPanel({ profile, onChange }) {
   const [selEdu, setSelEdu] = useState({});
   const [selSkill, setSelSkill] = useState({});
   const [selProj, setSelProj] = useState({});
+  const [selCert, setSelCert] = useState({});
 
   const fetch = useCallback(async () => {
     setLoading(true);
@@ -93,6 +96,7 @@ function ImportPanel({ profile, onChange }) {
         setSelEdu(all(res.cvData.education));
         setSelSkill(all(res.cvData.skills));
         setSelProj(all(res.cvData.projects));
+        setSelCert(all(res.cvData.certifications));
       }
     } catch {
       setError(
@@ -107,78 +111,16 @@ function ImportPanel({ profile, onChange }) {
     fetch();
   }, [fetch]);
 
+  // Dates, current flags, certifications and project links come straight from
+  // the parse (validation/cvImport.js); older parses fall back to `duration`.
   const applyImport = () => {
     if (!parsedCv) return;
-
-    const pick = (arr, sel) => (arr || []).filter((_, i) => sel[i]);
-
-    // Parsed durations ("Jan 2020 - Present") become real start/end dates;
-    // anything unrecognised stays in the description for the user to fix.
-    const newExp = pick(parsedCv.experience, selExp).map((e) => {
-      const range = splitDateRange(e.duration);
-      return {
-        title: e.title || "",
-        company: e.company || "",
-        description: range ? "" : e.duration || "",
-        startDate: range?.startDate || "",
-        endDate: range?.endDate || "",
-        current: range?.current || false,
-        source: "cv",
-      };
-    });
-
-    const newEdu = pick(parsedCv.education, selEdu).map((e) => ({
-      institution: e.institution || "",
-      degree: e.degree || "",
-      field: "",
-      // "2019 - 2023" → start/end; a single year is the graduation year.
-      ...(() => {
-        const range = splitDateRange(e.year);
-        if (!range) return { startDate: "", endDate: "" };
-        return range.endDate || range.current
-          ? { startDate: range.startDate, endDate: range.endDate }
-          : { startDate: "", endDate: range.startDate };
-      })(),
-      gpa: "",
-      source: "cv",
-    }));
-
-    const newCvSkills = pick(parsedCv.skills, selSkill).map((s) => s.name);
-
-    const newCvProj = pick(parsedCv.projects || [], selProj).map((p) => ({
-      name: p.name || "",
-      description: p.description || "",
-      technologies: p.technologies || [],
-    }));
-
-    // Merge: keep existing manual items, append CV items (avoid exact-title duplicates)
-    const existingExpTitles = new Set(
-      profile.experience
-        .filter((e) => e.source !== "cv")
-        .map((e) => e.title?.toLowerCase()),
-    );
-    const mergedExp = [
-      ...profile.experience.filter((e) => e.source !== "cv"),
-      ...newExp.filter((e) => !existingExpTitles.has(e.title?.toLowerCase())),
-    ];
-
-    const existingEduInst = new Set(
-      profile.education
-        .filter((e) => e.source !== "cv")
-        .map((e) => e.institution?.toLowerCase()),
-    );
-    const mergedEdu = [
-      ...profile.education.filter((e) => e.source !== "cv"),
-      ...newEdu.filter(
-        (e) => !existingEduInst.has(e.institution?.toLowerCase()),
-      ),
-    ];
-
     onChange({
-      experience: mergedExp,
-      education: mergedEdu,
-      skills: { ...profile.skills, cv: newCvSkills },
-      projects: { ...profile.projects, cv: newCvProj },
+      ...mapParsedCvToProfile(
+        parsedCv,
+        { experience: selExp, education: selEdu, skills: selSkill, projects: selProj, certifications: selCert },
+        profile,
+      ),
       cvImportedAt: new Date().toISOString(),
       cvData: {
         parsedData: parsedCv,
@@ -189,11 +131,10 @@ function ImportPanel({ profile, onChange }) {
     setImported(true);
   };
 
-  const totalSelected =
-    Object.values(selExp).filter(Boolean).length +
-    Object.values(selEdu).filter(Boolean).length +
-    Object.values(selSkill).filter(Boolean).length +
-    Object.values(selProj).filter(Boolean).length;
+  const totalSelected = [selExp, selEdu, selSkill, selProj, selCert].reduce(
+    (n, sel) => n + Object.values(sel).filter(Boolean).length,
+    0,
+  );
 
   if (loading) {
     return (
@@ -276,7 +217,11 @@ function ImportPanel({ profile, onChange }) {
               <p className="text-sm font-semibold text-slate-800">{e.title}</p>
               <p className="text-xs text-slate-500">
                 {e.company}
-                {e.duration ? ` · ${e.duration}` : ""}
+                {(() => {
+                  const m = mapExperience(e);
+                  const range = formatRange(m.startDate, m.endDate, m.current) || e.duration;
+                  return range ? ` · ${range}` : "";
+                })()}
               </p>
             </div>
             {SOURCE_BADGE}
@@ -297,7 +242,11 @@ function ImportPanel({ profile, onChange }) {
               </p>
               <p className="text-xs text-slate-500">
                 {e.degree}
-                {e.year ? ` · ${e.year}` : ""}
+                {(() => {
+                  const m = mapEducation(e);
+                  const range = formatRange(m.startDate, m.endDate, false) || e.year;
+                  return range ? ` · ${range}` : "";
+                })()}
               </p>
             </div>
             {SOURCE_BADGE}
@@ -356,6 +305,25 @@ function ImportPanel({ profile, onChange }) {
           )}
         />
       )}
+
+      <ToggleList
+        title="Certifications"
+        items={parsedCv.certifications}
+        selected={selCert}
+        onToggle={setSelCert}
+        renderItem={(c) => (
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <p className="text-sm font-semibold text-slate-800">{c.name}</p>
+              <p className="text-xs text-slate-500">
+                {c.issuer || "Issuer missing — add it after importing"}
+                {c.date ? ` · ${c.date}` : ""}
+              </p>
+            </div>
+            {SOURCE_BADGE}
+          </div>
+        )}
+      />
 
       <button
         onClick={applyImport}

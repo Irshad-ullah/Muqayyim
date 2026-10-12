@@ -9,7 +9,18 @@ from typing import Dict, Optional, Tuple
 import PyPDF2
 from docx import Document
 
+from app.services.cv_errors import doc_unsupported, encrypted_file, no_text_found
+from app.services.doc_converter import DocConversionError, converted_docx
+
 logger = logging.getLogger(__name__)
+
+# Fewer non-whitespace characters than this = no usable text (scanned or
+# image-only document). OCR is out of scope (SRS LI-1).
+MIN_TEXT_CHARS = 100
+
+
+def count_text_chars(text: str) -> int:
+    return len(re.sub(r"\s+", "", text or ""))
 
 
 class CVParser:
@@ -28,6 +39,13 @@ class CVParser:
             text = []
             with open(file_path, 'rb') as file:
                 pdf_reader = PyPDF2.PdfReader(file)
+                if pdf_reader.is_encrypted:
+                    try:
+                        opened = pdf_reader.decrypt("")
+                    except Exception:
+                        opened = False
+                    if not opened:
+                        raise encrypted_file(422)
                 
                 # Check if PDF is image-based (no extractable text)
                 if len(pdf_reader.pages) == 0:
@@ -52,6 +70,8 @@ class CVParser:
             return extracted_text, True
         
         except Exception as e:
+            if getattr(e, "code", None) == "ENCRYPTED_FILE":
+                raise
             logger.error(f"Error extracting text from PDF: {e}")
             return "", False
     
@@ -87,18 +107,17 @@ class CVParser:
     @staticmethod
     def extract_text_from_doc(file_path: str) -> Tuple[str, bool]:
         """
-        Extract text from DOC file (using python-docx as fallback)
-        For older DOC format, might need additional library like python-doc2docx
-        Returns: (text, success)
+        Extract text from a legacy Word .doc: convert to .docx with LibreOffice
+        headless (app/services/doc_converter.py), then use the DOCX path.
+        Raises CVProcessingError(DOC_UNSUPPORTED) when that is not possible.
         """
         try:
-            # Try opening as DOCX first (newer Office formats)
-            return CVParser.extract_text_from_docx(file_path)
-        except Exception as e:
-            # If python-docx fails, it's likely an older .doc format (pre-2007)
-            logger.warning(f"Cannot parse .doc file - appears to be older MS Word format (pre-2007): {e}")
-            logger.info("Supported formats: .pdf, .docx (Office 2007+)")
-            return "", False
+            with converted_docx(file_path) as docx_path:
+                return CVParser.extract_text_from_docx(docx_path)
+        except DocConversionError as exc:
+            error = doc_unsupported(exc.reason)
+            error.libreoffice_missing = exc.missing
+            raise error from exc
     
     @staticmethod
     def extract_text(file_path: str, file_extension: str) -> Tuple[str, bool]:
@@ -154,10 +173,13 @@ class CVParser:
 # Helper function for quick parsing
 def parse_cv_file(file_path: str, file_extension: str) -> Tuple[str, bool]:
     """
-    Quick helper to parse CV file
-    Returns: (text, success)
+    Extract and clean the CV text. Returns (text, True) or raises
+    CVProcessingError: ENCRYPTED_FILE, DOC_UNSUPPORTED, or NO_TEXT_FOUND when
+    fewer than MIN_TEXT_CHARS non-whitespace characters could be read.
     """
     text, success = CVParser.extract_text(file_path, file_extension)
-    if success:
-        text = CVParser.clean_text(text)
-    return text, success
+    text = CVParser.clean_text(text) if text else ""
+    chars = count_text_chars(text)
+    if not success or chars < MIN_TEXT_CHARS:
+        raise no_text_found(f"{chars} characters of text extracted from .{file_extension}")
+    return text, True

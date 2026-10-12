@@ -8,6 +8,7 @@ import { authService } from '../services/authService.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { CV_STATUS } from '../constants/cvStatus.js';
 import { isHandledGlobally } from '../services/apiErrors.js';
+import { cvErrorMessage } from '../constants/cvErrors.js';
 import toast from 'react-hot-toast';
 
 const STEPS = ['upload', 'parsing', 'review', 'success'];
@@ -114,7 +115,7 @@ const CVParsingPage = () => {
       await triggerParsing(data.file_id);
     } catch (err) {
       clearInterval(interval);
-      const msg = err.message || 'Upload failed';
+      const msg = cvErrorMessage(err, 'Upload failed');
       setUploadError(msg);
       if (!isHandledGlobally(err)) toast.error(msg);
     } finally {
@@ -139,7 +140,7 @@ const CVParsingPage = () => {
       setCurrentStep('review');
       toast.success('CV parsed successfully!');
     } catch (err) {
-      const msg = err.message || 'Parsing failed';
+      const msg = cvErrorMessage(err, 'Parsing failed');
       setError(msg);
       if (!isHandledGlobally(err)) toast.error(msg);
       setCurrentStep('upload');
@@ -178,7 +179,12 @@ const CVParsingPage = () => {
         (d.projects = d.projects || []).push(editAction.data);
         break;
       case 'project_update':
-        if (d.projects?.[editAction.index]) d.projects[editAction.index] = editAction.data;
+        // Merge: the editor only sends name/description/technologies, links stay.
+        if (d.projects?.[editAction.index]) d.projects[editAction.index] = { ...d.projects[editAction.index], ...editAction.data };
+        break;
+      case 'section_replace':
+        // Experience, education and certifications are edited in place.
+        d[editAction.key] = editAction.items;
         break;
       default:
         break;
@@ -216,7 +222,7 @@ const CVParsingPage = () => {
       setCurrentStep('success');
       toast.success('CV data saved to your profile!');
     } catch (err) {
-      const msg = err.message || 'Failed to save data';
+      const msg = cvErrorMessage(err, 'Failed to save data');
       setError(msg);
       if (!isHandledGlobally(err)) toast.error(msg);
     } finally {

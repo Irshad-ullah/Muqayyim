@@ -9,6 +9,7 @@ from pydantic import BaseModel, BeforeValidator, Field, StringConstraints
 
 from app.constants.cv_status import PARSED, VERIFIED
 from app.constants.profile_limits import (
+    PROFILE_LIMITS,
     DESCRIPTION_MAX,
     MAX_EDUCATION,
     MAX_EXPERIENCE,
@@ -20,38 +21,70 @@ from app.constants.profile_limits import (
     TITLE_MAX,
 )
 
+URL_MAX = PROFILE_LIMITS["urlMax"]
+GPA_MAX = PROFILE_LIMITS["gpaMax"]
+LOCATION_MAX = PROFILE_LIMITS["locationMax"]
+MAX_CERTIFICATIONS = PROFILE_LIMITS["maxEntries"]["certifications"]
+
 
 class SkillSchema(BaseModel):
-    name:       str   = Field(..., min_length=1, max_length=100)
+    name:       str
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
 
 
+# Parse results: required fields may be empty and are then listed in
+# needsReview (the user fills them in before verifying). Lengths are already
+# fitted to the profile limits by app/utils/parsed_normaliser.py.
 class EducationSchema(BaseModel):
-    degree:      str           = Field(..., min_length=1, max_length=200)
-    institution: str           = Field(..., min_length=1, max_length=200)
-    year:        Optional[str] = Field(default=None, max_length=10)
+    degree:      str           = ""
+    institution: str           = ""
+    field:       str           = ""
+    startDate:   str           = ""
+    endDate:     str           = ""
+    gpa:         str           = ""
+    year:        Optional[str] = None
     confidence:  float         = Field(default=1.0, ge=0.0, le=1.0)
+    needsReview: List[str]     = []
 
 
 class ExperienceSchema(BaseModel):
-    title:      str           = Field(..., min_length=1, max_length=200)
-    company:    str           = Field(..., min_length=1, max_length=200)
-    duration:   Optional[str] = Field(default=None, max_length=100)
-    confidence: float         = Field(default=1.0, ge=0.0, le=1.0)
+    title:       str           = ""
+    company:     str           = ""
+    location:    str           = ""
+    startDate:   str           = ""
+    endDate:     str           = ""
+    current:     bool          = False
+    description: str           = ""
+    duration:    Optional[str] = None
+    confidence:  float         = Field(default=1.0, ge=0.0, le=1.0)
+    needsReview: List[str]     = []
+
+
+class CertificationSchema(BaseModel):
+    name:        str       = ""
+    issuer:      str       = ""
+    date:        str       = ""
+    url:         str       = ""
+    confidence:  float     = Field(default=1.0, ge=0.0, le=1.0)
+    needsReview: List[str] = []
 
 
 class ProjectSchema(BaseModel):
     """Project extracted from CV"""
-    name:         str           = Field(..., min_length=1, max_length=200)
-    description:  Optional[str] = Field(default="", max_length=1000)
+    name:         str           = ""
+    description:  Optional[str] = ""
     technologies: List[str]     = Field(default=[])
+    githubUrl:    str           = ""
+    liveUrl:      str           = ""
+    needsReview:  List[str]     = []
 
 
 class ParsedDataSchema(BaseModel):
-    skills:     List[SkillSchema]     = []
-    education:  List[EducationSchema] = []
-    experience: List[ExperienceSchema]= []
-    projects:   List[ProjectSchema]   = []
+    skills:         List[SkillSchema]         = []
+    education:      List[EducationSchema]     = []
+    experience:     List[ExperienceSchema]    = []
+    certifications: List[CertificationSchema] = []
+    projects:       List[ProjectSchema]       = []
 
 
 class CVUploadResponseSchema(BaseModel):
@@ -101,6 +134,11 @@ def _line(max_length: int, min_length: int = 0):
 SkillName = _line(SKILL_MAX, 1)
 
 
+Multiline = Annotated[str, StringConstraints(max_length=DESCRIPTION_MAX), BeforeValidator(_clean_multiline)]
+DateText = Optional[_line(40)]
+UrlText = Optional[_line(URL_MAX)]
+
+
 class VerifiedSkillSchema(BaseModel):
     name:       SkillName
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
@@ -109,30 +147,48 @@ class VerifiedSkillSchema(BaseModel):
 class VerifiedEducationSchema(BaseModel):
     degree:      _line(TITLE_MAX, 1)
     institution: _line(ORG_MAX, 1)
+    field:       Optional[_line(TITLE_MAX)] = ""
+    startDate:   DateText = ""
+    endDate:     DateText = ""
+    gpa:         Optional[_line(GPA_MAX)] = ""
     year:        Optional[_line(10)] = None
     confidence:  float = Field(default=1.0, ge=0.0, le=1.0)
 
 
 class VerifiedExperienceSchema(BaseModel):
-    title:      _line(TITLE_MAX, 1)
-    company:    _line(ORG_MAX, 1)
-    duration:   Optional[_line(100)] = None
+    title:       _line(TITLE_MAX, 1)
+    company:     _line(ORG_MAX, 1)
+    location:    Optional[_line(LOCATION_MAX)] = ""
+    startDate:   DateText = ""
+    endDate:     DateText = ""
+    current:     bool = False
+    description: Optional[Multiline] = ""
+    duration:    Optional[_line(100)] = None
+    confidence:  float = Field(default=1.0, ge=0.0, le=1.0)
+
+
+class VerifiedCertificationSchema(BaseModel):
+    name:       _line(TITLE_MAX, 1)
+    issuer:     _line(ORG_MAX, 1)
+    date:       DateText = ""
+    url:        UrlText = ""
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
 
 
 class VerifiedProjectSchema(BaseModel):
     name:         _line(TITLE_MAX, 1)
-    description:  Optional[
-        Annotated[str, StringConstraints(max_length=DESCRIPTION_MAX), BeforeValidator(_clean_multiline)]
-    ] = ""
+    description:  Optional[Multiline] = ""
     technologies: Annotated[List[SkillName], BeforeValidator(_drop_empty), Field(max_length=TECHNOLOGIES_MAX)] = []
+    githubUrl:    UrlText = ""
+    liveUrl:      UrlText = ""
 
 
 class VerifiedDataSchema(BaseModel):
-    skills:     List[VerifiedSkillSchema]      = Field(default=[], max_length=SKILLS_TOTAL_MAX)
-    education:  List[VerifiedEducationSchema]  = Field(default=[], max_length=MAX_EDUCATION)
-    experience: List[VerifiedExperienceSchema] = Field(default=[], max_length=MAX_EXPERIENCE)
-    projects:   List[VerifiedProjectSchema]    = Field(default=[], max_length=MAX_PROJECTS)
+    skills:         List[VerifiedSkillSchema]         = Field(default=[], max_length=SKILLS_TOTAL_MAX)
+    education:      List[VerifiedEducationSchema]     = Field(default=[], max_length=MAX_EDUCATION)
+    experience:     List[VerifiedExperienceSchema]    = Field(default=[], max_length=MAX_EXPERIENCE)
+    certifications: List[VerifiedCertificationSchema] = Field(default=[], max_length=MAX_CERTIFICATIONS)
+    projects:       List[VerifiedProjectSchema]       = Field(default=[], max_length=MAX_PROJECTS)
 
 
 class CVVerifyRequestSchema(BaseModel):

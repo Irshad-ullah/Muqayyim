@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     MAX_FILE_SIZE: int = 5 * 1024 * 1024  # 5MB
     ALLOWED_EXTENSIONS: list = ["pdf", "doc", "docx"]
     UPLOAD_DIRECTORY: str = os.getenv("UPLOAD_DIRECTORY", "./uploads")
+    # Legacy .doc support: LibreOffice headless converts .doc to .docx.
+    # Empty = auto-detect (PATH, then common install locations).
+    LIBREOFFICE_PATH: str = os.getenv("LIBREOFFICE_PATH", "")
+    DOC_CONVERT_TIMEOUT_SECONDS: int = int(os.getenv("DOC_CONVERT_TIMEOUT_SECONDS", "30"))
     
     # NLP Configuration
     NLP_MODEL: str = os.getenv("NLP_MODEL", "en_core_web_sm")  # spaCy model

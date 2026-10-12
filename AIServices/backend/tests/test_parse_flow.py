@@ -45,6 +45,9 @@ class FakeExtractor:
     def extract_experience(self, text):
         return []
 
+    def extract_certifications(self, text):
+        return []
+
     def extract_projects(self, text):
         return []
 
@@ -71,7 +74,7 @@ def statuses(notify):
 
 
 def test_parse_success_notifies_processing_then_parsed(env, monkeypatch):
-    (env["dir"] / "abc123.pdf").write_bytes(b"%PDF placeholder")
+    (env["dir"] / "abc123.pdf").write_bytes(b"%PDF-1.4 placeholder")
     monkeypatch.setattr(cv_routes, "parse_cv_file", lambda path, ext: ("Python developer", True))
 
     res = env["client"].post("/api/cv/parse/abc123")
@@ -83,18 +86,19 @@ def test_parse_success_notifies_processing_then_parsed(env, monkeypatch):
 
 
 def test_corrupted_file_notifies_processing_then_failed(env):
-    # Real parser on a corrupted PDF.
+    # A stored ".pdf" whose content is not a PDF: caught by the signature check.
     (env["dir"] / "bad999.pdf").write_bytes(b"\x00\x01this is not a pdf\xff" * 20)
 
     res = env["client"].post("/api/cv/parse/bad999")
 
     assert res.status_code == 422
+    assert res.json()["code"] == "INVALID_FILE_TYPE"
     assert statuses(env["notify"]) == ["processing", "failed"]
     assert env["db"]["cv_parsed_data"].docs[USER_ID]["parsing_status"] == "failed"
 
 
 def test_extraction_error_notifies_failed(env, monkeypatch):
-    (env["dir"] / "err1.pdf").write_bytes(b"%PDF placeholder")
+    (env["dir"] / "err1.pdf").write_bytes(b"%PDF-1.4 placeholder")
 
     def explode(path, ext):
         raise RuntimeError("extractor crashed")

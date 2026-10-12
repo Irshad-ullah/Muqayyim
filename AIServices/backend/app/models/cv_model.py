@@ -34,19 +34,40 @@ class SkillItem(BaseModel):
 
 
 class EducationItem(BaseModel):
-    """Education item model"""
-    degree: str
-    institution: str
+    """Education item model (dates in the profile's stored form)"""
+    degree: str = ""
+    institution: str = ""
+    field: str = ""
+    startDate: str = ""
+    endDate: str = ""
+    gpa: str = ""
     year: Optional[str] = None
     confidence: float = 1.0
+    needsReview: List[str] = []
 
 
 class ExperienceItem(BaseModel):
     """Experience item model"""
-    title: str
-    company: str
+    title: str = ""
+    company: str = ""
+    location: str = ""
+    startDate: str = ""
+    endDate: str = ""
+    current: bool = False
+    description: str = ""
     duration: Optional[str] = None
     confidence: float = 1.0
+    needsReview: List[str] = []
+
+
+class CertificationItem(BaseModel):
+    """Certification extracted from CV"""
+    name: str = ""
+    issuer: str = ""
+    date: str = ""
+    url: str = ""
+    confidence: float = 1.0
+    needsReview: List[str] = []
 
 
 class ProjectItem(BaseModel):
@@ -54,14 +75,18 @@ class ProjectItem(BaseModel):
     name: str
     description: Optional[str] = ""
     technologies: List[str] = []
+    githubUrl: str = ""
+    liveUrl: str = ""
+    needsReview: List[str] = []
 
 
 class ParsedDataModel(BaseModel):
     """Parsed data from NLP extraction"""
-    skills:     List[SkillItem]     = []
-    education:  List[EducationItem] = []
-    experience: List[ExperienceItem]= []
-    projects:   List[ProjectItem]   = []
+    skills:         List[SkillItem]         = []
+    education:      List[EducationItem]     = []
+    experience:     List[ExperienceItem]    = []
+    certifications: List[CertificationItem] = []
+    projects:       List[ProjectItem]       = []
 
 
 class CVParsedDataModel(BaseModel):

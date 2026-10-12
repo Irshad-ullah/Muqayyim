@@ -49,14 +49,14 @@ def verify(env, data, file_id="3f2b9c1e-aaaa-bbbb-cccc-0123456789ab"):
 def test_valid_data_is_cleaned_and_saved(env):
     res = verify(env, {
         "skills": [{"name": "  Python\u0007 "}],
-        "experience": [{"title": " Engineer ", "company": "Acme", "duration": "2019 - 2021"}],
+        "experience": [{"title": " Engineer ", "company": "Acme", "duration": "2019 - 2021", "startDate": "Jan 2019", "endDate": "2021"}],
         "projects": [{"name": "P", "description": "line 1\r\nline 2", "technologies": ["", " Go "]}],
     })
     assert res.status_code == 200
     saved = env["collection"].saved["parsed_data"]
     assert saved["skills"][0]["name"] == "Python"
     assert saved["experience"][0]["title"] == "Engineer"
-    assert saved["projects"][0] == {"name": "P", "description": "line 1\nline 2", "technologies": ["Go"]}
+    assert saved["projects"][0] == {"name": "P", "description": "line 1\nline 2", "technologies": ["Go"], "githubUrl": "", "liveUrl": ""}
 
 
 def test_limits_violations_use_the_standard_shape(env):

@@ -118,7 +118,7 @@ async def test_corrupted_cv_is_logged_as_a_warning(real_db, monkeypatch, tmp_pat
     entry = await real_db["error_logs"].find_one({"module": "cv-parsing"})
     assert entry["level"] == "warning"
     assert entry["service"] == "ai"
-    assert entry["errorType"] == "CV_TEXT_EXTRACTION_FAILED"
+    assert entry["errorType"] == "INVALID_FILE_TYPE"
     assert entry["statusCode"] == 422
     assert "bad42" in entry["message"]
 

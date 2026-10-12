@@ -1,0 +1,28 @@
+{
+  "_comment": "Certification issuers recognised by the CV parser (FR4.6). 'name' is what gets stored; 'aliases' are matched case-insensitively as whole words.",
+  "issuers": [
+    { "name": "Coursera", "aliases": [] },
+    { "name": "Udemy", "aliases": [] },
+    { "name": "edX", "aliases": [] },
+    { "name": "Google", "aliases": ["Google Cloud"] },
+    { "name": "Amazon Web Services", "aliases": ["AWS", "Amazon"] },
+    { "name": "Microsoft", "aliases": ["Microsoft Learn"] },
+    { "name": "Meta", "aliases": ["Facebook"] },
+    { "name": "IBM", "aliases": [] },
+    { "name": "Oracle", "aliases": [] },
+    { "name": "Cisco", "aliases": ["Cisco Networking Academy"] },
+    { "name": "CompTIA", "aliases": [] },
+    { "name": "HackerRank", "aliases": [] },
+    { "name": "LinkedIn Learning", "aliases": ["LinkedIn"] },
+    { "name": "DataCamp", "aliases": [] },
+    { "name": "freeCodeCamp", "aliases": ["free Code Camp"] },
+    { "name": "Kaggle", "aliases": [] },
+    { "name": "NVIDIA", "aliases": ["NVIDIA Deep Learning Institute"] },
+    { "name": "Hugging Face", "aliases": ["HuggingFace"] },
+    { "name": "Pluralsight", "aliases": [] },
+    { "name": "Udacity", "aliases": [] },
+    { "name": "DigiSkills", "aliases": ["DigitalSkills", "DigiSkills.pk", "Digi Skills"] },
+    { "name": "PMI", "aliases": ["Project Management Institute"] },
+    { "name": "Scrum.org", "aliases": [] }
+  ]
+}

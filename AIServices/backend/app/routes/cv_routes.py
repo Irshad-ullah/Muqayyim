@@ -3,13 +3,18 @@ CV Routes
 API endpoints for CV uploading, parsing, and verification
 """
 
+import asyncio
 import logging
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from bson import ObjectId
 from datetime import datetime
 
-from app.utils.limits_fit import fit_parsed_to_limits
+from app.middleware.validation import validation_error_response
+from app.services.cv_errors import CVProcessingError
+from app.services.file_signature import verify_file
+from app.services.verify_rules import check_verified_data
+from app.utils.parsed_normaliser import normalise_parsed
 from app.schemas.cv_schema import (
     CVUploadResponseSchema,
     CVParseResponseSchema,
@@ -39,7 +44,7 @@ from app.constants.cv_status import UPLOADED, PROCESSING, PARSED, VERIFIED, FAIL
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/cv", tags=["CV Parsing"])
 
-EMPTY_PARSED_DATA = {"skills": [], "education": [], "experience": [], "projects": []}
+EMPTY_PARSED_DATA = {"skills": [], "education": [], "experience": [], "certifications": [], "projects": []}
 
 
 async def _set_record_status(user_id: str, status_value: str, file_name: str | None = None):
@@ -95,7 +100,15 @@ async def upload_cv(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=error_msg
             )
-        
+
+        # Business Rule 1: the content (magic bytes) must match the extension,
+        # and password-protected files are refused before anything is stored.
+        try:
+            verify_file(contents, get_file_extension(file.filename))
+        except CVProcessingError as e:
+            logger.warning("Upload rejected (%s): %s", e.code, e.log_detail or e.message)
+            return e.response()
+
         # Generate file ID
         file_id = generate_file_id()
         
@@ -173,66 +186,33 @@ async def parse_cv(
         await _set_record_status(user_id, PROCESSING, f"{file_id}.{ext}")
         await push_cv_status(user_id, PROCESSING)
         processing_started = True
-        
-        # Extract text from file
-        cv_text, extraction_success = parse_cv_file(file_path, ext)
-        
-        if not extraction_success or not cv_text.strip():
-            logger.warning(f"Failed to extract text from CV: {file_id}")
-            log_error(
-                level="warning",
-                module="cv-parsing",
-                error_type="CV_TEXT_EXTRACTION_FAILED",
-                message=f"No text could be extracted from {ext.upper()} file {file_id} (empty, image-only or corrupted)",
-                status_code=422,
-            )
-            await _mark_failed(user_id)
-            error_detail = "Failed to extract text from CV. The file might be:"
-            if ext == "doc":
-                error_detail += " - An older MS Word format (pre-2007). Please convert to .docx or .pdf"
-            else:
-                error_detail += " - Image-based, corrupted, or empty"
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail=error_detail
-            )
-        
-        # Get NLP extractor and extract data
+
+        # Stage 1: the stored file must still be what its extension says
+        # (uploads are checked too; this covers files stored before that).
+        with open(file_path, "rb") as stored:
+            verify_file(stored.read(), ext, status_code=422)
+
+        # Stage 2: text extraction (.doc via LibreOffice). Runs in a worker
+        # thread: a .doc conversion can take up to DOC_CONVERT_TIMEOUT_SECONDS.
+        cv_text, _ = await asyncio.to_thread(parse_cv_file, file_path, ext)
+
+        # Stages 3–4: sections, skills, entries, certifications, projects.
         extractor = get_nlp_extractor()
-        
-        skills = extractor.extract_skills(cv_text)
-        education = extractor.extract_education(cv_text)
-        experience = extractor.extract_experience(cv_text)
-        projects = extractor.extract_projects(cv_text)
+        raw = {
+            "skills": extractor.extract_skills(cv_text),
+            "education": extractor.extract_education(cv_text),
+            "experience": extractor.extract_experience(cv_text),
+            "certifications": extractor.extract_certifications(cv_text),
+            "projects": extractor.extract_projects(cv_text),
+        }
 
+        # Fit everything to the profile limits and flag what needs review, so
+        # importing the result into the profile never fails on limits.
+        parsed_data = ParsedDataModel(**normalise_parsed(raw))
         logger.info(
-            f"Extraction results for {file_id}: "
-            f"skills={len(skills)}, education={len(education)}, "
-            f"experience={len(experience)}, projects={len(projects)}"
-        )
-
-        # Normalize extracted items to satisfy schema requirements even when
-        # spaCy NER is unavailable (e.g. company names may be missing).
-        normalized_experience = []
-        for exp in experience or []:
-            exp = dict(exp or {})
-            exp.setdefault("title", "Unknown Title")
-            exp.setdefault("company", "Unknown Company")
-            exp.setdefault("confidence", 0.6)
-            normalized_experience.append(exp)
-        experience = normalized_experience
-
-        # Keep the parse result inside the profile limits so it can be
-        # verified unchanged (CVVerifyRequestSchema enforces them).
-        skills, education, experience, projects = fit_parsed_to_limits(
-            skills, education, experience, projects
-        )
-
-        parsed_data = ParsedDataModel(
-            skills=skills,
-            education=education,
-            experience=experience,
-            projects=projects,
+            "Extraction results for %s: %s",
+            file_id,
+            ", ".join(f"{k}={len(getattr(parsed_data, k))}" for k in raw),
         )
         
         # Store in database
@@ -264,6 +244,27 @@ async def parse_cv(
             message="CV parsed successfully"
         )
     
+    except CVProcessingError as e:
+        # The user can fix these (wrong type, encrypted, .doc, no text): warning.
+        log_error(
+            level="warning",
+            module="cv-parsing",
+            error_type=e.code,
+            message=f"{e.code} for file {file_id}: {e.log_detail or e.message}",
+            status_code=e.status_code,
+        )
+        if getattr(e, "libreoffice_missing", False):
+            log_error(
+                level="warning",
+                module="cv-parsing",
+                error_type="LIBREOFFICE_MISSING",
+                message="LibreOffice (soffice) not found: .doc uploads cannot be converted. Install it or set LIBREOFFICE_PATH.",
+                dedupe_key="libreoffice-missing",
+                dedupe_seconds=60,
+            )
+        if processing_started:
+            await _mark_failed(current_user["user_id"])
+        return e.response()
     except HTTPException:
         raise
     except Exception as e:
@@ -295,6 +296,12 @@ async def verify_cv_data(
         - user_id: User identifier
         - parsing_status: Updated to 'verified'
     """
+    # Same rules the profile applies on import (FR5.3/5.4/5.6/5.7): a verified
+    # CV can always be imported. Verified data no longer needs review.
+    verified, rule_errors = check_verified_data(request.verified_data.model_dump())
+    if rule_errors:
+        return validation_error_response(rule_errors)
+
     try:
         db = get_database()
         if db is None:
@@ -305,7 +312,7 @@ async def verify_cv_data(
             )
 
         cv_collection = db["cv_parsed_data"]
-        
+
         # Find the CV record by user and file name
         file_name_candidates = [f"{request.file_id}.{ext}" for ext in settings.ALLOWED_EXTENSIONS]
 
@@ -316,7 +323,7 @@ async def verify_cv_data(
             },
             {
                 "$set": {
-                    "parsed_data": request.verified_data.dict(),
+                    "parsed_data": verified,
                     "parsing_status": VERIFIED,
                 },
                 "$unset": {

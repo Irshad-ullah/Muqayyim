@@ -264,6 +264,8 @@ const projects = z.preprocess(
             _id: objectId,
             name: text('Project name', L.titleMax, { required: true }),
             description: text('Description', L.descriptionMax, { multiline: true }),
+            // GitHub or live link found by the CV parser (FR5.7 link rule).
+            url: projectUrl,
             technologies,
           },
           'Project',

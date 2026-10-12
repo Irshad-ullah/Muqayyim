@@ -5,6 +5,8 @@ Using spaCy and NLTK for NLP processing
 
 import re
 import spacy
+
+from app.services.extractors import certifications, entries, projects
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime
 import logging
@@ -79,15 +81,27 @@ class NLPExtractor:
         normalized = re.sub(r"[^a-z0-9]+", "", skill_name.lower())
         return normalized
 
+    # Section headings recognised by the splitter (SDS Algorithm 1).
+    SECTION_HEADERS = [
+        "professional summary", "summary", "objective", "profile",
+        "education", "educational background", "academic background", "academic qualifications", "qualifications",
+        "skills", "technical skills", "core skills",
+        "projects", "personal projects", "academic projects", "key projects", "side projects", "project experience",
+        "experience", "work experience", "professional experience", "employment", "employment history", "work history",
+        "certifications", "certificates", "certification", "licenses & certifications", "licences & certifications",
+        "licenses and certifications", "licenses", "licences", "courses & certifications", "courses and certifications",
+        "achievements & certifications", "achievements and certifications", "awards & certifications",
+        "awards", "achievements", "courses", "contact", "references", "languages", "interests", "hobbies",
+    ]
+    CERTIFICATION_HEADERS = [
+        "certifications", "certificates", "certification", "licenses & certifications", "licences & certifications",
+        "licenses and certifications", "licenses", "licences", "courses & certifications", "courses and certifications",
+        "achievements & certifications", "achievements and certifications", "awards & certifications",
+    ]
+
     def _split_sections(self, text: str) -> Dict[str, str]:
         """Split resume text into named sections using common headings."""
-        headers = [
-            "professional summary", "summary", "objective", "profile",
-            "education", "educational background", "academic background",
-            "skills", "technical skills", "projects", "personal projects", "academic projects", "key projects", "side projects", "project experience",
-            "experience", "work experience", "professional experience", "employment",
-            "certifications", "awards", "contact"
-        ]
+        headers = sorted(self.SECTION_HEADERS, key=len, reverse=True)
         header_regex = re.compile(
             r"^\s*(?P<header>" + "|".join(re.escape(h) for h in headers) + r")\s*(?:[:\-\–]|$)",
             flags=re.IGNORECASE | re.MULTILINE,
@@ -95,20 +109,29 @@ class NLPExtractor:
         matches = [match for match in header_regex.finditer(text)]
         sections = {}
         for index, match in enumerate(matches):
-            header = match.group("header").strip().lower()
+            header = re.sub(r"\s+", " ", match.group("header").strip().lower())
             start = match.end()
             end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
             section_text = text[start:end].strip()
             if section_text:
-                sections[header] = section_text
+                sections[header] = (sections[header] + "\n" + section_text) if header in sections else section_text
         return sections
 
     def _get_section(self, text: str, keywords: List[str]) -> Optional[str]:
+        """First section whose heading equals one of `keywords` (in order)."""
         sections = self._split_sections(text)
         for keyword in keywords:
-            for header, section_text in sections.items():
-                if keyword in header:
-                    return section_text
+            if keyword in sections:
+                return sections[keyword]
+        return None
+
+    def _first_org(self, text: str) -> Optional[str]:
+        """spaCy ORG entity, used when no company/institution was found by pattern."""
+        if not self.nlp or not text:
+            return None
+        for ent in self.nlp(text).ents:
+            if ent.label_ == "ORG":
+                return ent.text.strip()
         return None
 
     def extract_skills(self, text: str, confidence_threshold: float = 0.7) -> List[Dict]:
@@ -125,7 +148,17 @@ class NLPExtractor:
         skills_section = self._get_section(text, ["skills", "technical skills"])
         if skills_section:
             # Fix missing spaces between camel case/adjacent terms from PDF extraction.
-            skills_section = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", skills_section)
+            # Known skills written in camel case ("JavaScript", "ReactNative")
+            # become their canonical phrase; otherwise "Java Script" would also
+            # match "Java". Other glued words are split ("PythonDjango").
+            skills_section = re.sub(
+                r"[A-Za-z0-9.#+]+",
+                lambda m: normalized_known.get(
+                    self._normalize_skill_name(m.group(0)),
+                    re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", m.group(0)),
+                ),
+                skills_section,
+            )
             search_section = re.sub(r"[^a-z0-9]+", " ", skills_section.lower())
 
             for skill_name in sorted(normalized_known.values(), key=len, reverse=True):
@@ -168,305 +201,34 @@ class NLPExtractor:
         return [{"name": s["name"], "confidence": s["confidence"]} for s in final_skills]
 
     def extract_education(self, text: str) -> List[Dict]:
-        """
-        Extract education information from text
-        Returns list of education entries
-        """
-        education = []
-        education_section = self._get_section(text, ["education", "educational background", "academic background"])
-
-        if not education_section:
-            # Fallback only when no explicit education section exists
-            if any(keyword in text.lower() for keyword in ["bachelor", "master", "phd", "degree", "university", "college"]):
-                education_section = text
-            else:
-                return []
-
-        # Split by obvious delimiters and retain candidate education entries.
-        entries = re.split(r"\n|\b(?:education|skills|projects|experience|employment|certifications|awards|contact)\b", education_section, flags=re.IGNORECASE)
-        for entry in entries:
-            entry_text = entry.strip(" .,-\t")
-            if len(entry_text) < 10:
-                continue
-
-            has_degree = any(
-                re.search(r"\b" + re.escape(keyword) + r"\b", entry_text, flags=re.IGNORECASE)
-                for keyword in self.degree_keywords
-            )
-            if not has_degree:
-                continue
-
-            degree = self._extract_degree(entry_text)
-            institution = self._extract_institution(entry_text)
-            year = self._extract_year(entry_text)
-            if degree or institution:
-                education.append({
-                    "degree": degree or "Unknown Degree",
-                    "institution": institution or "Unknown Institution",
-                    "year": year,
-                    "confidence": 0.85 if (degree and institution) else 0.65
-                })
-
-        unique_edu = {
-            (e["degree"].lower(), e["institution"].lower()): e
-            for e in education
-        }
-        return list(unique_edu.values())
+        """Education entries with degree, field, institution, dates (Stage 4)."""
+        section = self._get_section(
+            text, ["education", "educational background", "academic background", "academic qualifications", "qualifications"]
+        )
+        if not section:
+            # No heading: only lines that name a degree (keeps precision).
+            section = "\n".join(l for l in text.splitlines() if entries.has_degree(l) and len(l) <= 200)
+        return entries.extract_education(section, self._first_org) if section else []
 
     def extract_experience(self, text: str) -> List[Dict]:
-        """
-        Extract work experience from text
-        Returns list of experience entries
-        """
-        experience = []
-        experience_section = self._get_section(text, ["experience", "work experience", "professional experience", "employment"])
-
-        if not experience_section:
-            return []
-
-        lines = [line.strip() for line in re.split(r"\n|\r", experience_section) if line.strip()]
-        current_entry = {}
-
-        for line in lines:
-            title = self._extract_job_title(line)
-            company = self._extract_company(line)
-            duration = self._extract_duration(line)
-
-            if title and current_entry and ("title" in current_entry or "company" in current_entry):
-                experience.append(current_entry)
-                current_entry = {}
-
-            if title:
-                current_entry["title"] = title
-                current_entry["confidence"] = 0.8
-            if company and not current_entry.get("company"):
-                current_entry["company"] = company
-            if duration:
-                current_entry["duration"] = duration
-
-        if current_entry and ("title" in current_entry or "company" in current_entry):
-            experience.append(current_entry)
-
-        unique_exp = {}
-        for exp in experience:
-            key = (exp.get("title", "").lower(), exp.get("company", "").lower())
-            if key not in unique_exp:
-                unique_exp[key] = exp
-
-        return list(unique_exp.values())
-    
-    def _extract_degree(self, text: str) -> Optional[str]:
-        """Extract degree from text"""
-        # Look for common degree patterns
-        patterns = [
-            r"(?i)(bachelor(?:'s)?|b\.?s\.?|b\.?a\.?|b\.?sc\.?|b\.?tech\.?|bachelor of science|bachelor of arts).*?(?:in|of)?\s+([^\n,]+)",
-            r"(?i)(master(?:'s)?|m\.?s\.?|m\.?a\.?|m\.?sc\.?|m\.?tech\.?|mba).*?(?:in|of)?\s+([^\n,]+)",
-            r"(?i)(doctorate|phd|ph\.?d\.?).*?(?:in|of)?\s+([^\n,]+)",
-        ]
-
-        for pattern in patterns:
-            match = re.search(pattern, text)
-            if match:
-                return match.group(0).strip()
-
-        # Return first line if it contains degree keyword
-        for keyword in self.degree_keywords:
-            if keyword in text.lower():
-                return text.split(",")[0].strip()
-
-        return None
-
-    def _extract_institution(self, text: str) -> Optional[str]:
-        """Extract institution from text"""
-        university_patterns = [
-            r"(?i)(?:[A-Z][A-Za-z&'.]+(?:\s+[A-Z][A-Za-z&'.]+)*)\s+(?:University|College|Institute|School|Academy|Center|Centre)(?:\s+[A-Z][A-Za-z&'.]+)*",
-            r"(?i)(?:University|College|Institute|School|Academy|Center|Centre)[^,\n]*",
-        ]
-
-        for pattern in university_patterns:
-            match = re.search(pattern, text)
-            if match:
-                return match.group(0).strip().rstrip(',')
-
-        if self.nlp:
-            doc = self.nlp(text)
-            for ent in doc.ents:
-                if ent.label_ == "ORG":
-                    return ent.text.strip()
-
-        return None
-
-    def _extract_year(self, text: str) -> Optional[str]:
-        """Extract year from text"""
-        year_pattern = r"(?:19|20)\d{2}"
-        matches = re.findall(year_pattern, text)
-
-        if matches:
-            if len(matches) >= 2:
-                return f"{matches[0]} - {matches[-1]}"
-            elif len(matches) == 1:
-                return matches[0]
-
-        return None
-    
-    def _extract_job_title(self, text: str) -> Optional[str]:
-        """Extract job title from text"""
-        job_title_patterns = [
-            r"(?i)(manager|director|engineer|analyst|developer|architect|specialist|consultant|coordinator|officer|executive|administrator)",
-        ]
-        
-        for pattern in job_title_patterns:
-            match = re.search(pattern, text)
-            if match:
-                # Get the full title containing the pattern
-                words = text.split()
-                for i, word in enumerate(words):
-                    if re.search(pattern, word, re.IGNORECASE):
-                        # Return context around the job title
-                        start = max(0, i - 2)
-                        end = min(len(words), i + 3)
-                        return " ".join(words[start:end]).strip()
-        
-        return None
-    
-    def _extract_company(self, text: str) -> Optional[str]:
-        """Extract company name from text"""
-        if not self.nlp:
-            return None
-        
-        doc = self.nlp(text)
-        
-        for ent in doc.ents:
-            if ent.label_ == "ORG":
-                return ent.text.strip()
-        
-        return None
-    
-    def _extract_duration(self, text: str) -> Optional[str]:
-        """Extract job duration from text"""
-        # Look for date patterns like "Jan 2020 - Dec 2023" or "2020-2023"
-        date_patterns = [
-            r"((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)?\.?\s*\d{1,4}\s*-\s*(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)?\.?\s*\d{1,4})",
-            r"(\d{1,2}/\d{1,2}/\d{4}\s*-\s*\d{1,2}/\d{1,2}/\d{4})",
-            r"(\d{4}\s*-\s*\d{4})",
-        ]
-        
-        for pattern in date_patterns:
-            match = re.search(pattern, text, re.IGNORECASE)
-            if match:
-                return match.group(0).strip()
-        
-        return None
-
-    def _looks_like_project_title(self, line: str) -> bool:
-        """Heuristic to determine if a line is likely a project title."""
-        if not line or len(line) > 120:
-            return False
-        words = line.split()
-        if not words:
-            return False
-
-        if re.match(r'^(using|with|developed|built|created|technologies|tech stack|tools|description|role|responsibilities|\*|\u2022|\u2023|\u25E6|\u2043|\u2219|\d+\.)', line, re.IGNORECASE):
-            return False
-
-        if re.search(r'\b(project|project experience|app|website|platform|dashboard|tool|system|prototype|solution)\b', line, re.IGNORECASE):
-            return True
-
-        if re.search(r'[:\-–—]', line) and len(line.split()) <= 12:
-            return True
-
-        return line[0].isupper()
-
-    def _split_project_title_line(self, line: str) -> Tuple[str, str]:
-        """Split a title line into project name and description when possible."""
-        separators = [r'\s+[-–—]\s+', r'\s*:\s*']
-        for sep in separators:
-            parts = re.split(sep, line, maxsplit=1)
-            if len(parts) == 2 and len(parts[0].split()) >= 2:
-                return parts[0].strip(), parts[1].strip()
-        return line.strip(), ''
-
-    def _extract_project_blocks(self, section: str) -> List[List[str]]:
-        """Split the projects section into blocks of candidate project lines."""
-        blocks: List[List[str]] = []
-        current: List[str] = []
-
-        for raw_line in section.splitlines():
-            line = raw_line.strip()
-            if not line:
-                if current:
-                    blocks.append(current)
-                    current = []
-                continue
-
-            cleaned = re.sub(r'^[\-\*\u2022\u2023\u25E6\u2043\u2219\d\.\)\s]+', '', line)
-            if not cleaned:
-                continue
-
-            if re.match(r'^[\-\*\u2022\u2023\u25E6\u2043\u2219]|^\d+\.', line):
-                if current:
-                    blocks.append(current)
-                current = [cleaned]
-            elif not current and self._looks_like_project_title(cleaned):
-                current = [cleaned]
-            elif self._looks_like_project_title(cleaned):
-                # New project title: save the current block and start fresh
-                if current:
-                    blocks.append(current)
-                current = [cleaned]
-            else:
-                current.append(cleaned)
-
-        if current:
-            blocks.append(current)
-
-        return blocks
-
-    def extract_projects(self, text: str) -> List[Dict]:
-        """
-        Extract projects from CV text.
-        Returns a list of {name, description, technologies}.
-        Existing skill/education/experience logic is untouched.
-        """
-        projects: List[Dict] = []
-
+        """Experience entries with title, company, dates, description (Stage 4)."""
         section = self._get_section(
             text,
-            ["projects", "personal projects", "academic projects",
-             "key projects", "side projects", "project experience"]
+            ["work experience", "professional experience", "experience", "employment history", "employment", "work history"],
         )
+        return entries.extract_experience(section, self._first_org) if section else []
 
-        if not section:
-            return projects
+    def extract_certifications(self, text: str) -> List[Dict]:
+        """Certifications with name, issuer, date (FR4.6)."""
+        return certifications.extract_certifications(self._get_section(text, self.CERTIFICATION_HEADERS), text)
 
-        blocks = self._extract_project_blocks(section)
-
-        for block in blocks:
-            if not block:
-                continue
-
-            title_line = block[0]
-            description_lines = block[1:]
-            name, title_description = self._split_project_title_line(title_line)
-            description = ' '.join(filter(None, [title_description] + description_lines)).strip()
-
-            if not description and len(block) > 1:
-                description = ' '.join(block[1:]).strip()
-
-            if not name:
-                continue
-
-            technologies = self._extract_technologies_from_text(f'{name} {description}')
-            projects.append({
-                'name': name,
-                'description': description,
-                'technologies': technologies,
-            })
-
-            if len(projects) >= 10:
-                break
-
-        return projects
+    def extract_projects(self, text: str) -> List[Dict]:
+        """Projects (Algorithm 3): name, description, technologies, links."""
+        section = self._get_section(
+            text,
+            ["projects", "personal projects", "academic projects", "key projects", "side projects", "project experience"],
+        )
+        return projects.extract_projects(section, self._extract_technologies_from_text)
 
     def _extract_technologies_from_text(self, text: str) -> List[str]:
         found: set = set()

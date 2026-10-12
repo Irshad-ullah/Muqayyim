@@ -44,6 +44,21 @@ def format_validation_errors(errors) -> list:
     return out
 
 
+def validation_error_response(errors: list, request_id: str | None = None) -> JSONResponse:
+    """422 VALIDATION_ERROR for rule checks done in a route (same body as below)."""
+    first = errors[0] if errors else {"field": "body", "message": "Invalid request"}
+    more = f" (and {len(errors) - 1} more)" if len(errors) > 1 else ""
+    content = {
+        "success": False,
+        "code": "VALIDATION_ERROR",
+        "message": f"{first['field']}: {first['message']}{more}",
+        "errors": errors,
+    }
+    if request_id:
+        content["requestId"] = request_id
+    return JSONResponse(status_code=422, content=content)
+
+
 async def _validation_error_handler(request: Request, exc: RequestValidationError):
     raw = exc.errors()
     request_id = getattr(request.state, "request_id", None)

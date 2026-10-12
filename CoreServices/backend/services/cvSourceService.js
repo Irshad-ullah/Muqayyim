@@ -140,16 +140,17 @@ const buildExperience = (profile, parsed) => {
   return (parsed?.experience || [])
     .filter((e) => clean(e.title) || clean(e.company))
     .map((e) => {
-      const range = splitDateRange(e.duration);
+      // Newer parses carry real dates; older ones only a `duration` string.
+      const range = clean(e.startDate) || e.current ? null : splitDateRange(e.duration);
       return {
         id: newId(),
         title: clean(e.title) === 'Unknown Title' ? '' : clean(e.title),
         company: clean(e.company) === 'Unknown Company' ? '' : clean(e.company),
-        location: '',
-        startDate: range?.startDate || '',
-        endDate: range ? range.endDate : clean(e.duration),
-        current: range?.current || false,
-        description: '',
+        location: clean(e.location),
+        startDate: clean(e.startDate) || range?.startDate || '',
+        endDate: clean(e.startDate) || e.current ? clean(e.endDate) : range ? range.endDate : clean(e.duration),
+        current: !!e.current || range?.current || false,
+        description: clean(e.description),
       };
     });
 };
@@ -169,16 +170,18 @@ const buildEducation = (profile, parsed) => {
     }));
   }
   return (parsed?.education || []).map((e) => {
-    const range = splitDateRange(e.year);
+    // Newer parses carry startDate/endDate; older ones only `year`.
+    const hasDates = clean(e.startDate) || clean(e.endDate);
+    const range = hasDates ? null : splitDateRange(e.year);
     return {
       id: newId(),
       degree: clean(e.degree),
-      field: '',
+      field: clean(e.field),
       institution: clean(e.institution),
       location: '',
-      startDate: range?.startDate || '',
-      endDate: range ? (range.current ? 'Present' : range.endDate) : clean(e.year),
-      gpa: '',
+      startDate: hasDates ? clean(e.startDate) : range?.startDate || '',
+      endDate: hasDates ? clean(e.endDate) : range ? (range.current ? '' : range.endDate) : clean(e.year),
+      gpa: clean(e.gpa),
       details: '',
     };
   });
@@ -210,7 +213,12 @@ const buildProjects = (profile, parsed) => {
   // individual source lists when it is missing.
   let candidates = p.selected?.length ? p.selected : [...manual, ...github, ...cv];
   if (!candidates.length) {
-    candidates = (parsed?.projects || []).map((c) => ({ ...c, source: 'cv' }));
+    candidates = (parsed?.projects || []).map((c) => ({
+      ...c,
+      url: c.githubUrl || c.url || '',
+      liveUrl: c.liveUrl || '',
+      source: 'cv',
+    }));
   }
 
   // Deduplicate by name, preferring user-entered, then GitHub (has URL), then CV.
@@ -232,13 +240,14 @@ const buildProjects = (profile, parsed) => {
     description: clean(proj.description),
     technologies: dedupeStrings(proj.technologies || []),
     url: clean(proj.url),
-    liveUrl: '',
+    liveUrl: clean(proj.liveUrl),
     source: ['manual', 'github', 'cv'].includes(proj.source) ? proj.source : 'manual',
   }));
 };
 
-const buildCertifications = (profile) =>
-  (profile?.certifications || [])
+// Profile certifications, else the ones parsed from the CV (FR4.6).
+const buildCertifications = (profile, parsed) =>
+  (profile?.certifications?.length ? profile.certifications : parsed?.certifications || [])
     .filter((c) => clean(c.name))
     .map((c) => ({
       id: newId(),
@@ -287,7 +296,7 @@ export const buildCvSource = async (userId) => {
     experience: buildExperience(profile, parsed),
     education: buildEducation(profile, parsed),
     projects: buildProjects(profile, parsed),
-    certifications: buildCertifications(profile),
+    certifications: buildCertifications(profile, parsed),
   };
 
   const hasProfile = !!(

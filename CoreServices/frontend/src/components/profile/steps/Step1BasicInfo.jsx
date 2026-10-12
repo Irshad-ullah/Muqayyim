@@ -10,6 +10,8 @@ export default function Step1BasicInfo({ profile, onChange, errors = [] }) {
   const [newCert, setNewCert] = useState(EMPTY_CERT);
   const [addingCert, setAddingCert] = useState(false);
   const [certErrors, setCertErrors] = useState([]);
+  // Certifications being fixed in place (stay open while typing).
+  const [editingCerts, setEditingCerts] = useState(() => new Set());
 
   const updateInfo = (field, value) =>
     onChange({ personalInfo: { ...profile.personalInfo, [field]: value } });
@@ -28,8 +30,10 @@ export default function Step1BasicInfo({ profile, onChange, errors = [] }) {
     setAddingCert(false);
   };
 
-  const removeCert = (i) =>
+  const removeCert = (i) => {
+    setEditingCerts(new Set()); // indexes shift after a removal
     onChange({ certifications: profile.certifications.filter((_, idx) => idx !== i) });
+  };
 
   // FR5.1: digits, spaces, + - ( ) only; 7–20 characters with at least 7 digits.
   const handlePhoneChange = (raw) => updateInfo('phone', raw.replace(/[^0-9+()\- ]/g, ''));
@@ -135,17 +139,48 @@ export default function Step1BasicInfo({ profile, onChange, errors = [] }) {
                 data-testid={`certification-${i}`}
                 className={`flex items-start justify-between p-3 bg-slate-50 rounded-xl border ${certErrs.length ? 'border-red-300' : 'border-slate-100'}`}
               >
-                <div>
-                  <p className="text-sm font-semibold text-slate-800">{c.name}</p>
-                  {c.issuer && <p className="text-xs text-slate-500">{c.issuer}{c.date ? ` · ${c.date}` : ''}</p>}
-                  {c.url && <a href={c.url} target="_blank" rel="noreferrer" className="text-xs text-indigo-600 hover:underline">{c.url}</a>}
-                  {certErrs.map((e) => (
-                    <FieldError key={e.field + e.message} message={e.message} />
-                  ))}
-                  {certErrs.length > 0 && (
-                    <p className="text-xs text-slate-500 mt-1">Remove it and add it again with the details fixed.</p>
-                  )}
-                </div>
+                {certErrs.length > 0 || editingCerts.has(i) ? (
+                  // A certification with problems (e.g. imported without an
+                  // issuer) is edited in place, with the error under each field.
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
+                    {certFields.map(({ key, label, placeholder, max }) => {
+                      const message = errorFor(errors, `certifications[${i}].${key}`);
+                      return (
+                        <div key={key}>
+                          <label className="text-xs font-medium text-slate-600" htmlFor={`cert-${i}-${key}`}>{label}</label>
+                          <input
+                            id={`cert-${i}-${key}`}
+                            value={c[key] || ''}
+                            maxLength={max}
+                            placeholder={placeholder}
+                            onChange={(e) => {
+                              setEditingCerts((prev) => new Set(prev).add(i));
+                              onChange({
+                                certifications: profile.certifications.map((x, idx) => (idx === i ? { ...x, [key]: e.target.value } : x)),
+                              });
+                            }}
+                            className={`input-field text-sm${errorClass(message)}`}
+                            {...errorProps(`cert-${i}-${key}`, message)}
+                          />
+                          <FieldError id={`err-cert-${i}-${key}`} message={message} />
+                        </div>
+                      );
+                    })}
+                    <button
+                      type="button"
+                      onClick={() => setEditingCerts((prev) => { const next = new Set(prev); next.delete(i); return next; })}
+                      className="text-xs text-indigo-600 font-medium justify-self-start"
+                    >
+                      Done
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">{c.name}</p>
+                    {c.issuer && <p className="text-xs text-slate-500">{c.issuer}{c.date ? ` · ${c.date}` : ''}</p>}
+                    {c.url && <a href={c.url} target="_blank" rel="noreferrer" className="text-xs text-indigo-600 hover:underline">{c.url}</a>}
+                  </div>
+                )}
                 <button onClick={() => removeCert(i)} aria-label={`Remove certification ${i + 1}`} className="text-slate-300 hover:text-red-500 ml-3 flex-shrink-0">
                   <X className="w-4 h-4" />
                 </button>

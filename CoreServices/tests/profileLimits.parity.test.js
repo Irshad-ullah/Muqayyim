@@ -54,7 +54,7 @@ const FIXTURES = [
     projects: {
       manual: [{ name: '', url: 'https://github.com/owner' }, { name: 'ok', description: 'x'.repeat(1001), technologies: ['y'.repeat(51)] }],
       github: [{ name: 'r', url: 'https://gitlab.com/a/b' }],
-      cv: [{ name: '' }],
+      cv: [{ name: '' }, { name: 'ok', url: 'https://github.com/owner' }],
     },
   },
   { githubData: { username: 'bad--name' } },

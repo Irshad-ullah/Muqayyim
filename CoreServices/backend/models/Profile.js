@@ -85,6 +85,7 @@ const profileSchema = new mongoose.Schema(
         {
           name: req(LIMITS.titleMax),
           description: str(LIMITS.descriptionMax),
+          url: str(LIMITS.urlMax),
           technologies: stringList(),
         },
       ],

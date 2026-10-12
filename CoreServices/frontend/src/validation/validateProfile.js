@@ -190,6 +190,7 @@ export const validateProfile = (profile = {}) => {
         if (!(x = c.object(`projects.cv[${i}]`, x, 'Project'))) return;
         c.text(`projects.cv[${i}].name`, x.name, 'Project name', L.titleMax, { required: true });
         c.text(`projects.cv[${i}].description`, x.description, 'Description', L.descriptionMax, { multiline: true });
+        c.rule(`projects.cv[${i}].url`, normalizeProjectUrl(x.url));
         c.strings(`projects.cv[${i}].technologies`, x.technologies, 'Technologies', L.technologiesMax);
       });
     }
