@@ -23,7 +23,7 @@ The single-page React application for the entire MUQAYYIM platform. Handles auth
 
 This is the unified React frontend for MUQAYYIM. All features — authentication, CV upload and parsing, profile builder, and GitHub integration — live in this single application. It communicates with all backend services exclusively through the **API Gateway** (port 8080); it never calls Module 1 (port 3000) or Module 2 (port 8000) directly.
 
-The Module 2 frontend (port 5173) is **no longer used**. CV parsing is fully integrated at the `/cv-parsing` route within this app.
+The old standalone Module 2 frontend (`AIServices/frontend`, port 5173) has been removed. CV parsing is fully integrated at the `/cv-parsing` route within this app, and all API calls go through the API Gateway (`VITE_API_BASE_URL`, default http://localhost:8080).
 
 ---
 
@@ -155,14 +155,14 @@ Profile management API calls: `getProfile`, `saveProfile`, `fetchGitHub`. All go
 Edit `.env` in the `frontend/` directory:
 
 ```env
-VITE_API_URL=http://localhost:8080
+VITE_API_BASE_URL=http://localhost:8080
 ```
 
 | Variable       | Value                    | Purpose                              |
 |----------------|--------------------------|--------------------------------------|
-| `VITE_API_URL` | `http://localhost:8080`  | API Gateway — single entry point for all backend calls |
+| `VITE_API_BASE_URL` | `http://localhost:8080`  | API Gateway — single entry point for all backend calls |
 
-> All API calls route through the gateway. Do not set `VITE_API_URL` to port 3000 or 8000 directly.
+> All API calls route through the gateway. Do not set `VITE_API_BASE_URL` to port 3000 or 8000 directly.
 
 > Vite only exposes variables prefixed with `VITE_` to the browser. Never put secrets here.
 
@@ -192,7 +192,7 @@ npm install
 
 The `.env` file should already have:
 ```env
-VITE_API_URL=http://localhost:8080
+VITE_API_BASE_URL=http://localhost:8080
 ```
 
 ### 3. Start the dev server

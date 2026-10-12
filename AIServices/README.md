@@ -1,5 +1,7 @@
 # Module 2: Automated Skill Extraction (CV Parsing)
 
+> **Note (2026-10):** the standalone CV-parsing frontend that used to live in `AIServices/frontend` (port 5173) has been removed. The only UI is `CoreServices/frontend` (http://localhost:5174, route `/cv-parsing`), and it talks to AIServices only through the API Gateway (http://localhost:8080).
+
 ## MUQAYYIM - AI-Powered Career Development Platform
 
 > An intelligent CV parsing system that extracts skills, education, and work experience using advanced NLP techniques.
@@ -68,20 +70,6 @@ Module 2/
 │   │   └── utils/
 │   │       └── file_handler.py    # File operations
 │   └── requirements.txt
-├── frontend/
-│   └── src/
-│       ├── components/
-│       │   ├── CVUpload.jsx          # Upload interface
-│       │   ├── ParsedSummary.jsx     # Results display
-│       │   ├── SkillsSection.jsx     # Skills editor
-│       │   ├── EducationSection.jsx  # Education editor
-│       │   └── ExperienceSection.jsx # Experience editor
-│       ├── pages/
-│       │   └── CVParsingPage.jsx     # Main page
-│       ├── services/
-│       │   └── cvService.js          # API client
-│       └── hooks/
-│           └── useCVParsing.js       # Custom hook
 ├── .env.example
 └── README.md
 ```
@@ -142,14 +130,14 @@ Module 2/
 1. **Install dependencies:**
 
    ```bash
-   cd frontend
+   cd ../CoreServices/frontend
    npm install
    ```
 
 2. **Create .env file:**
 
    ```bash
-   VITE_API_URL=http://localhost:8000
+   VITE_API_BASE_URL=http://localhost:8080
    ```
 
 3. **Start development server:**
@@ -158,7 +146,7 @@ Module 2/
    npm run dev
    ```
 
-   The application will be available at `http://localhost:5173`
+   The application will be available at `http://localhost:5174`
 
 ## 📡 API Endpoints
 
@@ -298,46 +286,12 @@ Retrieve parsed CV summary
 - Extracts employment duration
 - Confidence: 0.70 - 0.95
 
-## 🎨 Frontend Components
-
-### CVUpload
-
-Handles file selection and upload with validation
-
-```jsx
-<CVUpload onUploadSuccess={handleSuccess} onUploadError={handleError} />
-```
-
-### ParsedSummary
-
-Displays extraction results with sections
-
-```jsx
-<ParsedSummary
-  parsedData={data}
-  isLoading={false}
-  onEdit={handleEdit}
-  onDelete={handleDelete}
-  onSave={handleSave}
-/>
-```
-
-### SkillsSection / EducationSection / ExperienceSection
-
-Individual editors for each category with confidence indicators
-
 ## 🧪 Testing
 
 ### Backend Tests
 
 ```bash
 pytest tests/
-```
-
-### Frontend Tests
-
-```bash
-npm run test
 ```
 
 ### Manual Testing
@@ -369,7 +323,7 @@ MAX_FILE_SIZE=5242880  # 5MB
 NLP_MODEL=en_core_web_sm
 
 # Frontend
-VITE_API_URL=http://localhost:8000
+VITE_API_BASE_URL=http://localhost:8080
 ```
 
 ## 📊 Success Metrics
@@ -400,8 +354,6 @@ npm run dev
 ```bash
 # Format code
 black backend/
-prettier frontend/src
-
 # Lint
 flake8 backend/
 npm run lint

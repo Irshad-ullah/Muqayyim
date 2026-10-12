@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import toast from 'react-hot-toast';
+import { isHandledGlobally } from '../services/apiErrors.js';
 import {
   Mail,
   Lock,
@@ -57,6 +58,10 @@ export default function LoginPage() {
           `Account temporarily locked due to too many failed attempts. Try again in ${mins} minute${mins === 1 ? '' : 's'}.`;
         toast.error(msg, { duration: 6000 });
         setErrors({ lock: msg });
+      } else if (isHandledGlobally(err)) {
+        // Rate limit / gateway errors: already shown once by the central handler,
+        // and they aren't a password problem, so no inline field error.
+        setErrors({});
       } else {
         // Keep 401 generic: never reveal whether the email exists.
         const msg = status === 401 ? 'Invalid email or password' : data.message || 'Login failed';

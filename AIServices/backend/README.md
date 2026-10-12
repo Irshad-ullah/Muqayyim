@@ -217,7 +217,7 @@ SECRET_KEY=your-secret-key-here
 ALGORITHM=HS256
 
 # CORS
-CORS_ORIGINS=["http://localhost:3000","http://localhost:5173"]
+CORS_ORIGINS=["http://localhost:3000","http://localhost:5174"]
 ```
 
 ## Project Structure

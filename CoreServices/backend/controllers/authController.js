@@ -180,6 +180,7 @@ export const login = async (req, res) => {
           logSecurityEvent('Account locked', {
             userId: String(user._id),
             ip: req.ip,
+            requestId: req.requestId,
             failedLoginAttempts: updated.failedLoginAttempts,
             lockUntil: updated.lockUntil.toISOString(),
           });
@@ -438,7 +439,7 @@ export const resetPassword = async (req, res) => {
 
     await user.save();
 
-    logSecurityEvent('Password reset', { userId: String(user._id), ip: req.ip });
+    logSecurityEvent('Password reset', { userId: String(user._id), ip: req.ip, requestId: req.requestId });
 
     return res.status(200).json({
       success: true,
@@ -503,7 +504,7 @@ export const changePassword = async (req, res) => {
     user.lockUntil = null;
     await user.save();
 
-    logSecurityEvent('Password changed', { userId: String(user._id), ip: req.ip });
+    logSecurityEvent('Password changed', { userId: String(user._id), ip: req.ip, requestId: req.requestId });
 
     // Non-blocking notification; a mail failure never fails the request.
     sendPasswordChangedEmail(user.email, user.name)

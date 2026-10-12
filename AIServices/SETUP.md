@@ -1,4 +1,6 @@
 # 🚀 Quick Setup Guide
+
+> **Note (2026-10):** the standalone CV-parsing frontend that used to live in `AIServices/frontend` (port 5173) has been removed. The only UI is `CoreServices/frontend` (http://localhost:5174, route `/cv-parsing`), and it talks to AIServices only through the API Gateway (http://localhost:8080).
 ## Module 2: CV Parsing - Get Running in 10 Minutes
 
 ## ⚡ Express Setup
@@ -34,19 +36,18 @@ uvicorn app.main:app --reload
 
 ```bash
 # 1. Navigate to frontend
-cd frontend
-
+cd ../CoreServices/frontend
 # 2. Install dependencies
 npm install
 
 # 3. Create .env
-echo "VITE_API_URL=http://localhost:8000" > .env
+echo "VITE_API_BASE_URL=http://localhost:8080" > .env
 
 # 4. Start dev server
 npm run dev
 ```
 
-✅ App running at `http://localhost:5173`
+✅ App running at `http://localhost:5174`
 
 ## 🧪 Test the System
 
@@ -93,7 +94,7 @@ HOST=0.0.0.0
 PORT=8000
 
 # Frontend
-VITE_API_URL=http://localhost:8000
+VITE_API_BASE_URL=http://localhost:8080
 ```
 
 ## 📦 Required Software
@@ -113,7 +114,7 @@ curl http://localhost:8000/health
 ```
 
 ### Frontend
-Open `http://localhost:5173` in browser
+Open `http://localhost:5174` in browser
 Should see CV upload interface
 
 ## 🔧 Common Issues
@@ -162,11 +163,11 @@ services:
     environment:
       MONGODB_URL: mongodb://mongo:27017
   frontend:
-    build: ./frontend
+    build: ../CoreServices/frontend
     ports:
-      - "5173:5173"
+      - "5174:5174"
     environment:
-      VITE_API_URL: http://localhost:8000
+      VITE_API_BASE_URL: http://localhost:8080
   mongo:
     image: mongo:latest
     ports:
@@ -176,7 +177,7 @@ services:
 ## 📞 Support
 
 - API Docs: http://localhost:8000/docs
-- Frontend: http://localhost:5173
+- Frontend: http://localhost:5174
 - Check logs for errors: `console` (frontend) or `terminal` (backend)
 
 ---

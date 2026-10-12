@@ -1,5 +1,7 @@
 # ⚡ Quick Reference Card
 
+> **Note (2026-10):** the standalone CV-parsing frontend that used to live in `AIServices/frontend` (port 5173) has been removed. The only UI is `CoreServices/frontend` (http://localhost:5174, route `/cv-parsing`), and it talks to AIServices only through the API Gateway (http://localhost:8080).
+
 ## 🚀 Startup Commands (Copy-Paste Ready)
 
 ### Terminal 1 - MongoDB
@@ -16,7 +18,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 ### Terminal 3 - Frontend
 ```powershell
-cd "c:\Users\Crown Tech\OneDrive - Higher Education Commission\Fyp2.0\Module 2\frontend"
+cd CoreServices/frontend
 npm run dev
 ```
 
@@ -26,7 +28,7 @@ npm run dev
 
 | Service | URL |
 |---------|-----|
-| Frontend | http://localhost:5173 |
+| Frontend | http://localhost:5174 |
 | Backend API | http://localhost:8000 |
 | API Docs | http://localhost:8000/docs |
 | Health Check | http://localhost:8000/health |
@@ -73,7 +75,7 @@ exit
 
 | Item | Path |
 |------|------|
-| Frontend | `.../Module 2/frontend/` |
+| Frontend | `CoreServices/frontend/` |
 | Backend | `.../Module 2/backend/` |
 | DB Script | `.../backend/check_db.py` |
 | Uploads | `.../backend/uploads/` |

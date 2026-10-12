@@ -9,21 +9,31 @@ import {
   apiFetch,
   SESSION_ENDED,
   SERVICE_UNAVAILABLE,
+  NOTICE,
+  RATE_LIMITED,
+  PAYLOAD_TOO_LARGE,
+  isHandledGlobally,
+  apiError,
 } from './apiErrors.js';
 
 let sessionEvents;
 let unavailableEvents;
+let noticeEvents;
 
 const listen = () => {
   sessionEvents = [];
   unavailableEvents = [];
+  noticeEvents = [];
   const onEnded = (e) => sessionEvents.push(e.detail);
   const onUnavailable = (e) => unavailableEvents.push(e.detail);
+  const onNotice = (e) => noticeEvents.push(e.detail);
   authEvents.addEventListener(SESSION_ENDED, onEnded);
   authEvents.addEventListener(SERVICE_UNAVAILABLE, onUnavailable);
+  authEvents.addEventListener(NOTICE, onNotice);
   return () => {
     authEvents.removeEventListener(SESSION_ENDED, onEnded);
     authEvents.removeEventListener(SERVICE_UNAVAILABLE, onUnavailable);
+    authEvents.removeEventListener(NOTICE, onNotice);
   };
 };
 
@@ -111,4 +121,54 @@ test('apiFetch applies the same handling to fetch() responses', async () => {
   } finally {
     globalThis.fetch = realFetch;
   }
+});
+
+test('429 RATE_LIMITED shows the server message once and does not log out', async () => {
+  const api = fakeAxios();
+  installAuthInterceptor(api);
+  const body = { success: false, code: 'RATE_LIMITED', message: 'Too many requests. Please try again in 14 minutes.', retryAfterSeconds: 840 };
+  await Promise.all([api.fail(429, body), api.fail(429, body), api.fail(429, body)]);
+  assert.equal(handleApiError(429, body), RATE_LIMITED);
+  assert.equal(sessionEvents.length, 0);
+  assert.equal(noticeEvents.length, 1);
+  assert.deepEqual(noticeEvents[0], { code: 'RATE_LIMITED', message: body.message });
+});
+
+test('413 PAYLOAD_TOO_LARGE on CV upload shows a clear message, no logout', () => {
+  assert.equal(
+    handleApiError(413, { code: 'PAYLOAD_TOO_LARGE', message: 'The file is too large. CV files must be 5 MB or smaller.' }),
+    PAYLOAD_TOO_LARGE,
+  );
+  assert.equal(sessionEvents.length, 0);
+  assert.equal(noticeEvents[0].message, 'The file is too large. CV files must be 5 MB or smaller.');
+
+  resetAuthErrorState();
+  handleApiError(413, {}); // e.g. a 413 from another proxy with no JSON body
+  assert.match(noticeEvents.at(-1).message, /too large/i);
+});
+
+test('502 UPSTREAM_UNAVAILABLE and 504 UPSTREAM_TIMEOUT show "service unavailable" without logging out', () => {
+  assert.equal(handleApiError(502, { code: 'UPSTREAM_UNAVAILABLE' }), SERVICE_UNAVAILABLE);
+  resetAuthErrorState();
+  assert.equal(handleApiError(504, { code: 'UPSTREAM_TIMEOUT' }), SERVICE_UNAVAILABLE);
+  assert.equal(sessionEvents.length, 0);
+  assert.equal(unavailableEvents.length, 2);
+  assert.ok(unavailableEvents.every((e) => e.message === 'Service temporarily unavailable, try again'));
+});
+
+test('isHandledGlobally lets pages skip duplicate toasts', () => {
+  assert.equal(isHandledGlobally({ response: { status: 429, data: { code: 'RATE_LIMITED' } } }), true);
+  assert.equal(isHandledGlobally({ status: 413 }), true);
+  assert.equal(isHandledGlobally({ response: { status: 504 } }), true);
+  assert.equal(isHandledGlobally({ response: { status: 503, data: { code: 'AUTH_UNAVAILABLE' } } }), true);
+  assert.equal(isHandledGlobally({ response: { status: 400 } }), false);
+  assert.equal(isHandledGlobally({ response: { status: 401, data: {} } }), false);
+});
+
+test('apiError keeps status and code for fetch() callers', () => {
+  const err = apiError({ status: 413 }, { code: 'PAYLOAD_TOO_LARGE', message: 'Too big' }, 'fallback');
+  assert.equal(err.message, 'Too big');
+  assert.equal(err.status, 413);
+  assert.equal(err.code, 'PAYLOAD_TOO_LARGE');
+  assert.equal(apiError({ status: 500 }, {}, 'Failed to upload CV').message, 'Failed to upload CV');
 });

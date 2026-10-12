@@ -133,36 +133,17 @@ sudo systemctl start mongod
 
 ### 2. Configure environment variables
 
-Copy each `.env.example` to `.env` and fill in the required values.
+Copy each `.env.example` to `.env` and fill in the required values. The examples
+are the reference for every variable (each one is commented):
 
-**`CoreServices/.env`**
-```env
-MONGODB_URI=mongodb://localhost:27017/muqayyim
-JWT_SECRET=pick-a-long-random-string    # must match AIServices
-EMAIL_USER=your-gmail@gmail.com
-EMAIL_PASSWORD=your-16-char-app-password
-# GITHUB_TOKEN=ghp_...  (optional — raises rate limit to 5000 req/hour)
-```
+| File | Key values to set |
+|---|---|
+| `CoreServices/.env` | `MONGODB_URL`, `CORE_DB_NAME=core_db`, `JWT_SECRET` (must match AIServices), `INTERNAL_API_KEY` (must match AIServices), `EMAIL_USER`, `EMAIL_PASSWORD`, optional `GITHUB_TOKEN` |
+| `AIServices/backend/.env` | `MONGODB_URL`, `AI_DB_NAME=ai_db`, `JWT_SECRET`, `INTERNAL_API_KEY`, `CORE_SERVICE_URL=http://localhost:3000`, `AUTH_CACHE_TTL_SECONDS` |
+| `API Gateway/.env` | `AUTH_SERVICE_URL=http://localhost:3000`, `CV_SERVICE_URL=http://localhost:8000`, `FRONTEND_URL=http://localhost:5174`, rate-limit / size / timeout settings (defaults are fine) |
+| `CoreServices/frontend/.env` | `VITE_API_BASE_URL=http://localhost:8080` (the frontend talks only to the gateway) |
 
-**`AIServices/backend/.env`**
-```env
-HOST=0.0.0.0
-PORT=8000
-DEBUG=False
-MONGODB_URL=mongodb://localhost:27017
-DATABASE_NAME=muqayyim
-SECRET_KEY=same-string-you-used-in-coreservices
-CORS_ORIGINS=["http://localhost:5173","http://localhost:8080"]
-```
-
-**`API Gateway/.env`**
-```env
-PORT=8080
-AUTH_SERVICE_URL=http://localhost:3000
-CV_SERVICE_URL=http://localhost:8000
-MODULE1_FRONTEND_URL=http://localhost:5174
-MODULE2_FRONTEND_URL=http://localhost:5173
-```
+Generate secrets with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
 
 > **Gmail App Password:** Google Account → Security → 2-Step Verification → App Passwords.
 

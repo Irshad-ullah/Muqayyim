@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authService } from '../services/authService.js';
 import toast from 'react-hot-toast';
+import { isHandledGlobally } from '../services/apiErrors.js';
 import { Mail, BrainCircuit, ArrowLeft, CheckCircle2, SendHorizonal } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
@@ -20,8 +21,9 @@ export default function ForgotPasswordPage() {
       await authService.forgotPassword(email);
       setSent(true);
       toast.success('Reset link sent if the email exists');
-    } catch {
-      toast.error('Something went wrong. Please try again.');
+    } catch (err) {
+      // Rate limits (429) and gateway errors are already shown centrally.
+      if (!isHandledGlobally(err)) toast.error('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }

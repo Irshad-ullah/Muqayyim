@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { installAuthInterceptor } from './apiErrors.js';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { API_BASE_URL } from '../config/api.js';
 
 export const adminAPI = axios.create({
   baseURL: `${API_BASE_URL}/api/admin`,

@@ -7,6 +7,7 @@ import { cvService } from '../services/cvService.js';
 import { authService } from '../services/authService.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { CV_STATUS } from '../constants/cvStatus.js';
+import { isHandledGlobally } from '../services/apiErrors.js';
 import toast from 'react-hot-toast';
 
 const STEPS = ['upload', 'parsing', 'review', 'success'];
@@ -30,6 +31,15 @@ const CVParsingPage = () => {
   // CV status is owned by the server (AIServices pushes it to CoreServices).
   // The page only re-reads it; it never sets it.
   const pollRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // Clearing the input's value lets the user pick the same file again.
+  const clearSelectedFile = () => {
+    setFile(null);
+    setUploadProgress(0);
+    setUploadError(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const syncStatus = async () => {
     try {
@@ -106,7 +116,7 @@ const CVParsingPage = () => {
       clearInterval(interval);
       const msg = err.message || 'Upload failed';
       setUploadError(msg);
-      toast.error(msg);
+      if (!isHandledGlobally(err)) toast.error(msg);
     } finally {
       setUploading(false);
     }
@@ -131,7 +141,7 @@ const CVParsingPage = () => {
     } catch (err) {
       const msg = err.message || 'Parsing failed';
       setError(msg);
-      toast.error(msg);
+      if (!isHandledGlobally(err)) toast.error(msg);
       setCurrentStep('upload');
     } finally {
       setIsLoading(false);
@@ -208,7 +218,7 @@ const CVParsingPage = () => {
     } catch (err) {
       const msg = err.message || 'Failed to save data';
       setError(msg);
-      toast.error(msg);
+      if (!isHandledGlobally(err)) toast.error(msg);
     } finally {
       setIsLoading(false);
     }
@@ -220,9 +230,7 @@ const CVParsingPage = () => {
     setParsedData(null);
     setEditedData(null);
     setError(null);
-    setFile(null);
-    setUploadProgress(0);
-    setUploadError(null);
+    clearSelectedFile();
   };
 
   const stepIndex = (s) => STEPS.indexOf(s);
@@ -294,13 +302,14 @@ const CVParsingPage = () => {
                 <div
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
-                  onClick={() => document.getElementById('cv-file-input').click()}
+                  onClick={() => fileInputRef.current?.click()}
                   className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
                     file ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400'
                   }`}
                 >
                   <input
                     id="cv-file-input"
+                    ref={fileInputRef}
                     type="file"
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) validateAndSetFile(f); }}
                     accept=".pdf,.doc,.docx"
@@ -324,7 +333,7 @@ const CVParsingPage = () => {
                         <p className="font-semibold text-gray-800">{file.name}</p>
                         <p className="text-sm text-gray-600">{(file.size / 1024).toFixed(2)} KB</p>
                       </div>
-                      <button onClick={() => { setFile(null); setUploadProgress(0); setUploadError(null); }} className="text-red-600 hover:text-red-800 font-medium" disabled={uploading}>
+                      <button onClick={(e) => { e.stopPropagation(); clearSelectedFile(); }} className="text-red-600 hover:text-red-800 font-medium" disabled={uploading}>
                         Remove
                       </button>
                     </div>

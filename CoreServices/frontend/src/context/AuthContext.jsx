@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { authService } from '../services/authService.js';
-import { authEvents, SESSION_ENDED, SERVICE_UNAVAILABLE } from '../services/apiErrors.js';
+import { authEvents, SESSION_ENDED, SERVICE_UNAVAILABLE, NOTICE } from '../services/apiErrors.js';
 
 const AuthContext = createContext(null);
 
@@ -45,11 +45,17 @@ export function AuthProvider({ children }) {
     const onUnavailable = (e) => {
       toast.error(e.detail?.message || 'Service temporarily unavailable, try again', { id: 'auth-unavailable' });
     };
+    // Rate limits (429) and oversized requests (413): show, never log out.
+    const onNotice = (e) => {
+      toast.error(e.detail?.message, { id: e.detail?.code, duration: 6000 });
+    };
     authEvents.addEventListener(SESSION_ENDED, onSessionEnded);
     authEvents.addEventListener(SERVICE_UNAVAILABLE, onUnavailable);
+    authEvents.addEventListener(NOTICE, onNotice);
     return () => {
       authEvents.removeEventListener(SESSION_ENDED, onSessionEnded);
       authEvents.removeEventListener(SERVICE_UNAVAILABLE, onUnavailable);
+      authEvents.removeEventListener(NOTICE, onNotice);
     };
   }, []);
 

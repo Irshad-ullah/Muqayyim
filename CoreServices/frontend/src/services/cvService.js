@@ -1,5 +1,5 @@
-import { apiFetch } from './apiErrors.js';
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+import { apiFetch, apiError } from './apiErrors.js';
+import { API_BASE_URL } from '../config/api.js';
 
 const getAuthToken = () => localStorage.getItem('token');
 
@@ -14,8 +14,8 @@ export const uploadCV = async (file) => {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to upload CV');
+    const body = await response.json().catch(() => ({}));
+    throw apiError(response, body, 'Failed to upload CV');
   }
   return response.json();
 };
@@ -30,8 +30,8 @@ export const parseCV = async (fileId) => {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to parse CV');
+    const body = await response.json().catch(() => ({}));
+    throw apiError(response, body, 'Failed to parse CV');
   }
 
   const payload = await response.json();
@@ -52,8 +52,8 @@ export const verifyCVData = async (fileId, verifiedData) => {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to save CV data');
+    const body = await response.json().catch(() => ({}));
+    throw apiError(response, body, 'Failed to save CV data');
   }
   return response.json();
 };
@@ -66,8 +66,8 @@ export const getLatestCV = async () => {
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || error.message || 'Failed to fetch CV data');
+    const body = await response.json().catch(() => ({}));
+    throw apiError(response, body, 'Failed to fetch CV data');
   }
   return response.json();
 };

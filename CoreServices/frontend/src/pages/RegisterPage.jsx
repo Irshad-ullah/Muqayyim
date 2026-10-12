@@ -13,6 +13,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import PasswordChecklist from '../components/PasswordChecklist.jsx';
+import { isHandledGlobally } from '../services/apiErrors.js';
 import { validatePassword } from '../constants/passwordPolicy.js';
 
 // Maps an API error to inline field errors (400 field errors, 409 email).
@@ -75,7 +76,7 @@ export default function RegisterPage() {
       const msg = err?.response?.data?.message || 'Registration failed';
       const inline = serverFieldErrors(err);
       if (Object.keys(inline).length) setErrors(inline);
-      else toast.error(msg);
+      else if (!isHandledGlobally(err)) toast.error(msg);
     } finally {
       setLoading(false);
     }

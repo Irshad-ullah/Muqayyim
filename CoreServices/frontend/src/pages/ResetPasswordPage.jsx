@@ -12,6 +12,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import PasswordChecklist from '../components/PasswordChecklist.jsx';
+import { isHandledGlobally } from '../services/apiErrors.js';
 import { validatePassword } from '../constants/passwordPolicy.js';
 
 export default function ResetPasswordPage() {
@@ -55,7 +56,7 @@ export default function ResetPasswordPage() {
     } catch (err) {
       const data = err?.response?.data || {};
       const msg = data.message || 'Reset link is invalid or expired';
-      toast.error(msg);
+      if (!isHandledGlobally(err)) toast.error(msg);
       setErrors({ [data.field || 'password']: msg });
     } finally {
       setLoading(false);

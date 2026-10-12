@@ -1,5 +1,6 @@
 // Security event log. Console for now; switch the sink here (e.g. a database
-// collection) without touching callers. Never pass passwords or tokens.
+// collection) without touching callers. Callers include userId, ip and the
+// requestId (X-Request-Id) for correlation. Never pass passwords or tokens.
 export const logSecurityEvent = (event, details = {}) => {
   const entry = { event, at: new Date().toISOString(), ...details };
   console.warn(`[Security] ${event}`, JSON.stringify(entry));

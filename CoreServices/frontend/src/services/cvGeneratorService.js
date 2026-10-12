@@ -1,7 +1,7 @@
 // Module 4 — CV Generator API (CoreServices via the API Gateway).
 import { apiFetch } from './apiErrors.js';
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+import { API_BASE_URL as API_BASE } from '../config/api.js';
 const token = () => localStorage.getItem("token");
 
 const authHeaders = (json = false) => {

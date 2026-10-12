@@ -1,5 +1,7 @@
 # 🚀 Quick Start Guide - CV Parsing Module
 
+> **Note (2026-10):** the standalone CV-parsing frontend that used to live in `AIServices/frontend` (port 5173) has been removed. The only UI is `CoreServices/frontend` (http://localhost:5174, route `/cv-parsing`), and it talks to AIServices only through the API Gateway (http://localhost:8080).
+
 ## Starting the Application (Next Time)
 
 ### Step 1: Start MongoDB (Terminal 1)
@@ -19,13 +21,13 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 ### Step 3: Start Frontend (Terminal 3)
 ```powershell
-cd "c:\Users\Crown Tech\OneDrive - Higher Education Commission\Fyp2.0\Module 2\frontend"
+cd CoreServices/frontend
 npm run dev
 ```
-✅ Frontend ready at: http://localhost:5173
+✅ Frontend ready at: http://localhost:5174
 
 ### That's it! 🎉
-Open browser to http://localhost:5173 and start uploading CVs
+Open browser to http://localhost:5174 and start uploading CVs
 
 ---
 
@@ -123,7 +125,7 @@ docker ps | findstr mongo
 Invoke-WebRequest http://localhost:8000/health
 
 # Check if frontend is up
-Invoke-WebRequest http://localhost:5173 -UseBasicParsing
+Invoke-WebRequest http://localhost:5174 -UseBasicParsing
 ```
 
 ### Stop services

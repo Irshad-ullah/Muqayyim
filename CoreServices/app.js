@@ -6,6 +6,7 @@ import generatedCvRoutes from './backend/routes/generatedCvRoutes.js';
 import adminRoutes from './backend/admin/routes/adminRoutes.js';
 import internalRoutes from './backend/routes/internalRoutes.js';
 import { parseTrustProxy } from './backend/utils/trustProxy.js';
+import requestId from './backend/middleware/requestId.js';
 
 // Express app without DB connection or listen(), so tests can import it.
 const app = express();
@@ -15,17 +16,16 @@ const app = express();
 app.set('trust proxy', parseTrustProxy(process.env.TRUST_PROXY));
 
 // Middleware
+app.use(requestId);
 app.use(express.json({ limit: '1mb' }));
 app.use(
   cors({
     origin: [
       process.env.FRONTEND_URL || 'http://localhost:5174',
       process.env.API_GATEWAY_URL || 'http://localhost:8080',
-      'http://localhost:5173',
       'http://localhost:5175',
       'http://localhost:8080',
       'http://127.0.0.1:5174',
-      'http://127.0.0.1:5173',
       'http://127.0.0.1:8080',
     ],
     credentials: true,

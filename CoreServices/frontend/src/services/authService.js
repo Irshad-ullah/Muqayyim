@@ -1,15 +1,13 @@
 import axios from 'axios';
 import { installAuthInterceptor, resetAuthErrorState } from './apiErrors.js';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-const CV_SERVICE_URL = import.meta.env.VITE_CV_SERVICE_URL || 'http://localhost:8000';
+import { API_BASE_URL } from '../config/api.js';
 
 export const authAPI = axios.create({
   baseURL: `${API_BASE_URL}/api/auth`,
 });
 
 export const cvAPI = axios.create({
-  baseURL: `${CV_SERVICE_URL}/api/cv`,
+  baseURL: `${API_BASE_URL}/api/cv`,
 });
 
 const attachToken = (api) => {
@@ -29,18 +27,11 @@ attachToken(cvAPI);
 installAuthInterceptor(authAPI);
 installAuthInterceptor(cvAPI);
 
-// Cookies on localhost are shared across all ports (5174, 5173, 8080 …).
-// This is the only reliable cross-origin token bridge for a local dev setup.
-const COOKIE_NAME = 'muqayyim_jwt';
-const COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days — matches JWT_EXPIRE
-
-const setTokenCookie = (token) => {
-  document.cookie = `${COOKIE_NAME}=${token}; path=/; SameSite=Lax; max-age=${COOKIE_MAX_AGE}`;
-};
-
-const clearTokenCookie = () => {
-  document.cookie = `${COOKIE_NAME}=; path=/; SameSite=Lax; max-age=0`;
-};
+// The JWT used to be mirrored into a JS-readable `muqayyim_jwt` cookie for the
+// removed standalone CV-parsing app. Expire any copy left in existing browsers.
+if (typeof document !== 'undefined') {
+  document.cookie = 'muqayyim_jwt=; path=/; SameSite=Lax; max-age=0';
+}
 
 export const authService = {
   register: async (name, email, password, passwordConfirm) => {
@@ -48,7 +39,6 @@ export const authService = {
     if (data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      setTokenCookie(data.token);
       resetAuthErrorState();
     }
     return data;
@@ -59,7 +49,6 @@ export const authService = {
     if (data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      setTokenCookie(data.token);
       resetAuthErrorState();
     }
     return data;
@@ -68,7 +57,6 @@ export const authService = {
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    clearTokenCookie();
   },
 
   getProfile: async () => {
@@ -87,7 +75,6 @@ export const authService = {
     const { data } = await authAPI.put('/password', { currentPassword, newPassword });
     if (data.token) {
       localStorage.setItem('token', data.token);
-      setTokenCookie(data.token);
     }
     return data;
   },

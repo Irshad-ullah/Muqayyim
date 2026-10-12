@@ -1,4 +1,6 @@
 # 📊 Module 2 Implementation Summary
+
+> **Note (2026-10):** the standalone CV-parsing frontend that used to live in `AIServices/frontend` (port 5173) has been removed. The only UI is `CoreServices/frontend` (http://localhost:5174, route `/cv-parsing`), and it talks to AIServices only through the API Gateway (http://localhost:8080).
 ## Automated Skill Extraction (CV Parsing) - MUQAYYIM
 
 ---
@@ -208,9 +210,9 @@ uvicorn app.main:app --reload
 
 ### Frontend Setup (5 min)
 ```bash
-cd frontend
+cd ../CoreServices/frontend
 npm install
-echo "VITE_API_URL=http://localhost:8000" > .env
+echo "VITE_API_BASE_URL=http://localhost:8080" > .env
 npm run dev
 ```
 
@@ -349,7 +351,7 @@ docker-compose up
 | Resource | Link |
 |----------|------|
 | API Docs | http://localhost:8000/docs |
-| Frontend | http://localhost:5173 |
+| Frontend | http://localhost:5174 |
 | Health Check | http://localhost:8000/health |
 | README | See main README.md |
 

@@ -4,8 +4,10 @@ Module 2: Automated Skill Extraction (CV Parsing)
 """
 
 import logging
+import re
+import uuid
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
@@ -68,6 +70,22 @@ app.add_middleware(
     TrustedHostMiddleware,
     allowed_hosts=["localhost", "127.0.0.1", "*.example.com"]
 )
+
+
+# Request correlation id: the API Gateway sets X-Request-Id; a valid incoming
+# id is kept, otherwise one is generated. Available as request.state.request_id
+# and echoed on every response.
+_VALID_REQUEST_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9-]{7,63}$")
+
+
+@app.middleware("http")
+async def request_id_middleware(request: Request, call_next):
+    incoming = request.headers.get("x-request-id")
+    request_id = incoming if incoming and _VALID_REQUEST_ID.match(incoming) else str(uuid.uuid4())
+    request.state.request_id = request_id
+    response = await call_next(request)
+    response.headers["X-Request-Id"] = request_id
+    return response
 
 
 # Auth failures → { success, code, message } (same codes as CoreServices)

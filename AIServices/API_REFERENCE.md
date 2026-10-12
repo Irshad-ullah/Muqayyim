@@ -305,8 +305,6 @@ Default: No limits currently
 
 Allowed origins (from `.env`):
 - `http://localhost:3000`
-- `http://localhost:5173`
-
 Add more in `.env`: `CORS_ORIGINS=["http://example.com"]`
 
 ## WebSocket (Future)
