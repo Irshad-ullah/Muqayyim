@@ -19,7 +19,14 @@ import Navbar from '../components/Navbar.jsx';
 import CvEditor from '../components/cvgen/CvEditor.jsx';
 import DesignPanel from '../components/cvgen/DesignPanel.jsx';
 import CvPreview from '../components/cvgen/CvPreview.jsx';
-import { DEFAULT_SETTINGS, SECTION_KEYS, resolveAccent, validateCv } from '../components/cvgen/cvModel.js';
+import {
+  DEFAULT_SETTINGS,
+  SECTION_KEYS,
+  describeCvError,
+  missingForGeneration,
+  resolveAccent,
+  validateCv,
+} from '../components/cvgen/cvModel.js';
 import { cvGeneratorService } from '../services/cvGeneratorService.js';
 
 // Module 4 — AI-Powered CV Generator.
@@ -28,6 +35,43 @@ import { cvGeneratorService } from '../services/cvGeneratorService.js';
 //
 // The CV is generated deterministically from structured profile data; the
 // AI writing buttons inside the editor are placeholders for a later release.
+
+// FR6.8: where each missing piece is added (PROFILE_INCOMPLETE `missing`).
+const MISSING_LINKS = {
+  name: { label: 'Your name', to: '/profile', where: 'Account settings' },
+  experience: { label: 'Work experience', to: '/profile-builder?step=cv', where: 'Profile Builder › CV Import' },
+  education: { label: 'Education', to: '/profile-builder?step=cv', where: 'Profile Builder › CV Import' },
+  projects: { label: 'Projects', to: '/profile-builder?step=projects', where: 'Profile Builder › Projects' },
+  skills: { label: 'Skills', to: '/profile-builder?step=skills', where: 'Profile Builder › Skills' },
+};
+
+export function IncompleteNotice({ missing }) {
+  if (!missing?.length) return null;
+  const needsName = missing.includes('name');
+  const content = missing.filter((m) => m !== 'name');
+  return (
+    <div role="alert" data-testid="profile-incomplete" className="flex items-start gap-3 p-3 mb-4 bg-amber-50 rounded-xl border border-amber-200">
+      <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+      <div className="text-xs text-amber-800">
+        <p className="font-semibold">Your profile isn’t complete enough to generate a CV yet.</p>
+        <p className="mt-1">
+          A CV needs {needsName ? 'your name' : ''}{needsName && content.length ? ' and ' : ''}
+          {content.length ? 'at least one of: experience, education, projects or skills' : ''}. Add it here in the editor, or in your profile:
+        </p>
+        <ul className="mt-1 space-y-0.5">
+          {missing.map((key) => (
+            <li key={key}>
+              <Link to={MISSING_LINKS[key].to} className="font-medium text-indigo-700 hover:underline">
+                {MISSING_LINKS[key].label} →
+              </Link>{' '}
+              <span className="text-amber-700">({MISSING_LINKS[key].where})</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 const loadPdfExport = () => import('../components/cvgen/pdfExport.jsx');
 
@@ -66,6 +110,8 @@ export default function CVGeneratorPage() {
   const [exporting, setExporting] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [resnapshot, setResnapshot] = useState(false);
+  // Errors returned by the server on save (cleared on the next edit).
+  const [serverErrors, setServerErrors] = useState([]);
 
   const fromSource = (res) => ({
     title: res.data.personal?.fullName ? `${res.data.personal.fullName} CV` : 'My CV',
@@ -122,14 +168,20 @@ export default function CVGeneratorPage() {
   const patch = useCallback((p) => {
     setCv((c) => ({ ...c, ...p }));
     setDirty(true);
+    setServerErrors([]);
   }, []);
 
-  const errors = useMemo(() => (cv ? validateCv(cv.data) : []), [cv]);
-  const blocked = errors.length > 0;
+  const missing = useMemo(() => (cv ? missingForGeneration(cv.data) : []), [cv]);
+  const errors = useMemo(
+    () => (cv ? [...new Set([...validateCv(cv.data), ...serverErrors.map(describeCvError)])] : []),
+    [cv, serverErrors],
+  );
+  const blocked = errors.length > 0 || missing.length > 0;
+  const blockReason = missing.length ? 'Add the missing profile details first (see above).' : errors[0];
 
   // ── Actions ────────────────────────────────────────────────────────────────
   const handleSave = async () => {
-    if (blocked) return toast.error(errors[0]);
+    if (blocked) return toast.error(blockReason);
     setSaving(true);
     try {
       const payload = { title: cv.title, template: cv.template, settings: cv.settings, data: cv.data };
@@ -146,6 +198,9 @@ export default function CVGeneratorPage() {
         navigate(`/cv-generator/${saved._id}`, { replace: true });
       }
     } catch (err) {
+      // VALIDATION_ERROR → listed with the client checks; PROFILE_INCOMPLETE
+      // is already covered by the notice computed from the same rule.
+      if (err.code === 'VALIDATION_ERROR' && err.errors?.length) setServerErrors(err.errors);
       toast.error(err.message);
     } finally {
       setSaving(false);
@@ -153,7 +208,7 @@ export default function CVGeneratorPage() {
   };
 
   const withPdf = async (fn) => {
-    if (blocked) return toast.error(errors[0]);
+    if (blocked) return toast.error(blockReason);
     setExporting(true);
     try {
       const mod = await loadPdfExport();
@@ -306,7 +361,8 @@ export default function CVGeneratorPage() {
               </p>
             </div>
           )}
-          {blocked && (
+          <IncompleteNotice missing={missing} />
+          {errors.length > 0 && (
             <div className="flex items-start gap-3 p-3 mb-4 bg-red-50 rounded-xl border border-red-100">
               <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
               <div className="text-xs text-red-700">

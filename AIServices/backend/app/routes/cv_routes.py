@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from bson import ObjectId
 from datetime import datetime
 
+from app.utils.limits_fit import fit_parsed_to_limits
 from app.schemas.cv_schema import (
     CVUploadResponseSchema,
     CVParseResponseSchema,
@@ -220,6 +221,12 @@ async def parse_cv(
             exp.setdefault("confidence", 0.6)
             normalized_experience.append(exp)
         experience = normalized_experience
+
+        # Keep the parse result inside the profile limits so it can be
+        # verified unchanged (CVVerifyRequestSchema enforces them).
+        skills, education, experience, projects = fit_parsed_to_limits(
+            skills, education, experience, projects
+        )
 
         parsed_data = ParsedDataModel(
             skills=skills,

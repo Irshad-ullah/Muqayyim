@@ -1,4 +1,6 @@
 import { logError, isDbConnectionError } from '../services/errorLogger.js';
+import { isMongooseInputError } from '../validation/formatErrors.js';
+import { handleMongooseInputError } from '../utils/serverError.js';
 
 // Final Express error handler: anything thrown or passed to next(err) that no
 // route handled ends up here. Logged, then a clean 500 with a reference ID.
@@ -13,6 +15,9 @@ const errorHandler = (err, req, res, next) => {
       requestId: req.requestId,
     });
   }
+
+  // Mongoose CastError / ValidationError: client input, 400 (see serverError.js).
+  if (isMongooseInputError(err)) return handleMongooseInputError(res, req, err, 'unhandled');
 
   logError({
     level: isDbConnectionError(err) ? 'critical' : 'error',

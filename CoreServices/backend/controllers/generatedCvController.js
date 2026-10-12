@@ -1,13 +1,10 @@
 import mongoose from 'mongoose';
 import GeneratedCv from '../models/GeneratedCv.js';
 import { buildCvSource, DEFAULT_SETTINGS } from '../services/cvSourceService.js';
-import {
-  sanitizeCvData,
-  sanitizeSettings,
-  sanitizeTemplate,
-  validateCvData,
-} from '../utils/cvSanitizer.js';
+import { sanitizeCvData } from '../utils/cvSanitizer.js';
 import { handleServerError } from '../utils/serverError.js';
+import { incompleteMessage, missingForGeneration, validateCvPayload } from '../validation/cvSchemas.js';
+import { sendValidationError } from '../validation/formatErrors.js';
 
 const MAX_SAVED_CVS = 50;
 
@@ -19,15 +16,27 @@ const findOwned = (req) => {
   return GeneratedCv.findOne({ _id: id, userId: req.user.userId });
 };
 
-const readPayload = (body = {}) => {
-  const data = sanitizeCvData(body.data);
-  return {
-    title: typeof body.title === 'string' ? body.title.trim().slice(0, 120) : '',
-    template: sanitizeTemplate(body.template),
-    settings: sanitizeSettings(body.settings),
-    data,
-    errors: validateCvData(data),
-  };
+// Validates a create/update payload. Sends the 400 itself and returns null
+// when the payload is rejected:
+//   PROFILE_INCOMPLETE (FR6.8) — no name, or none of experience/education/
+//                                projects/skills; `missing` lists what to add.
+//   VALIDATION_ERROR           — field rules, with errors[].field paths.
+const readPayload = (req, res) => {
+  const result = validateCvPayload(req.body);
+  if (result.missing) {
+    res.status(400).json({
+      success: false,
+      code: 'PROFILE_INCOMPLETE',
+      message: incompleteMessage(result.missing),
+      missing: result.missing,
+    });
+    return null;
+  }
+  if (result.errors) {
+    sendValidationError(res, result.errors);
+    return null;
+  }
+  return result.value;
 };
 
 // GET /api/generated-cvs/source
@@ -41,7 +50,10 @@ export const getCvSource = async (req, res) => {
       data: clean,
       settings: DEFAULT_SETTINGS,
       sources,
-      warnings: validateCvData(clean),
+      warnings: (() => {
+        const missing = missingForGeneration(clean);
+        return missing.length ? [incompleteMessage(missing)] : [];
+      })(),
     });
   } catch (error) {
     return handleServerError(res, req, error, { module: 'cv-generator', message: 'Failed to load your profile data' });
@@ -75,10 +87,9 @@ export const getCv = async (req, res) => {
 // POST /api/generated-cvs
 export const createCv = async (req, res) => {
   try {
-    const { title, template, settings, data, errors } = readPayload(req.body);
-    if (errors.length) {
-      return res.status(400).json({ success: false, message: errors[0], errors });
-    }
+    const payload = readPayload(req, res);
+    if (!payload) return undefined;
+    const { title, template, settings, data } = payload;
 
     const count = await GeneratedCv.countDocuments({ userId: req.user.userId });
     if (count >= MAX_SAVED_CVS) {
@@ -91,7 +102,7 @@ export const createCv = async (req, res) => {
     const sources = req.body.sources || {};
     const cv = await GeneratedCv.create({
       userId: req.user.userId,
-      title: title || `${data.personal.fullName} CV`,
+      title: title || `${data.personal.fullName} CV`.slice(0, 100),
       template,
       settings,
       data,
@@ -108,10 +119,9 @@ export const createCv = async (req, res) => {
 // PUT /api/generated-cvs/:id
 export const updateCv = async (req, res) => {
   try {
-    const { title, template, settings, data, errors } = readPayload(req.body);
-    if (errors.length) {
-      return res.status(400).json({ success: false, message: errors[0], errors });
-    }
+    const payload = readPayload(req, res);
+    if (!payload) return undefined;
+    const { title, template, settings, data } = payload;
 
     const update = { template, settings, data };
     if (title) update.title = title;
@@ -126,7 +136,7 @@ export const updateCv = async (req, res) => {
 
     return res.status(200).json({ success: true, message: 'CV updated', cv });
   } catch (error) {
-    if (error.name === 'CastError') {
+    if (error.name === 'CastError' && error.path === '_id') {
       return res.status(404).json({ success: false, message: 'CV not found' });
     }
     return handleServerError(res, req, error, { module: 'cv-generator', message: 'Failed to update CV' });

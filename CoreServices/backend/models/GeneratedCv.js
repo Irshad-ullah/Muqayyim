@@ -122,7 +122,7 @@ const generatedCvSchema = new Schema(
       required: true,
       index: true,
     },
-    title: { type: String, required: true, trim: true, maxlength: 120 },
+    title: { type: String, required: true, trim: true, maxlength: 100 },
     template: { type: String, enum: TEMPLATES, default: 'classic' },
     settings: { type: settingsSchema, default: () => ({}) },
     data: { type: cvDataSchema, default: () => ({}) },

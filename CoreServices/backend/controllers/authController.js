@@ -5,6 +5,8 @@ import User from '../models/User.js';
 import { sendPasswordResetEmail, sendPasswordChangedEmail } from '../utils/emailService.js';
 import { validateEmail } from '../utils/emailValidator.js';
 import { validatePassword, passwordErrorResponse } from '../utils/passwordPolicy.js';
+import { checkName } from '../validation/rules.js';
+import { sendValidationError } from '../validation/formatErrors.js';
 import { MAX_LOGIN_ATTEMPTS, LOCK_DURATION_MS } from '../config/security.js';
 import { logSecurityEvent } from '../utils/securityLog.js';
 import { normalizeEmail, isDuplicateKeyError, emailInUse } from '../utils/apiErrors.js';
@@ -51,6 +53,9 @@ export const register = async (req, res) => {
       });
     }
 
+    const nameCheck = checkName(name);
+    if (nameCheck.error) return sendValidationError(res, [{ field: 'name', message: nameCheck.error }]);
+
     const passwordCheck = validatePassword(password);
     if (!passwordCheck.valid) {
       return res.status(400).json(passwordErrorResponse(passwordCheck.errors));
@@ -79,7 +84,7 @@ export const register = async (req, res) => {
 
     // Create user
     const user = await User.create({
-      name,
+      name: nameCheck.value,
       email,
       password,
     });
@@ -283,7 +288,11 @@ export const updateProfile = async (req, res) => {
     }
 
     // Update fields
-    if (name) user.name = name;
+    if (name !== undefined) {
+      const nameCheck = checkName(name);
+      if (nameCheck.error) return sendValidationError(res, [{ field: 'name', message: nameCheck.error }]);
+      user.name = nameCheck.value;
+    }
     if (email) user.email = email;
 
     user = await user.save();

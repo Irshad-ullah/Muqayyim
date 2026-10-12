@@ -56,8 +56,8 @@ export default function Step4Skills({ profile, onChange }) {
       // Put all merged back into manual, clear cv/extracted to avoid duplication
       onChange({ skills: { manual: res.skills, cv: [], extracted: [] } });
       toast.success(`${res.skills.length} skills merged and deduplicated`);
-    } catch {
-      toast.error('Merge failed');
+    } catch (err) {
+      toast.error(err.message || 'Merge failed');
     } finally {
       setMerging(false);
     }

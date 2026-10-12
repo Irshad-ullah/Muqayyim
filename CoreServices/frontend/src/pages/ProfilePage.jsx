@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar.jsx';
 import CVStatusBadge from '../components/CVStatusBadge.jsx';
 import { CV_STATUS, cvStatusLabel } from '../constants/cvStatus.js';
 import toast from 'react-hot-toast';
+import { checkName } from '../validation/profileRules.js';
 import PasswordChecklist from '../components/PasswordChecklist.jsx';
 import { validatePassword } from '../constants/passwordPolicy.js';
 import {
@@ -59,6 +60,7 @@ export default function ProfilePage() {
   const validate = () => {
     const e = {};
     if (!form.name.trim()) e.name = 'Name is required';
+    else if (checkName(form.name).error) e.name = checkName(form.name).error;
     if (!form.email) e.email = 'Email is required';
     else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Enter a valid email';
     setErrors(e);

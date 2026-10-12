@@ -1,4 +1,4 @@
-import { apiFetch } from './apiErrors.js';
+import { apiError, apiFetch } from './apiErrors.js';
 import { API_BASE_URL as API_BASE } from '../config/api.js';
 const token = () => localStorage.getItem("token");
 
@@ -22,7 +22,11 @@ export const saveProfile = async (data) => {
     headers: authHeaders(true),
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Failed to save profile");
+  if (!res.ok) {
+    // 400 VALIDATION_ERROR carries errors[{ field, message }] for the wizard.
+    const body = await res.json().catch(() => ({}));
+    throw apiError(res, body, "Failed to save profile");
+  }
   return res.json();
 };
 
@@ -33,8 +37,8 @@ export const fetchGitHub = async (username) => {
     body: JSON.stringify({ username }),
   });
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to fetch GitHub data");
+    const body = await res.json().catch(() => ({}));
+    throw apiError(res, body, "Failed to fetch GitHub data");
   }
   return res.json();
 };
@@ -50,7 +54,10 @@ export const extractSkills = async (
     headers: authHeaders(true),
     body: JSON.stringify({ cvSkills, githubSkills, manualSkills }),
   });
-  if (!res.ok) throw new Error("Failed to extract skills");
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw apiError(res, body, "Failed to extract skills");
+  }
   return res.json();
 };
 

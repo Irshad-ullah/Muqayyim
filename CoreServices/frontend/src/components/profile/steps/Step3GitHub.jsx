@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Github, Star, RefreshCw, CheckCircle2, Circle, ExternalLink, Check } from 'lucide-react';
 import { profileService } from '../../../services/profileService.js';
 import toast from 'react-hot-toast';
+import { checkGithubUsername } from '../../../validation/profileRules.js';
+import { errorFor } from '../../../validation/validateProfile.js';
+import { FieldError, errorClass, errorProps } from '../FieldErrors.jsx';
 
-export default function Step3GitHub({ profile, onChange }) {
+export default function Step3GitHub({ profile, onChange, errors = [] }) {
   const [username, setUsername]   = useState(profile.githubData?.username || '');
   const [repos, setRepos]         = useState(profile.githubData?.repos     || []);
   const [loading, setLoading]     = useState(false);
@@ -23,6 +26,9 @@ export default function Step3GitHub({ profile, onChange }) {
 
   const handleFetch = async () => {
     if (!username.trim()) return;
+    // Same username rule as the server, before calling GitHub.
+    const check = checkGithubUsername(username);
+    if (check.error) return setError(check.error);
     setLoading(true);
     setError('');
     setApplied(false);
@@ -99,7 +105,9 @@ export default function Step3GitHub({ profile, onChange }) {
               onChange={e => { setUsername(e.target.value); setApplied(false); }}
               onKeyDown={e => e.key === 'Enter' && handleFetch()}
               placeholder="e.g. octocat"
-              className="input-field pl-9"
+              maxLength={39}
+              className={`input-field pl-9${errorClass(error || errorFor(errors, 'githubData.username'))}`}
+              {...errorProps('github-username', error || errorFor(errors, 'githubData.username'))}
             />
           </div>
           <button
@@ -113,7 +121,7 @@ export default function Step3GitHub({ profile, onChange }) {
             {loading ? 'Fetching…' : 'Fetch'}
           </button>
         </div>
-        {error && <p className="text-xs text-red-500 mt-1.5">{error}</p>}
+        <FieldError id="err-github-username" message={error || errorFor(errors, 'githubData.username')} />
         {profile.githubData?.lastSynced && (
           <p className="text-xs text-slate-400 mt-1">
             Last synced: {new Date(profile.githubData.lastSynced).toLocaleString()}

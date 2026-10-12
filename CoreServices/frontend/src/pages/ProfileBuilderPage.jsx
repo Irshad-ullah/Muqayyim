@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   User,
   FileText,
@@ -23,6 +23,12 @@ import Step3GitHub from "../components/profile/steps/Step3GitHub.jsx";
 import Step4Skills from "../components/profile/steps/Step4Skills.jsx";
 import Step5Projects from "../components/profile/steps/Step5Projects.jsx";
 import Step6Review from "../components/profile/steps/Step6Review.jsx";
+import { StepErrors } from "../components/profile/FieldErrors.jsx";
+import {
+  sectionOf,
+  stepForField,
+  validateProfile,
+} from "../validation/validateProfile.js";
 
 // ── Wizard step definitions ───────────────────────────────────────────────────
 const STEPS = [
@@ -140,7 +146,13 @@ function StepIndicator({ current }) {
 export default function ProfileBuilderPage() {
   const { user } = useAuth();
   const [profile, setProfile] = useState(EMPTY);
-  const [step, setStep] = useState(0);
+  // ?step=skills opens that step (links from the CV generator).
+  const [searchParams] = useSearchParams();
+  const [step, setStep] = useState(() =>
+    Math.max(0, STEPS.findIndex((s) => s.id === searchParams.get("step"))),
+  );
+  // Field errors from the client checks or the server ([{ field, message }]).
+  const [fieldErrors, setFieldErrors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -178,7 +190,11 @@ export default function ProfileBuilderPage() {
   }, []);
 
   // Partial-update helper — each step calls onChange({field: value})
-  const handleChange = (updates) => setProfile((p) => ({ ...p, ...updates }));
+  // Editing a section clears its errors.
+  const handleChange = (updates) => {
+    setProfile((p) => ({ ...p, ...updates }));
+    setFieldErrors((errs) => errs.filter((e) => !(sectionOf(e.field) in updates)));
+  };
 
   const buildProjectSelection = () => {
     const cvProjects = (profile.projects?.cv || []).map((p) => ({
@@ -195,7 +211,8 @@ export default function ProfileBuilderPage() {
       description: p.description || "",
       url: p.url || "",
       technologies: [...(p.languages || []), ...(p.topics || [])].filter(
-        Boolean,
+        (t, i, all) =>
+          t && all.findIndex((x) => x?.toLowerCase() === t.toLowerCase()) === i,
       ),
     }));
 
@@ -218,20 +235,36 @@ export default function ProfileBuilderPage() {
     );
   };
 
+  // Shows errors inline and jumps to the first step that has one.
+  const showErrors = (errors) => {
+    setFieldErrors(errors);
+    const steps = errors.map((e) => STEPS.findIndex((s) => s.id === stepForField(e.field)));
+    const first = Math.min(...steps.filter((i) => i >= 0));
+    if (Number.isFinite(first)) setStep(first);
+    toast.error(
+      errors.length === 1
+        ? "Please fix the highlighted field before saving."
+        : `Please fix the ${errors.length} highlighted fields before saving.`,
+    );
+  };
+
   const handleSave = async () => {
+    const payload = {
+      ...profile,
+      projects: { ...profile.projects, selected: buildProjectSelection() },
+    };
+    // Same rules as the server (FR5.x); the server re-checks everything.
+    const clientErrors = validateProfile(payload);
+    if (clientErrors.length) return showErrors(clientErrors);
+
     setSaving(true);
     try {
-      const selectedProjects = buildProjectSelection();
-      await profileService.saveProfile({
-        ...profile,
-        projects: {
-          ...profile.projects,
-          selected: selectedProjects,
-        },
-      });
+      await profileService.saveProfile(payload);
+      setFieldErrors([]);
       toast.success("Profile saved successfully!");
-    } catch {
-      toast.error("Failed to save profile. Please try again.");
+    } catch (err) {
+      if (err.code === "VALIDATION_ERROR" && err.errors?.length) showErrors(err.errors);
+      else toast.error(err.message || "Failed to save profile. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -244,15 +277,15 @@ export default function ProfileBuilderPage() {
   const renderStep = () => {
     switch (step) {
       case 0:
-        return <Step1BasicInfo profile={profile} onChange={handleChange} />;
+        return <Step1BasicInfo profile={profile} onChange={handleChange} errors={fieldErrors} />;
       case 1:
-        return <Step2CVImport profile={profile} onChange={handleChange} />;
+        return <Step2CVImport profile={profile} onChange={handleChange} errors={fieldErrors} />;
       case 2:
-        return <Step3GitHub profile={profile} onChange={handleChange} />;
+        return <Step3GitHub profile={profile} onChange={handleChange} errors={fieldErrors} />;
       case 3:
-        return <Step4Skills profile={profile} onChange={handleChange} />;
+        return <Step4Skills profile={profile} onChange={handleChange} errors={fieldErrors} />;
       case 4:
-        return <Step5Projects profile={profile} onChange={handleChange} />;
+        return <Step5Projects profile={profile} onChange={handleChange} errors={fieldErrors} />;
       case 5:
         return <Step6Review profile={profile} />;
       default:
@@ -335,6 +368,9 @@ export default function ProfileBuilderPage() {
             </div>
 
             {/* Content */}
+            <StepErrors
+              errors={fieldErrors.filter((e) => stepForField(e.field) === currentStepMeta.id)}
+            />
             {renderStep()}
           </div>
 

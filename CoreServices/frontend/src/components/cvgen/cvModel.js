@@ -1,6 +1,17 @@
 // Module 4 — shared CV model: section metadata, design options and pure
 // formatting helpers used by the editor, the HTML preview and the PDF export.
 
+import { PROFILE_LIMITS as L } from '../../constants/profileLimits.js';
+import { checkPhone, cleanText, dedupeAcross, normalizeUrl } from '../../validation/profileRules.js';
+import {
+  checkCertification,
+  checkEducation,
+  checkExperience,
+  checkProject,
+  describeField,
+  makeCollector,
+} from '../../validation/validateProfile.js';
+
 export const SECTION_LABELS = {
   summary: 'Professional Summary',
   skills: 'Skills',
@@ -135,39 +146,69 @@ export const isValidUrl = (url) => {
   return /^[\w.-]+\.[a-z]{2,}(:\d+)?(\/\S*)?$/i.test(s);
 };
 
-// Mirrors the server-side validateCvData rules so problems show before saving.
-export const validateCv = (data) => {
-  const errors = [];
-  if (!data.personal?.fullName?.trim()) errors.push('Full name is required.');
-  [['linkedin', 'LinkedIn'], ['github', 'GitHub'], ['website', 'Website']].forEach(([k, label]) => {
-    if (!isValidUrl(data.personal?.[k])) errors.push(`${label} link is not a valid URL.`);
-  });
-  (data.projects || []).forEach((p, i) => {
-    if (!isValidUrl(p.url) || !isValidUrl(p.liveUrl)) errors.push(`Project #${i + 1} has an invalid URL.`);
-  });
-  (data.certifications || []).forEach((c, i) => {
-    if (!isValidUrl(c.url)) errors.push(`Certification #${i + 1} has an invalid URL.`);
-  });
-  const hasContent = ['summary', 'skills', 'experience', 'education', 'projects'].some((k) =>
-    sectionHasContent(k, data),
-  );
-  if (!hasContent) {
-    errors.push('Add at least one of: summary, skills, experience, education or projects.');
-  }
-  (data.experience || []).forEach((e, i) => {
-    if (!e.title?.trim() && !e.company?.trim()) errors.push(`Experience #${i + 1} needs a job title or company.`);
-  });
-  (data.education || []).forEach((e, i) => {
-    if (!e.institution?.trim() && !e.degree?.trim()) errors.push(`Education #${i + 1} needs a degree or institution.`);
-  });
-  (data.projects || []).forEach((p, i) => {
-    if (!p.name?.trim()) errors.push(`Project #${i + 1} needs a name.`);
-  });
-  (data.certifications || []).forEach((c, i) => {
-    if (!c.name?.trim()) errors.push(`Certification #${i + 1} needs a name.`);
-  });
-  return errors;
+// ── Validation (mirrors backend/validation/cvSchemas.js) ─────────────────────
+// FR6.8: a CV needs a name and at least one of these sections.
+export const CONTENT_SECTIONS = ['experience', 'education', 'projects', 'skills'];
+
+export const missingForGeneration = (data = {}) => {
+  const missing = [];
+  if (!data.personal?.fullName?.trim()) missing.push('name');
+  const has = (k) => (data[k] || []).length > 0;
+  const hasSkills = (data.skills || []).some((g) => (g.items || []).some((s) => s?.trim?.()));
+  if (!(has('experience') || has('education') || has('projects') || hasSkills)) missing.push(...CONTENT_SECTIONS);
+  return missing;
 };
+
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Field rules on the CV content; paths are relative to `data`
+// (the server reports the same paths prefixed with "data.").
+export const validateCvFields = (data = {}) => {
+  const c = makeCollector();
+  const pi = data.personal || {};
+  c.text('personal.fullName', pi.fullName, 'Full name', L.name.max);
+  const name = cleanText(pi.fullName || '');
+  if (name && name.length < L.name.min) c.add('personal.fullName', `Full name must be at least ${L.name.min} characters`);
+  c.text('personal.headline', pi.headline, 'Headline', L.cv.headlineMax);
+  const email = cleanText(pi.email || '');
+  if (email && (email.length > L.emailMax || !EMAIL.test(email))) c.add('personal.email', 'Must be a valid email address');
+  c.rule('personal.phone', checkPhone(pi.phone));
+  c.text('personal.location', pi.location, 'Location', L.locationMax);
+  ['linkedin', 'github', 'website'].forEach((k) => c.rule(`personal.${k}`, normalizeUrl(pi[k])));
+  c.text('summary', data.summary, 'Summary', L.summaryMax, { multiline: true });
+
+  const groups = c.list('skills', data.skills, L.cv.skillGroupsMax, 'Skill groups') || [];
+  const items = groups.map((g, i) => {
+    c.text(`skills[${i}].category`, g?.category, 'Category', L.cv.skillCategoryMax);
+    return c.strings(`skills[${i}].items`, g?.items, 'Skills') || [];
+  });
+  const total = dedupeAcross(items).reduce((n, l) => n + l.length, 0);
+  if (total > L.skill.maxTotal) c.add('skills', `You can have at most ${L.skill.maxTotal} skills (you have ${total})`);
+
+  c.list('experience', data.experience, L.maxEntries.experience, 'Experience entries')?.forEach((e, i) =>
+    checkExperience(c, `experience[${i}]`, e),
+  );
+  c.list('education', data.education, L.maxEntries.education, 'Education entries')?.forEach((e, i) => {
+    checkEducation(c, `education[${i}]`, e);
+    c.text(`education[${i}].location`, e?.location, 'Location', L.locationMax);
+    c.text(`education[${i}].details`, e?.details, 'Details', L.descriptionMax, { multiline: true });
+  });
+  c.list('projects', data.projects, L.maxEntries.projects, 'Projects')?.forEach((p, i) => {
+    checkProject(c, `projects[${i}]`, p);
+    c.rule(`projects[${i}].liveUrl`, normalizeUrl(p?.liveUrl));
+    c.strings(`projects[${i}].technologies`, p?.technologies, 'Technologies', L.technologiesMax);
+  });
+  c.list('certifications', data.certifications, L.maxEntries.certifications, 'Certifications')?.forEach((x, i) =>
+    checkCertification(c, `certifications[${i}]`, x),
+  );
+  return c.errors;
+};
+
+// Readable messages ("Experience 2 › End date: …") for the page's error list.
+export const describeCvError = ({ field, message }) =>
+  `${describeField(String(field).replace(/^data\./, ''))}: ${message}`;
+
+export const validateCv = (data) => validateCvFields(data).map(describeCvError);
 
 export const fileNameFor = (title) =>
   `${(title || 'CV').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_') || 'CV'}.pdf`;

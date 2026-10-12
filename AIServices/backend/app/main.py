@@ -17,6 +17,7 @@ from app.config.database import connect_to_mongo, close_mongo_connection
 from app.routes.cv_routes import router as cv_router
 from app.routes.internal_routes import router as internal_router
 from app.middleware.auth import register_auth_error_handler
+from app.middleware.validation import register_validation_error_handler
 from app.routes.internal_logs_routes import router as internal_logs_router
 from app.services.error_logger import is_db_connection_error, log_error, request_context
 
@@ -94,6 +95,9 @@ async def request_id_middleware(request: Request, call_next):
 
 # Auth failures → { success, code, message } (same codes as CoreServices)
 register_auth_error_handler(app)
+
+# Request validation → 422 { success, code: VALIDATION_ERROR, message, errors[] }
+register_validation_error_handler(app)
 
 
 # Global exception handler: log, then a clean 500 with a reference request ID.

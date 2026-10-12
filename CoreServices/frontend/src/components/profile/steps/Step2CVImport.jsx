@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { cvService } from "../../../services/cvService.js";
 import { CV_STATUS } from "../../../constants/cvStatus.js";
+import EntriesEditor from "../EntriesEditor.jsx";
+import { errorsUnder, splitDateRange } from "../../../validation/validateProfile.js";
 
 const SOURCE_BADGE = (
   <span className="inline-flex items-center gap-1 text-xs font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
@@ -60,7 +62,7 @@ function ToggleList({ title, items, selected, onToggle, renderItem }) {
   );
 }
 
-export default function Step2CVImport({ profile, onChange }) {
+function ImportPanel({ profile, onChange }) {
   const [parsedCv, setParsedCv] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -110,22 +112,33 @@ export default function Step2CVImport({ profile, onChange }) {
 
     const pick = (arr, sel) => (arr || []).filter((_, i) => sel[i]);
 
-    const newExp = pick(parsedCv.experience, selExp).map((e) => ({
-      title: e.title || "",
-      company: e.company || "",
-      description: e.duration || "",
-      startDate: "",
-      endDate: "",
-      current: false,
-      source: "cv",
-    }));
+    // Parsed durations ("Jan 2020 - Present") become real start/end dates;
+    // anything unrecognised stays in the description for the user to fix.
+    const newExp = pick(parsedCv.experience, selExp).map((e) => {
+      const range = splitDateRange(e.duration);
+      return {
+        title: e.title || "",
+        company: e.company || "",
+        description: range ? "" : e.duration || "",
+        startDate: range?.startDate || "",
+        endDate: range?.endDate || "",
+        current: range?.current || false,
+        source: "cv",
+      };
+    });
 
     const newEdu = pick(parsedCv.education, selEdu).map((e) => ({
       institution: e.institution || "",
       degree: e.degree || "",
       field: "",
-      startDate: e.year?.split("-")[0] || "",
-      endDate: e.year?.split("-")[1]?.trim() || "",
+      // "2019 - 2023" → start/end; a single year is the graduation year.
+      ...(() => {
+        const range = splitDateRange(e.year);
+        if (!range) return { startDate: "", endDate: "" };
+        return range.endDate || range.current
+          ? { startDate: range.startDate, endDate: range.endDate }
+          : { startDate: "", endDate: range.startDate };
+      })(),
       gpa: "",
       source: "cv",
     }));
@@ -237,8 +250,8 @@ export default function Step2CVImport({ profile, onChange }) {
             CV data available
           </p>
           <p className="text-xs text-blue-600 mt-0.5">
-            Select the items you want to import. You can edit them in later
-            steps.
+            Select the items you want to import. You can edit them below
+            after importing.
           </p>
         </div>
       </div>
@@ -353,6 +366,28 @@ export default function Step2CVImport({ profile, onChange }) {
         Import {totalSelected} Selected Item{totalSelected !== 1 ? "s" : ""} to
         Profile
       </button>
+    </div>
+  );
+}
+
+// Step 2: import from the parsed CV, then review/edit experience and
+// education (inline errors use the server's field paths).
+export default function Step2CVImport({ profile, onChange, errors = [] }) {
+  return (
+    <div className="space-y-8">
+      <ImportPanel profile={profile} onChange={onChange} />
+      <EntriesEditor
+        kind="experience"
+        items={profile.experience || []}
+        errors={errorsUnder(errors, "experience")}
+        onChange={(experience) => onChange({ experience })}
+      />
+      <EntriesEditor
+        kind="education"
+        items={profile.education || []}
+        errors={errorsUnder(errors, "education")}
+        onChange={(education) => onChange({ education })}
+      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import toast from 'react-hot-toast';
+import { checkName } from '../validation/profileRules.js';
 import {
   User,
   Mail,
@@ -45,6 +46,7 @@ export default function RegisterPage() {
   const fieldErrors = (f) => {
     const e = {};
     if (!f.name.trim()) e.name = 'Full name is required';
+    else if (checkName(f.name).error) e.name = checkName(f.name).error;
     if (!f.email.trim()) e.email = 'Email is required';
     else if (!/\S+@\S+\.\S+/.test(f.email.trim())) e.email = 'Enter a valid email';
     if (!f.password) e.password = 'Password is required';

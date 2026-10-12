@@ -1,4 +1,12 @@
 import mongoose from "mongoose";
+import { LIMITS } from "../validation/profileLimits.js";
+
+// Second line of defence: request schemas (validation/profileSchemas.js) run
+// first; these constraints apply on write (runValidators) and never on read,
+// so older documents that break a newer rule still load.
+const str = (max) => ({ type: String, default: "", maxlength: max });
+const req = (max) => ({ type: String, required: true, maxlength: max });
+const stringList = () => ({ type: [{ type: String, maxlength: LIMITS.skill.max }], default: [] });
 
 const profileSchema = new mongoose.Schema(
   {
@@ -10,63 +18,63 @@ const profileSchema = new mongoose.Schema(
       index: true,
     },
     personalInfo: {
-      phone: { type: String, default: "" },
-      location: { type: String, default: "" },
-      website: { type: String, default: "" },
-      linkedin: { type: String, default: "" },
-      github: { type: String, default: "" },
+      phone: str(LIMITS.phone.max),
+      location: str(LIMITS.locationMax),
+      website: str(LIMITS.urlMax),
+      linkedin: str(LIMITS.urlMax),
+      github: str(LIMITS.urlMax),
     },
-    summary: { type: String, default: "" },
+    summary: str(LIMITS.summaryMax),
     experience: [
       {
-        company: { type: String, required: true },
-        title: { type: String, required: true },
-        location: { type: String, default: "" },
-        startDate: { type: String, default: "" },
-        endDate: { type: String, default: "" },
+        company: req(LIMITS.orgMax),
+        title: req(LIMITS.titleMax),
+        location: str(LIMITS.locationMax),
+        startDate: str(7),
+        endDate: str(7),
         current: { type: Boolean, default: false },
-        description: { type: String, default: "" },
+        description: str(LIMITS.descriptionMax),
         source: { type: String, enum: ["manual", "cv"], default: "manual" },
       },
     ],
     education: [
       {
-        institution: { type: String, required: true },
-        degree: { type: String, default: "" },
-        field: { type: String, default: "" },
-        startDate: { type: String, default: "" },
-        endDate: { type: String, default: "" },
-        gpa: { type: String, default: "" },
+        institution: req(LIMITS.orgMax),
+        degree: req(LIMITS.titleMax),
+        field: str(LIMITS.titleMax),
+        startDate: str(7),
+        endDate: str(7),
+        gpa: str(LIMITS.gpaMax),
         source: { type: String, enum: ["manual", "cv"], default: "manual" },
       },
     ],
     skills: {
-      manual: { type: [String], default: [] },
-      cv: { type: [String], default: [] },
-      extracted: { type: [String], default: [] },
+      manual: stringList(),
+      cv: stringList(),
+      extracted: stringList(),
     },
     certifications: [
       {
-        name: { type: String, required: true },
-        issuer: { type: String, default: "" },
-        date: { type: String, default: "" },
-        url: { type: String, default: "" },
+        name: req(LIMITS.titleMax),
+        issuer: req(LIMITS.orgMax),
+        date: str(7),
+        url: str(LIMITS.urlMax),
       },
     ],
     projects: {
       manual: [
         {
-          name: { type: String, required: true },
-          description: { type: String, default: "" },
-          url: { type: String, default: "" },
-          technologies: { type: [String], default: [] },
+          name: req(LIMITS.titleMax),
+          description: str(LIMITS.descriptionMax),
+          url: str(LIMITS.urlMax),
+          technologies: stringList(),
         },
       ],
       github: [
         {
           repoId: Number,
           name: String,
-          description: { type: String, default: "" },
+          description: str(LIMITS.descriptionMax),
           url: String,
           languages: { type: [String], default: [] },
           topics: { type: [String], default: [] },
@@ -75,9 +83,9 @@ const profileSchema = new mongoose.Schema(
       ],
       cv: [
         {
-          name: { type: String, required: true },
-          description: { type: String, default: "" },
-          technologies: { type: [String], default: [] },
+          name: req(LIMITS.titleMax),
+          description: str(LIMITS.descriptionMax),
+          technologies: stringList(),
         },
       ],
       selected: [
@@ -87,15 +95,15 @@ const profileSchema = new mongoose.Schema(
             enum: ["manual", "github", "cv"],
             default: "manual",
           },
-          name: { type: String, required: true },
-          description: { type: String, default: "" },
-          url: { type: String, default: "" },
-          technologies: { type: [String], default: [] },
+          name: req(LIMITS.titleMax),
+          description: str(LIMITS.descriptionMax),
+          url: str(LIMITS.urlMax),
+          technologies: stringList(),
         },
       ],
     },
     githubData: {
-      username: { type: String, default: "" },
+      username: str(LIMITS.githubUsername.max),
       repos: { type: mongoose.Schema.Types.Mixed, default: [] },
       extractedSkills: { type: [String], default: [] },
       lastSynced: Date,

@@ -29,28 +29,28 @@ afterAll(dropTestDb);
 
 describe('registration', () => {
   test('weak password → 400 with field-level errors', async () => {
-    const res = await register({ name: 'A', email: uniqueEmail(), password: 'abcdefgh', passwordConfirm: 'abcdefgh' });
+    const res = await register({ name: 'Al', email: uniqueEmail(), password: 'abcdefgh', passwordConfirm: 'abcdefgh' });
     expect(res.status).toBe(400);
     expect(res.body.success).toBe(false);
     expect(res.body.errors).toEqual([{ field: 'password', message: 'Password must contain at least one number' }]);
   });
 
   test('strong password → 201', async () => {
-    const res = await register({ name: 'A', email: uniqueEmail(), password: STRONG, passwordConfirm: STRONG });
+    const res = await register({ name: 'Al', email: uniqueEmail(), password: STRONG, passwordConfirm: STRONG });
     expect(res.status).toBe(201);
     expect(res.body.token).toBeDefined();
   });
 
   test('duplicate email → 409 "Email already in use"', async () => {
     const { email } = await createUser();
-    const res = await register({ name: 'B', email, password: STRONG, passwordConfirm: STRONG });
+    const res = await register({ name: 'Bo', email, password: STRONG, passwordConfirm: STRONG });
     expect(res.status).toBe(409);
     expect(res.body.message).toBe('Email already in use');
   });
 
   test('duplicate with different case and spaces → 409', async () => {
     const { email } = await createUser();
-    const res = await register({ name: 'B', email: `  ${email.toUpperCase()} `, password: STRONG, passwordConfirm: STRONG });
+    const res = await register({ name: 'Bo', email: `  ${email.toUpperCase()} `, password: STRONG, passwordConfirm: STRONG });
     expect(res.status).toBe(409);
   });
 
@@ -63,7 +63,7 @@ describe('registration', () => {
   });
 
   test('email is stored normalised', async () => {
-    const res = await register({ name: 'N', email: '  MiXeD.Case@Example.COM ', password: STRONG, passwordConfirm: STRONG });
+    const res = await register({ name: 'Ny', email: '  MiXeD.Case@Example.COM ', password: STRONG, passwordConfirm: STRONG });
     expect(res.status).toBe(201);
     expect(res.body.user.email).toBe('mixed.case@example.com');
   });

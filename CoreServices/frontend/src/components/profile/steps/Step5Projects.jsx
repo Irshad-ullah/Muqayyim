@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Plus, X, Edit2, Github, FileText, Code2, ExternalLink } from 'lucide-react';
+import { PROFILE_LIMITS as L } from '../../../constants/profileLimits.js';
+import { errorsUnder, validateProfile } from '../../../validation/validateProfile.js';
+import { FieldError } from '../FieldErrors.jsx';
 
 const TAG_COLORS = [
   'bg-blue-100 text-blue-700 border-blue-200',
@@ -21,12 +24,13 @@ const getTechs   = (p)   => p.technologies || p.languages || p.topics || [];
 
 const EMPTY_NEW = { name: '', description: '', url: '', techStr: '' };
 
-export default function Step5Projects({ profile, onChange }) {
+export default function Step5Projects({ profile, onChange, errors = [] }) {
   const [editingKey, setEditingKey] = useState(null);
   const [editValues, setEditValues] = useState({});
   const [editTechStr, setEditTechStr] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [newForm, setNewForm] = useState(EMPTY_NEW);
+  const [newErrors, setNewErrors] = useState([]);
 
   const manualProjects = profile.projects?.manual || [];
   const githubProjects = profile.projects?.github || [];
@@ -51,7 +55,7 @@ export default function Step5Projects({ profile, onChange }) {
       const i = parseInt(id);
       onChange({ projects: { ...profile.projects, cv: cvProjects.map((p, idx) => idx === i ? { ...p, ...updated } : p) } });
     } else if (source === 'github') {
-      onChange({ projects: { ...profile.projects, github: githubProjects.map(r => r.repoId === id ? { ...r, ...updated } : r) } });
+      onChange({ projects: { ...profile.projects, github: githubProjects.map(r => String(r.repoId) === id ? { ...r, ...updated } : r) } });
     } else {
       const i = parseInt(id);
       onChange({ projects: { ...profile.projects, manual: manualProjects.map((p, idx) => idx === i ? { ...p, ...updated } : p) } });
@@ -72,18 +76,22 @@ export default function Step5Projects({ profile, onChange }) {
   const addProject = () => {
     if (!newForm.name.trim()) return;
     const p = { name: newForm.name.trim(), description: newForm.description, url: newForm.url, technologies: parseTechs(newForm.techStr) };
+    const found = validateProfile({ projects: { manual: [p] } });
+    if (found.length) return setNewErrors(found);
+    setNewErrors([]);
     onChange({ projects: { ...profile.projects, manual: [...manualProjects, p] } });
     setNewForm(EMPTY_NEW);
     setIsAdding(false);
   };
 
-  const renderCard = (p, source, key, onRemove) => {
+  const renderCard = (p, source, key, onRemove, index) => {
     const isEditing = editingKey === key;
+    const cardErrors = errorsUnder(errors, `projects.${source}[${index}]`);
     const badge     = SOURCE_BADGE[source];
     const techs     = getTechs(p);
 
     return (
-      <div key={key} className="border border-slate-200 rounded-xl bg-white p-4">
+      <div key={key} data-testid={`project-${source}-${index}`} className={`border rounded-xl bg-white p-4 ${cardErrors.length ? 'border-red-300' : 'border-slate-200'}`}>
         {isEditing ? (
           <div className="space-y-3">
             <input
@@ -153,6 +161,9 @@ export default function Step5Projects({ profile, onChange }) {
                   <ExternalLink className="w-3 h-3" /> View
                 </a>
               )}
+              {cardErrors.map((e) => (
+                <FieldError key={e.field + e.message} message={e.message} />
+              ))}
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
               <button onClick={() => startEdit(key, p)}
@@ -181,7 +192,7 @@ export default function Step5Projects({ profile, onChange }) {
             <FileText className="w-4 h-4 text-blue-500" /> Projects from CV
           </h3>
           <div className="space-y-2">
-            {cvProjects.map((p, i) => renderCard(p, 'cv', `cv:${i}`, () => removeProject('cv', i)))}
+            {cvProjects.map((p, i) => renderCard(p, 'cv', `cv:${i}`, () => removeProject('cv', i), i))}
           </div>
         </section>
       )}
@@ -192,7 +203,7 @@ export default function Step5Projects({ profile, onChange }) {
             <Github className="w-4 h-4 text-purple-500" /> GitHub Repositories
           </h3>
           <div className="space-y-2">
-            {githubProjects.map(r => renderCard(r, 'github', `github:${r.repoId}`, () => removeProject('github', r.repoId)))}
+            {githubProjects.map((r, i) => renderCard(r, 'github', `github:${r.repoId}`, () => removeProject('github', r.repoId), i))}
           </div>
         </section>
       )}
@@ -202,7 +213,7 @@ export default function Step5Projects({ profile, onChange }) {
           <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <Code2 className="w-4 h-4 text-slate-500" /> Manual Projects
           </h3>
-          {!isAdding && (
+          {!isAdding && manualProjects.length < L.maxEntries.projects && (
             <button onClick={() => setIsAdding(true)}
               className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-700 font-medium">
               <Plus className="w-4 h-4" /> Add Project
@@ -215,7 +226,7 @@ export default function Step5Projects({ profile, onChange }) {
         )}
 
         <div className="space-y-2 mb-3">
-          {manualProjects.map((p, i) => renderCard(p, 'manual', `manual:${i}`, () => removeProject('manual', i)))}
+          {manualProjects.map((p, i) => renderCard(p, 'manual', `manual:${i}`, () => removeProject('manual', i), i))}
         </div>
 
         {isAdding && (
@@ -233,6 +244,9 @@ export default function Step5Projects({ profile, onChange }) {
             <input value={newForm.techStr}
               onChange={e => setNewForm(f => ({ ...f, techStr: e.target.value }))}
               placeholder="Technologies (comma-separated)" className="input-field" />
+            {newErrors.map((e) => (
+              <FieldError key={e.field + e.message} message={e.message} />
+            ))}
             {newForm.techStr && (
               <div className="flex flex-wrap gap-1">
                 {parseTechs(newForm.techStr).map((t, i) => (
@@ -245,7 +259,7 @@ export default function Step5Projects({ profile, onChange }) {
                 className="flex-1 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium disabled:opacity-50">
                 Add Project
               </button>
-              <button onClick={() => { setIsAdding(false); setNewForm(EMPTY_NEW); }}
+              <button onClick={() => { setIsAdding(false); setNewForm(EMPTY_NEW); setNewErrors([]); }}
                 className="flex-1 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors text-sm">
                 Cancel
               </button>

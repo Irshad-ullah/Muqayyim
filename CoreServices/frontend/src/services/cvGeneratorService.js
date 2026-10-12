@@ -1,5 +1,5 @@
 // Module 4 — CV Generator API (CoreServices via the API Gateway).
-import { apiFetch } from './apiErrors.js';
+import { apiError, apiFetch } from './apiErrors.js';
 
 import { API_BASE_URL as API_BASE } from '../config/api.js';
 const token = () => localStorage.getItem("token");
@@ -13,7 +13,8 @@ const authHeaders = (json = false) => {
 const request = async (path, options = {}, fallback = "Request failed") => {
   const res = await apiFetch(`${API_BASE}/api/generated-cvs${path}`, options);
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(body.message || fallback);
+  // Keeps code/errors/missing (VALIDATION_ERROR, PROFILE_INCOMPLETE) for the page.
+  if (!res.ok) throw apiError(res, body, fallback);
   return body;
 };
 

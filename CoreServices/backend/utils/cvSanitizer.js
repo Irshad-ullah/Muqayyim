@@ -1,14 +1,12 @@
 import crypto from 'crypto';
-import { TEMPLATES, SECTION_KEYS } from '../models/GeneratedCv.js';
 
-// Module 4 — whitelists and normalizes client-supplied CV payloads.
+// Module 4 — normalises the CV *source* assembled from the profile and the
+// parsed CV (GET /api/generated-cvs/source). Saved CVs are validated strictly
+// by validation/cvSchemas.js instead.
 // Unknown fields are dropped, strings are trimmed/capped, control characters
 // removed, and links restricted to http(s) so nothing like `javascript:` can
 // end up in the preview or the PDF.
 
-export const ACCENT_COLORS = ['slate', 'black', 'navy', 'teal', 'burgundy'];
-// Older palette keys mapped to their nearest professional colour.
-const LEGACY_ACCENTS = { blue: 'navy', indigo: 'navy', green: 'teal' };
 const MAX_ITEMS = 50;
 const MAX_TECH = 40;
 
@@ -102,54 +100,4 @@ export const sanitizeCvData = (d = {}) => {
       url: safeUrl(c?.url),
     })),
   };
-};
-
-export const sanitizeSettings = (s = {}) => {
-  const order = stringList(s.sectionOrder, SECTION_KEYS.length, 40).filter((k) =>
-    SECTION_KEYS.includes(k),
-  );
-  // Keep every section present exactly once, in the user's order first.
-  const sectionOrder = [...order, ...SECTION_KEYS.filter((k) => !order.includes(k))];
-  return {
-    accentColor: ACCENT_COLORS.includes(LEGACY_ACCENTS[s.accentColor] || s.accentColor)
-      ? LEGACY_ACCENTS[s.accentColor] || s.accentColor
-      : 'slate',
-    fontFamily: ['sans', 'serif'].includes(s.fontFamily) ? s.fontFamily : 'sans',
-    fontSize: ['small', 'medium', 'large'].includes(s.fontSize) ? s.fontSize : 'medium',
-    groupSkills: s.groupSkills !== false,
-    sectionOrder,
-    hiddenSections: stringList(s.hiddenSections, SECTION_KEYS.length, 40).filter((k) =>
-      SECTION_KEYS.includes(k),
-    ),
-  };
-};
-
-export const sanitizeTemplate = (t) => (TEMPLATES.includes(t) ? t : 'classic');
-
-// Minimum content needed to produce a meaningful CV (FR6.8).
-export const validateCvData = (data) => {
-  const errors = [];
-  if (!data.personal.fullName) errors.push('Full name is required.');
-  const hasContent =
-    data.summary ||
-    data.skills.length ||
-    data.experience.length ||
-    data.education.length ||
-    data.projects.length;
-  if (!hasContent) {
-    errors.push('Add at least one of: summary, skills, experience, education or projects.');
-  }
-  data.experience.forEach((e, i) => {
-    if (!e.title && !e.company) errors.push(`Experience #${i + 1} needs a job title or company.`);
-  });
-  data.education.forEach((e, i) => {
-    if (!e.institution && !e.degree) errors.push(`Education #${i + 1} needs a degree or institution.`);
-  });
-  data.projects.forEach((p, i) => {
-    if (!p.name) errors.push(`Project #${i + 1} needs a name.`);
-  });
-  data.certifications.forEach((c, i) => {
-    if (!c.name) errors.push(`Certification #${i + 1} needs a name.`);
-  });
-  return errors;
 };

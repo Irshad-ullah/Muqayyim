@@ -1,45 +1,55 @@
 import React, { useState } from 'react';
-import { Phone, MapPin, Linkedin, Github, Plus, X, Award } from 'lucide-react';
+import { Phone, MapPin, Linkedin, Github, Globe, Plus, X, Award } from 'lucide-react';
+import { PROFILE_LIMITS as L } from '../../../constants/profileLimits.js';
+import { errorFor, errorsUnder, validateProfile } from '../../../validation/validateProfile.js';
+import { FieldError, errorClass, errorProps } from '../FieldErrors.jsx';
 
-export default function Step1BasicInfo({ profile, onChange }) {
-  const [newCert, setNewCert] = useState({ name: '', issuer: '', date: '', url: '' });
+const EMPTY_CERT = { name: '', issuer: '', date: '', url: '' };
+
+export default function Step1BasicInfo({ profile, onChange, errors = [] }) {
+  const [newCert, setNewCert] = useState(EMPTY_CERT);
   const [addingCert, setAddingCert] = useState(false);
+  const [certErrors, setCertErrors] = useState([]);
 
   const updateInfo = (field, value) =>
     onChange({ personalInfo: { ...profile.personalInfo, [field]: value } });
 
+  // FR5.6: name and issuer required, http(s) link, date not in the future.
+  // Checked with the same rules as the server before the entry is added.
   const addCert = () => {
-    if (!newCert.name.trim()) return;
-    onChange({ certifications: [...profile.certifications, { ...newCert }] });
-    setNewCert({ name: '', issuer: '', date: '', url: '' });
+    const found = validateProfile({ certifications: [newCert] }).map((e) => ({
+      ...e,
+      field: e.field.replace('certifications[0]', 'new'),
+    }));
+    if (found.length) return setCertErrors(found);
+    onChange({ certifications: [...(profile.certifications || []), { ...newCert }] });
+    setNewCert(EMPTY_CERT);
+    setCertErrors([]);
     setAddingCert(false);
   };
 
   const removeCert = (i) =>
     onChange({ certifications: profile.certifications.filter((_, idx) => idx !== i) });
 
-  const [phoneError, setPhoneError] = useState('');
-
-  const handlePhoneChange = (raw) => {
-    // Allow only digits; preserve a leading + for country code
-    const hasPlus = raw.startsWith('+');
-    const digits  = raw.replace(/\D/g, '');
-    const filtered = (hasPlus ? '+' : '') + digits;
-    updateInfo('phone', filtered);
-
-    if (filtered && (digits.length < 7 || digits.length > 15)) {
-      setPhoneError('Enter a valid phone number (7–15 digits)');
-    } else {
-      setPhoneError('');
-    }
-  };
+  // FR5.1: digits, spaces, + - ( ) only; 7–20 characters with at least 7 digits.
+  const handlePhoneChange = (raw) => updateInfo('phone', raw.replace(/[^0-9+()\- ]/g, ''));
 
   const infoFields = [
-    { key: 'phone',    Icon: Phone,    type: 'tel',  placeholder: '+1 (555) 000-0000',          label: 'Phone' },
-    { key: 'location', Icon: MapPin,   type: 'text', placeholder: 'City, Country',               label: 'Location' },
-    { key: 'linkedin', Icon: Linkedin, type: 'text', placeholder: 'linkedin.com/in/yourprofile', label: 'LinkedIn' },
-    { key: 'github',   Icon: Github,   type: 'text', placeholder: 'github.com/yourusername',     label: 'GitHub' },
+    { key: 'phone',    Icon: Phone,    type: 'tel',  placeholder: '+1 (555) 000-0000',          label: 'Phone',    max: L.phone.max },
+    { key: 'location', Icon: MapPin,   type: 'text', placeholder: 'City, Country',               label: 'Location', max: L.locationMax },
+    { key: 'linkedin', Icon: Linkedin, type: 'text', placeholder: 'linkedin.com/in/yourprofile', label: 'LinkedIn', max: L.urlMax },
+    { key: 'github',   Icon: Github,   type: 'text', placeholder: 'github.com/yourusername',     label: 'GitHub',   max: L.urlMax },
+    { key: 'website',  Icon: Globe,    type: 'text', placeholder: 'https://yourportfolio.com',   label: 'Website',  max: L.urlMax },
   ];
+
+  const certFields = [
+    { key: 'name',   label: 'Name *',   placeholder: 'AWS Certified Developer', max: L.titleMax },
+    { key: 'issuer', label: 'Issuer *', placeholder: 'Amazon Web Services',     max: L.orgMax },
+    { key: 'date',   label: 'Date',     placeholder: '2024-01 or Jan 2024' },
+    { key: 'url',    label: 'URL',      placeholder: 'https://…',               max: L.urlMax },
+  ];
+
+  const summaryError = errorFor(errors, 'summary');
 
   return (
     <div className="space-y-8">
@@ -48,28 +58,32 @@ export default function Step1BasicInfo({ profile, onChange }) {
       <section>
         <h3 className="text-base font-semibold text-slate-800 mb-4">Contact &amp; Links</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {infoFields.map(({ key, Icon, type, placeholder, label }) => (
-            <div key={key}>
-              <label className="label">{label}</label>
-              <div className="relative">
-                <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                <input
-                  type={type}
-                  value={profile.personalInfo?.[key] || ''}
-                  onChange={(e) =>
-                    key === 'phone'
-                      ? handlePhoneChange(e.target.value)
-                      : updateInfo(key, e.target.value)
-                  }
-                  placeholder={placeholder}
-                  className={`input-field pl-9 ${key === 'phone' && phoneError ? 'border-red-400 focus:ring-red-400' : ''}`}
-                />
+          {infoFields.map(({ key, Icon, type, placeholder, label, max }) => {
+            const message = errorFor(errors, `personalInfo.${key}`);
+            return (
+              <div key={key}>
+                <label className="label" htmlFor={`pi-${key}`}>{label}</label>
+                <div className="relative">
+                  <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  <input
+                    id={`pi-${key}`}
+                    type={type}
+                    maxLength={max}
+                    value={profile.personalInfo?.[key] || ''}
+                    onChange={(e) =>
+                      key === 'phone'
+                        ? handlePhoneChange(e.target.value)
+                        : updateInfo(key, e.target.value)
+                    }
+                    placeholder={placeholder}
+                    className={`input-field pl-9${errorClass(message)}`}
+                    {...errorProps(`pi-${key}`, message)}
+                  />
+                </div>
+                <FieldError id={`err-pi-${key}`} message={message} />
               </div>
-              {key === 'phone' && phoneError && (
-                <p className="text-xs text-red-500 mt-1">{phoneError}</p>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -84,11 +98,13 @@ export default function Step1BasicInfo({ profile, onChange }) {
           value={profile.summary || ''}
           onChange={(e) => onChange({ summary: e.target.value })}
           placeholder="e.g. Full-stack developer with 3+ years experience building scalable web applications…"
-          className="input-field resize-none"
-          maxLength={1000}
+          className={`input-field resize-none${errorClass(summaryError)}`}
+          maxLength={L.summaryMax}
+          {...errorProps('summary', summaryError)}
         />
+        <FieldError id="err-summary" message={summaryError} />
         <p className="text-xs text-slate-400 mt-1 text-right">
-          {(profile.summary || '').length} / 1000
+          {(profile.summary || '').length} / {L.summaryMax}
         </p>
       </section>
 
@@ -96,59 +112,72 @@ export default function Step1BasicInfo({ profile, onChange }) {
       <section>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-base font-semibold text-slate-800">Certifications</h3>
-          <button
-            onClick={() => setAddingCert(true)}
-            className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
-          >
-            <Plus className="w-4 h-4" /> Add
-          </button>
+          {(profile.certifications?.length || 0) < L.maxEntries.certifications && (
+            <button
+              onClick={() => setAddingCert(true)}
+              className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+            >
+              <Plus className="w-4 h-4" /> Add
+            </button>
+          )}
         </div>
 
-        {profile.certifications?.length === 0 && !addingCert && (
+        {!profile.certifications?.length && !addingCert && (
           <p className="text-sm text-slate-400 italic">No certifications added yet.</p>
         )}
 
         <div className="space-y-2">
-          {profile.certifications?.map((c, i) => (
-            <div key={i} className="flex items-start justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-              <div>
-                <p className="text-sm font-semibold text-slate-800">{c.name}</p>
-                {c.issuer && <p className="text-xs text-slate-500">{c.issuer}{c.date ? ` · ${c.date}` : ''}</p>}
-                {c.url && <a href={c.url} target="_blank" rel="noreferrer" className="text-xs text-indigo-600 hover:underline">{c.url}</a>}
+          {profile.certifications?.map((c, i) => {
+            const certErrs = errorsUnder(errors, `certifications[${i}]`);
+            return (
+              <div
+                key={i}
+                data-testid={`certification-${i}`}
+                className={`flex items-start justify-between p-3 bg-slate-50 rounded-xl border ${certErrs.length ? 'border-red-300' : 'border-slate-100'}`}
+              >
+                <div>
+                  <p className="text-sm font-semibold text-slate-800">{c.name}</p>
+                  {c.issuer && <p className="text-xs text-slate-500">{c.issuer}{c.date ? ` · ${c.date}` : ''}</p>}
+                  {c.url && <a href={c.url} target="_blank" rel="noreferrer" className="text-xs text-indigo-600 hover:underline">{c.url}</a>}
+                  {certErrs.map((e) => (
+                    <FieldError key={e.field + e.message} message={e.message} />
+                  ))}
+                  {certErrs.length > 0 && (
+                    <p className="text-xs text-slate-500 mt-1">Remove it and add it again with the details fixed.</p>
+                  )}
+                </div>
+                <button onClick={() => removeCert(i)} aria-label={`Remove certification ${i + 1}`} className="text-slate-300 hover:text-red-500 ml-3 flex-shrink-0">
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-              <button onClick={() => removeCert(i)} className="text-slate-300 hover:text-red-500 ml-3 flex-shrink-0">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {addingCert && (
           <div className="mt-3 p-4 border border-indigo-100 bg-indigo-50/40 rounded-xl space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="label">Name *</label>
-                <input value={newCert.name} onChange={(e) => setNewCert(p => ({ ...p, name: e.target.value }))}
-                  placeholder="AWS Certified Developer" className="input-field" />
-              </div>
-              <div>
-                <label className="label">Issuer</label>
-                <input value={newCert.issuer} onChange={(e) => setNewCert(p => ({ ...p, issuer: e.target.value }))}
-                  placeholder="Amazon Web Services" className="input-field" />
-              </div>
-              <div>
-                <label className="label">Date</label>
-                <input value={newCert.date} onChange={(e) => setNewCert(p => ({ ...p, date: e.target.value }))}
-                  placeholder="Jan 2024" className="input-field" />
-              </div>
-              <div>
-                <label className="label">URL</label>
-                <input value={newCert.url} onChange={(e) => setNewCert(p => ({ ...p, url: e.target.value }))}
-                  placeholder="https://…" className="input-field" />
-              </div>
+              {certFields.map(({ key, label, placeholder, max }) => {
+                const message = errorFor(certErrors, `new.${key}`);
+                return (
+                  <div key={key}>
+                    <label className="label" htmlFor={`cert-${key}`}>{label}</label>
+                    <input
+                      id={`cert-${key}`}
+                      value={newCert[key]}
+                      maxLength={max}
+                      onChange={(e) => setNewCert((p) => ({ ...p, [key]: e.target.value }))}
+                      placeholder={placeholder}
+                      className={`input-field${errorClass(message)}`}
+                      {...errorProps(`cert-${key}`, message)}
+                    />
+                    <FieldError id={`err-cert-${key}`} message={message} />
+                  </div>
+                );
+              })}
             </div>
             <div className="flex gap-2 justify-end">
-              <button onClick={() => setAddingCert(false)} className="btn-secondary px-4 py-2 text-sm w-auto">Cancel</button>
+              <button onClick={() => { setAddingCert(false); setCertErrors([]); }} className="btn-secondary px-4 py-2 text-sm w-auto">Cancel</button>
               <button onClick={addCert} className="btn-primary px-4 py-2 text-sm w-auto">
                 <Award className="w-4 h-4" /> Add Certification
               </button>

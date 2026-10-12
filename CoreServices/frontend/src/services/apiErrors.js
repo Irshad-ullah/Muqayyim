@@ -129,5 +129,8 @@ export const apiError = (response, body, fallback) => {
   const error = new Error(body?.message || body?.detail || fallback);
   error.status = response.status;
   error.code = body?.code;
+  // VALIDATION_ERROR: [{ field, message }]; PROFILE_INCOMPLETE: ['name', ...]
+  if (Array.isArray(body?.errors)) error.errors = body.errors;
+  if (Array.isArray(body?.missing)) error.missing = body.missing;
   return error;
 };
