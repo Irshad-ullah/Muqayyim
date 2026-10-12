@@ -1,7 +1,8 @@
 import crypto from 'crypto';
 import User from '../models/User.js';
 import Profile from '../models/Profile.js';
-import CvData from '../models/CvData.js';
+import { getLatestParsedCv } from './aiServiceClient.js';
+import { CV_STATUS } from '../constants/cvStatus.js';
 import { SECTION_KEYS } from '../models/GeneratedCv.js';
 
 // Module 4 — CV source adapter.
@@ -12,7 +13,9 @@ import { SECTION_KEYS } from '../models/GeneratedCv.js';
 // Precedence per section:
 //   1. Profile Builder data (Module 3) — includes CV items the user reviewed
 //      and imported, manual entries and selected GitHub projects.
-//   2. Parsed CV record (Module 2) — used only for sections the profile lacks.
+//   2. Parsed CV record (Module 2, fetched from AIServices over internal HTTP)
+//      — used only for sections the profile lacks. If AIServices is down the
+//      CV is built from profile data alone.
 
 const newId = () => crypto.randomBytes(6).toString('hex');
 const clean = (v) => (typeof v === 'string' ? v.trim() : '');
@@ -259,10 +262,12 @@ export const buildCvSource = async (userId) => {
   const [user, profile, cvRecord] = await Promise.all([
     User.findById(userId).lean(),
     Profile.findOne({ userId }).lean(),
-    CvData.findOne({ user_id: userId.toString() }, null, { sort: { upload_date: -1 } }).lean(),
+    getLatestParsedCv(userId.toString()),
   ]);
 
-  const parsed = cvRecord?.parsed_data || null;
+  // Only completed parses carry usable data (a processing/failed record may be stale).
+  const usable = [CV_STATUS.PARSED, CV_STATUS.VERIFIED].includes(cvRecord?.parsing_status);
+  const parsed = usable ? cvRecord.parsed_data || null : null;
   const pi = profile?.personalInfo || {};
   const githubUser = clean(profile?.githubData?.username);
 

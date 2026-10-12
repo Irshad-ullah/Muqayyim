@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcryptjs from 'bcryptjs';
+import { CV_STATUS, CV_STATUS_VALUES } from '../constants/cvStatus.js';
 
 const userSchema = new mongoose.Schema(
   {
@@ -32,8 +33,8 @@ const userSchema = new mongoose.Schema(
     },
     cvStatus: {
       type: String,
-      enum: ['Not Uploaded', 'Uploaded', 'Processing', 'Verified'],
-      default: 'Not Uploaded',
+      enum: CV_STATUS_VALUES,
+      default: CV_STATUS.NOT_UPLOADED,
     },
     isActive: {
       type: Boolean,

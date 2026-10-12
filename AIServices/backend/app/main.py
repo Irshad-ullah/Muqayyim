@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 from app.config.settings import settings
 from app.config.database import connect_to_mongo, close_mongo_connection
 from app.routes.cv_routes import router as cv_router
+from app.routes.internal_routes import router as internal_router
 
 # Configure logging
 logging.basicConfig(
@@ -81,6 +82,7 @@ async def global_exception_handler(request, exc):
 
 # Include routers
 app.include_router(cv_router)
+app.include_router(internal_router)  # service-to-service, X-Internal-Key
 
 
 # Root endpoint

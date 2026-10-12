@@ -11,7 +11,7 @@ from app.config.settings import settings
 
 # MongoDB connection string
 MONGODB_URL = settings.MONGODB_URL
-DATABASE_NAME = settings.DATABASE_NAME
+DATABASE_NAME = settings.AI_DB_NAME
 
 # Global database instance
 db_client = None

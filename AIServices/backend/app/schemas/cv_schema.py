@@ -6,6 +6,8 @@ from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel, Field
 
+from app.constants.cv_status import PARSED, VERIFIED
+
 
 class SkillSchema(BaseModel):
     name:       str   = Field(..., min_length=1, max_length=100)
@@ -49,7 +51,7 @@ class CVUploadResponseSchema(BaseModel):
 
 class CVParseResponseSchema(BaseModel):
     file_id:        str
-    parsing_status: str             = "completed"
+    parsing_status: str             = PARSED
     parsed_data:    ParsedDataSchema
     message:        str             = "CV parsed successfully"
 
@@ -62,7 +64,7 @@ class CVVerifyRequestSchema(BaseModel):
 class CVVerifyResponseSchema(BaseModel):
     file_id:        str
     user_id:        str
-    parsing_status: str = "verified"
+    parsing_status: str = VERIFIED
     message:        str = "CV data verified and saved"
 
 

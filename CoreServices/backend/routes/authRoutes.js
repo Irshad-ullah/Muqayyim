@@ -7,7 +7,6 @@ import {
   forgotPassword,
   resetPassword,
   getCVStatus,
-  updateCVStatus,
 } from '../controllers/authController.js';
 import authMiddleware from '../middleware/auth.js';
 
@@ -23,8 +22,7 @@ router.post('/reset-password/:token', resetPassword);
 router.get('/profile', authMiddleware, getProfile);
 router.put('/profile', authMiddleware, updateProfile);
 
-// CV Status routes
+// CV status is read-only here; it is written only by AIServices via /internal routes.
 router.get('/cv-status', authMiddleware, getCVStatus);
-router.patch('/cv-status', authMiddleware, updateCVStatus);
 
 export default router;

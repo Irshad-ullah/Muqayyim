@@ -91,11 +91,6 @@ export const authService = {
     return data;
   },
 
-  updateCVStatus: async (cvStatus) => {
-    const { data } = await authAPI.patch('/cv-status', { cvStatus });
-    return data;
-  },
-
   getStoredUser: () => {
     try {
       const u = localStorage.getItem('user');

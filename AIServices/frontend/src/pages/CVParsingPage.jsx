@@ -5,32 +5,8 @@ import ParsedSummary from "../components/ParsedSummary";
 import { cvService } from "../services/cvService";
 import toast from "react-hot-toast";
 
-// VITE_API_URL points to the API Gateway (port 8080).
-// The gateway routes /api/auth/* → Module 1, so we can update CV status from here.
-const GATEWAY_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
-
-const readToken = () => {
-  const match = document.cookie.match(/(?:^|;\s*)muqayyim_jwt=([^;]+)/);
-  return match ? match[1] : localStorage.getItem("authToken");
-};
-
-// Notify Module 1 of a CV status change. Fire-and-forget — never breaks the CV flow.
-const updateCVStatus = async (cvStatus) => {
-  const token = readToken();
-  if (!token) return;
-  try {
-    await fetch(`${GATEWAY_URL}/api/auth/cv-status`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ cvStatus }),
-    });
-  } catch {
-    // Non-critical — CV parsing continues regardless
-  }
-};
+// CV status is owned by the server: AIServices pushes it to CoreServices
+// during upload/parse/verify, so this page never sets it.
 
 /**
  * CVParsingPage Component
@@ -55,7 +31,6 @@ const CVParsingPage = () => {
       setCurrentStep("parsing");
       setError(null);
       toast.success("File uploaded! Starting CV parsing...");
-      await updateCVStatus("Uploaded");
 
       // Trigger NLP parsing
       await triggerParsing(uploadResponse.file_id);
@@ -89,7 +64,6 @@ const CVParsingPage = () => {
       setParsedData(data);
       setEditedData(JSON.parse(JSON.stringify(data))); // Deep copy for editing
       setCurrentStep("review");
-      await updateCVStatus("Processing");
       toast.success("CV parsed successfully!");
     } catch (err) {
       const errorMsg = err.message || "Parsing failed";
@@ -208,7 +182,6 @@ const CVParsingPage = () => {
     try {
       setIsLoading(true);
       await cvService.verifyCVData(fileId, editedData);
-      await updateCVStatus("Verified");
       setCurrentStep("success");
       toast.success("CV data saved to your profile!");
     } catch (err) {

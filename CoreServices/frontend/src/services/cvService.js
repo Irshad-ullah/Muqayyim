@@ -57,5 +57,19 @@ export const verifyCVData = async (fileId, verifiedData) => {
   return response.json();
 };
 
-export const cvService = { uploadCV, parseCV, verifyCVData };
+// Latest parsed CV for the logged-in user, served by AIServices (user from JWT).
+// Returns { cvData, status, uploadDate } — cvData is null when nothing is parsed yet.
+export const getLatestCV = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/cv/latest`, {
+    headers: { Authorization: `Bearer ${getAuthToken()}` },
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || error.message || 'Failed to fetch CV data');
+  }
+  return response.json();
+};
+
+export const cvService = { uploadCV, parseCV, verifyCVData, getLatestCV };
 export default cvService;

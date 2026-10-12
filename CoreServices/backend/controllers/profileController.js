@@ -1,5 +1,4 @@
 import Profile from "../models/Profile.js";
-import CvData from "../models/CvData.js";
 import {
   fetchUserRepos,
   extractSkillsFromRepos,
@@ -87,35 +86,6 @@ export const fetchGitHubRepos = async (req, res) => {
     console.error("GitHub fetch error:", error);
     const status = error.message.includes("not found") ? 404 : 502;
     return res.status(status).json({ success: false, message: error.message });
-  }
-};
-
-// GET /api/profile/cv-data
-// Reads the most-recent CV parse record for this user from the AI Service's collection.
-export const getCVData = async (req, res) => {
-  try {
-    const userId = req.user.userId.toString();
-    const record = await CvData.findOne({ user_id: userId }, null, {
-      sort: { upload_date: -1 },
-    });
-
-    if (!record) {
-      return res
-        .status(200)
-        .json({ success: true, cvData: null, status: null });
-    }
-
-    return res.status(200).json({
-      success: true,
-      cvData: record.parsed_data,
-      status: record.parsing_status,
-      uploadDate: record.upload_date,
-    });
-  } catch (error) {
-    console.error("Get CV data error:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch CV data" });
   }
 };
 

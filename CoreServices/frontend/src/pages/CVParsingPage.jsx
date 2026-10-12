@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CheckCircle, AlertCircle, Upload, ArrowLeft, X } from 'lucide-react';
 import Navbar from '../components/Navbar.jsx';
@@ -6,6 +6,7 @@ import ParsedSummary from '../components/cv/ParsedSummary.jsx';
 import { cvService } from '../services/cvService.js';
 import { authService } from '../services/authService.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { CV_STATUS } from '../constants/cvStatus.js';
 import toast from 'react-hot-toast';
 
 const STEPS = ['upload', 'parsing', 'review', 'success'];
@@ -26,15 +27,39 @@ const CVParsingPage = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState(null);
 
-  const updateCVStatus = async (cvStatus) => {
+  // CV status is owned by the server (AIServices pushes it to CoreServices).
+  // The page only re-reads it; it never sets it.
+  const pollRef = useRef(null);
+
+  const syncStatus = async () => {
     try {
-      await authService.updateCVStatus(cvStatus);
-      const stored = authService.getStoredUser() || {};
-      updateUser({ ...stored, cvStatus });
+      const { user: fresh } = await authService.getProfile();
+      if (fresh) updateUser(fresh);
+      return fresh?.cvStatus;
     } catch {
-      // Non-critical
+      return null; // non-critical; the dashboard re-reads it too
     }
   };
+
+  const stopPolling = () => {
+    if (pollRef.current) clearInterval(pollRef.current);
+    pollRef.current = null;
+  };
+
+  // Poll every 2s until the server status settles (default: parsed or failed),
+  // giving up after 30s. AIServices may deliver the status slightly after the
+  // HTTP response if CoreServices is slow, so the page waits for it here.
+  const PARSE_SETTLED = [CV_STATUS.PARSED, CV_STATUS.FAILED, CV_STATUS.VERIFIED];
+  const startPolling = (settled = PARSE_SETTLED) => {
+    stopPolling();
+    const startedAt = Date.now();
+    pollRef.current = setInterval(async () => {
+      const status = await syncStatus();
+      if (settled.includes(status) || Date.now() - startedAt >= 30000) stopPolling();
+    }, 2000);
+  };
+
+  useEffect(() => stopPolling, []);
 
   const ALLOWED = ['pdf', 'doc', 'docx'];
   const MAX_SIZE = 5 * 1024 * 1024;
@@ -75,7 +100,7 @@ const CVParsingPage = () => {
       setCurrentStep('parsing');
       setError(null);
       toast.success('File uploaded! Starting CV parsing…');
-      await updateCVStatus('Uploaded');
+      await syncStatus();
       await triggerParsing(data.file_id);
     } catch (err) {
       clearInterval(interval);
@@ -90,6 +115,7 @@ const CVParsingPage = () => {
   const triggerParsing = async (fid) => {
     try {
       setIsLoading(true);
+      startPolling();
       const data = await cvService.parseCV(fid);
 
       if (data.skills) {
@@ -101,7 +127,6 @@ const CVParsingPage = () => {
       setParsedData(data);
       setEditedData(JSON.parse(JSON.stringify(data)));
       setCurrentStep('review');
-      await updateCVStatus('Processing');
       toast.success('CV parsed successfully!');
     } catch (err) {
       const msg = err.message || 'Parsing failed';
@@ -110,6 +135,9 @@ const CVParsingPage = () => {
       setCurrentStep('upload');
     } finally {
       setIsLoading(false);
+      // Read the final server status now; keep polling only if it hasn't settled yet.
+      const status = await syncStatus();
+      if (PARSE_SETTLED.includes(status)) stopPolling();
     }
   };
 
@@ -173,7 +201,8 @@ const CVParsingPage = () => {
     try {
       setIsLoading(true);
       await cvService.verifyCVData(fileId, editedData);
-      await updateCVStatus('Verified');
+      const status = await syncStatus();
+      if (status !== CV_STATUS.VERIFIED) startPolling([CV_STATUS.VERIFIED, CV_STATUS.FAILED]);
       setCurrentStep('success');
       toast.success('CV data saved to your profile!');
     } catch (err) {

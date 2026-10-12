@@ -7,7 +7,8 @@ import {
   AlertCircle,
   Info,
 } from "lucide-react";
-import { profileService } from "../../../services/profileService.js";
+import { cvService } from "../../../services/cvService.js";
+import { CV_STATUS } from "../../../constants/cvStatus.js";
 
 const SOURCE_BADGE = (
   <span className="inline-flex items-center gap-1 text-xs font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
@@ -60,7 +61,7 @@ function ToggleList({ title, items, selected, onToggle, renderItem }) {
 }
 
 export default function Step2CVImport({ profile, onChange }) {
-  const [cvData, setCvData] = useState(null);
+  const [parsedCv, setParsedCv] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [imported, setImported] = useState(false);
@@ -74,9 +75,11 @@ export default function Step2CVImport({ profile, onChange }) {
     setLoading(true);
     setError("");
     try {
-      const res = await profileService.getCVData();
-      if (res.cvData) {
-        setCvData({
+      const res = await cvService.getLatestCV();
+      // Only completed parses are importable (a processing/failed record may be stale).
+      const importable = [CV_STATUS.PARSED, CV_STATUS.VERIFIED].includes(res.status);
+      if (res.cvData && importable) {
+        setParsedCv({
           ...res.cvData,
           uploadDate: res.uploadDate,
           parsingStatus: res.status,
@@ -103,11 +106,11 @@ export default function Step2CVImport({ profile, onChange }) {
   }, [fetch]);
 
   const applyImport = () => {
-    if (!cvData) return;
+    if (!parsedCv) return;
 
     const pick = (arr, sel) => (arr || []).filter((_, i) => sel[i]);
 
-    const newExp = pick(cvData.experience, selExp).map((e) => ({
+    const newExp = pick(parsedCv.experience, selExp).map((e) => ({
       title: e.title || "",
       company: e.company || "",
       description: e.duration || "",
@@ -117,7 +120,7 @@ export default function Step2CVImport({ profile, onChange }) {
       source: "cv",
     }));
 
-    const newEdu = pick(cvData.education, selEdu).map((e) => ({
+    const newEdu = pick(parsedCv.education, selEdu).map((e) => ({
       institution: e.institution || "",
       degree: e.degree || "",
       field: "",
@@ -127,9 +130,9 @@ export default function Step2CVImport({ profile, onChange }) {
       source: "cv",
     }));
 
-    const newCvSkills = pick(cvData.skills, selSkill).map((s) => s.name);
+    const newCvSkills = pick(parsedCv.skills, selSkill).map((s) => s.name);
 
-    const newCvProj = pick(cvData.projects || [], selProj).map((p) => ({
+    const newCvProj = pick(parsedCv.projects || [], selProj).map((p) => ({
       name: p.name || "",
       description: p.description || "",
       technologies: p.technologies || [],
@@ -165,9 +168,9 @@ export default function Step2CVImport({ profile, onChange }) {
       projects: { ...profile.projects, cv: newCvProj },
       cvImportedAt: new Date().toISOString(),
       cvData: {
-        parsedData: cvData,
-        uploadDate: cvData.uploadDate || null,
-        parsingStatus: cvData.parsingStatus || "",
+        parsedData: parsedCv,
+        uploadDate: parsedCv.uploadDate || null,
+        parsingStatus: parsedCv.parsingStatus || "",
       },
     });
     setImported(true);
@@ -208,7 +211,7 @@ export default function Step2CVImport({ profile, onChange }) {
     );
   }
 
-  if (!cvData) {
+  if (!parsedCv) {
     return (
       <div className="flex flex-col items-center gap-4 py-10 text-center">
         <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center">
@@ -251,7 +254,7 @@ export default function Step2CVImport({ profile, onChange }) {
 
       <ToggleList
         title="Work Experience"
-        items={cvData.experience}
+        items={parsedCv.experience}
         selected={selExp}
         onToggle={setSelExp}
         renderItem={(e) => (
@@ -270,7 +273,7 @@ export default function Step2CVImport({ profile, onChange }) {
 
       <ToggleList
         title="Education"
-        items={cvData.education}
+        items={parsedCv.education}
         selected={selEdu}
         onToggle={setSelEdu}
         renderItem={(e) => (
@@ -291,7 +294,7 @@ export default function Step2CVImport({ profile, onChange }) {
 
       <ToggleList
         title="Skills"
-        items={cvData.skills}
+        items={parsedCv.skills}
         selected={selSkill}
         onToggle={setSelSkill}
         renderItem={(s) => (
@@ -307,10 +310,10 @@ export default function Step2CVImport({ profile, onChange }) {
         )}
       />
 
-      {cvData.projects?.length > 0 && (
+      {parsedCv.projects?.length > 0 && (
         <ToggleList
           title="Projects"
-          items={cvData.projects}
+          items={parsedCv.projects}
           selected={selProj}
           onToggle={setSelProj}
           renderItem={(p) => (

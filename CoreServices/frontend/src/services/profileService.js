@@ -38,15 +38,6 @@ export const fetchGitHub = async (username) => {
   return res.json();
 };
 
-// Fetch most recent parsed CV data for this user (read from AI Service's collection).
-export const getCVData = async () => {
-  const res = await fetch(`${API_BASE}/api/profile/cv-data`, {
-    headers: authHeaders(),
-  });
-  if (!res.ok) throw new Error("Failed to fetch CV data");
-  return res.json();
-};
-
 // Merge + deduplicate skills from all sources.
 export const extractSkills = async (
   cvSkills = [],
@@ -66,7 +57,6 @@ export const profileService = {
   getProfile,
   saveProfile,
   fetchGitHub,
-  getCVData,
   extractSkills,
 };
 export default profileService;

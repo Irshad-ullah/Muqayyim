@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { authService } from '../services/authService.js';
 import Navbar from '../components/Navbar.jsx';
 import CVStatusBadge from '../components/CVStatusBadge.jsx';
+import { CV_STATUS, cvStatusLabel } from '../constants/cvStatus.js';
 import toast from 'react-hot-toast';
 import {
   User,
@@ -105,7 +106,7 @@ export default function ProfilePage() {
                       <Shield className="w-3 h-3" />
                       {user?.role}
                     </span>
-                    <CVStatusBadge status={user?.cvStatus || 'Not Uploaded'} />
+                    <CVStatusBadge status={user?.cvStatus || CV_STATUS.NOT_UPLOADED} />
                   </div>
                 </div>
                 {!editing && (
@@ -202,7 +203,7 @@ export default function ProfilePage() {
                   <InfoRow
                     icon={CheckCircle2}
                     label="CV Status"
-                    value={user?.cvStatus || 'Not Uploaded'}
+                    value={cvStatusLabel(user?.cvStatus)}
                   />
                 </div>
               )}

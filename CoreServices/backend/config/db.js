@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 const connectDB = async () => {
   try {
     const mongoUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017';
-    const dbName = process.env.DB_NAME || 'muqayyim';
+    // Database-per-service: CoreServices owns core_db only (AIServices uses ai_db).
+    const dbName = process.env.CORE_DB_NAME || process.env.DB_NAME || 'core_db';
 
     await mongoose.connect(mongoUrl, {
       dbName: dbName,

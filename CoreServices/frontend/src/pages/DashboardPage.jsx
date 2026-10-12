@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import Navbar from '../components/Navbar.jsx';
 import CVStatusBadge, { CVStatusStepper } from '../components/CVStatusBadge.jsx';
 import SavedCvsCard from '../components/cvgen/SavedCvsCard.jsx';
+import { CV_STATUS } from '../constants/cvStatus.js';
 import toast from 'react-hot-toast';
 import {
   FileUp,
@@ -90,7 +91,7 @@ const infoCards = [
 
 export default function DashboardPage() {
   const { user, refreshProfile } = useAuth();
-  const [cvStatus, setCvStatus] = useState(user?.cvStatus || 'Not Uploaded');
+  const [cvStatus, setCvStatus] = useState(user?.cvStatus || CV_STATUS.NOT_UPLOADED);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
@@ -202,7 +203,7 @@ export default function DashboardPage() {
               <CVStatusStepper status={cvStatus} />
 
               <div className="mt-6 pt-5 border-t border-slate-100">
-                {cvStatus === 'Not Uploaded' && (
+                {cvStatus === CV_STATUS.NOT_UPLOADED && (
                   <div className="flex items-center justify-between">
                     <p className="text-sm text-slate-500">
                       Upload your CV to start AI-powered analysis.
@@ -215,20 +216,46 @@ export default function DashboardPage() {
                     </Link>
                   </div>
                 )}
-                {cvStatus === 'Uploaded' && (
+                {cvStatus === CV_STATUS.UPLOADED && (
                   <p className="text-sm text-slate-500">
                     Your CV is uploaded. Head to the CV Parsing module to run NLP analysis.
                   </p>
                 )}
-                {cvStatus === 'Processing' && (
+                {cvStatus === CV_STATUS.PROCESSING && (
                   <p className="text-sm text-amber-600 font-medium">
                     AI is analysing your CV… this usually takes a few seconds.
                   </p>
                 )}
-                {cvStatus === 'Verified' && (
+                {cvStatus === CV_STATUS.PARSED && (
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-sky-700 font-medium">
+                      Your CV is parsed. Review and confirm the extracted details.
+                    </p>
+                    <Link
+                      to="/cv-parsing"
+                      className="flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                    >
+                      Review <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                )}
+                {cvStatus === CV_STATUS.VERIFIED && (
                   <p className="text-sm text-emerald-600 font-medium">
                     Your CV data is verified and saved to your profile.
                   </p>
+                )}
+                {cvStatus === CV_STATUS.FAILED && (
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-red-600 font-medium">
+                      We couldn't read your CV. Try a text-based PDF or DOCX.
+                    </p>
+                    <Link
+                      to="/cv-parsing"
+                      className="flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                    >
+                      Upload again <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>

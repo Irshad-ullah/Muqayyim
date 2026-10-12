@@ -7,6 +7,8 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from bson import ObjectId
 
+from app.constants.cv_status import PARSED
+
 
 class PyObjectId(ObjectId):
     """Custom ObjectId type for Pydantic"""
@@ -72,7 +74,7 @@ class CVParsedDataModel(BaseModel):
     upload_date:    datetime      = Field(default_factory=datetime.utcnow)
     parsed_data:    ParsedDataModel
     verified_data:  Optional[ParsedDataModel] = None
-    parsing_status: str = "completed"
+    parsing_status: str = PARSED
 
     class Config:
         populate_by_name = True

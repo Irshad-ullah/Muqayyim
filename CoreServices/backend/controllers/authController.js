@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import User from '../models/User.js';
-import CvData from '../models/CvData.js';
 import { sendPasswordResetEmail } from '../utils/emailService.js';
 import { validateEmail } from '../utils/emailValidator.js';
 
@@ -167,18 +166,6 @@ export const getProfile = async (req, res) => {
       });
     }
 
-    // If the stored status implies data exists, verify it actually does.
-    // Auto-reset to "Not Uploaded" when the parsed data has been deleted.
-    let cvStatus = user.cvStatus;
-    if (cvStatus !== 'Not Uploaded') {
-      const record = await CvData.findOne({ user_id: user._id.toString() });
-      if (!record) {
-        cvStatus = 'Not Uploaded';
-        user.cvStatus = 'Not Uploaded';
-        await user.save();
-      }
-    }
-
     return res.status(200).json({
       success: true,
       user: {
@@ -186,7 +173,8 @@ export const getProfile = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        cvStatus,
+        // Owned by the server: pushed by AIServices via /internal routes.
+        cvStatus: user.cvStatus,
         createdAt: user.createdAt,
       },
     });
@@ -394,19 +382,9 @@ export const getCVStatus = async (req, res) => {
       });
     }
 
-    let cvStatus = user.cvStatus;
-    if (cvStatus !== 'Not Uploaded') {
-      const record = await CvData.findOne({ user_id: user._id.toString() });
-      if (!record) {
-        cvStatus = 'Not Uploaded';
-        user.cvStatus = 'Not Uploaded';
-        await user.save();
-      }
-    }
-
     return res.status(200).json({
       success: true,
-      cvStatus,
+      cvStatus: user.cvStatus,
       userId: user._id,
     });
   } catch (error) {
@@ -414,50 +392,6 @@ export const getCVStatus = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Failed to fetch CV status',
-      error: error.message,
-    });
-  }
-};
-
-// @route   PATCH /api/auth/cv-status
-// @desc    Update CV status for authenticated user (called internally via API Gateway)
-// @access  Private
-export const updateCVStatus = async (req, res) => {
-  try {
-    const { cvStatus } = req.body;
-    const allowedStatuses = ['Not Uploaded', 'Uploaded', 'Processing', 'Verified'];
-
-    if (!cvStatus || !allowedStatuses.includes(cvStatus)) {
-      return res.status(400).json({
-        success: false,
-        message: `cvStatus must be one of: ${allowedStatuses.join(', ')}`,
-      });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      req.user.userId,
-      { cvStatus },
-      { new: true }
-    );
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found',
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: 'CV status updated',
-      cvStatus: user.cvStatus,
-      userId: user._id,
-    });
-  } catch (error) {
-    console.error('Update CV status error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to update CV status',
       error: error.message,
     });
   }

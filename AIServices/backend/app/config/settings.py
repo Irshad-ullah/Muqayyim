@@ -26,7 +26,8 @@ class Settings(BaseSettings):
     
     # Database Configuration
     MONGODB_URL: str = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
-    DATABASE_NAME: str = os.getenv("DATABASE_NAME", "muqayyim")
+    # Database-per-service: AIServices owns ai_db only (CoreServices uses core_db).
+    AI_DB_NAME: str = os.getenv("AI_DB_NAME", os.getenv("DATABASE_NAME", "ai_db"))
     
     # File Upload Configuration
     MAX_FILE_SIZE: int = 5 * 1024 * 1024  # 5MB
@@ -40,6 +41,10 @@ class Settings(BaseSettings):
     # Authentication — must match Module 1 JWT_SECRET exactly
     JWT_SECRET: str = os.getenv("JWT_SECRET", os.getenv("SECRET_KEY", "your-secret-key-here"))
     ALGORITHM: str = "HS256"
+
+    # Service-to-service (internal REST). The key must match CoreServices.
+    CORE_SERVICE_URL: str = os.getenv("CORE_SERVICE_URL", "http://localhost:3000")
+    INTERNAL_API_KEY: str = os.getenv("INTERNAL_API_KEY", "")
     
     # CORS Configuration
     # Include both localhost and 127.0.0.1 since dev servers may use either.

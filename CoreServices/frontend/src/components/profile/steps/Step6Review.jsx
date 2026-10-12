@@ -1,4 +1,5 @@
 import React from "react";
+import { cvStatusLabel } from "../../../constants/cvStatus.js";
 import {
   User,
   FileText,
@@ -159,7 +160,7 @@ export default function Step6Review({ profile }) {
           </p>
           {profile.cvData.parsingStatus && (
             <p className="text-xs text-slate-500 mt-1">
-              Status: {profile.cvData.parsingStatus}
+              Status: {cvStatusLabel(profile.cvData.parsingStatus)}
             </p>
           )}
         </Section>

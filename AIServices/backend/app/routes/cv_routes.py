@@ -31,9 +31,33 @@ from app.utils.file_handler import (
 from app.config.database import get_database
 from app.config.settings import settings
 from app.middleware.auth import get_current_user
+from app.services.core_client import push_cv_status
+from app.constants.cv_status import UPLOADED, PROCESSING, PARSED, VERIFIED, FAILED
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/cv", tags=["CV Parsing"])
+
+EMPTY_PARSED_DATA = {"skills": [], "education": [], "experience": [], "projects": []}
+
+
+async def _set_record_status(user_id: str, status_value: str, file_name: str | None = None):
+    """Record the parsing status on the user's CV record (creates it if missing)."""
+    db = get_database()
+    if db is None:
+        return
+    update = {"$set": {"parsing_status": status_value}}
+    if file_name:
+        update["$set"]["file_name"] = file_name
+        update["$setOnInsert"] = {"parsed_data": EMPTY_PARSED_DATA, "upload_date": datetime.utcnow()}
+    try:
+        await db["cv_parsed_data"].update_one({"user_id": user_id}, update, upsert=bool(file_name))
+    except Exception as exc:  # status bookkeeping must not break the request
+        logger.error("Failed to record parsing status %s for user %s: %s", status_value, user_id, exc)
+
+
+async def _mark_failed(user_id: str):
+    await _set_record_status(user_id, FAILED)
+    await push_cv_status(user_id, FAILED)
 
 
 @router.post("/upload", response_model=CVUploadResponseSchema)
@@ -81,6 +105,7 @@ async def upload_cv(
         )
         
         logger.info(f"File uploaded successfully: {file_id} by user {current_user['user_id']}")
+        await push_cv_status(current_user["user_id"], UPLOADED)
         
         return CVUploadResponseSchema(
             file_id=file_id,
@@ -113,6 +138,7 @@ async def parse_cv(
         - parsed_data: Extracted skills, education, and experience
         - parsing_status: Status of parsing
     """
+    processing_started = False
     try:
         # Get file path from file_id
         upload_dir = settings.UPLOAD_DIRECTORY
@@ -134,12 +160,18 @@ async def parse_cv(
         
         # Extract file extension
         ext = get_file_extension(file_path)
+        user_id = current_user["user_id"]
+
+        await _set_record_status(user_id, PROCESSING, f"{file_id}.{ext}")
+        await push_cv_status(user_id, PROCESSING)
+        processing_started = True
         
         # Extract text from file
         cv_text, extraction_success = parse_cv_file(file_path, ext)
         
         if not extraction_success or not cv_text.strip():
             logger.warning(f"Failed to extract text from CV: {file_id}")
+            await _mark_failed(user_id)
             error_detail = "Failed to extract text from CV. The file might be:"
             if ext == "doc":
                 error_detail += " - An older MS Word format (pre-2007). Please convert to .docx or .pdf"
@@ -191,7 +223,7 @@ async def parse_cv(
             file_name=f"{file_id}.{ext}",
             file_path=file_path,
             parsed_data=parsed_data,
-            parsing_status="completed"
+            parsing_status=PARSED
         )
         
         # Upsert: update existing record for user or insert new one
@@ -202,11 +234,12 @@ async def parse_cv(
         )
         
         logger.info(f"CV parsed successfully: {file_id}")
-        
+        await push_cv_status(user_id, PARSED)
+
         return CVParseResponseSchema(
             file_id=file_id,
             parsed_data=parsed_data.model_dump(),
-            parsing_status="completed",
+            parsing_status=PARSED,
             message="CV parsed successfully"
         )
     
@@ -214,6 +247,8 @@ async def parse_cv(
         raise
     except Exception as e:
         logger.error(f"Error parsing CV: {e}")
+        if processing_started:
+            await _mark_failed(current_user["user_id"])
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to parse CV"
@@ -255,7 +290,7 @@ async def verify_cv_data(
             {
                 "$set": {
                     "parsed_data": request.verified_data.dict(),
-                    "parsing_status": "verified",
+                    "parsing_status": VERIFIED,
                 },
                 "$unset": {
                     "verified_data": ""
@@ -283,11 +318,12 @@ async def verify_cv_data(
             delete_file(file_path)
         
         logger.info(f"CV verified and saved: {request.file_id}")
+        await push_cv_status(current_user["user_id"], VERIFIED)
         
         return CVVerifyResponseSchema(
             file_id=request.file_id,
             user_id=current_user["user_id"],
-            parsing_status="verified",
+            parsing_status=VERIFIED,
             message="CV data verified and saved to profile"
         )
     
@@ -299,6 +335,39 @@ async def verify_cv_data(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to verify CV data"
         )
+
+
+@router.get("/latest")
+async def get_latest_cv(current_user: dict = Depends(get_current_user)):
+    """
+    Latest parsed CV for the authenticated user (user taken from the JWT).
+    Used by the Profile Builder CV-import step.
+
+    Returns:
+        - cvData: parsed skills/education/experience/projects, or null
+        - status: parsing status (shared CV status enum), or null
+        - uploadDate: upload timestamp, or null
+    """
+    db = get_database()
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database connection not available"
+        )
+
+    record = await db["cv_parsed_data"].find_one(
+        {"user_id": current_user["user_id"]},
+        sort=[("upload_date", -1)]
+    )
+    if not record:
+        return {"success": True, "cvData": None, "status": None, "uploadDate": None}
+
+    return {
+        "success": True,
+        "cvData": record.get("parsed_data") or EMPTY_PARSED_DATA,
+        "status": record.get("parsing_status"),
+        "uploadDate": record.get("upload_date"),
+    }
 
 
 @router.get("/summary/{user_id}", response_model=CVSummaryResponseSchema)

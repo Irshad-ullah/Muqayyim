@@ -14,15 +14,18 @@ import {
   AlertCircle,
   Filter,
 } from 'lucide-react';
+import { cvStatusLabel } from '../../constants/cvStatus.js';
 
 const ROLES = ['All', 'JobSeeker', 'Admin'];
 const STATUSES = ['All', 'active', 'inactive'];
 
 const CV_STATUS_COLORS = {
-  'Not Uploaded': 'bg-slate-100 text-slate-600',
-  Uploaded: 'bg-blue-100 text-blue-700',
-  Processing: 'bg-amber-100 text-amber-700',
-  Verified: 'bg-emerald-100 text-emerald-700',
+  not_uploaded: 'bg-slate-100 text-slate-600',
+  uploaded: 'bg-blue-100 text-blue-700',
+  processing: 'bg-amber-100 text-amber-700',
+  parsed: 'bg-sky-100 text-sky-700',
+  verified: 'bg-emerald-100 text-emerald-700',
+  failed: 'bg-red-100 text-red-700',
 };
 
 function RoleBadge({ role }) {
@@ -288,7 +291,7 @@ export default function AdminUsersPage() {
                       {/* CV Status */}
                       <td className="px-4 py-3">
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${CV_STATUS_COLORS[u.cvStatus] || 'bg-slate-100 text-slate-600'}`}>
-                          {u.cvStatus}
+                          {cvStatusLabel(u.cvStatus)}
                         </span>
                       </td>
 
