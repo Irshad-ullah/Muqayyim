@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { installAuthInterceptor } from './apiErrors.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -11,6 +12,7 @@ adminAPI.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
+installAuthInterceptor(adminAPI);
 
 export const adminService = {
   // ── Dashboard ──────────────────────────────────────────────────────────────

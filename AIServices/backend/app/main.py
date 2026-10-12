@@ -14,6 +14,7 @@ from app.config.settings import settings
 from app.config.database import connect_to_mongo, close_mongo_connection
 from app.routes.cv_routes import router as cv_router
 from app.routes.internal_routes import router as internal_router
+from app.middleware.auth import register_auth_error_handler
 
 # Configure logging
 logging.basicConfig(
@@ -67,6 +68,10 @@ app.add_middleware(
     TrustedHostMiddleware,
     allowed_hosts=["localhost", "127.0.0.1", "*.example.com"]
 )
+
+
+# Auth failures → { success, code, message } (same codes as CoreServices)
+register_auth_error_handler(app)
 
 
 # Global exception handler

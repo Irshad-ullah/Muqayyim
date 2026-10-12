@@ -20,6 +20,7 @@ from app.constants.cv_status import CV_STATUS_VALUES
 logger = logging.getLogger(__name__)
 
 TIMEOUT_SECONDS = 5.0
+AUTH_STATE_TIMEOUT_SECONDS = 2.0
 # Fail fast when CoreServices is down (a refused connect can otherwise stall for
 # seconds per attempt), so a Core outage adds only a few seconds to the request.
 CONNECT_TIMEOUT_SECONDS = 1.0
@@ -65,6 +66,31 @@ async def notify_cv_status(user_id: str, status: str) -> bool:
         last_error,
     )
     return False
+
+
+class CoreUnavailable(Exception):
+    """CoreServices could not be reached or returned an unexpected error."""
+
+
+async def get_auth_state(user_id: str) -> dict:
+    """
+    Current auth state of a user from CoreServices:
+    {exists, isActive, role, passwordChangedAt} or {"exists": False}.
+    Raises CoreUnavailable on network errors, timeouts or 5xx responses.
+    """
+    url = f"{settings.CORE_SERVICE_URL.rstrip('/')}/internal/users/{user_id}/auth-state"
+    headers = {"X-Internal-Key": settings.INTERNAL_API_KEY}
+    try:
+        async with httpx.AsyncClient(timeout=AUTH_STATE_TIMEOUT_SECONDS) as client:
+            response = await client.get(url, headers=headers)
+    except httpx.HTTPError as exc:
+        raise CoreUnavailable(f"{type(exc).__name__}") from exc
+
+    if response.status_code == 404:
+        return {"exists": False}
+    if response.status_code != 200:
+        raise CoreUnavailable(f"HTTP {response.status_code}")
+    return response.json()
 
 
 async def push_cv_status(user_id: str, status: str) -> None:

@@ -1,7 +1,9 @@
 import authMiddleware from '../../middleware/auth.js';
 
 // Requires a valid JWT AND Admin role.
-// Chain: authMiddleware validates the token, then we check the role.
+// Chain: authMiddleware validates the token and loads the user from the
+// database; req.user.role is the DATABASE role (the token's role claim is
+// never used), so a demoted admin loses access on their next request.
 const requireAdmin = (req, res, next) => {
   if (req.user?.role !== 'Admin') {
     return res.status(403).json({

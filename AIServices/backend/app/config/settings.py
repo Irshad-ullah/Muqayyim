@@ -45,6 +45,10 @@ class Settings(BaseSettings):
     # Service-to-service (internal REST). The key must match CoreServices.
     CORE_SERVICE_URL: str = os.getenv("CORE_SERVICE_URL", "http://localhost:3000")
     INTERNAL_API_KEY: str = os.getenv("INTERNAL_API_KEY", "")
+
+    # How long a user's auth state from CoreServices is cached (seconds).
+    # Suspensions/password changes reach this service within this window.
+    AUTH_CACHE_TTL_SECONDS: int = int(os.getenv("AUTH_CACHE_TTL_SECONDS", "30"))
     
     # CORS Configuration
     # Include both localhost and 127.0.0.1 since dev servers may use either.

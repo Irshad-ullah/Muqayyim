@@ -31,6 +31,7 @@ describe('gateway /internal blocking', () => {
     ['GET', '/internal/anything'],
     ['PUT', '/internal/users/507f1f77bcf86cd799439011/cv-status'],
     ['GET', '/internal/cv/507f1f77bcf86cd799439011/latest'],
+    ['GET', '/internal/users/507f1f77bcf86cd799439011/auth-state'],
   ])('%s %s → 404 and not proxied', async (method, path) => {
     const res = await request(app)[method.toLowerCase()](path)
       .set('X-Internal-Key', 'anything')

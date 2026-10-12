@@ -8,6 +8,7 @@ import { validatePassword, passwordErrorResponse } from '../utils/passwordPolicy
 import { MAX_LOGIN_ATTEMPTS, LOCK_DURATION_MS } from '../config/security.js';
 import { logSecurityEvent } from '../utils/securityLog.js';
 import { normalizeEmail, isDuplicateKeyError, emailInUse } from '../utils/apiErrors.js';
+import { passwordChangedTimestamp } from '../utils/passwordChangedAt.js';
 
 const INVALID_CREDENTIALS = 'Invalid email or password';
 
@@ -429,12 +430,15 @@ export const resetPassword = async (req, res) => {
     user.password = password;
     user.resetToken = undefined;
     user.resetTokenExpiry = undefined;
-    user.passwordChangedAt = new Date();
+    // Revokes every existing session (tokens issued before this moment).
+    user.passwordChangedAt = passwordChangedTimestamp();
     // A successful reset also clears any lockout.
     user.failedLoginAttempts = 0;
     user.lockUntil = null;
 
     await user.save();
+
+    logSecurityEvent('Password reset', { userId: String(user._id), ip: req.ip });
 
     return res.status(200).json({
       success: true,
@@ -493,7 +497,8 @@ export const changePassword = async (req, res) => {
     }
 
     user.password = newPassword; // hashed by the pre-save hook
-    user.passwordChangedAt = new Date();
+    // Revokes older tokens; the fresh token issued below is newer and stays valid.
+    user.passwordChangedAt = passwordChangedTimestamp();
     user.failedLoginAttempts = 0;
     user.lockUntil = null;
     await user.save();

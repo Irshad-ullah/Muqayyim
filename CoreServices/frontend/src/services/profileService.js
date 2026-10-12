@@ -1,3 +1,4 @@
+import { apiFetch } from './apiErrors.js';
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
 const token = () => localStorage.getItem("token");
 
@@ -8,7 +9,7 @@ const authHeaders = (json = false) => {
 };
 
 export const getProfile = async () => {
-  const res = await fetch(`${API_BASE}/api/profile`, {
+  const res = await apiFetch(`${API_BASE}/api/profile`, {
     headers: authHeaders(),
   });
   if (!res.ok) throw new Error("Failed to fetch profile");
@@ -16,7 +17,7 @@ export const getProfile = async () => {
 };
 
 export const saveProfile = async (data) => {
-  const res = await fetch(`${API_BASE}/api/profile/save`, {
+  const res = await apiFetch(`${API_BASE}/api/profile/save`, {
     method: "POST",
     headers: authHeaders(true),
     body: JSON.stringify(data),
@@ -26,7 +27,7 @@ export const saveProfile = async (data) => {
 };
 
 export const fetchGitHub = async (username) => {
-  const res = await fetch(`${API_BASE}/api/profile/github`, {
+  const res = await apiFetch(`${API_BASE}/api/profile/github`, {
     method: "POST",
     headers: authHeaders(true),
     body: JSON.stringify({ username }),
@@ -44,7 +45,7 @@ export const extractSkills = async (
   githubSkills = [],
   manualSkills = [],
 ) => {
-  const res = await fetch(`${API_BASE}/api/profile/extract-skills`, {
+  const res = await apiFetch(`${API_BASE}/api/profile/extract-skills`, {
     method: "POST",
     headers: authHeaders(true),
     body: JSON.stringify({ cvSkills, githubSkills, manualSkills }),

@@ -5,6 +5,16 @@ import { normalizeEmail, isDuplicateKeyError, emailInUse } from '../../utils/api
 
 const SAFE_FIELDS = '-password -resetToken -resetTokenExpiry';
 
+// True when `user` is the only active admin left (so it must not be removed,
+// deactivated or demoted). Defense in depth: through the API the acting admin
+// is itself an active admin and cannot target itself, so this guards future
+// endpoints/scripts against leaving the system with no active admin.
+export const isLastActiveAdmin = async (user) => {
+  if (user.role !== 'Admin' || user.isActive === false) return false;
+  const others = await User.countDocuments({ _id: { $ne: user._id }, role: 'Admin', isActive: { $ne: false } });
+  return others === 0;
+};
+
 // Adds the temporary-lock state (separate from admin deactivation) to a user.
 const withLockState = (user) => {
   const obj = user.toObject();
@@ -164,6 +174,10 @@ export const toggleUserStatus = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Cannot deactivate your own account' });
     }
 
+    if (!isActive && (await isLastActiveAdmin(user))) {
+      return res.status(400).json({ success: false, message: 'Cannot deactivate the last active admin' });
+    }
+
     user.isActive = isActive;
     await user.save();
 
@@ -203,6 +217,10 @@ export const updateUserRole = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Cannot change your own role' });
     }
 
+    if (role !== 'Admin' && (await isLastActiveAdmin(user))) {
+      return res.status(400).json({ success: false, message: 'Cannot demote the last active admin' });
+    }
+
     const previousRole = user.role;
     user.role = role;
     await user.save();
@@ -230,6 +248,10 @@ export const deleteUser = async (req, res) => {
 
     if (user._id.toString() === req.user.userId) {
       return res.status(400).json({ success: false, message: 'Cannot delete your own account' });
+    }
+
+    if (await isLastActiveAdmin(user)) {
+      return res.status(400).json({ success: false, message: 'Cannot delete the last active admin' });
     }
 
     await auditLog(req.user.userId, 'DELETE_USER', 'User', user._id, { email: user.email }, req);

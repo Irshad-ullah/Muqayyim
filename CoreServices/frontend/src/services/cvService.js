@@ -1,3 +1,4 @@
+import { apiFetch } from './apiErrors.js';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const getAuthToken = () => localStorage.getItem('token');
@@ -6,7 +7,7 @@ export const uploadCV = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`${API_BASE_URL}/api/cv/upload`, {
+  const response = await apiFetch(`${API_BASE_URL}/api/cv/upload`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${getAuthToken()}` },
     body: formData,
@@ -20,7 +21,7 @@ export const uploadCV = async (file) => {
 };
 
 export const parseCV = async (fileId) => {
-  const response = await fetch(`${API_BASE_URL}/api/cv/parse/${fileId}`, {
+  const response = await apiFetch(`${API_BASE_URL}/api/cv/parse/${fileId}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${getAuthToken()}`,
@@ -38,7 +39,7 @@ export const parseCV = async (fileId) => {
 };
 
 export const verifyCVData = async (fileId, verifiedData) => {
-  const response = await fetch(`${API_BASE_URL}/api/cv/verify`, {
+  const response = await apiFetch(`${API_BASE_URL}/api/cv/verify`, {
     method: 'PUT',
     headers: {
       Authorization: `Bearer ${getAuthToken()}`,
@@ -60,7 +61,7 @@ export const verifyCVData = async (fileId, verifiedData) => {
 // Latest parsed CV for the logged-in user, served by AIServices (user from JWT).
 // Returns { cvData, status, uploadDate } — cvData is null when nothing is parsed yet.
 export const getLatestCV = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/cv/latest`, {
+  const response = await apiFetch(`${API_BASE_URL}/api/cv/latest`, {
     headers: { Authorization: `Bearer ${getAuthToken()}` },
   });
 

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { installAuthInterceptor, resetAuthErrorState } from './apiErrors.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const CV_SERVICE_URL = import.meta.env.VITE_CV_SERVICE_URL || 'http://localhost:8000';
@@ -24,6 +25,9 @@ const attachToken = (api) => {
 
 attachToken(authAPI);
 attachToken(cvAPI);
+// Session-ending auth errors (revoked/expired/suspended) are handled centrally.
+installAuthInterceptor(authAPI);
+installAuthInterceptor(cvAPI);
 
 // Cookies on localhost are shared across all ports (5174, 5173, 8080 …).
 // This is the only reliable cross-origin token bridge for a local dev setup.
@@ -45,6 +49,7 @@ export const authService = {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setTokenCookie(data.token);
+      resetAuthErrorState();
     }
     return data;
   },
@@ -55,6 +60,7 @@ export const authService = {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setTokenCookie(data.token);
+      resetAuthErrorState();
     }
     return data;
   },

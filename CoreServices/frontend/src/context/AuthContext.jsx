@@ -1,37 +1,69 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import { authService } from '../services/authService.js';
+import { authEvents, SESSION_ENDED, SERVICE_UNAVAILABLE } from '../services/apiErrors.js';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  // True once the stored session has been re-checked with the server, so
+  // role-gated UI (AdminRoute) uses the database role, not the cached one.
+  const [sessionVerified, setSessionVerified] = useState(false);
 
   useEffect(() => {
     const stored = authService.getStoredUser();
     const tok    = authService.getToken();
     if (stored && tok) {
       setUser(stored);
-      // Silently refresh from DB so cvStatus is always current
       authService.getProfile()
         .then(({ user: fresh }) => {
           setUser(fresh);
           localStorage.setItem('user', JSON.stringify(fresh));
         })
-        .catch(() => {}); // fail silently — keep cached user on network errors
+        // Revoked/suspended sessions are handled by the session-ended listener;
+        // on network errors keep the cached user (the server still enforces roles).
+        .catch(() => {})
+        .finally(() => setSessionVerified(true));
+    } else {
+      setSessionVerified(true);
     }
     setLoading(false);
+  }, []);
+
+  // Central auth-error events (see services/apiErrors.js).
+  useEffect(() => {
+    const onSessionEnded = (e) => {
+      authService.logout();
+      setUser(null); // route guards redirect to /login
+      toast.error(e.detail?.message || 'Your session has ended. Please log in again.', {
+        id: 'session-ended',
+        duration: 6000,
+      });
+    };
+    const onUnavailable = (e) => {
+      toast.error(e.detail?.message || 'Service temporarily unavailable, try again', { id: 'auth-unavailable' });
+    };
+    authEvents.addEventListener(SESSION_ENDED, onSessionEnded);
+    authEvents.addEventListener(SERVICE_UNAVAILABLE, onUnavailable);
+    return () => {
+      authEvents.removeEventListener(SESSION_ENDED, onSessionEnded);
+      authEvents.removeEventListener(SERVICE_UNAVAILABLE, onUnavailable);
+    };
   }, []);
 
   const login = useCallback(async (email, password) => {
     const data = await authService.login(email, password);
     setUser(data.user);
+    setSessionVerified(true);
     return data;
   }, []);
 
   const register = useCallback(async (name, email, password, passwordConfirm) => {
     const data = await authService.register(name, email, password, passwordConfirm);
     setUser(data.user);
+    setSessionVerified(true);
     return data;
   }, []);
 
@@ -48,9 +80,10 @@ export function AuthProvider({ children }) {
       localStorage.setItem('user', JSON.stringify(updated));
       return updated;
     } catch {
-      logout();
+      // Session-ending errors are handled centrally; others keep the session.
+      return undefined;
     }
-  }, [logout]);
+  }, []);
 
   const updateUser = useCallback((updated) => {
     setUser(updated);
@@ -61,6 +94,7 @@ export function AuthProvider({ children }) {
     user,
     loading,
     isAuthenticated: !!user && !!authService.getToken(),
+    sessionVerified,
     login,
     register,
     logout,

@@ -2,6 +2,29 @@ import mongoose from 'mongoose';
 import User from '../models/User.js';
 import { CV_STATUS_VALUES, isValidCvStatus } from '../constants/cvStatus.js';
 
+// @route   GET /internal/users/:userId/auth-state
+// @desc    Current auth-relevant user state, for other services' per-request checks
+// @access  Internal (X-Internal-Key)
+export const getUserAuthState = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = mongoose.Types.ObjectId.isValid(userId)
+      ? await User.findById(userId).select('role isActive passwordChangedAt').lean()
+      : null;
+    if (!user) return res.status(404).json({ exists: false });
+
+    return res.status(200).json({
+      exists: true,
+      isActive: user.isActive !== false,
+      role: user.role,
+      passwordChangedAt: user.passwordChangedAt || null,
+    });
+  } catch (error) {
+    console.error('Internal auth-state error:', error.message);
+    return res.status(500).json({ success: false, message: 'Failed to read auth state' });
+  }
+};
+
 // @route   PUT /internal/users/:userId/cv-status
 // @desc    Set a user's CV status (pushed by AIServices)
 // @access  Internal (X-Internal-Key)
