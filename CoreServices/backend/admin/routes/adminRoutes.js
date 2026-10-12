@@ -3,7 +3,7 @@ import { adminAuthMiddleware } from '../middleware/adminMiddleware.js';
 
 import { createAdminUser } from '../controllers/adminAuthController.js';
 import { getDashboardMetrics, getDashboardSummary } from '../controllers/adminDashboardController.js';
-import { listUsers, getUserById, updateUser, toggleUserStatus, updateUserRole, deleteUser } from '../controllers/adminUserController.js';
+import { listUsers, getUserById, updateUser, toggleUserStatus, updateUserRole, deleteUser, unlockUser } from '../controllers/adminUserController.js';
 import { getSystemHealth, getSystemStatus, getAdminLogs } from '../controllers/adminSystemController.js';
 import { getAllConfigs, createConfig, updateConfig, deleteConfig } from '../controllers/adminConfigController.js';
 import {
@@ -31,6 +31,7 @@ router.get('/users', adminAuthMiddleware, listUsers);
 router.get('/users/:id', adminAuthMiddleware, getUserById);
 router.put('/users/:id', adminAuthMiddleware, updateUser);
 router.patch('/users/:id/status', adminAuthMiddleware, toggleUserStatus);
+router.post('/users/:id/unlock', adminAuthMiddleware, unlockUser);
 router.patch('/users/:id/role', adminAuthMiddleware, updateUserRole);
 router.delete('/users/:id', adminAuthMiddleware, deleteUser);
 

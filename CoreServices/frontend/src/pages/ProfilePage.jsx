@@ -6,6 +6,8 @@ import Navbar from '../components/Navbar.jsx';
 import CVStatusBadge from '../components/CVStatusBadge.jsx';
 import { CV_STATUS, cvStatusLabel } from '../constants/cvStatus.js';
 import toast from 'react-hot-toast';
+import PasswordChecklist from '../components/PasswordChecklist.jsx';
+import { validatePassword } from '../constants/passwordPolicy.js';
 import {
   User,
   Mail,
@@ -16,7 +18,27 @@ import {
   CheckCircle2,
   Pencil,
   X,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
+
+const EMPTY_PASSWORD_FORM = { currentPassword: '', newPassword: '', confirmPassword: '' };
+
+const passwordFieldErrors = (f) => {
+  const e = {};
+  if (!f.currentPassword) e.currentPassword = 'Current password is required';
+  if (!f.newPassword) e.newPassword = 'New password is required';
+  else {
+    const check = validatePassword(f.newPassword);
+    if (!check.valid) e.newPassword = check.errors[0];
+    else if (f.newPassword === f.currentPassword) {
+      e.newPassword = 'New password must be different from your current password';
+    }
+  }
+  if (!f.confirmPassword) e.confirmPassword = 'Please confirm your new password';
+  else if (f.newPassword !== f.confirmPassword) e.confirmPassword = 'Passwords do not match';
+  return e;
+};
 
 export default function ProfilePage() {
   const { user, logout, updateUser } = useAuth();
@@ -54,10 +76,54 @@ export default function ProfilePage() {
       setEditing(false);
     } catch (err) {
       const msg = err?.response?.data?.message || 'Failed to update profile';
-      toast.error(msg);
-      if (msg.toLowerCase().includes('email')) setErrors({ email: msg });
+      if (err?.response?.status === 409) setErrors({ email: msg });
+      else {
+        toast.error(msg);
+        if (msg.toLowerCase().includes('email')) setErrors({ email: msg });
+      }
     } finally {
       setSaving(false);
+    }
+  };
+
+  // ── Change password ──
+  const [pwForm, setPwForm] = useState(EMPTY_PASSWORD_FORM);
+  const [pwErrors, setPwErrors] = useState({});
+  const [pwTouched, setPwTouched] = useState({});
+  const [pwSaving, setPwSaving] = useState(false);
+  const [showPw, setShowPw] = useState(false);
+  const pwValid = Object.keys(passwordFieldErrors(pwForm)).length === 0;
+
+  const setPw = (field) => (e) => {
+    setPwForm((f) => ({ ...f, [field]: e.target.value }));
+    setPwErrors((er) => ({ ...er, [field]: '' }));
+  };
+  const touchPw = (field) => () => setPwTouched((t) => ({ ...t, [field]: true }));
+  // Inline errors: server errors, plus client errors once a field has been left.
+  const pwError = (field) =>
+    pwErrors[field] || (pwTouched[field] && pwForm[field] ? passwordFieldErrors(pwForm)[field] : '');
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    const fieldErrs = passwordFieldErrors(pwForm);
+    if (Object.keys(fieldErrs).length) {
+      setPwErrors(fieldErrs);
+      return;
+    }
+    setPwSaving(true);
+    try {
+      await authService.changePassword(pwForm.currentPassword, pwForm.newPassword);
+      toast.success('Password changed successfully');
+      setPwForm(EMPTY_PASSWORD_FORM);
+      setPwTouched({});
+      setPwErrors({});
+    } catch (err) {
+      const data = err?.response?.data || {};
+      const field = data.errors?.[0]?.field || data.field;
+      if (field) setPwErrors({ [field]: data.errors?.[0]?.message || data.message });
+      else toast.error(data.message || 'Failed to change password');
+    } finally {
+      setPwSaving(false);
     }
   };
 
@@ -209,27 +275,76 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* Security */}
+            {/* Security — Change Password */}
             <div className="card p-6">
-              <h3 className="text-base font-semibold text-slate-900 mb-5">Security</h3>
-              <div className="flex items-center justify-between py-3 border-b border-slate-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center">
-                    <KeyRound className="w-4 h-4 text-slate-500" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-800">Password</p>
-                    <p className="text-xs text-slate-400">Last changed: unknown</p>
-                  </div>
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center">
+                  <KeyRound className="w-4 h-4 text-slate-500" />
                 </div>
-                <a
-                  href="/forgot-password"
-                  onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }}
-                  className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
-                >
-                  Change
-                </a>
+                <div>
+                  <h3 className="text-base font-semibold text-slate-900">Change Password</h3>
+                  <p className="text-xs text-slate-400">You'll stay signed in on this device.</p>
+                </div>
               </div>
+
+              <form onSubmit={handleChangePassword} noValidate className="space-y-4">
+                {[
+                  { field: 'currentPassword', label: 'Current password', autoComplete: 'current-password' },
+                  { field: 'newPassword', label: 'New password', autoComplete: 'new-password' },
+                  { field: 'confirmPassword', label: 'Confirm new password', autoComplete: 'new-password' },
+                ].map(({ field, label, autoComplete }) => (
+                  <div key={field}>
+                    <label className="label" htmlFor={field}>{label}</label>
+                    <div className="relative">
+                      <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                      <input
+                        id={field}
+                        type={showPw ? 'text' : 'password'}
+                        value={pwForm[field]}
+                        onChange={setPw(field)}
+                        onBlur={touchPw(field)}
+                        className={`input-field pl-10 ${field === 'currentPassword' ? 'pr-10' : ''} ${pwError(field) ? 'error' : ''}`}
+                        autoComplete={autoComplete}
+                      />
+                      {field === 'currentPassword' && (
+                        <button
+                          type="button"
+                          onClick={() => setShowPw((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                          aria-label={showPw ? 'Hide passwords' : 'Show passwords'}
+                        >
+                          {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      )}
+                    </div>
+                    {pwError(field) && <p className="mt-1 text-xs text-red-500">{pwError(field)}</p>}
+                    {field === 'newPassword' && <PasswordChecklist password={pwForm.newPassword} />}
+                  </div>
+                ))}
+
+                <div className="flex items-center gap-3 pt-1 flex-wrap">
+                  <button type="submit" disabled={pwSaving || !pwValid} className="btn-primary w-auto px-6">
+                    {pwSaving ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Updating…
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4" />
+                        Update password
+                      </>
+                    )}
+                  </button>
+                  <a
+                    href="/forgot-password"
+                    onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }}
+                    className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                  >
+                    Forgot your current password?
+                  </a>
+                </div>
+              </form>
             </div>
 
             {/* Danger zone */}

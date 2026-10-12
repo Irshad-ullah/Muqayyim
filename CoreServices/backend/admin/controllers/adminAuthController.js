@@ -1,18 +1,21 @@
 import User from '../../models/User.js';
 import { auditLog } from '../utils/auditLog.js';
+import { validatePassword, passwordErrorResponse } from '../../utils/passwordPolicy.js';
+import { normalizeEmail, isDuplicateKeyError, emailInUse } from '../../utils/apiErrors.js';
 
 // @route   POST /api/admin/auth/create-admin
 // @desc    Promote an existing user to Admin OR create a new Admin account
 // @access  Admin only
 export const createAdminUser = async (req, res) => {
   try {
-    const { email, name, password } = req.body;
+    const { name, password } = req.body;
+    const email = normalizeEmail(req.body.email);
 
     if (!email) {
       return res.status(400).json({ success: false, message: 'Email is required' });
     }
 
-    let user = await User.findOne({ email: email.toLowerCase() });
+    let user = await User.findOne({ email });
 
     if (user) {
       if (user.role === 'Admin') {
@@ -39,13 +42,14 @@ export const createAdminUser = async (req, res) => {
       });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.valid) {
+      return res.status(400).json(passwordErrorResponse(passwordCheck.errors));
     }
 
     user = await User.create({
       name,
-      email: email.toLowerCase(),
+      email,
       password,
       role: 'Admin',
     });
@@ -58,6 +62,7 @@ export const createAdminUser = async (req, res) => {
       data: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
   } catch (error) {
+    if (isDuplicateKeyError(error)) return emailInUse(res);
     console.error('Create admin error:', error);
     return res.status(500).json({ success: false, message: 'Failed to create admin user' });
   }

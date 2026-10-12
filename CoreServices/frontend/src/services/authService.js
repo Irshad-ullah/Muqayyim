@@ -76,6 +76,16 @@ export const authService = {
     return data;
   },
 
+  // Returns a fresh token; store it so the current session stays signed in.
+  changePassword: async (currentPassword, newPassword) => {
+    const { data } = await authAPI.put('/password', { currentPassword, newPassword });
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      setTokenCookie(data.token);
+    }
+    return data;
+  },
+
   forgotPassword: async (email) => {
     const { data } = await authAPI.post('/forgot-password', { email });
     return data;

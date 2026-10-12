@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Please provide an email'],
       unique: true,
       lowercase: true,
+      trim: true,
       match: [
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
         'Please provide a valid email',
@@ -39,6 +40,23 @@ const userSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    // Login lockout (FR1.2 / SEC-3). Separate from admin deactivation (isActive).
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lockUntil: {
+      type: Date,
+      default: null,
+    },
+    lastLogin: {
+      type: Date,
+      default: null,
+    },
+    passwordChangedAt: {
+      type: Date,
+      default: null,
     },
     resetToken: String,
     resetTokenExpiry: Date,
@@ -75,6 +93,11 @@ userSchema.pre('save', async function (next) {
 // Method to compare passwords
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcryptjs.compare(enteredPassword, this.password);
+};
+
+// True while a temporary lockout is in effect (an expired lock counts as unlocked).
+userSchema.methods.isLocked = function (now = Date.now()) {
+  return !!(this.lockUntil && this.lockUntil.getTime() > now);
 };
 
 const User = mongoose.model('User', userSchema);

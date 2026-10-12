@@ -1,8 +1,30 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import bcryptjs from 'bcryptjs';
 import User from '../models/User.js';
-import { sendPasswordResetEmail } from '../utils/emailService.js';
+import { sendPasswordResetEmail, sendPasswordChangedEmail } from '../utils/emailService.js';
 import { validateEmail } from '../utils/emailValidator.js';
+import { validatePassword, passwordErrorResponse } from '../utils/passwordPolicy.js';
+import { MAX_LOGIN_ATTEMPTS, LOCK_DURATION_MS } from '../config/security.js';
+import { logSecurityEvent } from '../utils/securityLog.js';
+import { normalizeEmail, isDuplicateKeyError, emailInUse } from '../utils/apiErrors.js';
+
+const INVALID_CREDENTIALS = 'Invalid email or password';
+
+// Compared against when the email is unknown, so the response takes as long as
+// a real password check and timing doesn't reveal whether the email exists.
+const DUMMY_PASSWORD_HASH = bcryptjs.hashSync(crypto.randomBytes(16).toString('hex'), 10);
+
+const minutesUntil = (date) => Math.max(1, Math.ceil((date.getTime() - Date.now()) / 60000));
+
+const lockedResponse = (res, lockUntil) => {
+  const retryAfterMinutes = minutesUntil(lockUntil);
+  return res.status(423).json({
+    success: false,
+    message: `Account temporarily locked due to too many failed attempts. Try again in ${retryAfterMinutes} minute${retryAfterMinutes === 1 ? '' : 's'}.`,
+    retryAfterMinutes,
+  });
+};
 
 // Generate JWT token
 const generateToken = (userId, role) => {
@@ -16,7 +38,8 @@ const generateToken = (userId, role) => {
 // @access  Public
 export const register = async (req, res) => {
   try {
-    const { name, email, password, passwordConfirm } = req.body;
+    const { name, password, passwordConfirm } = req.body;
+    const email = normalizeEmail(req.body.email);
 
     // Validation
     if (!name || !email || !password || !passwordConfirm) {
@@ -26,10 +49,16 @@ export const register = async (req, res) => {
       });
     }
 
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.valid) {
+      return res.status(400).json(passwordErrorResponse(passwordCheck.errors));
+    }
+
     if (password !== passwordConfirm) {
       return res.status(400).json({
         success: false,
         message: 'Passwords do not match',
+        field: 'passwordConfirm',
       });
     }
 
@@ -42,19 +71,14 @@ export const register = async (req, res) => {
       });
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email already registered',
-      });
-    }
+    // Check if user already exists (the unique index also catches races below)
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return emailInUse(res);
 
     // Create user
     const user = await User.create({
       name,
-      email: email.toLowerCase(),
+      email,
       password,
     });
 
@@ -74,6 +98,7 @@ export const register = async (req, res) => {
       },
     });
   } catch (error) {
+    if (isDuplicateKeyError(error)) return emailInUse(res);
     console.error('Registration error:', error);
     return res.status(500).json({
       success: false,
@@ -88,7 +113,8 @@ export const register = async (req, res) => {
 // @access  Public
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { password } = req.body;
+    const email = normalizeEmail(req.body.email);
 
     // Validation
     if (!email || !password) {
@@ -99,24 +125,67 @@ export const login = async (req, res) => {
     }
 
     // Find user and select password
-    const user = await User.findOne({ email: email.toLowerCase() }).select(
-      '+password'
-    );
+    const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid email or password',
-      });
+      await bcryptjs.compare(String(password), DUMMY_PASSWORD_HASH);
+      return res.status(401).json({ success: false, message: INVALID_CREDENTIALS });
+    }
+
+    // Locked: refuse without checking the password.
+    if (user.isLocked()) {
+      return lockedResponse(res, user.lockUntil);
     }
 
     // Compare passwords
-    const isPasswordValid = await user.comparePassword(password);
+    const isPasswordValid = await user.comparePassword(String(password));
     if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid email or password',
-      });
+      // One atomic update so parallel requests can't skip the counter:
+      // an expired lock restarts the count at 1; reaching the limit sets the lock.
+      const now = new Date();
+      const lockUntil = new Date(now.getTime() + LOCK_DURATION_MS);
+      const lockExpired = {
+        $and: [{ $ne: [{ $ifNull: ['$lockUntil', null] }, null] }, { $lte: ['$lockUntil', now] }],
+      };
+      const updated = await User.findOneAndUpdate(
+        { _id: user._id },
+        [
+          {
+            $set: {
+              failedLoginAttempts: {
+                $cond: [lockExpired, 1, { $add: [{ $ifNull: ['$failedLoginAttempts', 0] }, 1] }],
+              },
+              lockUntil: { $cond: [lockExpired, null, { $ifNull: ['$lockUntil', null] }] },
+            },
+          },
+          {
+            $set: {
+              lockUntil: {
+                $cond: [
+                  { $and: [{ $gte: ['$failedLoginAttempts', MAX_LOGIN_ATTEMPTS] }, { $eq: ['$lockUntil', null] }] },
+                  lockUntil,
+                  '$lockUntil',
+                ],
+              },
+            },
+          },
+        ],
+        { new: true },
+      );
+
+      if (updated?.isLocked()) {
+        // Log only when this attempt set the lock (not a parallel one).
+        if (updated.lockUntil.getTime() === lockUntil.getTime()) {
+          logSecurityEvent('Account locked', {
+            userId: String(user._id),
+            ip: req.ip,
+            failedLoginAttempts: updated.failedLoginAttempts,
+            lockUntil: updated.lockUntil.toISOString(),
+          });
+        }
+        return lockedResponse(res, updated.lockUntil);
+      }
+      return res.status(401).json({ success: false, message: INVALID_CREDENTIALS });
     }
 
     // Reject deactivated accounts
@@ -126,6 +195,12 @@ export const login = async (req, res) => {
         message: 'Your account has been deactivated. Please contact support.',
       });
     }
+
+    // Success: clear any failed-attempt state and record the login.
+    await User.updateOne(
+      { _id: user._id },
+      { $set: { failedLoginAttempts: 0, lockUntil: null, lastLogin: new Date() } },
+    );
 
     // Generate token
     const token = generateToken(user._id, user.role);
@@ -193,7 +268,8 @@ export const getProfile = async (req, res) => {
 // @access  Private
 export const updateProfile = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name } = req.body;
+    const email = req.body.email !== undefined ? normalizeEmail(req.body.email) : undefined;
 
     // Find and update user
     let user = await User.findById(req.user.userId);
@@ -214,13 +290,8 @@ export const updateProfile = async (req, res) => {
           message: emailCheck.reason,
         });
       }
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        return res.status(400).json({
-          success: false,
-          message: 'Email already in use',
-        });
-      }
+      const existingUser = await User.findOne({ email, _id: { $ne: user._id } });
+      if (existingUser) return emailInUse(res);
     }
 
     // Update fields
@@ -241,6 +312,7 @@ export const updateProfile = async (req, res) => {
       },
     });
   } catch (error) {
+    if (isDuplicateKeyError(error)) return emailInUse(res);
     console.error('Update profile error:', error);
     return res.status(500).json({
       success: false,
@@ -255,7 +327,7 @@ export const updateProfile = async (req, res) => {
 // @access  Public
 export const forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = normalizeEmail(req.body.email);
 
     if (!email) {
       return res.status(400).json({
@@ -265,7 +337,7 @@ export const forgotPassword = async (req, res) => {
     }
 
     // Find user
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email });
 
     if (!user) {
       // Don't reveal if user exists for security
@@ -321,10 +393,16 @@ export const resetPassword = async (req, res) => {
       });
     }
 
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.valid) {
+      return res.status(400).json(passwordErrorResponse(passwordCheck.errors));
+    }
+
     if (password !== passwordConfirm) {
       return res.status(400).json({
         success: false,
         message: 'Passwords do not match',
+        field: 'passwordConfirm',
       });
     }
 
@@ -351,6 +429,10 @@ export const resetPassword = async (req, res) => {
     user.password = password;
     user.resetToken = undefined;
     user.resetTokenExpiry = undefined;
+    user.passwordChangedAt = new Date();
+    // A successful reset also clears any lockout.
+    user.failedLoginAttempts = 0;
+    user.lockUntil = null;
 
     await user.save();
 
@@ -364,6 +446,80 @@ export const resetPassword = async (req, res) => {
       success: false,
       message: 'Failed to reset password',
       error: error.message,
+    });
+  }
+};
+
+// @route   PUT /api/auth/password
+// @desc    Change password for the logged-in user (returns a fresh token)
+// @access  Private
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword) {
+      return res.status(400).json({
+        success: false,
+        field: 'currentPassword',
+        message: 'Current password is required',
+      });
+    }
+
+    const passwordCheck = validatePassword(newPassword);
+    if (!passwordCheck.valid) {
+      return res.status(400).json(passwordErrorResponse(passwordCheck.errors, 'newPassword'));
+    }
+
+    const user = await User.findById(req.user.userId).select('+password');
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // 400 (not 401): a wrong current password must not look like an expired session.
+    if (!(await user.comparePassword(String(currentPassword)))) {
+      return res.status(400).json({
+        success: false,
+        field: 'currentPassword',
+        message: 'Current password is incorrect',
+      });
+    }
+
+    if (await user.comparePassword(newPassword)) {
+      return res.status(400).json({
+        success: false,
+        field: 'newPassword',
+        message: 'New password must be different from your current password',
+      });
+    }
+
+    user.password = newPassword; // hashed by the pre-save hook
+    user.passwordChangedAt = new Date();
+    user.failedLoginAttempts = 0;
+    user.lockUntil = null;
+    await user.save();
+
+    logSecurityEvent('Password changed', { userId: String(user._id), ip: req.ip });
+
+    // Non-blocking notification; a mail failure never fails the request.
+    sendPasswordChangedEmail(user.email, user.name)
+      .then((sent) => {
+        if (!sent) console.error(`Password-changed email not sent for user ${user._id}`);
+      })
+      .catch((err) => console.error(`Password-changed email error for user ${user._id}:`, err.message));
+
+    // Fresh token so the current session stays signed in.
+    const token = generateToken(user._id, user.role);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Password changed successfully',
+      token,
+    });
+  } catch (error) {
+    console.error('Change password error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to change password',
     });
   }
 };

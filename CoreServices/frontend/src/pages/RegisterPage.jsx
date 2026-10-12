@@ -12,12 +12,19 @@ import {
   ArrowRight,
   CheckCircle2,
 } from 'lucide-react';
+import PasswordChecklist from '../components/PasswordChecklist.jsx';
+import { validatePassword } from '../constants/passwordPolicy.js';
 
-const passwordChecks = [
-  { label: 'At least 6 characters', test: (p) => p.length >= 6 },
-  { label: 'Contains a number', test: (p) => /\d/.test(p) },
-  { label: 'Contains a letter', test: (p) => /[a-zA-Z]/.test(p) },
-];
+// Maps an API error to inline field errors (400 field errors, 409 email).
+const serverFieldErrors = (err) => {
+  const data = err?.response?.data || {};
+  if (err?.response?.status === 409) return { email: data.message || 'Email already in use' };
+  if (Array.isArray(data.errors) && data.errors.length) {
+    return data.errors.reduce((acc, e) => ({ ...acc, [e.field]: acc[e.field] || e.message }), {});
+  }
+  if (data.field) return { [data.field]: data.message };
+  return {};
+};
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -34,15 +41,24 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const validate = () => {
+  const fieldErrors = (f) => {
     const e = {};
-    if (!form.name.trim()) e.name = 'Full name is required';
-    if (!form.email) e.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Enter a valid email';
-    if (!form.password) e.password = 'Password is required';
-    else if (form.password.length < 6) e.password = 'Password must be at least 6 characters';
-    if (!form.passwordConfirm) e.passwordConfirm = 'Please confirm your password';
-    else if (form.password !== form.passwordConfirm) e.passwordConfirm = 'Passwords do not match';
+    if (!f.name.trim()) e.name = 'Full name is required';
+    if (!f.email.trim()) e.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(f.email.trim())) e.email = 'Enter a valid email';
+    if (!f.password) e.password = 'Password is required';
+    else {
+      const check = validatePassword(f.password);
+      if (!check.valid) e.password = check.errors[0];
+    }
+    if (!f.passwordConfirm) e.passwordConfirm = 'Please confirm your password';
+    else if (f.password !== f.passwordConfirm) e.passwordConfirm = 'Passwords do not match';
+    return e;
+  };
+  const formValid = Object.keys(fieldErrors(form)).length === 0;
+
+  const validate = () => {
+    const e = fieldErrors(form);
     setErrors(e);
     return !Object.keys(e).length;
   };
@@ -52,13 +68,14 @@ export default function RegisterPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      await register(form.name.trim(), form.email, form.password, form.passwordConfirm);
+      await register(form.name.trim(), form.email.trim().toLowerCase(), form.password, form.passwordConfirm);
       toast.success('Account created! Welcome to MUQAYYIM.');
       navigate('/dashboard');
     } catch (err) {
       const msg = err?.response?.data?.message || 'Registration failed';
-      toast.error(msg);
-      if (msg.toLowerCase().includes('email')) setErrors({ email: msg });
+      const inline = serverFieldErrors(err);
+      if (Object.keys(inline).length) setErrors(inline);
+      else toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -186,22 +203,8 @@ export default function RegisterPage() {
                 {errors.password && (
                   <p className="mt-1 text-xs text-red-500">{errors.password}</p>
                 )}
-                {/* Password strength hints */}
-                {form.password && (
-                  <div className="mt-2 flex gap-3 flex-wrap">
-                    {passwordChecks.map(({ label, test }) => (
-                      <span
-                        key={label}
-                        className={`flex items-center gap-1 text-xs ${
-                          test(form.password) ? 'text-emerald-600' : 'text-slate-400'
-                        }`}
-                      >
-                        <CheckCircle2 className="w-3 h-3" />
-                        {label}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                {/* Password strength checklist (same rules as the server) */}
+                <PasswordChecklist password={form.password} />
               </div>
 
               {/* Confirm Password */}
@@ -230,7 +233,7 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              <button type="submit" disabled={loading} className="btn-primary mt-2">
+              <button type="submit" disabled={loading || !formValid} className="btn-primary mt-2">
                 {loading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

@@ -1,6 +1,15 @@
 import User from '../../models/User.js';
 import Profile from '../../models/Profile.js';
 import { auditLog } from '../utils/auditLog.js';
+import { normalizeEmail, isDuplicateKeyError, emailInUse } from '../../utils/apiErrors.js';
+
+const SAFE_FIELDS = '-password -resetToken -resetTokenExpiry';
+
+// Adds the temporary-lock state (separate from admin deactivation) to a user.
+const withLockState = (user) => {
+  const obj = user.toObject();
+  return { ...obj, isLocked: user.isLocked(), lockUntil: user.isLocked() ? user.lockUntil : null };
+};
 
 // @route   GET /api/admin/users
 // @desc    Paginated, filterable user list
@@ -36,13 +45,13 @@ export const listUsers = async (req, res) => {
         .sort(sort)
         .skip(skip)
         .limit(parseInt(limit))
-        .select('-password -resetToken -resetTokenExpiry'),
+        .select(SAFE_FIELDS),
       User.countDocuments(filter),
     ]);
 
     return res.json({
       success: true,
-      data: users,
+      data: users.map(withLockState),
       pagination: {
         total,
         page: parseInt(page),
@@ -61,16 +70,14 @@ export const listUsers = async (req, res) => {
 // @access  Admin
 export const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select(
-      '-password -resetToken -resetTokenExpiry'
-    );
+    const user = await User.findById(req.params.id).select(SAFE_FIELDS);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     const profile = await Profile.findOne({ userId: user._id });
 
-    return res.json({ success: true, data: { user, profile: profile || null } });
+    return res.json({ success: true, data: { user: withLockState(user), profile: profile || null } });
   } catch (error) {
     console.error('Get user error:', error);
     return res.status(500).json({ success: false, message: 'Failed to fetch user' });
@@ -82,13 +89,19 @@ export const getUserById = async (req, res) => {
 // @access  Admin
 export const updateUser = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name } = req.body;
+    const email = req.body.email !== undefined ? normalizeEmail(req.body.email) : undefined;
 
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
+    if (email && email !== user.email) {
+      const taken = await User.exists({ email, _id: { $ne: user._id } });
+      if (taken) return emailInUse(res);
+    }
+
     if (name) user.name = name;
-    if (email) user.email = email.toLowerCase();
+    if (email) user.email = email;
 
     await user.save();
     await auditLog(req.user.userId, 'UPDATE_USER', 'User', user._id, { name, email }, req);
@@ -99,8 +112,37 @@ export const updateUser = async (req, res) => {
       data: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
   } catch (error) {
+    if (isDuplicateKeyError(error)) return emailInUse(res);
     console.error('Update user error:', error);
     return res.status(500).json({ success: false, message: 'Failed to update user' });
+  }
+};
+
+// @route   POST /api/admin/users/:id/unlock
+// @desc    Clear a temporary login lockout (failed-attempt counter + lock)
+// @access  Admin
+export const unlockUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    const wasLocked = user.isLocked();
+    const previousAttempts = user.failedLoginAttempts || 0;
+
+    await User.updateOne({ _id: user._id }, { $set: { failedLoginAttempts: 0, lockUntil: null } });
+    await auditLog(req.user.userId, 'UNLOCK_USER', 'User', user._id, { wasLocked, previousAttempts }, req);
+
+    return res.json({
+      success: true,
+      message: wasLocked ? 'User unlocked' : 'User was not locked; failed attempts cleared',
+      data: { userId: user._id, isLocked: false, lockUntil: null },
+    });
+  } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    console.error('Unlock user error:', error);
+    return res.status(500).json({ success: false, message: 'Failed to unlock user' });
   }
 };
 

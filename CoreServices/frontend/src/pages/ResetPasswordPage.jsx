@@ -11,6 +11,8 @@ import {
   CheckCircle2,
   ShieldCheck,
 } from 'lucide-react';
+import PasswordChecklist from '../components/PasswordChecklist.jsx';
+import { validatePassword } from '../constants/passwordPolicy.js';
 
 export default function ResetPasswordPage() {
   const { token } = useParams();
@@ -23,12 +25,21 @@ export default function ResetPasswordPage() {
   const [done, setDone] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const validate = () => {
+  const fieldErrors = (f) => {
     const e = {};
-    if (!form.password) e.password = 'Password is required';
-    else if (form.password.length < 6) e.password = 'Minimum 6 characters';
-    if (!form.passwordConfirm) e.passwordConfirm = 'Please confirm your password';
-    else if (form.password !== form.passwordConfirm) e.passwordConfirm = 'Passwords do not match';
+    if (!f.password) e.password = 'Password is required';
+    else {
+      const check = validatePassword(f.password);
+      if (!check.valid) e.password = check.errors[0];
+    }
+    if (!f.passwordConfirm) e.passwordConfirm = 'Please confirm your password';
+    else if (f.password !== f.passwordConfirm) e.passwordConfirm = 'Passwords do not match';
+    return e;
+  };
+  const formValid = Object.keys(fieldErrors(form)).length === 0;
+
+  const validate = () => {
+    const e = fieldErrors(form);
     setErrors(e);
     return !Object.keys(e).length;
   };
@@ -42,9 +53,10 @@ export default function ResetPasswordPage() {
       setDone(true);
       toast.success('Password reset successfully!');
     } catch (err) {
-      const msg = err?.response?.data?.message || 'Reset link is invalid or expired';
+      const data = err?.response?.data || {};
+      const msg = data.message || 'Reset link is invalid or expired';
       toast.error(msg);
-      setErrors({ password: msg });
+      setErrors({ [data.field || 'password']: msg });
     } finally {
       setLoading(false);
     }
@@ -102,6 +114,7 @@ export default function ResetPasswordPage() {
                   {errors.password && (
                     <p className="mt-1 text-xs text-red-500">{errors.password}</p>
                   )}
+                  <PasswordChecklist password={form.password} />
                 </div>
 
                 <div>
@@ -129,7 +142,7 @@ export default function ResetPasswordPage() {
                   )}
                 </div>
 
-                <button type="submit" disabled={loading} className="btn-primary">
+                <button type="submit" disabled={loading || !formValid} className="btn-primary">
                   {loading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

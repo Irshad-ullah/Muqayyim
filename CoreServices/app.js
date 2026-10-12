@@ -5,9 +5,14 @@ import profileRoutes from './backend/routes/profileRoutes.js';
 import generatedCvRoutes from './backend/routes/generatedCvRoutes.js';
 import adminRoutes from './backend/admin/routes/adminRoutes.js';
 import internalRoutes from './backend/routes/internalRoutes.js';
+import { parseTrustProxy } from './backend/utils/trustProxy.js';
 
 // Express app without DB connection or listen(), so tests can import it.
 const app = express();
+
+// Trust X-Forwarded-For only from known proxies so req.ip is the real client
+// (the gateway locally; the platform proxy on Railway/Render).
+app.set('trust proxy', parseTrustProxy(process.env.TRUST_PROXY));
 
 // Middleware
 app.use(express.json({ limit: '1mb' }));

@@ -44,4 +44,14 @@ const sendPasswordResetEmail = async (email, resetToken) => {
   return sendEmail(email, 'Password Reset Request - MUQAYYIM', htmlContent);
 };
 
-export { sendEmail, sendPasswordResetEmail };
+const sendPasswordChangedEmail = async (email, name) => {
+  const html = `
+    <p>Hi ${name || 'there'},</p>
+    <p>The password for your MUQAYYIM account was just changed.</p>
+    <p>If you made this change, no action is needed. If you did not, reset your password
+    immediately using "Forgot password" on the login page and contact support.</p>
+  `;
+  return sendEmail(email, 'Your MUQAYYIM password was changed', html);
+};
+
+export { sendEmail, sendPasswordResetEmail, sendPasswordChangedEmail };

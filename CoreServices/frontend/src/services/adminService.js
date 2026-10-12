@@ -31,6 +31,7 @@ export const adminService = {
   updateUserRole: (id, role) =>
     adminAPI.patch(`/users/${id}/role`, { role }).then((r) => r.data),
   deleteUser: (id) => adminAPI.delete(`/users/${id}`).then((r) => r.data),
+  unlockUser: (id) => adminAPI.post(`/users/${id}/unlock`).then((r) => r.data),
 
   // ── Admin accounts ─────────────────────────────────────────────────────────
   createAdmin: (data) => adminAPI.post('/auth/create-admin', data).then((r) => r.data),

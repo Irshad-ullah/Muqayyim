@@ -8,6 +8,18 @@ dotenv.config();
 
 const app = express();
 
+// Trust X-Forwarded-For only from known proxies so req.ip is the real client
+// (needed for upcoming rate limiting behind Railway/Render's proxy).
+//   unset → 'loopback' | true/false | hop count (e.g. 1) | subnet list string
+const parseTrustProxy = (value) => {
+  if (value === undefined || value === '') return 'loopback';
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  if (/^\d+$/.test(value)) return Number(value);
+  return value;
+};
+app.set('trust proxy', parseTrustProxy(process.env.TRUST_PROXY));
+
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'http://localhost:3000';
 const CV_SERVICE_URL   = process.env.CV_SERVICE_URL   || 'http://localhost:8000';
 
@@ -71,6 +83,7 @@ app.use(
   createProxyMiddleware({
     target: AUTH_SERVICE_URL,
     changeOrigin: true,
+    xfwd: true, // pass the client IP downstream (X-Forwarded-For)
     onError: (err, req, res) => onError(err, req, res, AUTH_SERVICE_URL),
     onProxyRes: stripDownstreamCors,
     logLevel: 'silent',
@@ -83,6 +96,7 @@ app.use(
   createProxyMiddleware({
     target: AUTH_SERVICE_URL,
     changeOrigin: true,
+    xfwd: true, // pass the client IP downstream (X-Forwarded-For)
     onError: (err, req, res) => onError(err, req, res, AUTH_SERVICE_URL),
     onProxyRes: stripDownstreamCors,
     logLevel: 'silent',
@@ -95,6 +109,7 @@ app.use(
   createProxyMiddleware({
     target: AUTH_SERVICE_URL,
     changeOrigin: true,
+    xfwd: true, // pass the client IP downstream (X-Forwarded-For)
     onError: (err, req, res) => onError(err, req, res, AUTH_SERVICE_URL),
     onProxyRes: stripDownstreamCors,
     logLevel: 'silent',
@@ -107,6 +122,7 @@ app.use(
   createProxyMiddleware({
     target: CV_SERVICE_URL,
     changeOrigin: true,
+    xfwd: true, // pass the client IP downstream (X-Forwarded-For)
     onError: (err, req, res) => onError(err, req, res, CV_SERVICE_URL),
     onProxyRes: stripDownstreamCors,
     logLevel: 'silent',
@@ -119,6 +135,7 @@ app.use(
   createProxyMiddleware({
     target: AUTH_SERVICE_URL,
     changeOrigin: true,
+    xfwd: true, // pass the client IP downstream (X-Forwarded-For)
     onError: (err, req, res) => onError(err, req, res, AUTH_SERVICE_URL),
     onProxyRes: stripDownstreamCors,
     logLevel: 'silent',

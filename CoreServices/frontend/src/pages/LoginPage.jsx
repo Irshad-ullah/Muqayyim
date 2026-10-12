@@ -47,9 +47,22 @@ export default function LoginPage() {
       toast.success('Welcome back!');
       navigate(data.user?.role === 'Admin' ? '/admin/dashboard' : '/dashboard');
     } catch (err) {
-      const msg = err?.response?.data?.message || 'Invalid email or password';
-      toast.error(msg);
-      setErrors({ password: msg });
+      const status = err?.response?.status;
+      const data = err?.response?.data || {};
+      if (status === 423) {
+        // Temporary lockout: show the server's message with minutes remaining.
+        const mins = data.retryAfterMinutes;
+        const msg =
+          data.message ||
+          `Account temporarily locked due to too many failed attempts. Try again in ${mins} minute${mins === 1 ? '' : 's'}.`;
+        toast.error(msg, { duration: 6000 });
+        setErrors({ lock: msg });
+      } else {
+        // Keep 401 generic: never reveal whether the email exists.
+        const msg = status === 401 ? 'Invalid email or password' : data.message || 'Login failed';
+        toast.error(msg);
+        setErrors({ password: msg });
+      }
     } finally {
       setLoading(false);
     }
@@ -127,6 +140,12 @@ export default function LoginPage() {
             </div>
 
             <form onSubmit={handleSubmit} noValidate className="space-y-4">
+              {errors.lock && (
+                <div role="alert" className="flex items-start gap-3 p-3 rounded-xl border border-orange-200 bg-orange-50">
+                  <Lock className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-orange-800">{errors.lock}</p>
+                </div>
+              )}
               {/* Email */}
               <div>
                 <label className="label">Email address</label>

@@ -13,6 +13,8 @@ import {
   Trash2,
   AlertCircle,
   Filter,
+  Lock,
+  Unlock,
 } from 'lucide-react';
 import { cvStatusLabel } from '../../constants/cvStatus.js';
 
@@ -48,6 +50,20 @@ function StatusDot({ isActive }) {
     <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${isActive !== false ? 'text-emerald-600' : 'text-red-500'}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${isActive !== false ? 'bg-emerald-500' : 'bg-red-500'}`} />
       {isActive !== false ? 'Active' : 'Inactive'}
+    </span>
+  );
+}
+
+// Temporary login lockout (too many failed attempts) — separate from Inactive.
+function LockedBadge({ lockUntil }) {
+  const until = lockUntil ? new Date(lockUntil) : null;
+  return (
+    <span
+      className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-orange-100 text-orange-700"
+      title={until ? `Locked until ${until.toLocaleTimeString()}` : 'Locked'}
+    >
+      <Lock className="w-3 h-3" />
+      Locked
     </span>
   );
 }
@@ -116,6 +132,20 @@ export default function AdminUsersPage() {
       fetchUsers(pagination.page);
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Failed to update status');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleUnlock = async (user) => {
+    if (!window.confirm(`Unlock ${user.email}? They will be able to try signing in again immediately.`)) return;
+    setActionLoading(user._id);
+    try {
+      await adminService.unlockUser(user._id);
+      toast.success('User unlocked');
+      fetchUsers(pagination.page);
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to unlock user');
     } finally {
       setActionLoading(null);
     }
@@ -297,7 +327,10 @@ export default function AdminUsersPage() {
 
                       {/* Active */}
                       <td className="px-4 py-3">
-                        <StatusDot isActive={u.isActive} />
+                        <div className="flex flex-col items-start gap-1">
+                          <StatusDot isActive={u.isActive} />
+                          {u.isLocked && <LockedBadge lockUntil={u.lockUntil} />}
+                        </div>
                       </td>
 
                       {/* Joined */}
@@ -310,6 +343,20 @@ export default function AdminUsersPage() {
                       {/* Actions */}
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
+                          {/* Unlock (only while temporarily locked) */}
+                          {u.isLocked && (
+                            <button
+                              onClick={() => handleUnlock(u)}
+                              disabled={busy}
+                              title="Unlock account"
+                              aria-label={`Unlock ${u.email}`}
+                              className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold text-orange-700 bg-orange-50 hover:bg-orange-100 transition-colors disabled:opacity-40"
+                            >
+                              <Unlock className="w-3.5 h-3.5" />
+                              Unlock
+                            </button>
+                          )}
+
                           {/* Toggle active */}
                           <button
                             onClick={() => handleToggleStatus(u)}
