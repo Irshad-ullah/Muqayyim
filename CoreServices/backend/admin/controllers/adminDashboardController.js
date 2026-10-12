@@ -22,7 +22,7 @@ export const getDashboardMetrics = async (req, res) => {
 // @access  Admin
 export const getDashboardSummary = async (req, res) => {
   try {
-    const metrics = await metricsAggregator.aggregate(['users', 'cv']);
+    const metrics = await metricsAggregator.aggregate(['users', 'cv', 'cvGenerator']);
 
     return res.json({
       success: true,
@@ -40,8 +40,10 @@ export const getDashboardSummary = async (req, res) => {
         // Module 3 — Profile Builder
         githubConnected: metrics.users?.githubConnected ?? 0,
 
+        // Module 4 — CV Generator
+        cvsGenerated: metrics.cvGenerator?.totalGenerated ?? 0,
+
         // Future modules — graceful defaults (not hardcoded fake data)
-        cvsGenerated: 'not_available',
         interviewsConducted: 'not_available',
         learningProgress: 'not_available',
         careerMatches: 'not_available',

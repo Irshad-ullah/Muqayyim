@@ -83,6 +83,18 @@ app.use(
   })
 );
 
+// ─── Route: /api/generated-cvs/* → Module 4 (CV Generator — Core Service) ────
+app.use(
+  '/api/generated-cvs',
+  createProxyMiddleware({
+    target: AUTH_SERVICE_URL,
+    changeOrigin: true,
+    onError: (err, req, res) => onError(err, req, res, AUTH_SERVICE_URL),
+    onProxyRes: stripDownstreamCors,
+    logLevel: 'silent',
+  })
+);
+
 // ─── Route: /api/cv/* → Module 2 (CV Parsing Service) ────────────────────────
 app.use(
   '/api/cv',
@@ -116,6 +128,7 @@ app.get('/health', (_req, res) => {
     routes: {
       '/api/auth/*':    AUTH_SERVICE_URL,
       '/api/profile/*': AUTH_SERVICE_URL,
+      '/api/generated-cvs/*': AUTH_SERVICE_URL,
       '/api/cv/*':      CV_SERVICE_URL,
       '/api/admin/*':   AUTH_SERVICE_URL,
     },
@@ -127,7 +140,7 @@ app.get('/', (_req, res) => {
   res.json({
     message: 'MUQAYYIM API Gateway',
     version: '1.0.0',
-    endpoints: ['/api/auth', '/api/profile', '/api/cv', '/api/admin', '/health'],
+    endpoints: ['/api/auth', '/api/profile', '/api/generated-cvs', '/api/cv', '/api/admin', '/health'],
   });
 });
 
@@ -144,6 +157,7 @@ app.listen(PORT, () => {
   console.log(`    /api/auth/*    → ${AUTH_SERVICE_URL}  (Core Service)`);
   console.log(`    /api/profile/* → ${AUTH_SERVICE_URL}  (Core Service)`);
   console.log(`    /api/admin/*   → ${AUTH_SERVICE_URL}  (Core Service — Admin Panel)`);
+  console.log(`    /api/generated-cvs/* → ${AUTH_SERVICE_URL}  (Core Service — CV Generator)`);
   console.log(`    /api/cv/*      → ${CV_SERVICE_URL}  (AI Service)`);
   console.log('');
 });

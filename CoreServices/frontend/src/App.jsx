@@ -14,6 +14,7 @@ import ProfilePage from './pages/ProfilePage.jsx';
 import CVParsingPage from './pages/CVParsingPage.jsx';
 import ProfileBuilderPage from './pages/ProfileBuilderPage.jsx';
 import ViewProfilePage from './pages/ViewProfilePage.jsx';
+import CVGeneratorPage from './pages/CVGeneratorPage.jsx';
 
 // Admin pages
 import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx';
@@ -92,6 +93,21 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* Module 4 — CV Generator (new CV, or reopen a saved one by id) */}
+      {['/cv-generator', '/cv-generator/:id'].map((path) => (
+        <Route
+          key={path}
+          path={path}
+          element={
+            <ProtectedRoute>
+              {user?.role === 'Admin'
+                ? <Navigate to="/admin/dashboard" replace />
+                : <CVGeneratorPage />}
+            </ProtectedRoute>
+          }
+        />
+      ))}
 
       {/* ── Admin protected routes ─────────────────────────────────────── */}
       <Route

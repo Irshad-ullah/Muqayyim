@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './backend/config/db.js';
 import authRoutes from './backend/routes/authRoutes.js';
 import profileRoutes from './backend/routes/profileRoutes.js';
+import generatedCvRoutes from './backend/routes/generatedCvRoutes.js';
 import adminRoutes from './backend/admin/routes/adminRoutes.js';
 import { seedAdmin } from './backend/admin/utils/adminSeed.js';
 
@@ -12,7 +13,7 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(
   cors({
     origin: [
@@ -35,6 +36,7 @@ connectDB().then(() => seedAdmin());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/generated-cvs', generatedCvRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Health check

@@ -9,6 +9,7 @@ import {
   BrainCircuit,
   FileUp,
   PenSquare,
+  FileText,
   Menu,
   X,
 } from 'lucide-react';
@@ -38,10 +39,11 @@ export default function Navbar() {
     { to: '/dashboard',       label: 'Dashboard',       icon: LayoutDashboard },
     { to: '/cv-parsing',      label: 'CV Parsing',       icon: FileUp },
     { to: '/profile-builder', label: 'Profile Builder',  icon: PenSquare },
+    { to: '/cv-generator',    label: 'CV Generator',     icon: FileText },
     { to: '/profile',         label: 'Account',          icon: User },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-100 shadow-sm">

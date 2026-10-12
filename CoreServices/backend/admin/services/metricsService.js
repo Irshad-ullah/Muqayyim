@@ -1,5 +1,6 @@
 import { UserMetricsProvider } from './providers/userMetricsProvider.js';
 import { CvMetricsProvider } from './providers/cvMetricsProvider.js';
+import { CvGeneratorMetricsProvider } from './providers/cvGeneratorMetricsProvider.js';
 
 // Lightweight provider registry — future modules register themselves here
 // without any changes to this aggregator.
@@ -13,6 +14,7 @@ class MetricsAggregator {
     this._providers = new Map();
     this.register('users', new UserMetricsProvider());
     this.register('cv', new CvMetricsProvider());
+    this.register('cvGenerator', new CvGeneratorMetricsProvider());
   }
 
   register(key, provider) {

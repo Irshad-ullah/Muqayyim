@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import Navbar from '../components/Navbar.jsx';
 import CVStatusBadge, { CVStatusStepper } from '../components/CVStatusBadge.jsx';
+import SavedCvsCard from '../components/cvgen/SavedCvsCard.jsx';
 import toast from 'react-hot-toast';
 import {
   FileUp,
@@ -17,6 +18,7 @@ import {
   BookOpen,
   PenSquare,
   Eye,
+  FileText,
 } from 'lucide-react';
 
 const quickActions = [
@@ -35,6 +37,14 @@ const quickActions = [
     to: '/profile-builder',
     color: 'text-emerald-600',
     bg: 'bg-emerald-50',
+  },
+  {
+    icon: FileText,
+    label: 'CV Generator',
+    description: 'Create an ATS-friendly CV from your profile',
+    to: '/cv-generator',
+    color: 'text-sky-600',
+    bg: 'bg-sky-50',
   },
   {
     icon: Eye,
@@ -303,6 +313,9 @@ export default function DashboardPage() {
                 ))}
               </div>
             </div>
+
+            {/* Module 4 — saved CVs */}
+            <SavedCvsCard />
           </div>
         </div>
       </main>
