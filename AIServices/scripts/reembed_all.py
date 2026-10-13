@@ -39,7 +39,7 @@ async def main(dry_run: bool) -> None:
     try:
         embedder = ModelManager()
         if not dry_run:
-            print(f"Loading {embedder.model_name} …")
+            print(f"Loading {embedder.model_name} ...")
             embedder.load_sync()
             await ensure_embedding_indexes(db)
         report = await reembed_all(db, embedder, dry_run=dry_run)

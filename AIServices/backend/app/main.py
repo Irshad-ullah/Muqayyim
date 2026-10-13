@@ -18,6 +18,7 @@ from app.config.database import connect_to_mongo, close_mongo_connection
 from app.routes.cv_routes import router as cv_router
 from app.routes.internal_routes import router as internal_router
 from app.routes.embedding_routes import router as embedding_router
+from app.services.embeddings.descriptions import InvalidDescriptionFile, load_description_provider
 from app.services.embeddings.model import get_embedder, get_manager
 from app.services.embeddings.user_profiles import run_worker
 from app.middleware.auth import register_auth_error_handler
@@ -43,6 +44,14 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("🚀 Starting up MUQAYYIM CV Parsing Module...")
     await connect_to_mongo()
+
+    # Skill descriptions (embedding text) are validated now: a broken curated
+    # file stops startup with a clear error instead of silently embedding names.
+    try:
+        load_description_provider()
+    except InvalidDescriptionFile as exc:
+        logger.critical("Invalid skill description file: %s", exc)
+        raise
 
     # Skill embeddings: the model loads in the background (the API does not
     # wait); the worker completes pending embeddings once it is ready.

@@ -1,5 +1,5 @@
 import React from 'react';
-import { CartesianGrid, LabelList, Legend, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Legend, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
 
 // 2D skill map: PCA of the user's skill vectors (positions are approximate).
 // Colour = where the skill came from (identity only; never used in any
@@ -13,6 +13,39 @@ export const SOURCE_STYLE = {
 };
 const ORDER = ['manual', 'cv', 'github'];
 
+// Labels sit above their point; a label that would collide with an earlier
+// one (points close together in data space) moves below its point instead.
+export const placeLabels = (points) => {
+  const placed = [];
+  return points.map((p) => {
+    const clash = placed.some((q) => q.below === false && Math.abs(q.x - p.x) < 0.45 && Math.abs(q.y - p.y) < 0.2);
+    const point = { ...p, below: clash };
+    placed.push(point);
+    return point;
+  });
+};
+
+// Point + its text label (identity is never colour alone).
+function LabelledPoint({ cx, cy, fill, payload }) {
+  if (cx == null || cy == null) return null;
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={6} fill={fill} stroke="#ffffff" strokeWidth={2} />
+      <text
+        x={cx}
+        y={payload.below ? cy + 20 : cy - 11}
+        textAnchor="middle"
+        fontSize={11}
+        fill="#334155"
+        style={{ pointerEvents: 'none' }}
+        data-testid="skill-map-label"
+      >
+        {payload.name}
+      </text>
+    </g>
+  );
+}
+
 function PointTooltip({ active, payload }) {
   if (!active || !payload?.length) return null;
   const p = payload[0].payload;
@@ -25,7 +58,8 @@ function PointTooltip({ active, payload }) {
 }
 
 export default function SkillMap({ points }) {
-  const series = ORDER.map((source) => ({ source, data: points.filter((p) => (p.source || 'manual') === source) })).filter(
+  const labelled = placeLabels(points);
+  const series = ORDER.map((source) => ({ source, data: labelled.filter((p) => (p.source || 'manual') === source) })).filter(
     (s) => s.data.length,
   );
   return (
@@ -53,10 +87,8 @@ export default function SkillMap({ points }) {
                 stroke="#ffffff"
                 strokeWidth={2}
                 isAnimationActive={false}
-                shape={(props) => <circle cx={props.cx} cy={props.cy} r={6} fill={props.fill} stroke="#ffffff" strokeWidth={2} />}
-              >
-                <LabelList dataKey="name" position="top" offset={9} style={{ fontSize: 11, fill: '#334155', pointerEvents: 'none' }} />
-              </Scatter>
+                shape={<LabelledPoint />}
+              />
             ))}
           </ScatterChart>
         </ResponsiveContainer>

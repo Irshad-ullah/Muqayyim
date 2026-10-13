@@ -96,6 +96,11 @@ export default function SkillEmbeddingsCard({ retryMs = RETRY_MS, maxRetryMs = M
           <div>
             <dt className="text-xs text-slate-500">Skills embedded</dt>
             <dd className="font-semibold text-slate-900" data-testid="skills-count">{info.skills_count}</dd>
+            {typeof info.described_count === 'number' && (
+              <dd className="text-xs text-slate-500" data-testid="described-count">
+                {info.described_count} of {info.skills_count} skills described
+              </dd>
+            )}
           </div>
           <div>
             <dt className="text-xs text-slate-500">Model</dt>

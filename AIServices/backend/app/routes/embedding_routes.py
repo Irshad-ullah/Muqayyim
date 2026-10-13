@@ -15,7 +15,9 @@ from fastapi.responses import JSONResponse
 import numpy as np
 
 from app.middleware.auth import get_current_user
+from app.services.embeddings.descriptions import build_embed_text, text_mode
 from app.services.embeddings.model import Embedder, get_embedder
+from app.services.embeddings.vector_store import description_counts
 from app.services.embeddings.user_profiles import (
     DONE,
     EmbeddingsPending,
@@ -36,23 +38,37 @@ def _error(status: int, code: str, message: str) -> JSONResponse:
 def _status(record, embedder: Embedder) -> str:
     if not record:
         return "none"
-    ready = record.get("embedding_status") == DONE and record.get("model") == embedder.model_name
+    ready = (
+        record.get("embedding_status") == DONE
+        and record.get("model") == embedder.model_name
+        and record.get("text_mode") == text_mode()
+    )
     return "ready" if ready else "pending"
 
 
 @router.get("/health")
 async def embeddings_health(embedder: Embedder = Depends(get_embedder)):
-    return {"success": True, **embedder.health()}
+    return {
+        "success": True,
+        **embedder.health(),
+        "text_mode": text_mode(),
+        "skills": await description_counts(embedder.model_name, text_mode()),
+    }
 
 
 @router.get("/me")
 async def my_embeddings(current_user: dict = Depends(get_current_user), embedder: Embedder = Depends(get_embedder)):
     record = await get_user_skill_record(current_user["user_id"])
+    skills = record["skills"] if record else []
+    mode = text_mode()
     return {
         "success": True,
         "status": _status(record, embedder),
-        "skills_count": len(record["skills"]) if record else 0,
+        "skills_count": len(skills),
+        # Skills embedded with a curated description ("x of y described").
+        "described_count": sum(1 for s in skills if mode == "description" and build_embed_text(s["name"], mode).has_description),
         "model": embedder.model_name,
+        "text_mode": mode,
         "updated_at": record.get("updated_at") if record else None,
     }
 
@@ -70,7 +86,7 @@ def pca_2d(matrix: np.ndarray) -> np.ndarray:
 
 
 def closest_pairs(names, matrix: np.ndarray, top: int = 3):
-    """Top pairs by cosine similarity on the full 384-dim (unit) vectors."""
+    """Top pairs by cosine similarity on the full (unit) vectors, not the 2D projection."""
     sims = matrix @ matrix.T
     i, j = np.triu_indices(len(names), k=1)
     order = np.argsort(-sims[i, j], kind="stable")[:top]

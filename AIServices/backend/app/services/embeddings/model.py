@@ -24,7 +24,6 @@ from app.config.settings import settings
 
 logger = logging.getLogger(__name__)
 
-DIMENSION = 384
 LOADING, READY, FAILED = "loading", "ready", "failed"
 RETRY_START_SECONDS, RETRY_MAX_SECONDS = 30, 600
 
@@ -35,7 +34,7 @@ class ModelNotReady(Exception):
 
 class Embedder(Protocol):
     model_name: str
-    dimension: int
+    dimension: Optional[int]  # read from the loaded model; None while loading
 
     @property
     def ready(self) -> bool: ...
@@ -59,7 +58,7 @@ class ModelManager:
     def __init__(self, model_name: Optional[str] = None, cache_dir: Optional[str] = None):
         self.model_name = model_name or settings.EMBEDDING_MODEL
         self.cache_dir = cache_dir or settings.EMBEDDING_CACHE_DIR
-        self.dimension = DIMENSION
+        self.dimension: Optional[int] = None  # read from the model once loaded
         self._state = LOADING
         self._model = None
         self.error: Optional[str] = None
@@ -87,9 +86,7 @@ class ModelManager:
             logger.info("Embedding model %s not cached; downloading to %s", self.model_name, self.cache_dir)
             model = SentenceTransformer(self.model_name, **kwargs)
         get_dimension = getattr(model, "get_embedding_dimension", None) or model.get_sentence_embedding_dimension
-        dimension = get_dimension()
-        if dimension != DIMENSION:
-            raise RuntimeError(f"{self.model_name} produces {dimension}-dim vectors, expected {DIMENSION}")
+        self.dimension = int(get_dimension())
         self._model = model
         self.load_seconds = round(time.perf_counter() - started, 2)
         self._state, self.error = READY, None
@@ -119,11 +116,12 @@ class ModelManager:
                 delay = min(delay * 2, RETRY_MAX_SECONDS)
 
     def embed_texts(self, texts: List[str]) -> np.ndarray:
-        """Batched, L2-normalised float32 vectors (len(texts) × 384)."""
+        """Batched, L2-normalised float32 vectors (len(texts) × model dimension). No instruction prefix:
+        skill-to-skill similarity is symmetric."""
         if not self.ready:
             raise ModelNotReady(self.model_name)
         if not texts:
-            return np.zeros((0, DIMENSION), dtype=np.float32)
+            return np.zeros((0, self.dimension), dtype=np.float32)
         vectors = self._model.encode(
             list(texts), batch_size=64, convert_to_numpy=True, normalize_embeddings=True, show_progress_bar=False
         )

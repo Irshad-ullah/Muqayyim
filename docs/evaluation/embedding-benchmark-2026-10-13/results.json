@@ -1,0 +1,1353 @@
+{
+  "rows": [
+    {
+      "model": "all-MiniLM-L6-v2",
+      "mode": "name",
+      "ram_mb": 574.1,
+      "ms": 1.0877349823236124,
+      "load_s": 46.58,
+      "eligible": true,
+      "metrics": {
+        "spearman": 0.528388742234988,
+        "auc_related": 0.8689788053949904,
+        "auc_strong": 0.7204853969559851,
+        "partial_threshold": 0.28753021359443665,
+        "partial_precision": 0.96,
+        "partial_recall": 0.6936416184971098,
+        "match_threshold": 0.3177267909049988,
+        "match_precision": 0.6,
+        "match_recall": 0.6470588235294118,
+        "mean_0": 0.1745728317441212,
+        "std_0": 0.0886974653961521,
+        "mean_1": 0.3558972348839464,
+        "std_1": 0.13193945774445204,
+        "mean_2": 0.40350256743384344,
+        "std_2": 0.1827549280101197,
+        "separation_d": 1.59374134408051,
+        "recall_at_5": 0.3829365079365079,
+        "mrr": 0.6804526276649124,
+        "score": 0.6259576566657492,
+        "by_category": {
+          "adjacent (label 1)": 0.3762202420921037,
+          "alternatives (label 1)": 0.3364811956479743,
+          "framework-family (label 2)": 0.49672546486059826,
+          "framework-language (label 2)": 0.4688762528821826,
+          "hard-name-overlap (label 0)": 0.24063695594668388,
+          "hard-name-overlap (label 1)": 0.40363144874572754,
+          "language-family (label 2)": 0.4007594883441925,
+          "same-domain (label 2)": 0.4235466489425072,
+          "tech-vs-nontech (label 0)": 0.15893331145246822,
+          "tool-ecosystem (label 2)": 0.3438952561467886,
+          "unrelated-tech (label 0)": 0.16378670235474904
+        },
+        "worst": [
+          [
+            "Natural Language Processing",
+            "Hugging Face Transformers",
+            2,
+            0.036
+          ],
+          [
+            "Figma",
+            "UI Design",
+            2,
+            0.062
+          ],
+          [
+            "Redux",
+            "Redis",
+            0,
+            0.559
+          ],
+          [
+            "Cypress",
+            "Test Automation",
+            2,
+            0.099
+          ],
+          [
+            "Burp Suite",
+            "Penetration Testing",
+            2,
+            0.101
+          ],
+          [
+            "Snowflake",
+            "Data Warehousing",
+            2,
+            0.107
+          ],
+          [
+            "Large Language Models",
+            "Prompt Engineering",
+            2,
+            0.112
+          ],
+          [
+            "GitHub Actions",
+            "CI/CD",
+            2,
+            0.115
+          ],
+          [
+            "Postman",
+            "API Testing",
+            2,
+            0.116
+          ],
+          [
+            "Swift",
+            "SwiftUI",
+            2,
+            0.879
+          ],
+          [
+            "Data Visualization",
+            "Power BI",
+            2,
+            0.129
+          ],
+          [
+            "PyTest",
+            "Unit Testing",
+            2,
+            0.146
+          ],
+          [
+            "Kotlin",
+            "Android Development",
+            2,
+            0.152
+          ],
+          [
+            "Jest",
+            "Unit Testing",
+            2,
+            0.171
+          ],
+          [
+            "Digital Marketing",
+            "Marketing Strategy",
+            1,
+            0.644
+          ]
+        ]
+      }
+    },
+    {
+      "model": "all-MiniLM-L6-v2",
+      "mode": "description",
+      "ram_mb": 574.1,
+      "ms": 2.889937809224211,
+      "load_s": 46.58,
+      "eligible": true,
+      "metrics": {
+        "spearman": 0.7205246012890628,
+        "auc_related": 0.9959055876685935,
+        "auc_strong": 0.8057726587138352,
+        "partial_threshold": 0.3748112916946411,
+        "partial_precision": 1.0,
+        "partial_recall": 0.930635838150289,
+        "match_threshold": 0.43144023418426514,
+        "match_precision": 0.6408450704225352,
+        "match_recall": 0.8921568627450981,
+        "mean_0": 0.10652716983652984,
+        "std_0": 0.09840416766820471,
+        "mean_1": 0.5329966356217022,
+        "std_1": 0.1402371123287728,
+        "mean_2": 0.5795802362993652,
+        "std_2": 0.12559206180456636,
+        "separation_d": 4.192986011136881,
+        "recall_at_5": 0.688888888888889,
+        "mrr": 0.9200680272108844,
+        "score": 0.8423972382787412,
+        "by_category": {
+          "adjacent (label 1)": 0.47087730512474524,
+          "alternatives (label 1)": 0.5887817595456097,
+          "framework-family (label 2)": 0.6386460363864899,
+          "framework-language (label 2)": 0.6624213326722383,
+          "hard-name-overlap (label 0)": 0.18879916798323393,
+          "hard-name-overlap (label 1)": 0.5188849568367004,
+          "language-family (label 2)": 0.55699622631073,
+          "same-domain (label 2)": 0.5534488444144909,
+          "tech-vs-nontech (label 0)": 0.05607149478358527,
+          "tool-ecosystem (label 2)": 0.5636266350746155,
+          "unrelated-tech (label 0)": 0.12407404563079277
+        },
+        "worst": [
+          [
+            "Statistics",
+            "A/B Testing",
+            2,
+            0.218
+          ],
+          [
+            "Tableau",
+            "Power BI",
+            1,
+            0.872
+          ],
+          [
+            "MySQL",
+            "PostgreSQL",
+            1,
+            0.843
+          ],
+          [
+            "TensorFlow",
+            "PyTorch",
+            1,
+            0.814
+          ],
+          [
+            "Django",
+            "Flask",
+            1,
+            0.799
+          ],
+          [
+            "SEO",
+            "Digital Marketing",
+            2,
+            0.305
+          ],
+          [
+            "Jest",
+            "Mocha",
+            1,
+            0.782
+          ],
+          [
+            "Vue.js",
+            "Svelte",
+            1,
+            0.772
+          ],
+          [
+            "Machine Learning",
+            "Deep Learning",
+            2,
+            0.333
+          ],
+          [
+            "IoT",
+            "Embedded Systems",
+            2,
+            0.341
+          ],
+          [
+            "Cypress",
+            "Playwright",
+            1,
+            0.734
+          ],
+          [
+            "Firebase",
+            "Supabase",
+            1,
+            0.73
+          ],
+          [
+            "React",
+            "Vue.js",
+            1,
+            0.725
+          ],
+          [
+            "Figma",
+            "Adobe XD",
+            1,
+            0.725
+          ],
+          [
+            "Airflow",
+            "ETL",
+            2,
+            0.384
+          ]
+        ]
+      }
+    },
+    {
+      "model": "bge-small-en-v1.5",
+      "mode": "name",
+      "ram_mb": 621.1,
+      "ms": 1.9697816254712588,
+      "load_s": 54.74,
+      "eligible": true,
+      "metrics": {
+        "spearman": 0.5260768161728819,
+        "auc_related": 0.8692999357739243,
+        "auc_strong": 0.7181543946249829,
+        "partial_threshold": 0.6293497085571289,
+        "partial_precision": 0.9552238805970149,
+        "partial_recall": 0.7398843930635838,
+        "match_threshold": 0.6526027321815491,
+        "match_precision": 0.6050420168067226,
+        "match_recall": 0.7058823529411765,
+        "mean_0": 0.5557070639398363,
+        "std_0": 0.05826479798747706,
+        "mean_1": 0.6726382945624876,
+        "std_1": 0.08595147561905724,
+        "mean_2": 0.6898419950522628,
+        "std_2": 0.09774047843066859,
+        "separation_d": 1.6670773367555038,
+        "recall_at_5": 0.3329365079365079,
+        "mrr": 0.6211443276111643,
+        "score": 0.6011182218552161,
+        "by_category": {
+          "adjacent (label 1)": 0.6824141668550896,
+          "alternatives (label 1)": 0.6597532356107557,
+          "framework-family (label 2)": 0.7133041620254517,
+          "framework-language (label 2)": 0.7141849882900715,
+          "hard-name-overlap (label 0)": 0.6183701356252035,
+          "hard-name-overlap (label 1)": 0.826781690120697,
+          "language-family (label 2)": 0.7455806732177734,
+          "same-domain (label 2)": 0.7065554383473519,
+          "tech-vs-nontech (label 0)": 0.5274193853139877,
+          "tool-ecosystem (label 2)": 0.6588963985443115,
+          "unrelated-tech (label 0)": 0.558929513891538
+        },
+        "worst": [
+          [
+            "Cypress",
+            "Test Automation",
+            2,
+            0.462
+          ],
+          [
+            "Prometheus",
+            "Grafana",
+            2,
+            0.47
+          ],
+          [
+            "Figma",
+            "UI Design",
+            2,
+            0.488
+          ],
+          [
+            "Snowflake",
+            "Data Warehousing",
+            2,
+            0.489
+          ],
+          [
+            "Natural Language Processing",
+            "Hugging Face Transformers",
+            2,
+            0.494
+          ],
+          [
+            "Postman",
+            "API Testing",
+            2,
+            0.505
+          ],
+          [
+            "Burp Suite",
+            "Penetration Testing",
+            2,
+            0.505
+          ],
+          [
+            "Redux",
+            "Redis",
+            0,
+            0.78
+          ],
+          [
+            "Kanban",
+            "Agile",
+            2,
+            0.515
+          ],
+          [
+            "GitHub Actions",
+            "CI/CD",
+            2,
+            0.523
+          ],
+          [
+            "UI Design",
+            "UX Design",
+            1,
+            0.856
+          ],
+          [
+            "Android Development",
+            "iOS Development",
+            1,
+            0.855
+          ],
+          [
+            "Jenkins",
+            "CI/CD",
+            2,
+            0.555
+          ],
+          [
+            "MySQL",
+            "PostgreSQL",
+            1,
+            0.836
+          ],
+          [
+            "Airflow",
+            "ETL",
+            2,
+            0.565
+          ]
+        ]
+      }
+    },
+    {
+      "model": "bge-small-en-v1.5",
+      "mode": "description",
+      "ram_mb": 621.1,
+      "ms": 5.648291872792907,
+      "load_s": 54.74,
+      "eligible": true,
+      "metrics": {
+        "spearman": 0.7225813882414903,
+        "auc_related": 0.9962267180475273,
+        "auc_strong": 0.8074180721239544,
+        "partial_threshold": 0.7203272581100464,
+        "partial_precision": 0.9770114942528736,
+        "partial_recall": 0.9826589595375722,
+        "match_threshold": 0.7760121822357178,
+        "match_precision": 0.6423841059602649,
+        "match_recall": 0.9509803921568627,
+        "mean_0": 0.6141832884815004,
+        "std_0": 0.05832632277459357,
+        "mean_1": 0.8218514180519212,
+        "std_1": 0.060609952115216484,
+        "mean_2": 0.8473946644979364,
+        "std_2": 0.050545670186125324,
+        "separation_d": 4.2732403376751185,
+        "recall_at_5": 0.7202380952380953,
+        "mrr": 0.9273809523809524,
+        "score": 0.8582324066428113,
+        "by_category": {
+          "adjacent (label 1)": 0.8032021685080095,
+          "alternatives (label 1)": 0.8384400847795848,
+          "framework-family (label 2)": 0.8759938577810923,
+          "framework-language (label 2)": 0.8880737349390984,
+          "hard-name-overlap (label 0)": 0.6764789372682571,
+          "hard-name-overlap (label 1)": 0.8234959840774536,
+          "language-family (label 2)": 0.8512031435966492,
+          "same-domain (label 2)": 0.8397671931829208,
+          "tech-vs-nontech (label 0)": 0.5988875071207682,
+          "tool-ecosystem (label 2)": 0.8341747298836708,
+          "unrelated-tech (label 0)": 0.60456081032753
+        },
+        "worst": [
+          [
+            "MySQL",
+            "PostgreSQL",
+            1,
+            0.96
+          ],
+          [
+            "Sass",
+            "Apache Spark",
+            0,
+            0.469
+          ],
+          [
+            "Wireframing",
+            "Prototyping",
+            2,
+            0.72
+          ],
+          [
+            "AWS",
+            "AWS Lambda",
+            2,
+            0.724
+          ],
+          [
+            "Statistics",
+            "A/B Testing",
+            2,
+            0.732
+          ],
+          [
+            "Cassandra",
+            "Usability Testing",
+            0,
+            0.501
+          ],
+          [
+            "Tableau",
+            "Power BI",
+            1,
+            0.918
+          ],
+          [
+            "Statistics",
+            "Time Series Analysis",
+            2,
+            0.746
+          ],
+          [
+            "Customer Service",
+            "Rust",
+            0,
+            0.522
+          ],
+          [
+            "React",
+            "Vue.js",
+            1,
+            0.904
+          ],
+          [
+            "AWS",
+            "Microsoft Azure",
+            1,
+            0.904
+          ],
+          [
+            "PowerShell",
+            "Bash",
+            1,
+            0.904
+          ],
+          [
+            "Vue.js",
+            "Svelte",
+            1,
+            0.904
+          ],
+          [
+            "TensorFlow",
+            "PyTorch",
+            1,
+            0.902
+          ],
+          [
+            "Django",
+            "Flask",
+            1,
+            0.901
+          ]
+        ]
+      }
+    },
+    {
+      "model": "bge-base-en-v1.5",
+      "mode": "name",
+      "ram_mb": 941.1,
+      "ms": 6.252851943541384,
+      "load_s": 103.98,
+      "eligible": true,
+      "metrics": {
+        "spearman": 0.6265815974015939,
+        "auc_related": 0.9210019267822736,
+        "auc_strong": 0.7731386260798024,
+        "partial_threshold": 0.5801705121994019,
+        "partial_precision": 0.9714285714285714,
+        "partial_recall": 0.7861271676300579,
+        "match_threshold": 0.6646973490715027,
+        "match_precision": 0.7142857142857143,
+        "match_recall": 0.5882352941176471,
+        "mean_0": 0.496446723325385,
+        "std_0": 0.056156435983821584,
+        "mean_1": 0.6333331423746028,
+        "std_1": 0.08210229356361701,
+        "mean_2": 0.6675376073986876,
+        "std_2": 0.09477942735785805,
+        "separation_d": 2.1963008285253314,
+        "recall_at_5": 0.4317460317460317,
+        "mrr": 0.7382756132756132,
+        "score": 0.6763739792641527,
+        "by_category": {
+          "adjacent (label 1)": 0.6454247705864183,
+          "alternatives (label 1)": 0.6188441676062506,
+          "framework-family (label 2)": 0.6908809343973795,
+          "framework-language (label 2)": 0.6758237592875957,
+          "hard-name-overlap (label 0)": 0.5559886768460274,
+          "hard-name-overlap (label 1)": 0.7704014778137207,
+          "language-family (label 2)": 0.6753937602043152,
+          "same-domain (label 2)": 0.6811143511380905,
+          "tech-vs-nontech (label 0)": 0.4804358084996541,
+          "tool-ecosystem (label 2)": 0.6472879186272621,
+          "unrelated-tech (label 0)": 0.4886408567428589
+        },
+        "worst": [
+          [
+            "Figma",
+            "UI Design",
+            2,
+            0.451
+          ],
+          [
+            "Snowflake",
+            "Data Warehousing",
+            2,
+            0.463
+          ],
+          [
+            "UI Design",
+            "UX Design",
+            1,
+            0.847
+          ],
+          [
+            "Cypress",
+            "Test Automation",
+            2,
+            0.48
+          ],
+          [
+            "Postman",
+            "API Testing",
+            2,
+            0.494
+          ],
+          [
+            "Airflow",
+            "ETL",
+            2,
+            0.498
+          ],
+          [
+            "Jenkins",
+            "CI/CD",
+            2,
+            0.5
+          ],
+          [
+            "Prometheus",
+            "Monitoring",
+            2,
+            0.516
+          ],
+          [
+            "dbt",
+            "Data Warehousing",
+            2,
+            0.517
+          ],
+          [
+            "GitHub Actions",
+            "CI/CD",
+            2,
+            0.518
+          ],
+          [
+            "MySQL",
+            "PostgreSQL",
+            1,
+            0.804
+          ],
+          [
+            "Kanban",
+            "Agile",
+            2,
+            0.521
+          ],
+          [
+            "Redux",
+            "Redis",
+            0,
+            0.687
+          ],
+          [
+            "Ansible",
+            "Infrastructure as Code",
+            2,
+            0.53
+          ],
+          [
+            "Canva",
+            "Adobe Photoshop",
+            1,
+            0.421
+          ]
+        ]
+      }
+    },
+    {
+      "model": "bge-base-en-v1.5",
+      "mode": "description",
+      "ram_mb": 941.1,
+      "ms": 21.87368727919346,
+      "load_s": 103.98,
+      "eligible": false,
+      "metrics": {
+        "spearman": 0.7537066180584103,
+        "auc_related": 0.9975112395632626,
+        "auc_strong": 0.834841628959276,
+        "partial_threshold": 0.6853854656219482,
+        "partial_precision": 0.9940476190476191,
+        "partial_recall": 0.9653179190751445,
+        "match_threshold": 0.718558669090271,
+        "match_precision": 0.6447368421052632,
+        "match_recall": 0.9607843137254902,
+        "mean_0": 0.5499975515736474,
+        "std_0": 0.061709164072324484,
+        "mean_1": 0.7790431741257788,
+        "std_1": 0.0682285903913507,
+        "mean_2": 0.816649450975306,
+        "std_2": 0.054740800436683064,
+        "separation_d": 4.571504374460415,
+        "recall_at_5": 0.7000000000000001,
+        "mrr": 0.9642857142857143,
+        "score": 0.8487556197816313,
+        "by_category": {
+          "adjacent (label 1)": 0.7525733041040825,
+          "alternatives (label 1)": 0.803317978575423,
+          "framework-family (label 2)": 0.846114863952001,
+          "framework-language (label 2)": 0.8553502038121223,
+          "hard-name-overlap (label 0)": 0.6118753626942635,
+          "hard-name-overlap (label 1)": 0.7543811202049255,
+          "language-family (label 2)": 0.7486003637313843,
+          "same-domain (label 2)": 0.8063704952215537,
+          "tech-vs-nontech (label 0)": 0.5171400616566341,
+          "tool-ecosystem (label 2)": 0.8084725469350815,
+          "unrelated-tech (label 0)": 0.5581039170424144
+        },
+        "worst": [
+          [
+            "MySQL",
+            "PostgreSQL",
+            1,
+            0.947
+          ],
+          [
+            "Statistics",
+            "A/B Testing",
+            2,
+            0.644
+          ],
+          [
+            "Tableau",
+            "Power BI",
+            1,
+            0.917
+          ],
+          [
+            "Django",
+            "Flask",
+            1,
+            0.904
+          ],
+          [
+            "Sass",
+            "Apache Spark",
+            0,
+            0.423
+          ],
+          [
+            "Cypress",
+            "Playwright",
+            1,
+            0.901
+          ],
+          [
+            "Vue.js",
+            "Svelte",
+            1,
+            0.893
+          ],
+          [
+            "AWS",
+            "AWS Lambda",
+            2,
+            0.696
+          ],
+          [
+            "Natural Language Processing",
+            "Hugging Face Transformers",
+            2,
+            0.701
+          ],
+          [
+            "SEO",
+            "Digital Marketing",
+            2,
+            0.702
+          ],
+          [
+            "React",
+            "Vue.js",
+            1,
+            0.881
+          ],
+          [
+            "Jest",
+            "Mocha",
+            1,
+            0.881
+          ],
+          [
+            "CSS",
+            "Kafka",
+            0,
+            0.447
+          ],
+          [
+            "gRPC",
+            "Sales",
+            0,
+            0.448
+          ],
+          [
+            "Flask",
+            "FastAPI",
+            1,
+            0.875
+          ]
+        ]
+      }
+    },
+    {
+      "model": "gte-modernbert-base",
+      "mode": "name",
+      "ram_mb": 761.2,
+      "ms": 88.74325653704298,
+      "load_s": 104.05,
+      "eligible": false,
+      "metrics": {
+        "spearman": 0.4947883147414064,
+        "auc_related": 0.8342967244701348,
+        "auc_strong": 0.7143836555601262,
+        "partial_threshold": 0.6786737442016602,
+        "partial_precision": 0.9719626168224299,
+        "partial_recall": 0.6011560693641619,
+        "match_threshold": 0.6794515252113342,
+        "match_precision": 0.6190476190476191,
+        "match_recall": 0.6372549019607843,
+        "mean_0": 0.5995056219398975,
+        "std_0": 0.054258645150984955,
+        "mean_1": 0.6816547924364117,
+        "std_1": 0.07120847031916508,
+        "mean_2": 0.7000161967441147,
+        "std_2": 0.08194036041800423,
+        "separation_d": 1.4463657687860811,
+        "recall_at_5": 0.3571428571428572,
+        "mrr": 0.603695802828463,
+        "score": 0.595719790806496,
+        "by_category": {
+          "adjacent (label 1)": 0.6956309351054105,
+          "alternatives (label 1)": 0.6664762448620152,
+          "framework-family (label 2)": 0.7363149623076121,
+          "framework-language (label 2)": 0.7224697507917881,
+          "hard-name-overlap (label 0)": 0.6604732523361841,
+          "hard-name-overlap (label 1)": 0.7820483446121216,
+          "language-family (label 2)": 0.7730218172073364,
+          "same-domain (label 2)": 0.7013642008487995,
+          "tech-vs-nontech (label 0)": 0.5844657023747762,
+          "tool-ecosystem (label 2)": 0.6824505157768727,
+          "unrelated-tech (label 0)": 0.5901584893465042
+        },
+        "worst": [
+          [
+            "Cypress",
+            "Test Automation",
+            2,
+            0.461
+          ],
+          [
+            "Postman",
+            "API Testing",
+            2,
+            0.505
+          ],
+          [
+            "UI Design",
+            "UX Design",
+            1,
+            0.9
+          ],
+          [
+            "GitHub Actions",
+            "CI/CD",
+            2,
+            0.519
+          ],
+          [
+            "ETL",
+            "Data Warehousing",
+            2,
+            0.527
+          ],
+          [
+            "Burp Suite",
+            "Penetration Testing",
+            2,
+            0.536
+          ],
+          [
+            "Figma",
+            "UI Design",
+            2,
+            0.56
+          ],
+          [
+            "Natural Language Processing",
+            "Hugging Face Transformers",
+            2,
+            0.563
+          ],
+          [
+            "Airflow",
+            "ETL",
+            2,
+            0.564
+          ],
+          [
+            "Jest",
+            "Unit Testing",
+            2,
+            0.565
+          ],
+          [
+            "Snowflake",
+            "Data Warehousing",
+            2,
+            0.575
+          ],
+          [
+            "Kubernetes",
+            "Helm",
+            2,
+            0.579
+          ],
+          [
+            "R",
+            "React",
+            0,
+            0.75
+          ],
+          [
+            "Next.js",
+            "Vercel",
+            1,
+            0.504
+          ],
+          [
+            "Prometheus",
+            "Monitoring",
+            2,
+            0.591
+          ]
+        ]
+      }
+    },
+    {
+      "model": "gte-modernbert-base",
+      "mode": "description",
+      "ram_mb": 761.2,
+      "ms": 330.5096275616575,
+      "load_s": 104.05,
+      "eligible": false,
+      "metrics": {
+        "spearman": 0.7145762898275761,
+        "auc_related": 0.9796885035324341,
+        "auc_strong": 0.8118058412176059,
+        "partial_threshold": 0.6733688116073608,
+        "partial_precision": 0.9820359281437125,
+        "partial_recall": 0.9479768786127167,
+        "match_threshold": 0.7266145348548889,
+        "match_precision": 0.6293706293706294,
+        "match_recall": 0.8823529411764706,
+        "mean_0": 0.5797052520016829,
+        "std_0": 0.0650492193216144,
+        "mean_1": 0.7595441492510514,
+        "std_1": 0.06468052041196805,
+        "mean_2": 0.7873243438262566,
+        "std_2": 0.05489729033476736,
+        "separation_d": 3.4495281273294767,
+        "recall_at_5": 0.6515873015873016,
+        "mrr": 0.9029365079365077,
+        "score": 0.8156379025598679,
+        "by_category": {
+          "adjacent (label 1)": 0.7370300274906736,
+          "alternatives (label 1)": 0.777879718187693,
+          "framework-family (label 2)": 0.8398246467113495,
+          "framework-language (label 2)": 0.8050207048654556,
+          "hard-name-overlap (label 0)": 0.6145854045947393,
+          "hard-name-overlap (label 1)": 0.8240941166877747,
+          "language-family (label 2)": 0.7880014777183533,
+          "same-domain (label 2)": 0.7770923314950405,
+          "tech-vs-nontech (label 0)": 0.5393007010221481,
+          "tool-ecosystem (label 2)": 0.7823300376534462,
+          "unrelated-tech (label 0)": 0.6061577419439952
+        },
+        "worst": [
+          [
+            "Statistics",
+            "A/B Testing",
+            2,
+            0.625
+          ],
+          [
+            "SEO",
+            "Digital Marketing",
+            2,
+            0.639
+          ],
+          [
+            "Three.js",
+            "Accounting",
+            0,
+            0.425
+          ],
+          [
+            "MySQL",
+            "PostgreSQL",
+            1,
+            0.897
+          ],
+          [
+            "Statistics",
+            "Time Series Analysis",
+            2,
+            0.654
+          ],
+          [
+            "Next.js",
+            "Vercel",
+            1,
+            0.875
+          ],
+          [
+            "Cypress",
+            "Playwright",
+            1,
+            0.871
+          ],
+          [
+            "Recruitment",
+            "Human Resources",
+            2,
+            0.675
+          ],
+          [
+            "Python",
+            "Pandas",
+            2,
+            0.675
+          ],
+          [
+            "Apache Spark",
+            "Spring Boot",
+            0,
+            0.759
+          ],
+          [
+            "Power BI",
+            "PowerShell",
+            0,
+            0.758
+          ],
+          [
+            "Tableau",
+            "Power BI",
+            1,
+            0.865
+          ],
+          [
+            "TCP/IP",
+            "Computer Networking",
+            2,
+            0.683
+          ],
+          [
+            "Data Structures",
+            "Algorithms",
+            2,
+            0.684
+          ],
+          [
+            "IoT",
+            "Embedded Systems",
+            2,
+            0.688
+          ]
+        ]
+      }
+    },
+    {
+      "model": "qwen3-embedding-0.6b",
+      "mode": "name",
+      "ram_mb": 1880.5,
+      "ms": 405.1700137808998,
+      "load_s": 324.16,
+      "eligible": false,
+      "metrics": {
+        "spearman": 0.7655357553807006,
+        "auc_related": 0.9910083493898523,
+        "auc_strong": 0.8501988207870561,
+        "partial_threshold": 0.6020385026931763,
+        "partial_precision": 0.9767441860465116,
+        "partial_recall": 0.9710982658959537,
+        "match_threshold": 0.6744180917739868,
+        "match_precision": 0.6482758620689655,
+        "match_recall": 0.9215686274509803,
+        "mean_0": 0.4660763198302852,
+        "std_0": 0.0753359890834588,
+        "mean_1": 0.7200746636995128,
+        "std_1": 0.08150546043888508,
+        "mean_2": 0.7784449259440104,
+        "std_2": 0.07681918317434129,
+        "separation_d": 4.105726563840545,
+        "recall_at_5": 0.6884920634920635,
+        "mrr": 0.9365079365079364,
+        "score": 0.8397502064409579,
+        "by_category": {
+          "adjacent (label 1)": 0.7123493588331974,
+          "alternatives (label 1)": 0.7262536351745194,
+          "framework-family (label 2)": 0.821939637263616,
+          "framework-language (label 2)": 0.7703447192907333,
+          "hard-name-overlap (label 0)": 0.5425232946872711,
+          "hard-name-overlap (label 1)": 0.746387779712677,
+          "language-family (label 2)": 0.7296386361122131,
+          "same-domain (label 2)": 0.7900748696082678,
+          "tech-vs-nontech (label 0)": 0.43396719098091124,
+          "tool-ecosystem (label 2)": 0.7650417640805245,
+          "unrelated-tech (label 0)": 0.46760665873686474
+        },
+        "worst": [
+          [
+            "Postman",
+            "API Testing",
+            2,
+            0.551
+          ],
+          [
+            "UI Design",
+            "UX Design",
+            1,
+            0.913
+          ],
+          [
+            "Data Analysis",
+            "Statistics",
+            1,
+            0.889
+          ],
+          [
+            "Large Language Models",
+            "Prompt Engineering",
+            2,
+            0.611
+          ],
+          [
+            "Kubernetes",
+            "Helm",
+            2,
+            0.617
+          ],
+          [
+            "Statistics",
+            "A/B Testing",
+            2,
+            0.617
+          ],
+          [
+            "Sales",
+            "Terraform",
+            0,
+            0.314
+          ],
+          [
+            "Airflow",
+            "ETL",
+            2,
+            0.629
+          ],
+          [
+            "Adobe Photoshop",
+            "Adobe Illustrator",
+            1,
+            0.862
+          ],
+          [
+            "gRPC",
+            "Sales",
+            0,
+            0.326
+          ],
+          [
+            "Machine Learning",
+            "Feature Engineering",
+            2,
+            0.636
+          ],
+          [
+            "Public Speaking",
+            "Communication",
+            1,
+            0.854
+          ],
+          [
+            "Jest",
+            "Mocha",
+            1,
+            0.489
+          ],
+          [
+            "Snowflake",
+            "Data Warehousing",
+            2,
+            0.647
+          ],
+          [
+            "Negotiation",
+            "Linux",
+            0,
+            0.341
+          ]
+        ]
+      }
+    },
+    {
+      "model": "qwen3-embedding-0.6b",
+      "mode": "description",
+      "ram_mb": 1880.5,
+      "ms": 638.7461007067969,
+      "load_s": 324.16,
+      "eligible": false,
+      "metrics": {
+        "spearman": 0.7761296885150071,
+        "auc_related": 0.9971901091843288,
+        "auc_strong": 0.8554778554778555,
+        "partial_threshold": 0.5846642851829529,
+        "partial_precision": 0.9827586206896551,
+        "partial_recall": 0.9884393063583815,
+        "match_threshold": 0.6859477758407593,
+        "match_precision": 0.6901408450704225,
+        "match_recall": 0.9607843137254902,
+        "mean_0": 0.4473726480371422,
+        "std_0": 0.06397064259467487,
+        "mean_1": 0.7294458251603892,
+        "std_1": 0.08425559044268163,
+        "mean_2": 0.792461963260875,
+        "std_2": 0.0649350260830324,
+        "separation_d": 5.353987327944454,
+        "recall_at_5": 0.740079365079365,
+        "mrr": 0.9452380952380953,
+        "score": 0.8686347371318469,
+        "by_category": {
+          "adjacent (label 1)": 0.7141447934237394,
+          "alternatives (label 1)": 0.7452746243090242,
+          "framework-family (label 2)": 0.8267159958680471,
+          "framework-language (label 2)": 0.8158919624984264,
+          "hard-name-overlap (label 0)": 0.49896224091450375,
+          "hard-name-overlap (label 1)": 0.6487143039703369,
+          "language-family (label 2)": 0.698091983795166,
+          "same-domain (label 2)": 0.7951565828078833,
+          "tech-vs-nontech (label 0)": 0.4188549886147181,
+          "tool-ecosystem (label 2)": 0.7776838541030884,
+          "unrelated-tech (label 0)": 0.4552544703086217
+        },
+        "worst": [
+          [
+            "IoT",
+            "Embedded Systems",
+            2,
+            0.617
+          ],
+          [
+            "Tableau",
+            "Power BI",
+            1,
+            0.887
+          ],
+          [
+            "Jest",
+            "Mocha",
+            1,
+            0.872
+          ],
+          [
+            "React",
+            "Vue.js",
+            1,
+            0.864
+          ],
+          [
+            "Statistics",
+            "A/B Testing",
+            2,
+            0.65
+          ],
+          [
+            "Next.js",
+            "Vercel",
+            1,
+            0.855
+          ],
+          [
+            "Customer Service",
+            "Rust",
+            0,
+            0.327
+          ],
+          [
+            "Celery",
+            "Cooking",
+            0,
+            0.327
+          ],
+          [
+            "Vue.js",
+            "Svelte",
+            1,
+            0.848
+          ],
+          [
+            "Cypress",
+            "Playwright",
+            1,
+            0.848
+          ],
+          [
+            "TensorFlow",
+            "PyTorch",
+            1,
+            0.848
+          ],
+          [
+            "Python",
+            "FastAPI",
+            2,
+            0.667
+          ],
+          [
+            "BigQuery",
+            "Data Warehousing",
+            2,
+            0.67
+          ],
+          [
+            "gRPC",
+            "Sales",
+            0,
+            0.345
+          ],
+          [
+            "UI Design",
+            "UX Design",
+            1,
+            0.835
+          ]
+        ]
+      }
+    }
+  ],
+  "failed": [
+    {
+      "model": "embeddinggemma-300m",
+      "model_id": "google/embeddinggemma-300m",
+      "ok": false,
+      "error": "GatedRepoError: 401 Client Error. (Request ID: Root=1-6ace2ac6-6e24f6d517614a8900d71ff3;dedc23ab-f870-44aa-ab11-bffe1d1ca5fd)\n\nCannot access gated repo for url https://huggingface.co/google/embeddinggemma-300m/resolve/main/modules.json.\nAccess to model google/embeddinggemma-300m is restricted. You must have access to it and be authenticated to access it. Please log in."
+    }
+  ],
+  "winner": "all-MiniLM-L6-v2 / description"
+}

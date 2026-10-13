@@ -19,6 +19,7 @@ from app.services import core_client
 from app.services.embeddings import model as model_module
 from app.services.embeddings.fake import FakeEmbedder
 from app.services.embeddings.normalise import normalise_skill, normalise_skills
+from app.services.embeddings.descriptions import build_embed_text
 from app.services.embeddings.reembed import reembed_all
 from app.services.embeddings.user_profiles import (
     EmbeddingsPending,
@@ -34,6 +35,11 @@ from tests.db_fixtures import real_db  # noqa: F401 — pytest fixture
 USER_A = "507f1f77bcf86cd799439011"
 USER_B = "507f1f77bcf86cd799439022"
 KEY = {"X-Internal-Key": "test-internal-key"}
+
+
+def texts(names):
+    """What is embedded for each canonical name (description mode)."""
+    return [build_embed_text(n).text for n in names]
 
 
 @pytest.fixture
@@ -126,9 +132,9 @@ def test_model_manager_never_loads_in_unit_tests():
 async def test_second_request_embeds_nothing(db, fake_embedder):
     first = await get_skill_vectors(["React", "reactjs", "Python"], fake_embedder, db)
     assert list(first) == ["react", "python"]
-    assert fake_embedder.embedded_texts == ["React", "Python"]
+    assert fake_embedder.embedded_texts == texts(["React", "Python"])
     second = await get_skill_vectors(["react.js", "Python"], fake_embedder, db)
-    assert fake_embedder.embedded_texts == ["React", "Python"]  # zero new embed calls
+    assert fake_embedder.embedded_texts == texts(["React", "Python"])  # zero new embed calls
     assert np.allclose(second["react"], first["react"])
     assert await db.skill_vectors.count_documents({}) == 2
     doc = await db.skill_vectors.find_one({"key": "react"})
@@ -145,7 +151,7 @@ async def test_concurrent_inserts_do_not_error(db):
 async def test_vectors_of_another_model_are_ignored(db, fake_embedder):
     await db.skill_vectors.insert_one({"key": "react", "name": "React", "vector": [1.0] + [0.0] * 383, "model": "other/model"})
     vectors = await get_skill_vectors(["React"], fake_embedder, db)
-    assert fake_embedder.embedded_texts == ["React"]  # not served from the other model
+    assert fake_embedder.embedded_texts == texts(["React"])  # not served from the other model
     assert not np.allclose(vectors["react"][:1], [1.0])
     assert await db.skill_vectors.count_documents({"key": "react"}) == 2
 
@@ -221,7 +227,7 @@ async def test_store_skills_and_vectors(db, fake_embedder):
         "success": True, "updated": True, "skills_count": 3, "embedding_status": "done",
     }
     record = await db.user_skill_profiles.find_one({"user_id": USER_A}, {"_id": 0})
-    assert set(record) == {"user_id", "skills", "skills_hash", "model", "embedding_status", "requested_at", "updated_at"}
+    assert set(record) == {"user_id", "skills", "skills_hash", "model", "text_mode", "embedding_status", "requested_at", "updated_at"}
     assert record["skills"] == [
         {"name": "React", "key": "react", "source": "manual"},
         {"name": "Node.js", "key": "node.js", "source": "cv"},
@@ -300,7 +306,7 @@ async def test_user_skill_matrix_order(db, fake_embedder):
     keys, names, matrix = await get_user_skill_matrix(USER_A, fake_embedder.model_name, db)
     assert keys == ["react", "node.js", "docker"] and names == ["React", "Node.js", "Docker"]
     assert matrix.shape == (3, 384)
-    assert np.allclose(matrix, fake_embedder.embed_texts(names), atol=1e-6)
+    assert np.allclose(matrix, fake_embedder.embed_texts(texts(names)), atol=1e-6)
 
 
 async def test_internal_endpoint_validates_input(db):
@@ -354,7 +360,7 @@ async def test_map_points_and_pairs_from_full_vectors(db, fake_embedder):
     assert all(-1.0001 <= p["x"] <= 1.0001 and -1.0001 <= p["y"] <= 1.0001 for p in body["points"])
     assert max(abs(p["x"]) for p in body["points"]) == pytest.approx(1.0)
 
-    m = fake_embedder.embed_texts(names).astype(np.float64)
+    m = fake_embedder.embed_texts(texts(names)).astype(np.float64)
     sims = m @ m.T
     expected = sorted(
         ((names[i], names[j], sims[i, j]) for i in range(5) for j in range(i + 1, 5)), key=lambda t: -t[2]
@@ -395,18 +401,46 @@ async def test_reembed_updates_model_without_mixing(db, fake_embedder):
     report = await reembed_all(db, new)
     assert report["embedded"] == 4 and report["profiles_updated"] == 1
     assert await db.skill_vectors.count_documents({"model": "fake/new-model"}) == 4
-    assert await db.skill_vectors.count_documents({"model": fake_embedder.model_name}) == 4  # old ones untouched
+    assert await db.skill_vectors.count_documents({"model": fake_embedder.model_name}) == 0  # removed after success
+    model_module.use_embedder(new)
     keys, names, matrix = await get_user_skill_matrix(USER_A, "fake/new-model", db)
-    assert np.allclose(matrix, new.embed_texts(names), atol=1e-6)  # only new-model vectors
-    assert not np.allclose(matrix, fake_embedder.embed_texts(names), atol=1e-3)
+    assert np.allclose(matrix, new.embed_texts(texts(names)), atol=1e-6)  # only new-model vectors
+    assert not np.allclose(matrix, fake_embedder.embed_texts(texts(names)), atol=1e-3)
     assert (await reembed_all(db, new))["embedded"] == 0  # idempotent
 
 
 # ── Real model (slow; `pytest -m slow`) ───────────────────────────────────────
-@pytest.mark.slow
-def test_real_model_similarity():
+@pytest.fixture(scope="module")
+def real_model():
     manager = model_module.ModelManager()
     manager.load_sync()
-    react, nextjs, accounting = manager.embed_texts(["React", "Next.js", "Accounting"])
-    assert react.shape == (384,) and abs(float(np.linalg.norm(react)) - 1) < 1e-4
-    assert float(react @ nextjs) > float(react @ accounting)
+    return manager
+
+
+def real_cos(manager, a, b):
+    va, vb = manager.embed_texts(texts([a, b]))
+    assert va.shape == (manager.dimension,) and abs(float(np.linalg.norm(va)) - 1) < 1e-4
+    return float(va @ vb)
+
+
+@pytest.mark.slow
+def test_real_model_description_mode_similarity(real_model):
+    """bge-small-en-v1.5 + "Name: description" text against the 0.72 related threshold."""
+    from app.config.settings import settings
+    from app.services.embeddings.matching_config import get_related_threshold
+
+    assert real_model.model_name == settings.EMBEDDING_MODEL == "BAAI/bge-small-en-v1.5"
+    threshold = get_related_threshold()
+    assert threshold == 0.72
+    assert real_cos(real_model, "React", "Next.js") > threshold > real_cos(real_model, "React", "Accounting")
+    assert real_cos(real_model, "Celery", "Cooking") < threshold
+
+
+@pytest.mark.slow
+@pytest.mark.xfail(
+    strict=True,
+    reason="Measured 0.744 with the benchmark's exact text (Redux and Redis seed descriptions); "
+    "a known false positive at 0.72 (benchmark precision 0.977). Seed descriptions must not change.",
+)
+def test_real_model_redux_redis_below_threshold(real_model):
+    assert real_cos(real_model, "Redux", "Redis") < 0.72

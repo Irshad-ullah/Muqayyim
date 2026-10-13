@@ -45,7 +45,15 @@ class Settings(BaseSettings):
     # Skill embeddings (Module 2 FE-4/FE-5). The model loads in the background
     # at startup; after the first download it is read from EMBEDDING_CACHE_DIR
     # and works fully offline.
-    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "BAAI/bge-small-en-v1.5")
+    # What is embedded per skill: "description" = "Name: description" when a
+    # curated description exists (else the name); "name" = the bare name.
+    EMBEDDING_TEXT_MODE: str = os.getenv("EMBEDDING_TEXT_MODE", "description")
+    # Related-skill threshold for future matching, measured for this model + text
+    # mode only (docs/evaluation/embedding-benchmark-2026-10-13/).
+    EMBEDDING_RELATED_THRESHOLD: float = float(os.getenv("EMBEDDING_RELATED_THRESHOLD", "0.72"))
+    EMBEDDING_THRESHOLD_MODEL: str = os.getenv("EMBEDDING_THRESHOLD_MODEL", "BAAI/bge-small-en-v1.5")
+    EMBEDDING_THRESHOLD_TEXT_MODE: str = os.getenv("EMBEDDING_THRESHOLD_TEXT_MODE", "description")
     EMBEDDING_CACHE_DIR: str = os.getenv("EMBEDDING_CACHE_DIR", "./models")
     EMBEDDING_AUTOLOAD: bool = os.getenv("EMBEDDING_AUTOLOAD", "true").lower() != "false"
     EMBEDDING_WORKER_INTERVAL_SECONDS: int = int(os.getenv("EMBEDDING_WORKER_INTERVAL_SECONDS", "30"))

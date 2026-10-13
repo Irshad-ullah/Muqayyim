@@ -2,7 +2,7 @@
 User skill profiles: ai_db.user_skill_profiles (Module 2 FE-5, FR-B9).
 
   { user_id (unique), skills: [{ name, key, source }], skills_hash, model,
-    embedding_status: 'done' | 'pending', requested_at, updated_at }
+    text_mode, embedding_status: 'done' | 'pending', requested_at, updated_at }
 
 Every skill keeps its own vector (in skill_vectors, looked up by key). There is
 NO averaged profile vector and NO weighting: `source` is stored for display
@@ -27,7 +27,8 @@ import numpy as np
 from pymongo.errors import DuplicateKeyError
 
 from app.config.database import get_database
-from app.services.embeddings.model import DIMENSION, Embedder, ModelNotReady, get_embedder
+from app.services.embeddings.descriptions import text_mode
+from app.services.embeddings.model import Embedder, ModelNotReady, get_embedder
 from app.services.embeddings.normalise import normalise_skill
 from app.services.embeddings.vector_store import USER_SKILL_PROFILES, get_skill_vectors, load_vectors
 
@@ -91,6 +92,7 @@ async def upsert_user_skills(
             existing
             and existing.get("skills_hash") == digest
             and existing.get("model") == embedder.model_name
+            and existing.get("text_mode") == text_mode()
             and existing.get("embedding_status") == DONE
         ):
             await coll.update_one({"user_id": user_id}, {"$max": {"requested_at": requested_at}})
@@ -111,6 +113,7 @@ async def upsert_user_skills(
             "skills": entries,
             "skills_hash": digest,
             "model": embedder.model_name,
+            "text_mode": text_mode(),
             "embedding_status": status,
             "requested_at": requested_at,
             "updated_at": datetime.now(timezone.utc),
@@ -144,18 +147,20 @@ async def get_user_skill_matrix(
     user_id: str, model: Optional[str] = None, db=None
 ) -> Tuple[List[str], List[str], np.ndarray]:
     """
-    For the matching module: (keys, names, matrix n×384), in the user's skill
-    order. Empty result when the user has no record. Raises EmbeddingsPending
-    when the vectors are not all available for the current model yet.
+    For the matching module: (keys, names, matrix n × model dimension), in the
+    user's skill order. Empty result when the user has no record. Raises
+    EmbeddingsPending when the vectors are not all available for the current
+    model and text mode yet.
     """
-    model = model or get_embedder().model_name
+    embedder = get_embedder()
+    model = model or embedder.model_name
     record = await get_user_skill_record(user_id, db)
     if not record:
-        return [], [], np.zeros((0, DIMENSION), dtype=np.float32)
-    if record.get("embedding_status") != DONE or record.get("model") != model:
+        return [], [], np.zeros((0, embedder.dimension or 0), dtype=np.float32)
+    if record.get("embedding_status") != DONE or record.get("model") != model or record.get("text_mode") != text_mode():
         raise EmbeddingsPending(f"Skill vectors for user {user_id} are still being created")
     keys = [s["key"] for s in record["skills"]]
-    vectors = await load_vectors(keys, model, db)
+    vectors = await load_vectors([(s["key"], s["name"]) for s in record["skills"]], model, db)
     missing = [k for k in keys if k not in vectors]
     if missing:
         raise EmbeddingsPending(f"{len(missing)} skill vectors for user {user_id} are not stored yet")
@@ -213,7 +218,7 @@ async def process_pending(embedder=None, db=None) -> dict:
     async for record in db["cv_parsed_data"].find({"embedding_status": PENDING}, {"user_id": 1, "file_name": 1, "skills_canonical": 1}):
         status = await embed_parse_record(record["user_id"], record.get("file_name"), record.get("skills_canonical") or [], embedder, db)
         done["parses"] += status == DONE
-    query = {"$or": [{"embedding_status": PENDING}, {"model": {"$ne": embedder.model_name}}]}
+    query = {"$or": [{"embedding_status": PENDING}, {"model": {"$ne": embedder.model_name}}, {"text_mode": {"$ne": text_mode()}}]}
     async for record in db[USER_SKILL_PROFILES].find(query, {"user_id": 1}):
         user_id = record["user_id"]
         async with _lock(user_id):
@@ -227,7 +232,7 @@ async def process_pending(embedder=None, db=None) -> dict:
                 continue
             await db[USER_SKILL_PROFILES].update_one(
                 {"user_id": user_id, "skills_hash": current["skills_hash"]},
-                {"$set": {"embedding_status": DONE, "model": embedder.model_name, "updated_at": datetime.now(timezone.utc)}},
+                {"$set": {"embedding_status": DONE, "model": embedder.model_name, "text_mode": text_mode(), "updated_at": datetime.now(timezone.utc)}},
             )
             done["users"] += 1
     return done

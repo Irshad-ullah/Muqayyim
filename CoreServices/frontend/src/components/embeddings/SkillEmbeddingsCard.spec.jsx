@@ -26,7 +26,7 @@ beforeAll(() => {
 });
 
 const err = (status, code, message) => Object.assign(new Error(message || code), { status, code });
-const READY = { status: 'ready', skills_count: 4, model: 'sentence-transformers/all-MiniLM-L6-v2', updated_at: '2026-10-13T09:00:00Z' };
+const READY = { status: 'ready', skills_count: 4, described_count: 3, model: 'BAAI/bge-small-en-v1.5', text_mode: 'description', updated_at: '2026-10-13T09:00:00Z' };
 const MAP = {
   points: [
     { name: 'React', x: -0.8, y: 0.2, source: 'manual' },
@@ -52,11 +52,12 @@ describe('Skill embeddings card', () => {
 
     expect((await screen.findByTestId('embedding-status')).textContent).toBe('Ready');
     expect(screen.getByTestId('skills-count').textContent).toBe('4');
-    expect(screen.getByText('all-MiniLM-L6-v2')).toBeTruthy();
+    expect(screen.getByText('bge-small-en-v1.5')).toBeTruthy();
+    expect(screen.getByTestId('described-count').textContent).toBe('3 of 4 skills described');
 
     const map = await screen.findByTestId('skill-map');
-    await waitFor(() => expect(map.querySelectorAll('.recharts-label-list text, .recharts-label').length).toBeGreaterThanOrEqual(4));
-    const labels = [...map.querySelectorAll('svg text')].map((t) => t.textContent);
+    await waitFor(() => expect(map.querySelectorAll('[data-testid="skill-map-label"]').length).toBe(4));
+    const labels = [...map.querySelectorAll('[data-testid="skill-map-label"]')].map((t) => t.textContent);
     expect(labels).toEqual(expect.arrayContaining(['React', 'Next.js', 'Docker', 'Accounting']));
     expect(within(map).getByText('Added by you')).toBeTruthy(); // legend
     expect(within(screen.getByTestId('skill-map-list')).getByText(/Docker \(From GitHub\)/)).toBeTruthy();
@@ -103,5 +104,17 @@ describe('Skill embeddings card', () => {
     await new Promise((r) => setTimeout(r, 100));
     expect(embeddingService.getMySkillMap.mock.calls.length).toBe(calls); // stopped
     expect(calls).toBeGreaterThan(1);
+  });
+});
+
+describe('Skill map labels', () => {
+  test('a label that would collide moves below its point', async () => {
+    const { placeLabels } = await import('./SkillMap.jsx');
+    const placed = placeLabels([
+      { name: 'Machine Learning', x: -0.1, y: -0.8 },
+      { name: 'Accounting', x: -0.05, y: -0.85 },
+      { name: 'React', x: 0.9, y: 0.9 },
+    ]);
+    expect(placed.map((p) => p.below)).toEqual([false, true, false]);
   });
 });
