@@ -19,6 +19,18 @@ nltk>=3.8.0
 PyPDF2>=3.0.0
 python-docx>=0.8.11
 
+# Skill embeddings (Module 2 FE-4/FE-5). CPU-only PyTorch from the PyTorch
+# index (no CUDA, ~1 GB installed instead of several). Pinned for Python 3.14.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.14.1+cpu
+sentence-transformers==6.1.0
+transformers==5.19.0
+tokenizers==0.23.3
+huggingface-hub==1.33.0
+safetensors==0.8.0
+scikit-learn==1.9.1
+scipy==1.18.1
+
 # Utilities
 python-dotenv>=1.0.0
 aiofiles>=23.0.0

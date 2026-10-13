@@ -15,6 +15,7 @@ from app.services.cv_errors import CVProcessingError
 from app.services.file_signature import verify_file
 from app.services.verify_rules import check_verified_data
 from app.utils.parsed_normaliser import normalise_parsed
+from app.services.embeddings.user_profiles import schedule_parse_embedding
 from app.schemas.cv_schema import (
     CVUploadResponseSchema,
     CVParseResponseSchema,
@@ -227,15 +228,27 @@ async def parse_cv(
             parsing_status=PARSED
         )
         
+        # FE-4: the parsed skills (already canonical) are embedded in the
+        # background; the record shows embedding_status pending → done/failed.
+        skills_canonical = [s.name for s in parsed_data.skills]
+
         # Upsert: update existing record for user or insert new one
         result = await cv_collection.update_one(
             {"user_id": current_user["user_id"]},
-            {"$set": cv_record.model_dump(by_alias=True, exclude_none=True)},
+            {"$set": {
+                **cv_record.model_dump(by_alias=True, exclude_none=True),
+                "skills_canonical": skills_canonical,
+                "embedding_status": "pending",
+            }},
             upsert=True
         )
         
         logger.info(f"CV parsed successfully: {file_id}")
         await push_cv_status(user_id, PARSED)
+        try:
+            schedule_parse_embedding(user_id, f"{file_id}.{ext}", skills_canonical, db=db)
+        except Exception as exc:  # noqa: BLE001 — embeddings never affect the parse
+            logger.warning("Could not schedule CV skill embeddings: %s", type(exc).__name__)
 
         return CVParseResponseSchema(
             file_id=file_id,

@@ -8,6 +8,7 @@ import { validateProfileUpdate } from '../validation/profileSchemas.js';
 import { checkGithubUsername, checkSkillName, dedupeAcross } from '../validation/rules.js';
 import { LIMITS } from '../validation/profileLimits.js';
 import { sendValidationError } from '../validation/formatErrors.js';
+import { syncSkillsIfChanged } from '../services/skillEmbeddingSync.js';
 
 // GET /api/profile
 export const getProfile = async (req, res) => {
@@ -28,11 +29,14 @@ export const upsertProfile = async (req, res) => {
     const { data: update, errors } = validateProfileUpdate(req.body);
     if (errors.length) return sendValidationError(res, errors);
 
+    // Skill embeddings (FR-B9): compare the merged skill set before and after.
+    const before = await Profile.findOne({ userId: req.user.userId }).select('skills').lean();
     const profile = await Profile.findOneAndUpdate(
       { userId: req.user.userId },
       { $set: update },
       { new: true, upsert: true, runValidators: true },
     );
+    syncSkillsIfChanged(req.user.userId, before, profile); // background; never affects the save
 
     return res
       .status(200)
@@ -53,7 +57,8 @@ export const fetchGitHubRepos = async (req, res) => {
     const repos = await fetchUserRepos(username);
     const extractedSkills = extractSkillsFromRepos(repos);
 
-    await Profile.findOneAndUpdate(
+    const before = await Profile.findOne({ userId: req.user.userId }).select('skills').lean();
+    const after = await Profile.findOneAndUpdate(
       { userId: req.user.userId },
       {
         $set: {
@@ -63,8 +68,9 @@ export const fetchGitHubRepos = async (req, res) => {
           "githubData.lastSynced": new Date(),
         },
       },
-      { upsert: true, runValidators: true },
+      { new: true, upsert: true, runValidators: true },
     );
+    syncSkillsIfChanged(req.user.userId, before, after); // only githubData changes here: normally a no-op
 
     return res.status(200).json({ success: true, repos, extractedSkills });
   } catch (error) {

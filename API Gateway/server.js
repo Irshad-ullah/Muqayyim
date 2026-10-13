@@ -26,5 +26,6 @@ app.listen(PORT, () => {
   console.log(`    /api/admin/*   → ${AUTH_SERVICE_URL}  (Core Service — Admin Panel)`);
   console.log(`    /api/generated-cvs/* → ${AUTH_SERVICE_URL}  (Core Service — CV Generator)`);
   console.log(`    /api/cv/*      → ${CV_SERVICE_URL}  (AI Service)`);
+  console.log(`    /api/embeddings/* → ${CV_SERVICE_URL}  (AI Service)`);
   console.log('');
 });

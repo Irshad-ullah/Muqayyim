@@ -3,6 +3,7 @@ FastAPI Main Application
 Module 2: Automated Skill Extraction (CV Parsing)
 """
 
+import asyncio
 import logging
 import re
 import uuid
@@ -16,6 +17,9 @@ from app.config.settings import settings
 from app.config.database import connect_to_mongo, close_mongo_connection
 from app.routes.cv_routes import router as cv_router
 from app.routes.internal_routes import router as internal_router
+from app.routes.embedding_routes import router as embedding_router
+from app.services.embeddings.model import get_embedder, get_manager
+from app.services.embeddings.user_profiles import run_worker
 from app.middleware.auth import register_auth_error_handler
 from app.middleware.validation import register_validation_error_handler
 from app.routes.internal_logs_routes import router as internal_logs_router
@@ -39,9 +43,22 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("🚀 Starting up MUQAYYIM CV Parsing Module...")
     await connect_to_mongo()
+
+    # Skill embeddings: the model loads in the background (the API does not
+    # wait); the worker completes pending embeddings once it is ready.
+    embedding_tasks = []
+    if settings.EMBEDDING_AUTOLOAD:
+        manager = get_manager()
+        embedding_tasks = [
+            asyncio.create_task(manager.load_forever()),
+            asyncio.create_task(run_worker(manager.ready_event, settings.EMBEDDING_WORKER_INTERVAL_SECONDS)),
+        ]
     logger.info("✓ Application started successfully")
     
     yield
+
+    for task in embedding_tasks:
+        task.cancel()
     
     # Shutdown
     logger.info("🛑 Shutting down application...")
@@ -130,6 +147,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 # Include routers
 app.include_router(cv_router)
+app.include_router(embedding_router)  # Module 2 FE-4/FE-5 — skill embeddings
 app.include_router(internal_router)  # service-to-service, X-Internal-Key
 app.include_router(internal_logs_router)  # admin log view, via CoreServices
 
@@ -152,7 +170,8 @@ async def health():
     return {
         "status": "healthy",
         "service": "CV Parsing Module",
-        "version": settings.API_VERSION
+        "version": settings.API_VERSION,
+        "embeddings": get_embedder().health(),
     }
 
 

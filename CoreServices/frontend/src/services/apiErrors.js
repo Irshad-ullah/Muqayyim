@@ -56,6 +56,8 @@ const notice = (code, message) => {
   emit(NOTICE, { code, message });
 };
 
+export const PAGE_HANDLED_503 = new Set(['EMBEDDINGS_PENDING', 'MODEL_LOADING']);
+
 // Returns 'session-ended' | 'service-unavailable' | 'rate-limited' |
 // 'payload-too-large' | null.
 export const handleApiError = (status, body) => {
@@ -70,6 +72,10 @@ export const handleApiError = (status, body) => {
     }
     return SESSION_ENDED;
   }
+
+  // Feature-level 503s (skill embeddings still being created, model loading)
+  // are shown by the page itself: never a logout or a global notice.
+  if (status === 503 && PAGE_HANDLED_503.has(code)) return null;
 
   if (status === 429) {
     notice('RATE_LIMITED', body?.message || RATE_LIMITED_MESSAGE);

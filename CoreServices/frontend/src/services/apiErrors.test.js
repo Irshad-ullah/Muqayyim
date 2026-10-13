@@ -172,3 +172,12 @@ test('apiError keeps status and code for fetch() callers', () => {
   assert.equal(err.code, 'PAYLOAD_TOO_LARGE');
   assert.equal(apiError({ status: 500 }, {}, 'Failed to upload CV').message, 'Failed to upload CV');
 });
+
+test('skill-embedding 503s (EMBEDDINGS_PENDING, MODEL_LOADING) never log out or raise a global notice', () => {
+  for (const code of ['EMBEDDINGS_PENDING', 'MODEL_LOADING']) {
+    assert.equal(handleApiError(503, { code }), null);
+  }
+  assert.deepEqual(sessionEvents, []);
+  assert.deepEqual(unavailableEvents, []);
+  assert.deepEqual(noticeEvents, []);
+});

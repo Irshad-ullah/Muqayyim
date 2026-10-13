@@ -8,6 +8,7 @@ import { CV_STATUS, cvStatusLabel } from '../constants/cvStatus.js';
 import toast from 'react-hot-toast';
 import { checkName } from '../validation/profileRules.js';
 import PasswordChecklist from '../components/PasswordChecklist.jsx';
+import SkillEmbeddingsCard from '../components/embeddings/SkillEmbeddingsCard.jsx';
 import { validatePassword } from '../constants/passwordPolicy.js';
 import {
   User,
@@ -276,6 +277,9 @@ export default function ProfilePage() {
                 </div>
               )}
             </div>
+
+            {/* Skill embeddings + skill map (Module 2 FE-5) */}
+            <SkillEmbeddingsCard />
 
             {/* Security — Change Password */}
             <div className="card p-6">

@@ -57,6 +57,10 @@ async def create_indexes():
 
     await ensure_log_indexes(database)
 
+    from app.services.embeddings.vector_store import ensure_embedding_indexes
+
+    await ensure_embedding_indexes(database)
+
 
 TTL_INDEX = "timestamp_ttl"
 

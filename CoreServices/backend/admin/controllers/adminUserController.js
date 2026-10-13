@@ -4,6 +4,7 @@ import { auditLog } from '../utils/auditLog.js';
 import { markAdminEmailsStale } from '../../services/alertService.js';
 import { normalizeEmail, isDuplicateKeyError, emailInUse } from '../../utils/apiErrors.js';
 import { handleServerError } from '../../utils/serverError.js';
+import { deleteUserEmbeddings } from '../../services/skillEmbeddingSync.js';
 
 const SAFE_FIELDS = '-password -resetToken -resetTokenExpiry';
 
@@ -259,6 +260,7 @@ export const deleteUser = async (req, res) => {
       User.findByIdAndDelete(req.params.id),
       Profile.findOneAndDelete({ userId: req.params.id }),
     ]);
+    deleteUserEmbeddings(user._id); // AIServices skill profile; background, retried
 
     return res.json({ success: true, message: 'User deleted successfully' });
   } catch (error) {

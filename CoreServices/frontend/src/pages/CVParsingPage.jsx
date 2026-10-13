@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { CheckCircle, AlertCircle, Upload, ArrowLeft, X } from 'lucide-react';
 import Navbar from '../components/Navbar.jsx';
 import ParsedSummary from '../components/cv/ParsedSummary.jsx';
+import SkillEmbeddingsCard from '../components/embeddings/SkillEmbeddingsCard.jsx';
 import { cvService } from '../services/cvService.js';
 import { authService } from '../services/authService.js';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -390,6 +391,13 @@ const CVParsingPage = () => {
                 onDelete={handleDelete}
                 onSave={handleSave}
               />
+            )}
+
+            {/* Skill embeddings (Module 2 FE-4/FE-5): created from the profile's skills */}
+            {(currentStep === 'review' || currentStep === 'success') && (
+              <div className="mt-6">
+                <SkillEmbeddingsCard />
+              </div>
             )}
 
             {/* Success Step */}

@@ -69,3 +69,6 @@ logs/
 *.temp
 generate_ch4_ch5.py
 _gen_doc.py
+
+# Downloaded embedding model cache (EMBEDDING_CACHE_DIR)
+AIServices/backend/models/

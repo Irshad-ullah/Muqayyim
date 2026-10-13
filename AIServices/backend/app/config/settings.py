@@ -41,6 +41,14 @@ class Settings(BaseSettings):
     # NLP Configuration
     NLP_MODEL: str = os.getenv("NLP_MODEL", "en_core_web_sm")  # spaCy model
     CONFIDENCE_THRESHOLD: float = 0.7
+
+    # Skill embeddings (Module 2 FE-4/FE-5). The model loads in the background
+    # at startup; after the first download it is read from EMBEDDING_CACHE_DIR
+    # and works fully offline.
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
+    EMBEDDING_CACHE_DIR: str = os.getenv("EMBEDDING_CACHE_DIR", "./models")
+    EMBEDDING_AUTOLOAD: bool = os.getenv("EMBEDDING_AUTOLOAD", "true").lower() != "false"
+    EMBEDDING_WORKER_INTERVAL_SECONDS: int = int(os.getenv("EMBEDDING_WORKER_INTERVAL_SECONDS", "30"))
     
     # Authentication — must match Module 1 JWT_SECRET exactly
     JWT_SECRET: str = os.getenv("JWT_SECRET", os.getenv("SECRET_KEY", "your-secret-key-here"))

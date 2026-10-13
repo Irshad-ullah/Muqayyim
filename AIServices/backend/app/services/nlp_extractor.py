@@ -7,6 +7,7 @@ import re
 import spacy
 
 from app.services.extractors import certifications, entries, projects
+from app.services.embeddings.normalise import normalise_skill
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime
 import logging
@@ -198,7 +199,15 @@ class NLPExtractor:
 
         final_skills = list(unique_skills.values())
         final_skills.sort(key=lambda x: x["confidence"], reverse=True)
-        return [{"name": s["name"], "confidence": s["confidence"]} for s in final_skills]
+
+        # Canonical names (FE-4): "Nodejs" → "Node.js", "Gcp" → "Google Cloud";
+        # aliases of one skill collapse to one entry (highest confidence kept).
+        canonical: Dict[str, Dict] = {}
+        for s in final_skills:
+            key, name = normalise_skill(s["name"])
+            if key and key not in canonical:
+                canonical[key] = {"name": name, "confidence": s["confidence"]}
+        return list(canonical.values())
 
     def extract_education(self, text: str) -> List[Dict]:
         """Education entries with degree, field, institution, dates (Stage 4)."""
