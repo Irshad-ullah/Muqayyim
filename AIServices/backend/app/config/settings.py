@@ -50,8 +50,9 @@ class Settings(BaseSettings):
     # curated description exists (else the name); "name" = the bare name.
     EMBEDDING_TEXT_MODE: str = os.getenv("EMBEDDING_TEXT_MODE", "description")
     # Related-skill threshold for future matching, measured for this model + text
-    # mode only (docs/evaluation/embedding-benchmark-2026-10-13/).
-    EMBEDDING_RELATED_THRESHOLD: float = float(os.getenv("EMBEDDING_RELATED_THRESHOLD", "0.72"))
+    # mode only: lowest similarity with >= 95% precision (benchmark v2,
+    # docs/evaluation/embedding-benchmark-2026-10-14/).
+    EMBEDDING_RELATED_THRESHOLD: float = float(os.getenv("EMBEDDING_RELATED_THRESHOLD", "0.73"))
     EMBEDDING_THRESHOLD_MODEL: str = os.getenv("EMBEDDING_THRESHOLD_MODEL", "BAAI/bge-small-en-v1.5")
     EMBEDDING_THRESHOLD_TEXT_MODE: str = os.getenv("EMBEDDING_THRESHOLD_TEXT_MODE", "description")
     EMBEDDING_CACHE_DIR: str = os.getenv("EMBEDDING_CACHE_DIR", "./models")

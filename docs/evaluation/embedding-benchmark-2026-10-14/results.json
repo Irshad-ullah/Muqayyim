@@ -1,0 +1,574 @@
+{
+  "rows": [
+    {
+      "model": "all-MiniLM-L6-v2",
+      "mode": "name",
+      "ram_mb": 572.0,
+      "ms": 1.6281674912219124,
+      "load_s": 57.26,
+      "eligible": true,
+      "metrics": {
+        "spearman": 0.6432005732930992,
+        "auc_related": 0.8862963485126181,
+        "auc_strong": 0.7898206090947019,
+        "partial_threshold": 0.25660064816474915,
+        "partial_precision": 0.8662420382165605,
+        "partial_recall": 0.7861271676300579,
+        "match_threshold": 0.24234792590141296,
+        "match_precision": 0.5059523809523809,
+        "match_recall": 0.8333333333333334,
+        "auc_vs_hard": 0.899849208343805,
+        "mean_hard": 0.14502739501388176,
+        "max_hard": 0.3602248728275299,
+        "thr_p95": 0.3232923150062561,
+        "recall_p95": 0.6184971098265896,
+        "thr_p90": 0.28178897500038147,
+        "recall_p90": 0.7052023121387283,
+        "mean_0": 0.15799856235886492,
+        "std_0": 0.08869002380371904,
+        "mean_1": 0.3558972348839464,
+        "std_1": 0.13193945774445204,
+        "mean_2": 0.40350256743384344,
+        "std_2": 0.1827549280101197,
+        "separation_d": 1.709153858982458,
+        "recall_at_5": 0.3829365079365079,
+        "mrr": 0.6804526276649124,
+        "score": 0.634616428224563,
+        "by_category": {
+          "adjacent (label 1)": 0.3762202420921037,
+          "alternatives (label 1)": 0.3364811956479743,
+          "framework-family (label 2)": 0.49672546486059826,
+          "framework-language (label 2)": 0.4688762528821826,
+          "hard-name-overlap (label 0)": 0.24063695594668388,
+          "hard-name-overlap (label 1)": 0.40363144874572754,
+          "hard-negative-tech (label 0)": 0.14502739501388176,
+          "language-family (label 2)": 0.4007594883441925,
+          "same-domain (label 2)": 0.4235466489425072,
+          "tech-vs-nontech (label 0)": 0.15893331145246822,
+          "tool-ecosystem (label 2)": 0.3438952561467886,
+          "unrelated-tech (label 0)": 0.16378670235474904
+        },
+        "worst": [
+          [
+            "Redux",
+            "Redis",
+            0,
+            0.559
+          ],
+          [
+            "Swift",
+            "SwiftUI",
+            2,
+            0.879
+          ],
+          [
+            "Natural Language Processing",
+            "Hugging Face Transformers",
+            2,
+            0.036
+          ],
+          [
+            "Figma",
+            "UI Design",
+            2,
+            0.062
+          ],
+          [
+            "Digital Marketing",
+            "Marketing Strategy",
+            1,
+            0.644
+          ],
+          [
+            "UI Design",
+            "UX Design",
+            1,
+            0.633
+          ],
+          [
+            "Cypress",
+            "Test Automation",
+            2,
+            0.099
+          ],
+          [
+            "Burp Suite",
+            "Penetration Testing",
+            2,
+            0.101
+          ],
+          [
+            "Snowflake",
+            "Data Warehousing",
+            2,
+            0.107
+          ],
+          [
+            "Large Language Models",
+            "Prompt Engineering",
+            2,
+            0.112
+          ],
+          [
+            "GitHub Actions",
+            "CI/CD",
+            2,
+            0.115
+          ],
+          [
+            "Postman",
+            "API Testing",
+            2,
+            0.116
+          ],
+          [
+            "Data Visualization",
+            "Power BI",
+            2,
+            0.129
+          ],
+          [
+            "Git",
+            "GitHub",
+            2,
+            0.759
+          ],
+          [
+            "Android Development",
+            "iOS Development",
+            1,
+            0.579
+          ]
+        ]
+      }
+    },
+    {
+      "model": "all-MiniLM-L6-v2",
+      "mode": "description",
+      "ram_mb": 572.0,
+      "ms": 3.747867137916031,
+      "load_s": 57.26,
+      "eligible": true,
+      "metrics": {
+        "spearman": 0.8304209075221634,
+        "auc_related": 0.995030311574792,
+        "auc_strong": 0.8801418439716312,
+        "partial_threshold": 0.3794323205947876,
+        "partial_precision": 1.0,
+        "partial_recall": 0.9248554913294798,
+        "match_threshold": 0.38366901874542236,
+        "match_precision": 0.6163522012578616,
+        "match_recall": 0.9607843137254902,
+        "auc_vs_hard": 0.9943453128926867,
+        "mean_hard": 0.1601849712188477,
+        "max_hard": 0.3776977062225342,
+        "thr_p95": 0.32927584648132324,
+        "recall_p95": 0.9710982658959537,
+        "thr_p90": 0.26886385679244995,
+        "recall_p90": 0.9942196531791907,
+        "mean_0": 0.1366278876851472,
+        "std_0": 0.10030189485755223,
+        "mean_1": 0.5329966356217022,
+        "std_1": 0.1402371123287728,
+        "mean_2": 0.5795802362993652,
+        "std_2": 0.12559206180456636,
+        "separation_d": 3.897423115432923,
+        "recall_at_5": 0.688888888888889,
+        "mrr": 0.9200680272108844,
+        "score": 0.8419596002318406,
+        "by_category": {
+          "adjacent (label 1)": 0.47087730512474524,
+          "alternatives (label 1)": 0.5887817595456097,
+          "framework-family (label 2)": 0.6386460363864899,
+          "framework-language (label 2)": 0.6624213326722383,
+          "hard-name-overlap (label 0)": 0.18879916798323393,
+          "hard-name-overlap (label 1)": 0.5188849568367004,
+          "hard-negative-tech (label 0)": 0.1601849712188477,
+          "language-family (label 2)": 0.55699622631073,
+          "same-domain (label 2)": 0.5534488444144909,
+          "tech-vs-nontech (label 0)": 0.05607149478358527,
+          "tool-ecosystem (label 2)": 0.5636266350746155,
+          "unrelated-tech (label 0)": 0.12407404563079277
+        },
+        "worst": [
+          [
+            "Tableau",
+            "Power BI",
+            1,
+            0.872
+          ],
+          [
+            "MySQL",
+            "PostgreSQL",
+            1,
+            0.843
+          ],
+          [
+            "TensorFlow",
+            "PyTorch",
+            1,
+            0.814
+          ],
+          [
+            "Django",
+            "Flask",
+            1,
+            0.799
+          ],
+          [
+            "Jest",
+            "Mocha",
+            1,
+            0.782
+          ],
+          [
+            "Vue.js",
+            "Svelte",
+            1,
+            0.772
+          ],
+          [
+            "Cypress",
+            "Playwright",
+            1,
+            0.734
+          ],
+          [
+            "Statistics",
+            "A/B Testing",
+            2,
+            0.218
+          ],
+          [
+            "Firebase",
+            "Supabase",
+            1,
+            0.73
+          ],
+          [
+            "React",
+            "Vue.js",
+            1,
+            0.725
+          ],
+          [
+            "Figma",
+            "Adobe XD",
+            1,
+            0.725
+          ],
+          [
+            "Java",
+            "Kotlin",
+            1,
+            0.706
+          ],
+          [
+            "AWS",
+            "Microsoft Azure",
+            1,
+            0.663
+          ],
+          [
+            "C",
+            "C++",
+            1,
+            0.661
+          ],
+          [
+            "SEO",
+            "Digital Marketing",
+            2,
+            0.305
+          ]
+        ]
+      }
+    },
+    {
+      "model": "bge-small-en-v1.5",
+      "mode": "name",
+      "ram_mb": 619.1,
+      "ms": 3.3556600708050435,
+      "load_s": 46.01,
+      "eligible": true,
+      "metrics": {
+        "spearman": 0.5961690245105307,
+        "auc_related": 0.8573241223741717,
+        "auc_strong": 0.7697955778055903,
+        "partial_threshold": 0.6293497085571289,
+        "partial_precision": 0.8951048951048951,
+        "partial_recall": 0.7398843930635838,
+        "match_threshold": 0.6526027321815491,
+        "match_precision": 0.5806451612903226,
+        "match_recall": 0.7058823529411765,
+        "auc_vs_hard": 0.8479517466700175,
+        "mean_hard": 0.5711136181717333,
+        "max_hard": 0.6949598789215088,
+        "thr_p95": 0.676554799079895,
+        "recall_p95": 0.5606936416184971,
+        "thr_p90": 0.6361899375915527,
+        "recall_p90": 0.7167630057803468,
+        "mean_0": 0.5643497650943151,
+        "std_0": 0.05324653384270007,
+        "mean_1": 0.6726382945624876,
+        "std_1": 0.08595147561905724,
+        "mean_2": 0.6898419950522628,
+        "std_2": 0.09774047843066859,
+        "separation_d": 1.5944992573143175,
+        "recall_at_5": 0.3329365079365079,
+        "mrr": 0.6211443276111643,
+        "score": 0.5951303151553398,
+        "by_category": {
+          "adjacent (label 1)": 0.6824141668550896,
+          "alternatives (label 1)": 0.6597532356107557,
+          "framework-family (label 2)": 0.7133041620254517,
+          "framework-language (label 2)": 0.7141849882900715,
+          "hard-name-overlap (label 0)": 0.6183701356252035,
+          "hard-name-overlap (label 1)": 0.826781690120697,
+          "hard-negative-tech (label 0)": 0.5711136181717333,
+          "language-family (label 2)": 0.7455806732177734,
+          "same-domain (label 2)": 0.7065554383473519,
+          "tech-vs-nontech (label 0)": 0.5274193853139877,
+          "tool-ecosystem (label 2)": 0.6588963985443115,
+          "unrelated-tech (label 0)": 0.558929513891538
+        },
+        "worst": [
+          [
+            "Cypress",
+            "Test Automation",
+            2,
+            0.462
+          ],
+          [
+            "Prometheus",
+            "Grafana",
+            2,
+            0.47
+          ],
+          [
+            "Redux",
+            "Redis",
+            0,
+            0.78
+          ],
+          [
+            "Figma",
+            "UI Design",
+            2,
+            0.488
+          ],
+          [
+            "Snowflake",
+            "Data Warehousing",
+            2,
+            0.489
+          ],
+          [
+            "UI Design",
+            "UX Design",
+            1,
+            0.856
+          ],
+          [
+            "Android Development",
+            "iOS Development",
+            1,
+            0.855
+          ],
+          [
+            "Natural Language Processing",
+            "Hugging Face Transformers",
+            2,
+            0.494
+          ],
+          [
+            "Postman",
+            "API Testing",
+            2,
+            0.505
+          ],
+          [
+            "Burp Suite",
+            "Penetration Testing",
+            2,
+            0.505
+          ],
+          [
+            "MySQL",
+            "PostgreSQL",
+            1,
+            0.836
+          ],
+          [
+            "Kanban",
+            "Agile",
+            2,
+            0.515
+          ],
+          [
+            "Java",
+            "JavaScript",
+            1,
+            0.827
+          ],
+          [
+            "GitHub Actions",
+            "CI/CD",
+            2,
+            0.523
+          ],
+          [
+            "Adobe Photoshop",
+            "Adobe Illustrator",
+            1,
+            0.822
+          ]
+        ]
+      }
+    },
+    {
+      "model": "bge-small-en-v1.5",
+      "mode": "description",
+      "ram_mb": 619.1,
+      "ms": 8.00059469973721,
+      "load_s": 46.01,
+      "eligible": true,
+      "metrics": {
+        "spearman": 0.8287564732534926,
+        "auc_related": 0.9929155505427887,
+        "auc_strong": 0.8811848143512725,
+        "partial_threshold": 0.7203272581100464,
+        "partial_precision": 0.9289617486338798,
+        "partial_recall": 0.9826589595375722,
+        "match_threshold": 0.7760121822357178,
+        "match_precision": 0.6381578947368421,
+        "match_recall": 0.9509803921568627,
+        "auc_vs_hard": 0.9903242020608193,
+        "mean_hard": 0.6510163059701091,
+        "max_hard": 0.7857335805892944,
+        "thr_p95": 0.7328648567199707,
+        "recall_p95": 0.9364161849710982,
+        "thr_p90": 0.7031828165054321,
+        "recall_p90": 1.0,
+        "mean_0": 0.6348457129263296,
+        "std_0": 0.05855310884569874,
+        "mean_1": 0.8218514180519212,
+        "std_1": 0.060609952115216484,
+        "mean_2": 0.8473946644979364,
+        "std_2": 0.050545670186125324,
+        "separation_d": 3.8859967990159197,
+        "recall_at_5": 0.7202380952380953,
+        "mrr": 0.9273809523809524,
+        "score": 0.856576822890442,
+        "by_category": {
+          "adjacent (label 1)": 0.8032021685080095,
+          "alternatives (label 1)": 0.8384400847795848,
+          "framework-family (label 2)": 0.8759938577810923,
+          "framework-language (label 2)": 0.8880737349390984,
+          "hard-name-overlap (label 0)": 0.6764789372682571,
+          "hard-name-overlap (label 1)": 0.8234959840774536,
+          "hard-negative-tech (label 0)": 0.6510163059701091,
+          "language-family (label 2)": 0.8512031435966492,
+          "same-domain (label 2)": 0.8397671931829208,
+          "tech-vs-nontech (label 0)": 0.5988875071207682,
+          "tool-ecosystem (label 2)": 0.8341747298836708,
+          "unrelated-tech (label 0)": 0.60456081032753
+        },
+        "worst": [
+          [
+            "MySQL",
+            "PostgreSQL",
+            1,
+            0.96
+          ],
+          [
+            "Tableau",
+            "Power BI",
+            1,
+            0.918
+          ],
+          [
+            "React",
+            "Vue.js",
+            1,
+            0.904
+          ],
+          [
+            "AWS",
+            "Microsoft Azure",
+            1,
+            0.904
+          ],
+          [
+            "PowerShell",
+            "Bash",
+            1,
+            0.904
+          ],
+          [
+            "Vue.js",
+            "Svelte",
+            1,
+            0.904
+          ],
+          [
+            "TensorFlow",
+            "PyTorch",
+            1,
+            0.902
+          ],
+          [
+            "Flask",
+            "Kotlin",
+            0,
+            0.786
+          ],
+          [
+            "Django",
+            "Flask",
+            1,
+            0.901
+          ],
+          [
+            "Jest",
+            "Mocha",
+            1,
+            0.895
+          ],
+          [
+            "Cypress",
+            "Playwright",
+            1,
+            0.893
+          ],
+          [
+            "Sass",
+            "Apache Spark",
+            0,
+            0.469
+          ],
+          [
+            "React",
+            "Python",
+            0,
+            0.776
+          ],
+          [
+            "Adobe Photoshop",
+            "Adobe Illustrator",
+            1,
+            0.888
+          ],
+          [
+            "Flask",
+            "FastAPI",
+            1,
+            0.886
+          ]
+        ]
+      }
+    }
+  ],
+  "failed": [],
+  "winner": "all-MiniLM-L6-v2 / description"
+}

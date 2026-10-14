@@ -215,20 +215,20 @@ def test_real_manager_has_no_dimension_until_loaded():
 # ── Related threshold ────────────────────────────────────────────────────────
 def test_related_threshold_only_for_the_measured_model_and_mode(caplog, monkeypatch):
     assert settings.EMBEDDING_THRESHOLD_MODEL == "BAAI/bge-small-en-v1.5"
-    assert get_related_threshold("BAAI/bge-small-en-v1.5", "description") == 0.72
+    assert get_related_threshold("BAAI/bge-small-en-v1.5", "description") == 0.73
     with caplog.at_level(logging.WARNING, logger="app.services.embeddings.matching_config"):
         assert get_related_threshold("sentence-transformers/all-MiniLM-L6-v2", "description") is None
         assert get_related_threshold("BAAI/bge-small-en-v1.5", "name") is None
     assert len([r for r in caplog.records if "re-measure" in r.getMessage()]) == 2
     monkeypatch.setattr(settings, "EMBEDDING_MODEL", "BAAI/bge-small-en-v1.5")
     monkeypatch.setattr(settings, "EMBEDDING_TEXT_MODE", "description")
-    assert get_related_threshold() == 0.72
+    assert get_related_threshold() == 0.73
 
 
 def test_default_configuration():
     assert settings.EMBEDDING_MODEL == "BAAI/bge-small-en-v1.5"
     assert settings.EMBEDDING_TEXT_MODE == "description"
-    assert settings.EMBEDDING_RELATED_THRESHOLD == 0.72
+    assert settings.EMBEDDING_RELATED_THRESHOLD == 0.73
 
 
 # ── Re-embedding a model / text-mode / alias change ─────────────────────────

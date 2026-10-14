@@ -425,22 +425,25 @@ def real_cos(manager, a, b):
 
 @pytest.mark.slow
 def test_real_model_description_mode_similarity(real_model):
-    """bge-small-en-v1.5 + "Name: description" text against the 0.72 related threshold."""
+    """bge-small-en-v1.5 + "Name: description" text against the 0.73 related threshold (benchmark v2)."""
     from app.config.settings import settings
     from app.services.embeddings.matching_config import get_related_threshold
 
     assert real_model.model_name == settings.EMBEDDING_MODEL == "BAAI/bge-small-en-v1.5"
     threshold = get_related_threshold()
-    assert threshold == 0.72
+    assert threshold == 0.73
     assert real_cos(real_model, "React", "Next.js") > threshold > real_cos(real_model, "React", "Accounting")
     assert real_cos(real_model, "Celery", "Cooking") < threshold
 
 
+# Known false positives at 0.73 (benchmark v2 precision 95%); descriptions must not change.
 @pytest.mark.slow
-@pytest.mark.xfail(
-    strict=True,
-    reason="Measured 0.744 with the benchmark's exact text (Redux and Redis seed descriptions); "
-    "a known false positive at 0.72 (benchmark precision 0.977). Seed descriptions must not change.",
-)
+@pytest.mark.xfail(strict=True, reason="Known false positive: measured cos(React, Python) = 0.776 (~0.78) >= 0.73")
+def test_real_model_react_python_below_threshold(real_model):
+    assert real_cos(real_model, "React", "Python") < 0.73
+
+
+@pytest.mark.slow
+@pytest.mark.xfail(strict=True, reason="Known false positive: measured cos(Redux, Redis) = 0.744 >= 0.73")
 def test_real_model_redux_redis_below_threshold(real_model):
-    assert real_cos(real_model, "Redux", "Redis") < 0.72
+    assert real_cos(real_model, "Redux", "Redis") < 0.73

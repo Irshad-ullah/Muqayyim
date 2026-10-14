@@ -11,10 +11,13 @@ Why exact keys for "matched": there is no reliable similarity cut-off for a
 strong match. Alternatives such as MySQL ↔ PostgreSQL score ~0.96, higher than
 many strongly related pairs, so embeddings only decide related vs unrelated.
 
-The 0.72 threshold (precision 0.98, recall 0.98 on the 245-pair benchmark,
-docs/evaluation/embedding-benchmark-2026-10-13/) is valid ONLY for the model
-and text mode it was measured with; get_related_threshold() refuses to return
-it for anything else — re-measure first.
+The 0.73 threshold is the lowest similarity giving >= 95% precision for
+"related" (recall 94%) on benchmark v2, which includes 92 hard negatives
+(technical skills from different areas; docs/evaluation/embedding-benchmark-2026-10-14/).
+Known false positives above it: React ↔ Python (0.78), Redux ↔ Redis (0.744);
+Module 5 may add a mutual-nearest-neighbour check to reduce them.
+It is valid ONLY for the model and text mode it was measured with;
+get_related_threshold() refuses to return it for anything else — re-measure first.
 """
 
 import logging

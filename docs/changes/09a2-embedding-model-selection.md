@@ -1,17 +1,75 @@
 # 09a2 — Embedding model selection: BAAI/bge-small-en-v1.5 with curated skill descriptions
 
-**Status:** implemented · **Date:** 2026-10-14 · **Affects:** AIServices (embedding layer), the skill-embeddings card in the frontend
-**Builds on:** [09a — skill embeddings](09a-skill-embeddings.md) · **Benchmark:** [`docs/evaluation/embedding-benchmark-2026-10-13/`](../evaluation/embedding-benchmark-2026-10-13/report.md)
+**Status:** implemented · **Date:** 2026-10-14 · **Revised:** 2026-10-14 ([v2](#revision-v2--hard-negatives-threshold-073)) · **Affects:** AIServices (embedding layer), the skill-embeddings card in the frontend
+**Builds on:** [09a — skill embeddings](09a-skill-embeddings.md) · **Benchmarks:** [v1 `embedding-benchmark-2026-10-13/`](../evaluation/embedding-benchmark-2026-10-13/report.md), [v2 `embedding-benchmark-2026-10-14/`](../evaluation/embedding-benchmark-2026-10-14/report.md)
 
 ## Summary
 
 - **New model:** skill vectors now come from **`BAAI/bge-small-en-v1.5`**, replacing all-MiniLM-L6-v2.
 - **New text:** each skill is embedded as **"Name: description"**, using a curated, hand-reviewed description where one exists. Skills without one fall back to the bare name.
 - **Cache identity:** a stored vector is identified by the exact text embedded, so a changed description is re-embedded automatically.
-- **Matching rule** (for Module 5; no matching is built yet): same canonical key → matched (credit 1.0); else cosine ≥ **0.72** → related (credit 0.5); else missing.
+- **Matching rule** (for Module 5; no matching is built yet): same canonical key → matched (credit 1.0); else cosine ≥ **0.73** → related (credit 0.5); else missing. The threshold was 0.72 from benchmark v1 and was raised to 0.73 after benchmark v2 added hard negatives; see [Revision (v2)](#revision-v2--hard-negatives-threshold-073).
 - **Delivered as two commits:**
   - **Stage 1** (`00da5d7`): 985 curated descriptions, their quality checks, and alias alignment.
   - **Stage 2** (this commit): the model and text switch, the description providers, cache invalidation, unknown-skill reporting, the threshold config, the re-embed migration, and "x of y described" on the card.
+
+
+## Revision (v2) — hard negatives, threshold 0.73
+
+**Benchmark v2** (2026-10-14, [`docs/evaluation/embedding-benchmark-2026-10-14/`](../evaluation/embedding-benchmark-2026-10-14/report.md)) re-ran the two eligible models on an extended test set.
+
+**What v1 lacked:** most of its 245 pairs' negatives were easy: tech vs non-tech, or unrelated domains. It had **few same-field negatives**, i.e. two technical skills from different areas that a CV commonly lists together. Those are exactly the pairs career matching must not call "related". v2 adds **92 hard negatives** (e.g. React–Python, Docker–Pandas, Figma–SQL), giving 337 pairs: 102 strong, 71 related, 164 unrelated.
+
+### v2 results: related vs technical skills from different areas
+
+| Model | Text | AUC (all) | AUC vs hard neg | Hard neg mean | Hard neg max | Thr@P95 | Recall@P95 | Thr@P90 | Recall@P90 | Recall@5 | MRR |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| **bge-small-en-v1.5** | **description** | **0.993** | **0.990** | **0.651** | **0.786** | **0.733** | **0.94** | **0.703** | **1.00** | **0.720** | **0.927** |
+| all-MiniLM-L6-v2 | description | 0.995 | 0.994 | 0.160 | 0.378 | 0.329 | 0.97 | 0.269 | 0.99 | 0.689 | 0.920 |
+| all-MiniLM-L6-v2 | name | 0.886 | 0.900 | 0.145 | 0.360 | 0.323 | 0.62 | 0.282 | 0.71 | 0.383 | 0.680 |
+| bge-small-en-v1.5 | name | 0.857 | 0.848 | 0.571 | 0.695 | 0.677 | 0.56 | 0.636 | 0.72 | 0.333 | 0.621 |
+
+Thr@P95 is the lowest similarity at which at least 95% of pairs called "related" really are related.
+
+bge-small's similarities sit in a high, narrow band: hard negatives average 0.651 against 0.822 for related pairs. The threshold therefore has to be precise, but the ranking is as good as MiniLM's.
+
+### Decision: keep bge-small-en-v1.5
+
+- **The models are otherwise close.** With descriptions, both are excellent against hard negatives (0.990 vs 0.994) and the differences on our own small test set are small.
+- **bge-small retrieves neighbours better:** Recall@5 0.720 vs 0.689 and MRR 0.927 vs 0.920. Neighbour retrieval is what the skill map and future suggestions use.
+- **No re-embed was needed.** The model and text mode are unchanged.
+- **Bare names don't favour bge-small** (0.857 vs MiniLM 0.886), but they are only the fallback for undescribed skills (see the correction under "Why not MiniLM").
+
+### Threshold change: 0.72 → 0.73
+
+| | v1 (0.72) | v2 (0.73) |
+|---|---|---|
+| Basis | best related/unrelated split on 245 pairs | lowest threshold with ≥ 95% precision on 337 pairs incl. 92 hard negatives (0.733) |
+| Precision / recall | 0.98 / 0.98 (v1 pairs) | **0.95 / 0.94** (v2 pairs) |
+| Alternative | — | 0.703 for ≥ 90% precision with 100% recall |
+
+- `EMBEDDING_RELATED_THRESHOLD` is now **0.73**: the setting default, `.env.example` and the local `.env`.
+- `thresholdModel` / `thresholdTextMode` stay `BAAI/bge-small-en-v1.5` / `description`, and `get_related_threshold()` still refuses the value for any other combination.
+- The slow real-model test asserts cos(React, Next.js) 0.889 > 0.73 > cos(React, Accounting) 0.646, and cos(Celery, Cooking) 0.580 < 0.73.
+
+### Known false positives (limitations)
+
+Measured with the real model on the curated text; descriptions were **not** edited.
+
+| Pair | Similarity | Why it scores high |
+|---|---|---|
+| React ↔ Python | 0.776 (≈ 0.78) | both are very common developer skills, and their descriptions share web and application vocabulary |
+| Redux ↔ Redis | 0.744 | near-identical names and overlapping "state"/"store" wording |
+
+Both are recorded as **strict expected failures** in the slow test, with the measured value in the reason. If a future change pushes either below 0.73, the test reports XPASS so the note gets updated.
+
+Matching will see about 5% false "related" calls at this threshold; they affect half credit only, never full matches. **Module 5 may add a mutual-nearest-neighbour check** to reduce them: count a pair as related only if each skill is among the other's top-k neighbours, as well as above 0.73.
+
+### Files
+
+- `docs/evaluation/embedding-benchmark-2026-10-14/`: the v2 `report.md`, `results.json` and `similarity_by_label.png`, copied unchanged.
+- **Code:** threshold default and docstring (`app/config/settings.py`, `app/services/embeddings/matching_config.py`), `.env.example`, the threshold assertions in `tests/test_embeddings_descriptions.py`, and the slow tests in `tests/test_embeddings.py`.
+- No other code changed.
 
 ## Benchmark method
 
@@ -60,12 +118,15 @@ Bare skill names are short and ambiguous ("Celery", "Spring", "Unity", "R"), so 
 ### Why bge-small-en-v1.5
 
 - **Strongest eligible configuration:** AUC 0.996, AUC-strong 0.807, Spearman 0.723, Recall@5 0.720, MRR 0.927, at about 5.7 ms/skill and about 620 MB of process RAM in the benchmark.
-- **Why not MiniLM:** the script's tie-break picked all-MiniLM-L6-v2, which is only 47 MB smaller with a score 0.016 lower. That tie-break was meant for large size gaps, so we override it: bge-small has the higher Recall@5 (0.720 vs 0.689) and MRR, and a related threshold with much better separation.
+- **Why not MiniLM:** the script's tie-break picked all-MiniLM-L6-v2, which is only 47 MB smaller with a score 0.016 lower. That tie-break was meant for large size gaps, so we override it: bge-small has the higher Recall@5 (0.720 vs 0.689) and MRR.
+  - *Correction (v2):* an earlier version also claimed bge-small had "a related threshold with much better separation". Neither round supports that: with descriptions, separation is about equal (v2 d 3.89 vs 3.90) and MiniLM is slightly ahead against hard negatives.
+  - *Bare names:* bge-small was **not** better there either (v1 AUC 0.869 for both; v2 **0.857 vs MiniLM 0.886**). Bare names are only a fallback for undescribed skills.
 - **Why not the others:** Qwen3-0.6B was about 100× slower and 3× larger. bge-base and gte-modernbert were slower without being better on the selection score.
 
-## The 0.72 related threshold and the exact-key rule
+## The related threshold and the exact-key rule
 
-- **The threshold:** for bge-small with description text, **0.72** separates related (label ≥ 1) from unrelated pairs with **precision 0.98 and recall 0.98**.
+- **The threshold (v1):** for bge-small with description text, **0.72** separates related (label ≥ 1) from unrelated pairs with **precision 0.98 and recall 0.98** on the v1 pairs.
+  - **Current: 0.73.** Benchmark v2 showed the v1 set had few same-field negatives; the lowest threshold with ≥ 95% precision is 0.733. See [Revision (v2)](#revision-v2--hard-negatives-threshold-073).
 - **No "strong match" threshold:** none is reliable. Alternatives score as high as or higher than strongly related pairs (MySQL ↔ PostgreSQL 0.96, Tableau ↔ Power BI 0.918, React ↔ Vue.js 0.904; Wireframing ↔ Prototyping, labelled strong, is only 0.72). So:
 
 ```
@@ -74,11 +135,11 @@ else cosine ≥ relatedThreshold    → related  (credit 0.5)
 else                              → missing  (credit 0)
 ```
 
-- **Configuration:** `embedding.relatedThreshold = 0.72`, `thresholdModel = "BAAI/bge-small-en-v1.5"`, `thresholdTextMode = "description"`. These are settings (`EMBEDDING_RELATED_THRESHOLD`, `EMBEDDING_THRESHOLD_MODEL`, `EMBEDDING_THRESHOLD_TEXT_MODE`).
-- **`get_related_threshold()`** (`app/services/embeddings/matching_config.py`) returns 0.72 only when the active model and text mode equal the measured ones. Otherwise it logs a warning ("re-measure the threshold") and returns `None`.
+- **Configuration:** `embedding.relatedThreshold = 0.73` (0.72 before v2), `thresholdModel = "BAAI/bge-small-en-v1.5"`, `thresholdTextMode = "description"`. These are settings (`EMBEDDING_RELATED_THRESHOLD`, `EMBEDDING_THRESHOLD_MODEL`, `EMBEDDING_THRESHOLD_TEXT_MODE`).
+- **`get_related_threshold()`** (`app/services/embeddings/matching_config.py`) returns the threshold only when the active model and text mode equal the measured ones. Otherwise it logs a warning ("re-measure the threshold") and returns `None`.
 - **No matching is implemented yet.** The rule is documented in that module's docstring for Module 5.
 
-**Known false positive: Redux ↔ Redis = 0.744** (labelled unrelated). It was measured with the benchmark's exact text, and the format check below reproduces the benchmark's published numbers. It is one of the about 2% false positives behind precision 0.977. The slow test records it as a strict expected failure (`xfail(strict=True)` with the measured value), so it stays visible; it would only be "fixed" by changing the seed descriptions, which must stay as calibrated.
+**Known false positive (v1): Redux ↔ Redis = 0.744** (labelled unrelated). It was measured with the benchmark's exact text, and the format check below reproduces the benchmark's published numbers. It is one of the about 2% false positives behind precision 0.977. The slow test records it as a strict expected failure (`xfail(strict=True)` with the measured value), so it stays visible; it would only be "fixed" by changing the seed descriptions, which must stay as calibrated. Benchmark v2 adds React ↔ Python (0.776) as a second known false positive at 0.73.
 
 ## The curated description file (Stage 1, `00da5d7`)
 
@@ -176,7 +237,7 @@ It reports counts before and after plus the time taken. A dry run writes nothing
 Other formats (description only; "Name. description"; newline-separated) differ by 0.02–0.04, so the embedded text exactly matches the calibration.
 
 **Real model test** (`pytest -m slow`):
-- passing: cos(React, Next.js) = **0.889** > 0.72 > cos(React, Accounting) = **0.646**; cos(Celery, Cooking) = **0.580** < 0.72;
+- at the original 0.72 threshold, passing: cos(React, Next.js) = **0.889** > 0.72 > cos(React, Accounting) = **0.646**; cos(Celery, Cooking) = **0.580** < 0.72 (re-checked at 0.73 in [Revision (v2)](#revision-v2--hard-negatives-threshold-073));
 - recorded as a strict expected failure: cos(Redux, Redis) = **0.744**.
 
 **Measurements on this machine** (Windows, CPU, model from the local cache with downloads forbidden):
@@ -236,13 +297,23 @@ New in `test_embeddings_descriptions.py` (24 tests):
 - **The test set is our own:** 245 pairs and 42 queries, labelled by us. Numbers on real CVs may differ, and the threshold should be re-checked once matching data exists.
 - **Undescribed skills fall back to bare names,** where the benchmark shows about 0.87 AUC instead of 0.996. The unknown-skills endpoint and the once-per-skill log show which descriptions to add next.
 - **The threshold is valid only for bge-small-en-v1.5 with description text.** `get_related_threshold()` enforces this. Any model or text-mode change means re-measuring the threshold, and changing seed descriptions would invalidate it.
-- **About 2% false positives at 0.72** (e.g. Redux ↔ Redis 0.744). Exact-key matching keeps full credit safe; only "related" (half credit) is affected.
+- **About 5% false positives at 0.73** (v2 precision 95% with hard negatives). Known examples: React ↔ Python 0.776, Redux ↔ Redis 0.744. Exact-key matching keeps full credit safe; only "related" (half credit) is affected. See [Revision (v2)](#revision-v2--hard-negatives-threshold-073).
 - **Speed depends on the machine.** On this machine today: 21 ms per described skill.
 
 ## Suggested SDS updates
 
-**§4.2: add an "Embedding model evaluation" table.** Use the results table above (model, text, AUC related, AUC strong, Spearman, Recall@5, MRR, related threshold P/R, RAM, ms/skill), with the selection rule, and this text:
-> "Skill embeddings use BAAI/bge-small-en-v1.5 on 'Name: description' text (ROC-AUC 0.996, Recall@5 0.720). A related threshold of 0.72 (precision 0.98, recall 0.98) separates related from unrelated skills; full matches come only from identical canonical skills."
+**§4.2: add an "Embedding model evaluation" subsection with both benchmark rounds:**
+- the v1 results table above;
+- the v2 hard-negative table (in [Revision (v2)](#revision-v2--hard-negatives-threshold-073));
+- the selection rule;
+- this text:
+> "Embedding models were evaluated in two rounds on a hand-labelled set of skill pairs and neighbour queries over 283 described skills.
+>
+> Round 1 (245 pairs) compared five models with bare-name and 'Name: description' text. Descriptions raised related-vs-unrelated ROC-AUC from about 0.87 to about 0.996 for every model.
+>
+> Round 2 (337 pairs) added 92 hard negatives: technical skills from different areas, such as React–Python. BAAI/bge-small-en-v1.5 with descriptions reached ROC-AUC 0.993 overall and 0.990 against hard negatives, Recall@5 0.720 and MRR 0.927. all-MiniLM-L6-v2 was comparable (0.994 against hard negatives, Recall@5 0.689). bge-small-en-v1.5 was kept for its better neighbour retrieval.
+>
+> A skill is 'related' at cosine ≥ 0.73, the lowest threshold with at least 95% precision (94% recall). Full matches come only from identical canonical skills. Known false positives (e.g. React–Python) may be reduced with a mutual-nearest-neighbour check."
 
 **Table 4.2 (technologies):** replace all-MiniLM-L6-v2 with **BAAI/bge-small-en-v1.5** (384-dim, CPU, sentence-transformers 6.1.0, PyTorch 2.14.1 CPU build), described as "skill embeddings on 'Name: description' text; curated description file of 985 skills".
 
