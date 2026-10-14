@@ -1,0 +1,4 @@
+conceptType,conceptUri,preferredLabel
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/py,Python (computer programming)
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/js,JavaScript
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/git,Git

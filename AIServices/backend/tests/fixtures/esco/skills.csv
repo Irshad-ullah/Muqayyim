@@ -1,0 +1,11 @@
+conceptType,conceptUri,skillType,reuseLevel,preferredLabel,altLabels,status,modifiedDate,description
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/py,knowledge,cross-sector,Python (computer programming),Python,released,2024-01-01T00:00:00Z,The techniques of software development in Python.
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/js,knowledge,cross-sector,JavaScript,,released,2024-01-01T00:00:00Z,The techniques of software development in JavaScript.
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/sql,knowledge,cross-sector,SQL,,released,2024-01-01T00:00:00Z,The computer language SQL.
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/git,knowledge,cross-sector,Git,,released,2024-01-01T00:00:00Z,The tool Git is a software program for configuration management.
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/pat,skill/competence,cross-sector,use software design patterns,apply design patterns,released,2024-01-01T00:00:00Z,Utilise reusable solutions.
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/agi,skill/competence,cross-sector,agile project management,,released,2023-01-01T00:00:00Z,Old description.
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/agi,skill/competence,cross-sector,agile project management,,released,2025-01-01T00:00:00Z,The agile project management approach.
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/hsk,knowledge,cross-sector,Haskell,,released,2024-01-01T00:00:00Z,The techniques of software development in Haskell.
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/cook,skill/competence,cross-sector,cook sauces,,released,2024-01-01T00:00:00Z,Prepare sauces.
+KnowledgeSkillCompetence,http://data.europa.eu/esco/skill/req,skill/competence,cross-sector,define technical requirements,,released,2024-01-01T00:00:00Z,Specify technical properties.

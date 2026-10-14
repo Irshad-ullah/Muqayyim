@@ -1,0 +1,63 @@
+{
+  "_comment": "Profession categories (Module 5). A profession's category comes from its SOC / ISCO code prefix (most specific prefix wins); if the code does not decide it, the first matching title keyword (case-insensitive, whole words) wins; otherwise 'Other'.",
+  "categories": [
+    "Development", "Data & AI", "Infrastructure & Cloud", "Security", "Design",
+    "Quality & Testing", "Management & Product", "Support & Networking", "Other"
+  ],
+  "soc": {
+    "15-1211.00": "Management & Product",
+    "15-1211.01": "Data & AI",
+    "15-1212": "Security",
+    "15-1221": "Data & AI",
+    "15-1231": "Support & Networking",
+    "15-1232": "Support & Networking",
+    "15-1241": "Infrastructure & Cloud",
+    "15-1242": "Data & AI",
+    "15-1243": "Data & AI",
+    "15-1244": "Infrastructure & Cloud",
+    "15-1251": "Development",
+    "15-1252": "Development",
+    "15-1253": "Quality & Testing",
+    "15-1254": "Development",
+    "15-1255.00": "Design",
+    "15-1255.01": "Design",
+    "15-1299.01": "Infrastructure & Cloud",
+    "15-1299.02": "Data & AI",
+    "15-1299.03": "Support & Networking",
+    "15-1299.04": "Security",
+    "15-1299.05": "Security",
+    "15-1299.06": "Security",
+    "15-1299.07": "Development",
+    "15-1299.08": "Infrastructure & Cloud",
+    "15-1299.09": "Management & Product",
+    "15-2051": "Data & AI"
+  },
+  "isco": {
+    "2511": "Management & Product",
+    "2512": "Development",
+    "2513": "Development",
+    "2514": "Development",
+    "2519": "Quality & Testing",
+    "2521": "Data & AI",
+    "2522": "Infrastructure & Cloud",
+    "2523": "Support & Networking",
+    "2529": "Security",
+    "3511": "Infrastructure & Cloud",
+    "3512": "Support & Networking",
+    "3513": "Support & Networking",
+    "3514": "Development",
+    "3521": "Support & Networking",
+    "3522": "Support & Networking",
+    "2166": "Design"
+  },
+  "keywords": [
+    ["security", "Security"], ["cyber", "Security"], ["penetration", "Security"], ["forensic", "Security"],
+    ["test", "Quality & Testing"], ["tester", "Quality & Testing"], ["quality", "Quality & Testing"],
+    ["data", "Data & AI"], ["machine learning", "Data & AI"], ["artificial intelligence", "Data & AI"], ["analyst", "Data & AI"],
+    ["designer", "Design"], ["design", "Design"], ["user experience", "Design"], ["ux", "Design"], ["ui", "Design"],
+    ["developer", "Development"], ["programmer", "Development"], ["software", "Development"], ["engineer", "Development"],
+    ["cloud", "Infrastructure & Cloud"], ["devops", "Infrastructure & Cloud"], ["system administrator", "Infrastructure & Cloud"], ["architect", "Infrastructure & Cloud"],
+    ["network", "Support & Networking"], ["support", "Support & Networking"], ["technician", "Support & Networking"], ["help desk", "Support & Networking"],
+    ["manager", "Management & Product"], ["product owner", "Management & Product"], ["consultant", "Management & Product"]
+  ]
+}

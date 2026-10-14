@@ -1,0 +1,19 @@
+O*NET-SOC Code,Title,Workplace Example,Element ID,Element Name,Hot Technology,In Demand
+15-1252.00,Software Developers,Microsoft Excel,43232400,Spreadsheet software,N,N
+15-1252.00,Software Developers,Oracle Java,43232400,Object or component oriented development software,Y,N
+15-1252.00,Software Developers,Python,43232400,Object or component oriented development software,Y,Y
+15-1252.00,Software Developers,React,43232400,Web platform development software,N,Y
+15-1252.00,Software Developers,Amazon Web Services AWS software,43232400,Platform interconnectivity software,Y,N
+15-1252.00,Software Developers,JavaScript Object Notation JSON,43232400,Development environment software,Y,N
+15-1252.00,Software Developers,Git,43232400,Configuration management software,Y,N
+15-1252.00,Software Developers,Docker,43232400,Operating system software,Y,Y
+15-1255.00,Web and Digital Interface Designers,Figma,43232400,Graphics or photo imaging software,Y,N
+15-1255.00,Web and Digital Interface Designers,Adobe Photoshop,43232400,Graphics or photo imaging software,Y,Y
+15-1299.00,"Computer Occupations, All Other",Python,43232400,Object or component oriented development software,Y,Y
+15-2051.00,Data Scientists,Python,43232400,Object or component oriented development software,Y,Y
+15-2051.00,Data Scientists,SAS software,43232400,Analytical or scientific software,Y,N
+15-2051.00,Data Scientists,The MathWorks MATLAB,43232400,Analytical or scientific software,Y,N
+15-2051.00,Data Scientists,Apache Spark,43232400,Data base management system software,Y,Y
+15-2051.00,Data Scientists,Tableau,43232400,Business intelligence and data analysis software,Y,N
+15-2051.00,Data Scientists,Microsoft Power BI,43232400,Business intelligence and data analysis software,N,Y
+11-1011.00,Chief Executives,Microsoft Excel,43232400,Spreadsheet software,Y,Y

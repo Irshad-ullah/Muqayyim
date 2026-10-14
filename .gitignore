@@ -72,3 +72,8 @@ _gen_doc.py
 
 # Downloaded embedding model cache (EMBEDDING_CACHE_DIR)
 AIServices/backend/models/
+
+# Downloaded ESCO / O*NET datasets and the built FAISS index
+AIServices/data/raw/*
+!AIServices/data/raw/README.md
+AIServices/data/index/

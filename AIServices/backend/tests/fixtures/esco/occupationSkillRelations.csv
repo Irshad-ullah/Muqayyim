@@ -1,0 +1,11 @@
+occupationUri,occupationLabel,relationType,skillType,skillUri,skillLabel
+http://data.europa.eu/esco/occupation/dev-0001,software developer,essential,knowledge,http://data.europa.eu/esco/skill/py,Python (computer programming)
+http://data.europa.eu/esco/occupation/dev-0001,software developer,essential,knowledge,http://data.europa.eu/esco/skill/js,JavaScript
+http://data.europa.eu/esco/occupation/dev-0001,software developer,optional,knowledge,http://data.europa.eu/esco/skill/sql,SQL
+http://data.europa.eu/esco/occupation/dev-0001,software developer,essential,knowledge,http://data.europa.eu/esco/skill/git,Git
+http://data.europa.eu/esco/occupation/dev-0001,software developer,essential,skill/competence,http://data.europa.eu/esco/skill/pat,use software design patterns
+http://data.europa.eu/esco/occupation/dev-0001,software developer,optional,knowledge,http://data.europa.eu/esco/skill/hsk,Haskell
+http://data.europa.eu/esco/occupation/dev-0001,software developer,optional,knowledge,http://data.europa.eu/esco/skill/py,Python (computer programming)
+http://data.europa.eu/esco/occupation/ana-0002,ICT system analyst,essential,skill/competence,http://data.europa.eu/esco/skill/req,define technical requirements
+http://data.europa.eu/esco/occupation/ana-0002,ICT system analyst,optional,skill/competence,http://data.europa.eu/esco/skill/agi,agile project management
+http://data.europa.eu/esco/occupation/chef-003,chef,essential,skill/competence,http://data.europa.eu/esco/skill/cook,cook sauces

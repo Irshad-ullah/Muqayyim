@@ -9,9 +9,8 @@ description when one is known:
     build_embed_text("Celery") → "Celery: Python distributed task queue for running background jobs"
 
 Descriptions come from DescriptionProviders consulted in order (first hit
-wins). Today there is one: CuratedFileProvider (app/data/skill_descriptions.json,
-reviewed by hand). ESCO, O*NET or LLM-generated providers can be appended to
-the chain later without changing callers. Descriptions are embedding text
+wins): CuratedFileProvider (app/data/skill_descriptions.json, reviewed by
+hand), then EscoDescriptionProvider when ESCO_DESCRIPTIONS_ENABLED=true (09b). Descriptions are embedding text
 only; the CV parser never reads them.
 """
 
@@ -98,15 +97,40 @@ class ChainedProvider:
         return None
 
 
+class EscoDescriptionProvider:
+    """ESCO skill descriptions (ai_db.esco_skills), keyed by the cleaned ESCO label.
+    Consulted after the curated file, and only when ESCO_DESCRIPTIONS_ENABLED=true
+    (off by default: ESCO descriptions are long and were not part of the benchmark
+    behind the related threshold)."""
+
+    name = "esco"
+
+    def __init__(self, descriptions: dict):
+        # descriptions: {canonical name: description}
+        self._by_key = {}
+        for name, text in descriptions.items():
+            key = normalise_skill(name)[0]
+            if key and text and key not in self._by_key:
+                self._by_key[key] = " ".join(text.split())
+
+    def __len__(self) -> int:
+        return len(self._by_key)
+
+    def lookup(self, canonical: str) -> Optional[Description]:
+        text = self._by_key.get(normalise_skill(canonical)[0])
+        return Description(text, self.name) if text else None
+
+
 _provider: Optional[DescriptionProvider] = None
+_curated: Optional[CuratedFileProvider] = None
 
 
-def load_description_provider() -> DescriptionProvider:
-    """Build (and validate) the provider chain. Raises InvalidDescriptionFile."""
-    global _provider
-    curated = CuratedFileProvider()
-    _provider = ChainedProvider([curated])
-    logger.info("Skill descriptions loaded: %d curated", len(curated))
+def load_description_provider(esco: Optional[EscoDescriptionProvider] = None) -> DescriptionProvider:
+    """Build (and validate) the provider chain: curated, then ESCO when given. Raises InvalidDescriptionFile."""
+    global _provider, _curated
+    _curated = _curated or CuratedFileProvider()
+    _provider = ChainedProvider([_curated] + ([esco] if esco is not None else []))
+    logger.info("Skill descriptions loaded: %d curated%s", len(_curated), f", {len(esco)} ESCO" if esco is not None else "")
     return _provider
 
 
@@ -116,8 +140,10 @@ def get_description_provider() -> DescriptionProvider:
 
 def use_description_provider(provider: Optional[DescriptionProvider]) -> None:
     """Substitute the provider (tests); None reloads the curated file on next use."""
-    global _provider
+    global _provider, _curated
     _provider = provider
+    if provider is None:
+        _curated = None
 
 
 def text_mode() -> str:

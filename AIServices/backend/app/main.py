@@ -24,6 +24,12 @@ from app.services.embeddings.user_profiles import run_worker
 from app.middleware.auth import register_auth_error_handler
 from app.middleware.validation import register_validation_error_handler
 from app.routes.internal_logs_routes import router as internal_logs_router
+from app.routes.profession_routes import router as profession_router
+from app.config.database import get_database
+from app.services.professions.imports import refresh_esco_descriptions
+from app.services.professions.role_index import get_role_index
+from app.services.professions.role_skills import professions_health
+from app.services.professions.store import ensure_profession_indexes
 from app.services.error_logger import is_db_connection_error, log_error, request_context
 
 # Configure logging
@@ -62,6 +68,18 @@ async def lifespan(app: FastAPI):
             asyncio.create_task(manager.load_forever()),
             asyncio.create_task(run_worker(manager.ready_event, settings.EMBEDDING_WORKER_INTERVAL_SECONDS)),
         ]
+
+    # Professions (09b): indexes, optional ESCO descriptions, then the role-skill
+    # FAISS index — loaded from disk if still valid, else rebuilt in the background.
+    db = get_database()
+    if db is not None:
+        try:
+            await ensure_profession_indexes(db)
+            await refresh_esco_descriptions(db)
+        except Exception as exc:  # noqa: BLE001 — the API still starts
+            logger.error("Profession setup failed: %s", type(exc).__name__)
+        if settings.ROLE_INDEX_AUTOLOAD:
+            embedding_tasks.append(asyncio.create_task(get_role_index().load_or_build(db)))
     logger.info("✓ Application started successfully")
     
     yield
@@ -159,6 +177,7 @@ app.include_router(cv_router)
 app.include_router(embedding_router)  # Module 2 FE-4/FE-5 — skill embeddings
 app.include_router(internal_router)  # service-to-service, X-Internal-Key
 app.include_router(internal_logs_router)  # admin log view, via CoreServices
+app.include_router(profession_router)  # Module 10 FE-4 professions + role-skill index, via CoreServices
 
 
 # Root endpoint
@@ -172,6 +191,13 @@ async def root():
     }
 
 
+async def _professions_health() -> dict:
+    try:
+        return await professions_health()
+    except Exception as exc:  # noqa: BLE001 — health must always answer
+        return {"available": False, "error": type(exc).__name__}
+
+
 # Health check
 @app.get("/health")
 async def health():
@@ -181,6 +207,8 @@ async def health():
         "service": "CV Parsing Module",
         "version": settings.API_VERSION,
         "embeddings": get_embedder().health(),
+        "professions": await _professions_health(),
+        "roleSkillIndex": get_role_index().health(),
     }
 
 

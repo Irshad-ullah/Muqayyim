@@ -7,6 +7,7 @@ os.environ.setdefault("INTERNAL_API_KEY", "test-internal-key")
 os.environ.setdefault("CORE_SERVICE_URL", "http://core.test")
 # Skill embeddings: never load or download the real model in unit tests.
 os.environ.setdefault("EMBEDDING_AUTOLOAD", "false")
+os.environ.setdefault("ROLE_INDEX_AUTOLOAD", "false")
 
 import pytest  # noqa: E402
 

@@ -55,6 +55,23 @@ class Settings(BaseSettings):
     EMBEDDING_RELATED_THRESHOLD: float = float(os.getenv("EMBEDDING_RELATED_THRESHOLD", "0.73"))
     EMBEDDING_THRESHOLD_MODEL: str = os.getenv("EMBEDDING_THRESHOLD_MODEL", "BAAI/bge-small-en-v1.5")
     EMBEDDING_THRESHOLD_TEXT_MODE: str = os.getenv("EMBEDDING_THRESHOLD_TEXT_MODE", "description")
+
+    # Profession database (ESCO + O*NET) and the FAISS role-skill index (Module 5/10).
+    # Comma-separated lists. PROFESSION_SOURCES selects which sources are active in the index.
+    PROFESSION_SOURCES: str = os.getenv("PROFESSION_SOURCES", "onet,esco,manual")
+    PROFESSION_DATA_DIR: str = os.getenv("PROFESSION_DATA_DIR", "../data/raw")
+    ONET_SOC_PREFIXES: str = os.getenv("ONET_SOC_PREFIXES", "15-12,15-2051")
+    ONET_SOC_EXCLUDE: str = os.getenv("ONET_SOC_EXCLUDE", "15-1299.00")
+    ONET_SKILLS_CAP: int = int(os.getenv("ONET_SKILLS_CAP", "30"))
+    ONET_VERSION: str = os.getenv("ONET_VERSION", "31.0")
+    ESCO_ISCO_PREFIXES: str = os.getenv("ESCO_ISCO_PREFIXES", "251,252,351,352,2166")
+    ESCO_VERSION: str = os.getenv("ESCO_VERSION", "1.2.1")
+    # ESCO skill descriptions as embedding text: off until ESCO-style text is benchmarked.
+    ESCO_DESCRIPTIONS_ENABLED: bool = os.getenv("ESCO_DESCRIPTIONS_ENABLED", "false").lower() == "true"
+    ROLE_INDEX_DIR: str = os.getenv("ROLE_INDEX_DIR", "../data/index")
+    MUTUAL_NN_K: int = int(os.getenv("MUTUAL_NN_K", "10"))
+    # Load/rebuild the role-skill index at startup (off in unit tests).
+    ROLE_INDEX_AUTOLOAD: bool = os.getenv("ROLE_INDEX_AUTOLOAD", "true").lower() != "false"
     EMBEDDING_CACHE_DIR: str = os.getenv("EMBEDDING_CACHE_DIR", "./models")
     EMBEDDING_AUTOLOAD: bool = os.getenv("EMBEDDING_AUTOLOAD", "true").lower() != "false"
     EMBEDDING_WORKER_INTERVAL_SECONDS: int = int(os.getenv("EMBEDDING_WORKER_INTERVAL_SECONDS", "30"))

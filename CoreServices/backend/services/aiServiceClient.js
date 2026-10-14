@@ -67,3 +67,25 @@ export const acknowledgeAiErrorLog = (id, acknowledgedBy, req) =>
 
 export const getAiLogSummary = (since, req) =>
   logsCall('error-log summary', () => client.get(`${baseURL()}/internal/logs/summary`, { params: { since }, headers: internalHeaders() }), req);
+
+// ── Profession database (admin panel, Module 10 FE-4) ────────────────────────
+// AIServices owns ai_db.professions. Returns { ok: true, status, data } for any
+// answer below 500 (4xx are passed through) or { ok: false } when AIServices is
+// unreachable, times out or fails.
+export const professionsCall = async (operation, { method = 'get', path = '', params, data } = {}, req) => {
+  try {
+    const response = await client.request({
+      method,
+      url: `${baseURL()}/internal${path}`,
+      params,
+      data,
+      headers: internalHeaders(),
+    });
+    return { ok: true, status: response.status, data: response.data };
+  } catch (error) {
+    const status = error.response?.status;
+    if (status && status < 500) return { ok: true, status, data: error.response.data };
+    warn(operation, error, req);
+    return { ok: false };
+  }
+};

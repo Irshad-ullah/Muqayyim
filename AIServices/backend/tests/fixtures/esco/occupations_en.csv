@@ -1,0 +1,7 @@
+conceptType,conceptUri,iscoGroup,preferredLabel,altLabels,hiddenLabels,status,description,code
+Occupation,http://data.europa.eu/esco/occupation/dev-0001,2512,software developer,"software engineer
+programmer
+software developer
+application developer",,released,Software developers implement software.,2512.4
+Occupation,http://data.europa.eu/esco/occupation/ana-0002,2511,ICT system analyst,systems analyst,,released,ICT system analysts analyse systems.,2511.1
+Occupation,http://data.europa.eu/esco/occupation/chef-003,3434,chef,head cook,,released,Chefs cook.,3434.1

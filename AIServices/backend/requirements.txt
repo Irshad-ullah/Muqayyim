@@ -31,6 +31,9 @@ safetensors==0.8.0
 scikit-learn==1.9.1
 scipy==1.18.1
 
+# Role-skill vector index (CON-8). Wheels for Python 3.14 on Windows.
+faiss-cpu==1.15.1
+
 # Utilities
 python-dotenv>=1.0.0
 aiofiles>=23.0.0
