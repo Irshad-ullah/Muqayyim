@@ -13,7 +13,8 @@ by the gateway); X-Internal-Key required.
   POST /internal/admin/taxonomy/jobs/{job_id}/publish   {acknowledge_background_warning, actor} → 202
   GET  /internal/admin/taxonomy/snapshots               kept snapshots (?pool=publish|edit)
   GET  /internal/admin/taxonomy/snapshots/{id}          one snapshot + what a restore would undo
-  POST /internal/admin/taxonomy/snapshots/{id}/restore  {actor} → whole-state restore + checks
+  POST /internal/admin/taxonomy/snapshots/{id}/restore  {actor} → 202, whole-state restore in the background
+  GET  /internal/admin/taxonomy/restores[/{restore_id}] restore progress and result (poll)
   GET  /internal/admin/taxonomy/lock            who holds the taxonomy lock, if anyone
 """
 
@@ -207,14 +208,30 @@ class _RestoreIn(BaseModel):
 
 @router.post("/snapshots/{snapshot_id}/restore")
 async def restore(snapshot_id: str, body: _RestoreIn):
+    """Start a whole-state restore (202); poll GET /restores/{restore_id}."""
     if get_database() is None:
         return no_db()
     try:
-        result = await publishing.restore(snapshot_id, body.actor)
+        record = await publishing.start_restore(snapshot_id, body.actor)
     except snapshots.SnapshotNotFound:
         return error(404, "NOT_FOUND", "Snapshot not found")
     except TaxonomyBusy as exc:
         return busy(exc)
-    except snapshots.SnapshotError as exc:
-        return error(422, "SNAPSHOT_UNUSABLE", exc.safe_message)
-    return {"success": True, "data": result}
+    return JSONResponse(status_code=202, content={"success": True, "data": jobs.public(record)})
+
+
+@router.get("/restores")
+async def list_restores():
+    if get_database() is None:
+        return no_db()
+    return {"success": True, "data": await publishing.list_restores()}
+
+
+@router.get("/restores/{restore_id}")
+async def get_restore(restore_id: str):
+    if get_database() is None:
+        return no_db()
+    record = await publishing.get_restore(restore_id)
+    if not record:
+        return error(404, "NOT_FOUND", "Restore not found")
+    return {"success": True, "data": jobs.public(record)}

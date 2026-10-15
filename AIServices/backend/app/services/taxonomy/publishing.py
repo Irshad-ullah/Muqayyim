@@ -14,8 +14,10 @@ publish (previewed → publishing → published | rolled_back | failed):
        credit rates
   any failure after the snapshot restores it automatically → rolled_back.
 
-restore: lock → snapshot of the current state ("pre-restore", so a restore can be
-undone) → whole-state restore → post-restore checks.
+restore (202 + polling; ai_db.restore_jobs: restoring → restored | rolled_back | failed):
+lock → snapshot of the current state ("pre-restore", so a restore can be undone) →
+whole-state restore → post-restore checks. A failure part-way puts the pre-restore
+snapshot back (rolled_back); a crashed restore is recovered the same way.
 
 recovery: a job left in "publishing" by a crash (its lock expired, or held by nobody)
 is restored from its snapshot → rolled_back; without a snapshot nothing live was
@@ -24,6 +26,7 @@ changed → failed. Runs at startup and every TAXONOMY_RECOVERY_INTERVAL_SECONDS
 
 import asyncio
 import logging
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -161,22 +164,124 @@ async def _roll_back(job: dict, snapshot: Optional[dict], exc: BaseException, db
         await jobs.transition(job_id, jobs.FAILED, note=message, db=db, error=message)
 
 
-# ── restore ───────────────────────────────────────────────────────────────────
-async def restore(snapshot_id: str, actor: str = "unknown", db=None) -> dict:
-    """Whole-state restore of a kept snapshot (after snapshotting the current state)."""
+# ── restore (202 + polling, like publish) ────────────────────────────────────
+RESTORES = "restore_jobs"
+RESTORING, RESTORED = "restoring", "restored"
+RESTORE_FAILED, RESTORE_ROLLED_BACK = "failed", "rolled_back"
+
+
+async def ensure_restore_indexes(db) -> None:
+    await db[RESTORES].create_index("restore_id", unique=True, name="restore_id_unique")
+    await db[RESTORES].create_index([("created_at", -1)], name="created_at")
+    await db[RESTORES].create_index("status", name="status")
+
+
+async def _set_restore(db, restore_id: str, **fields) -> None:
+    await db[RESTORES].update_one({"restore_id": restore_id},
+                                  {"$set": {**fields, "updated_at": datetime.now(timezone.utc)}})
+
+
+async def get_restore(restore_id: str, db=None) -> Optional[dict]:
+    db = db if db is not None else get_database()
+    return await db[RESTORES].find_one({"restore_id": restore_id})
+
+
+async def list_restores(db=None, limit: int = 50) -> list:
+    db = db if db is not None else get_database()
+    return [jobs.public(r) async for r in db[RESTORES].find({}).sort("created_at", -1).limit(limit)]
+
+
+async def start_restore(snapshot_id: str, actor: str = "unknown", db=None, wait: bool = False) -> dict:
+    """Check now (SnapshotNotFound / TaxonomyBusy), then restore in the background.
+    → the restore record (status restoring; poll GET /restores/{restore_id})."""
     db = db if db is not None else get_database()
     record = await snapshots.get_snapshot(snapshot_id, db)
-    lock = await TaxonomyLock(f"restore:{snapshot_id}", None, db).acquire()
+    restore_id = uuid.uuid4().hex
+    lock = await TaxonomyLock(f"restore:{restore_id}", None, db).acquire()
+    now = datetime.now(timezone.utc)
+    doc = {"restore_id": restore_id, "snapshot_id": snapshot_id, "status": RESTORING, "created_by": actor,
+           "created_at": now, "updated_at": now, "pre_restore_snapshot": None, "progress": "Starting",
+           "result": None, "error": None}
     try:
+        await db[RESTORES].insert_one(dict(doc))
+    except BaseException:
+        await lock.release()
+        raise
+    if wait:
+        await _restore(doc, record, lock, actor, db)
+    else:
+        jobs.spawn(lambda: _restore(doc, record, lock, actor, db))
+    return await get_restore(restore_id, db)
+
+
+async def _restore(doc: dict, record: dict, lock: TaxonomyLock, actor: str, db) -> None:
+    restore_id = doc["restore_id"]
+    before = None
+    try:
+        await _set_restore(db, restore_id, progress="Verifying the snapshot files")
+        await snapshots.check_files(record)  # a damaged snapshot fails here, before anything changes
+        await _set_restore(db, restore_id, progress="Taking a snapshot of the current state")
         before = await snapshots.create_snapshot(db, created_by=actor, reason="pre-restore")
+        await _set_restore(db, restore_id, pre_restore_snapshot=before["snapshot_id"],
+                           progress=f"Restoring snapshot {record['snapshot_id']}")
         restored = await snapshots.restore_files(db, record)
+        await _set_restore(db, restore_id, progress="Running the post-restore checks")
         post = await post_checks(db)
+        await _set_restore(db, restore_id, status=RESTORED, progress="Restored",
+                           result={"restore": restored, "post_restore_checks": post})
         await db[snapshots.SNAPSHOTS].update_one(
-            {"snapshot_id": snapshot_id},
-            {"$push": {"restores": {"at": datetime.now(timezone.utc), "by": actor,
+            {"snapshot_id": record["snapshot_id"]},
+            {"$push": {"restores": {"at": datetime.now(timezone.utc), "by": actor, "restore_id": restore_id,
                                     "pre_restore_snapshot": before["snapshot_id"]}}})
-        return {"snapshot_id": snapshot_id, "pre_restore_snapshot": before["snapshot_id"], "restore": restored,
-                "post_restore_checks": post}
+    except Exception as exc:  # noqa: BLE001
+        await _restore_failed(db, restore_id, before, exc)
+    finally:
+        await lock.release()
+
+
+async def _restore_failed(db, restore_id: str, before: Optional[dict], exc: BaseException) -> None:
+    """Put the pre-restore state back when a restore failed part-way."""
+    from app.services.error_logger import log_error
+
+    reason = jobs.safe_error(exc)
+    log_error(level="error", module="taxonomy", exc=exc, error_type="TAXONOMY_RESTORE_FAILED",
+              message=f"Restore {restore_id} failed: {type(exc).__name__}")
+    if before is None:  # nothing was changed
+        await _set_restore(db, restore_id, status=RESTORE_FAILED, progress="Failed", error=reason)
+        return
+    try:
+        rolled = await snapshots.restore_files(db, before)
+        post = await post_checks(db)
+        await _set_restore(db, restore_id, status=RESTORE_ROLLED_BACK, error=reason,
+                           progress=f"Failed; put back the pre-restore snapshot {before['snapshot_id']}",
+                           result={"restore": rolled, "post_restore_checks": post})
+    except Exception as again:  # noqa: BLE001
+        message = f"{reason}; putting back {before['snapshot_id']} also failed: {jobs.safe_error(again)}"
+        log_error(level="critical", module="taxonomy", exc=again, error_type="TAXONOMY_ROLLBACK_FAILED",
+                  message=f"Rollback of restore {restore_id} failed: {type(again).__name__}")
+        await _set_restore(db, restore_id, status=RESTORE_FAILED, progress="Failed", error=message)
+
+
+async def restore(snapshot_id: str, actor: str = "unknown", db=None) -> dict:
+    """Synchronous restore (tests, tools) → the finished restore record."""
+    return await start_restore(snapshot_id, actor, db, wait=True)
+
+
+async def recover_restore(doc: dict, db) -> Optional[str]:
+    """A restore left in "restoring" by a crash: put its pre-restore snapshot back."""
+    restore_id = doc["restore_id"]
+    try:
+        lock = await TaxonomyLock(f"recovery:restore:{restore_id}", None, db).acquire()
+    except TaxonomyBusy:
+        return None
+    try:
+        doc = await get_restore(restore_id, db)
+        if not doc or doc["status"] != RESTORING:
+            return None
+        before = (await snapshots.get_snapshot(doc["pre_restore_snapshot"], db)
+                  if doc.get("pre_restore_snapshot") else None)
+        await _restore_failed(db, restore_id, before, RuntimeError("Interrupted by a service restart"))
+        return (await get_restore(restore_id, db))["status"]
     finally:
         await lock.release()
 
@@ -219,6 +324,9 @@ async def recover(db=None, at_startup: bool = False) -> dict:
     validating / previewing jobs → failed (CLI jobs only once they are stale)."""
     db = db if db is not None else get_database()
     counts = {"rolled_back": 0, "failed": 0, "skipped": 0}
+    async for doc in db[RESTORES].find({"status": RESTORING}):
+        outcome = await recover_restore(doc, db)
+        counts[{RESTORE_ROLLED_BACK: "rolled_back", RESTORE_FAILED: "failed"}.get(outcome, "skipped")] += 1
     stale = datetime.now(timezone.utc) - timedelta(seconds=2 * settings.TAXONOMY_LOCK_TTL_SECONDS)
     query = {"status": {"$in": list(jobs.RUNNING) if at_startup else [jobs.PUBLISHING]}}
     async for job in db[jobs.JOBS].find(query):

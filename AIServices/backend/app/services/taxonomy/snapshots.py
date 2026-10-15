@@ -288,14 +288,20 @@ async def swap_in(db, staged: Dict[str, str]) -> None:
     await db[staged["esco_skills"]].rename(ESCO_SKILLS, dropTarget=True)
 
 
-async def restore_files(db, record: dict) -> dict:
-    """Put a snapshot back (whole state). The caller holds the taxonomy lock."""
-    from app.services.taxonomy.pipeline import copy_indexes
-
+async def check_files(record: dict) -> Path:
+    """The snapshot's directory, after verifying every file against the manifest."""
     path = Path(record["path"])
     if path.parent != snapshots_root() or not path.is_dir():
         raise SnapshotError("The snapshot's files are no longer on disk")
     await asyncio.to_thread(verify, path)
+    return path
+
+
+async def restore_files(db, record: dict) -> dict:
+    """Put a snapshot back (whole state). The caller holds the taxonomy lock."""
+    from app.services.taxonomy.pipeline import copy_indexes
+
+    path = await check_files(record)
     await ensure_profession_indexes(db)
     token = secrets.token_hex(6)
     staged = {"professions": f"{PROFESSIONS}__restore_{token}", "esco_skills": f"{ESCO_SKILLS}__restore_{token}"}

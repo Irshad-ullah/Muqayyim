@@ -219,6 +219,14 @@ def run_in_background(job_id: str, step: Callable[[], Awaitable[None]], *, faile
     return task
 
 
+def spawn(coro_fn: Callable[[], Awaitable[None]]) -> asyncio.Task:
+    """Track a background task that handles its own errors (restores)."""
+    task = asyncio.get_running_loop().create_task(coro_fn())
+    _tasks.add(task)
+    task.add_done_callback(_tasks.discard)
+    return task
+
+
 async def wait_for_background() -> None:
     """Tests / shutdown: wait until every background job step has finished."""
     while _tasks:

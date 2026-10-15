@@ -38,7 +38,7 @@ async def db(real_db, tmp_path, monkeypatch):  # noqa: F811
     index = RoleSkillIndex(tmp_path / "index")
     use_role_index(index)
     for setup in (jobs.ensure_job_indexes, pipeline.ensure_diff_indexes, snapshots.ensure_snapshot_indexes,
-                  ensure_profession_indexes):
+                  publishing.ensure_restore_indexes, ensure_profession_indexes):
         await setup(real_db)
     yield real_db
     await jobs.wait_for_background()
@@ -319,8 +319,9 @@ async def test_restore_a_snapshot(db, checks):
     assert [i["job_id"] for i in preview_undo["imports_undone"]] == [job["job_id"]]
 
     result = await publishing.restore(job["snapshot_id"], actor="admin-2", db=db)
+    assert result["status"] == publishing.RESTORED and result["created_by"] == "admin-2"
     assert await state(db) == before
-    assert result["post_restore_checks"]["state_hash_ok"] is True
+    assert result["result"]["post_restore_checks"]["state_hash_ok"] is True
     pre = await snapshots.get_snapshot(result["pre_restore_snapshot"], db)
     assert pre["reason"] == "pre-restore" and pre["created_by"] == "admin-2"
     # The restore itself can be undone.
@@ -338,10 +339,60 @@ async def test_restore_brings_back_data_files_and_reloads_them(db, checks):
 
 
 async def test_damaged_snapshot_is_refused(db, checks):
+    await seed_onet(db)
+    before = await state(db)
     record = await snapshots.create_snapshot(db, reason="publish")
     (Path(record["path"]) / "professions.jsonl.gz").write_bytes(b"tampered")
-    with pytest.raises(snapshots.SnapshotError, match="professions.jsonl.gz is missing or damaged"):
-        await publishing.restore(record["snapshot_id"], db=db)
+    result = await publishing.restore(record["snapshot_id"], db=db)
+    # Verified before anything happens: failed, nothing changed, no pre-restore snapshot needed.
+    assert result["status"] == publishing.RESTORE_FAILED and result["pre_restore_snapshot"] is None
+    assert "professions.jsonl.gz is missing or damaged" in result["error"]
+    assert await state(db) == before
+
+
+async def test_restore_failing_part_way_puts_the_previous_state_back(db, checks, monkeypatch):
+    await seed_onet(db)
+    target = await snapshots.create_snapshot(db, reason="publish")
+    await publishing.start_publish((await previewed(db))["job_id"], db=db, wait=True)
+    current = await state(db)
+
+    real_swap = snapshots.swap_in
+    calls = {"n": 0}
+
+    async def swap_then_fail(*args, **kwargs):
+        calls["n"] += 1
+        await real_swap(*args, **kwargs)
+        if calls["n"] == 1:  # the restore of `target`; the rollback's own swap works
+            raise RuntimeError("disk error after the swap")
+
+    monkeypatch.setattr(snapshots, "swap_in", swap_then_fail)
+    result = await publishing.restore(target["snapshot_id"], db=db)
+    assert result["status"] == publishing.RESTORE_ROLLED_BACK
+    assert result["error"] == "RuntimeError (details in the service error log)"
+    assert await state(db) == current
+    assert result["result"]["post_restore_checks"]["state_hash_ok"] is True
+
+
+async def test_crashed_restore_is_recovered(db, checks, monkeypatch):
+    await seed_onet(db)
+    target = await snapshots.create_snapshot(db, reason="publish")
+    await publishing.start_publish((await previewed(db))["job_id"], db=db, wait=True)
+    current = await state(db)
+
+    async def crash():
+        raise SimulatedCrash()
+
+    monkeypatch.setattr(pipeline, "between_swaps_hook", crash)
+    with pytest.raises(SimulatedCrash):
+        await publishing.restore(target["snapshot_id"], db=db)
+    monkeypatch.setattr(pipeline, "between_swaps_hook", lambda: asyncio.sleep(0))
+    crashed = (await db[publishing.RESTORES].find_one({"snapshot_id": target["snapshot_id"]}))
+    assert crashed["status"] == publishing.RESTORING and await state(db) != current
+
+    counts = await publishing.recover(db, at_startup=True)
+    assert counts["rolled_back"] == 1
+    assert (await publishing.get_restore(crashed["restore_id"], db))["status"] == publishing.RESTORE_ROLLED_BACK
+    assert await state(db) == current
 
 
 async def test_restore_needs_the_lock(db, checks):
@@ -428,8 +479,16 @@ async def test_publish_and_restore_routes(client, db, checks):
         assert detail["imports_undone"][0]["job_id"] == job["job_id"]
         restored = await c.post(f"/internal/admin/taxonomy/snapshots/{done['snapshot_id']}/restore",
                                 json={"actor": "admin-7"}, headers=KEY)
-        assert restored.status_code == 200 and restored.json()["data"]["post_restore_checks"]["state_hash_ok"]
+        assert restored.status_code == 202 and restored.json()["data"]["status"] == "restoring"
+        restore_id = restored.json()["data"]["restore_id"]
+        await jobs.wait_for_background()
+        polled = (await c.get(f"/internal/admin/taxonomy/restores/{restore_id}", headers=KEY)).json()["data"]
+        assert polled["status"] == "restored" and polled["created_by"] == "admin-7"
+        assert polled["result"]["post_restore_checks"]["state_hash_ok"] is True
         assert await db[ESCO_SKILLS].count_documents({}) == 0
+        listed_restores = (await c.get("/internal/admin/taxonomy/restores", headers=KEY)).json()["data"]
+        assert [r["restore_id"] for r in listed_restores] == [restore_id]
+        assert (await c.get("/internal/admin/taxonomy/restores/nope", headers=KEY)).status_code == 404
         assert (await c.post("/internal/admin/taxonomy/snapshots/nope/restore", json={}, headers=KEY)).status_code == 404
         lock = await TaxonomyLock("job:x", "x", db).acquire()
         try:

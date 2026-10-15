@@ -28,7 +28,7 @@ from app.routes.profession_routes import router as profession_router
 from app.routes.taxonomy_routes import router as taxonomy_router
 from app.services.taxonomy.heartbeat import run_heartbeat
 from app.services.taxonomy.jobs import ensure_job_indexes
-from app.services.taxonomy.publishing import recover as recover_taxonomy_jobs, run_recovery
+from app.services.taxonomy.publishing import ensure_restore_indexes, recover as recover_taxonomy_jobs, run_recovery
 from app.services.taxonomy.snapshots import ensure_snapshot_indexes
 from app.services.taxonomy.uploads import run_cleanup
 from app.services.taxonomy.pipeline import ensure_diff_indexes
@@ -92,6 +92,7 @@ async def lifespan(app: FastAPI):
             await ensure_job_indexes(db)
             await ensure_diff_indexes(db)
             await ensure_snapshot_indexes(db)
+            await ensure_restore_indexes(db)
             # Jobs interrupted by a restart; a crashed publish is restored from its snapshot.
             recovered = await recover_taxonomy_jobs(db, at_startup=True)
             if any(recovered.values()):
