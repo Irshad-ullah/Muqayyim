@@ -25,6 +25,9 @@ from app.middleware.auth import register_auth_error_handler
 from app.middleware.validation import register_validation_error_handler
 from app.routes.internal_logs_routes import router as internal_logs_router
 from app.routes.profession_routes import router as profession_router
+from app.routes.taxonomy_routes import router as taxonomy_router
+from app.services.taxonomy.heartbeat import run_heartbeat
+from app.services.taxonomy.jobs import ensure_job_indexes, recover_interrupted_jobs
 from app.config.database import get_database
 from app.services.professions.imports import refresh_esco_descriptions
 from app.services.professions.role_index import get_role_index
@@ -80,6 +83,16 @@ async def lifespan(app: FastAPI):
             logger.error("Profession setup failed: %s", type(exc).__name__)
         if settings.ROLE_INDEX_AUTOLOAD:
             embedding_tasks.append(asyncio.create_task(get_role_index().load_or_build(db)))
+        # Admin taxonomy jobs (09c): no job step can still be running in a new process.
+        try:
+            await ensure_job_indexes(db)
+            recovered = await recover_interrupted_jobs(db)
+            if any(recovered.values()):
+                logger.warning("Taxonomy jobs interrupted by a restart: %s", recovered)
+        except Exception as exc:  # noqa: BLE001 — the API still starts
+            logger.error("Taxonomy job recovery failed: %s", type(exc).__name__)
+        if settings.SERVICE_HEARTBEAT_ENABLED:
+            embedding_tasks.append(asyncio.create_task(run_heartbeat(db)))
     logger.info("✓ Application started successfully")
     
     yield
@@ -178,6 +191,7 @@ app.include_router(embedding_router)  # Module 2 FE-4/FE-5 — skill embeddings
 app.include_router(internal_router)  # service-to-service, X-Internal-Key
 app.include_router(internal_logs_router)  # admin log view, via CoreServices
 app.include_router(profession_router)  # Module 10 FE-4 professions + role-skill index, via CoreServices
+app.include_router(taxonomy_router)  # Module 10 FE-4 / FR12.5 admin taxonomy jobs, via CoreServices
 
 
 # Root endpoint

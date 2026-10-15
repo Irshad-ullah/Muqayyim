@@ -72,6 +72,14 @@ class Settings(BaseSettings):
     MUTUAL_NN_K: int = int(os.getenv("MUTUAL_NN_K", "10"))
     # Load/rebuild the role-skill index at startup (off in unit tests).
     ROLE_INDEX_AUTOLOAD: bool = os.getenv("ROLE_INDEX_AUTOLOAD", "true").lower() != "false"
+
+    # Admin taxonomy jobs (09c, Module 10 FE-4). The taxonomy lock is renewed by a
+    # heartbeat while a job runs; a lock whose holder died expires after the TTL.
+    TAXONOMY_LOCK_TTL_SECONDS: int = int(os.getenv("TAXONOMY_LOCK_TTL_SECONDS", "300"))
+    TAXONOMY_LOCK_HEARTBEAT_SECONDS: int = int(os.getenv("TAXONOMY_LOCK_HEARTBEAT_SECONDS", "60"))
+    # The running AI service records a heartbeat so offline tools (CLI imports) can tell it is up.
+    SERVICE_HEARTBEAT_SECONDS: int = int(os.getenv("SERVICE_HEARTBEAT_SECONDS", "60"))
+    SERVICE_HEARTBEAT_ENABLED: bool = os.getenv("SERVICE_HEARTBEAT_ENABLED", "true").lower() != "false"
     EMBEDDING_CACHE_DIR: str = os.getenv("EMBEDDING_CACHE_DIR", "./models")
     EMBEDDING_AUTOLOAD: bool = os.getenv("EMBEDDING_AUTOLOAD", "true").lower() != "false"
     EMBEDDING_WORKER_INTERVAL_SECONDS: int = int(os.getenv("EMBEDDING_WORKER_INTERVAL_SECONDS", "30"))
