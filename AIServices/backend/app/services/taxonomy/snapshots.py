@@ -336,5 +336,43 @@ async def restore_files(db, record: dict) -> dict:
             await asyncio.to_thread(_replace_file, path / "index" / name, index.dir / name)
     index.last_build_seconds = None
     state = await index.load_or_build(db)  # loads the restored files if they match the data, else rebuilds
+    vectors = await repair_vectors(db)
     return {"index_state": state, "index_files_restored": restored_index,
-            "index_rebuilt": index.last_build_seconds is not None}
+            "index_rebuilt": index.last_build_seconds is not None, "vectors": vectors}
+
+
+async def repair_vectors(db) -> dict:
+    """
+    The vector cache is not part of a snapshot. A description edit replaced the vector
+    of the edited text (the old one is deleted as stale), so after restoring the old
+    text, role skills and users' skills may have no vector for their current text.
+    Embed exactly those (only misses); if the model is not loaded yet, mark the affected
+    user profiles pending so the embedding worker completes them (role skills are
+    embedded by the next index rebuild).
+    """
+    from app.services.embeddings.descriptions import text_mode
+    from app.services.embeddings.model import ModelNotReady, get_embedder
+    from app.services.embeddings.normalise import normalise_skills
+    from app.services.embeddings.user_profiles import PENDING
+    from app.services.embeddings.vector_store import USER_SKILL_PROFILES, get_skill_vectors, load_vectors
+    from app.services.professions.role_skills import active_professions, distinct_role_skills
+
+    embedder = get_embedder()
+    pairs = dict(distinct_role_skills(await active_professions(db)))
+    async for record in db[USER_SKILL_PROFILES].find({}, {"skills": 1}):
+        for skill in record.get("skills") or []:
+            for key, name in normalise_skills([skill["name"]]):
+                pairs.setdefault(key, name)
+    cached = await load_vectors(list(pairs.items()), embedder.model_name, db, text_mode())
+    missing = {k: n for k, n in pairs.items() if k not in cached}
+    if not missing:
+        return {"missing": 0, "re_embedded": 0, "profiles_marked_pending": 0}
+    try:
+        if not embedder.ready:
+            raise ModelNotReady(embedder.model_name)
+        await get_skill_vectors(list(missing.values()), embedder, db)
+        return {"missing": len(missing), "re_embedded": len(missing), "profiles_marked_pending": 0}
+    except ModelNotReady:
+        result = await db[USER_SKILL_PROFILES].update_many(
+            {"skills.key": {"$in": list(missing)}}, {"$set": {"embedding_status": PENDING}})
+        return {"missing": len(missing), "re_embedded": 0, "profiles_marked_pending": result.modified_count}

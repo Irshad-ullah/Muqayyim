@@ -277,3 +277,46 @@ async def test_edit_routes(client, db):
         invalid = await c.post(f"{base}/skills", json={"name": "Frobnicator", "description": "Short"}, headers=KEY)
         assert invalid.status_code == 422 and invalid.json()["code"] == "SKILL_INVALID" and invalid.json()["errors"]
         assert (await c.get(f"{base}/skills/NoSuchSkill", headers=KEY)).status_code == 404
+
+
+# ── vector cache after a restore (found in the 09c Part 5 manual check) ──────
+async def _vector_for_current_text(db, name) -> bool:
+    from app.services.embeddings.descriptions import text_mode
+    from app.services.embeddings.model import get_embedder
+    from app.services.embeddings.vector_store import load_vectors
+
+    key = normalise.normalise_skill(name)[0]
+    return key in await load_vectors([(key, name)], get_embedder().model_name, db, text_mode())
+
+
+async def test_restore_re_embeds_vectors_missing_for_the_restored_text(db, fake_embedder):
+    from app.services.taxonomy import publishing
+
+    name = non_seed_role_skill()
+    first = await skills_editor.save({"name": name, "description": "Temporary description that the restore below replaces with the original text"},
+                                     False, "admin-1", db)
+    assert await _vector_for_current_text(db, name)  # the edited text has its vector
+    restored = await publishing.restore(first["snapshot_id"], "admin-1", db)
+    vectors = restored["result"]["restore"]["vectors"]
+    assert vectors == {"missing": 1, "re_embedded": 1, "profiles_marked_pending": 0}
+    assert await _vector_for_current_text(db, name)  # the restored (original) text has a vector again
+
+
+async def test_restore_without_the_model_marks_profiles_pending(db, fake_embedder):
+    from app.services.embeddings.vector_store import USER_SKILL_PROFILES
+    from app.services.taxonomy import publishing
+
+    name = non_seed_role_skill()
+    key = normalise.normalise_skill(name)[0]
+    await db[USER_SKILL_PROFILES].insert_one({"user_id": "u-1", "embedding_status": "done",
+                                              "skills": [{"name": name, "key": key, "source": "manual"}]})
+    first = await skills_editor.save({"name": name, "description": "Temporary description that the restore below replaces with the original text"},
+                                     False, "admin-1", db)
+    fake_embedder.set_ready(False)
+    try:
+        restored = await publishing.restore(first["snapshot_id"], "admin-1", db)
+    finally:
+        fake_embedder.set_ready(True)
+    vectors = restored["result"]["restore"]["vectors"]
+    assert vectors["re_embedded"] == 0 and vectors["profiles_marked_pending"] == 1
+    assert (await db[USER_SKILL_PROFILES].find_one({"user_id": "u-1"}))["embedding_status"] == "pending"
