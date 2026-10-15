@@ -25,7 +25,7 @@ from tests.db_fixtures import real_db  # noqa: F401 — pytest fixture
 
 FIXTURES = Path(__file__).parent / "fixtures"
 REAL_DATA = Path(__file__).resolve().parents[1] / "app" / "data"
-KEY = {"X-Internal-Key": "k-edit"}
+KEY = {"X-Internal-Key": "k-edit", "X-Admin-Id": "admin-3"}
 DEV = "onet:15-1252.00"
 
 
@@ -258,8 +258,13 @@ async def test_edit_routes(client, db):
     async with client as c:
         listed = (await c.get(f"{base}/professions", params={"search": "software"}, headers=KEY)).json()
         assert listed["pagination"]["total"] >= 1
-        res = await c.patch(f"{base}/professions/{DEV}", json={"title": "Coders", "actor": "admin-3"}, headers=KEY)
+        res = await c.patch(f"{base}/professions/{DEV}", json={"title": "Coders", "actor": "spoofed-admin"}, headers=KEY)
         assert res.status_code == 200 and res.json()["data"]["result"]["title"] == "Coders"
+        assert res.json()["data"]["result"]["updated_by"] == "admin-3"  # not the spoofed body field
+        snap = await db[snapshots.SNAPSHOTS].find_one({"snapshot_id": res.json()["data"]["snapshot_id"]})
+        assert snap["created_by"] == "admin-3"
+        anonymous = await c.patch(f"{base}/professions/{DEV}", json={"title": "Coders"}, headers={"X-Internal-Key": "k-edit"})
+        assert anonymous.status_code == 400 and anonymous.json()["code"] == "ADMIN_ID_REQUIRED"
         assert res.json()["data"]["snapshot_id"]
         assert (await c.patch(f"{base}/professions/{DEV}", json={}, headers=KEY)).status_code == 422
         assert (await c.patch(f"{base}/professions/nope", json={"title": "Xx"}, headers=KEY)).status_code == 404

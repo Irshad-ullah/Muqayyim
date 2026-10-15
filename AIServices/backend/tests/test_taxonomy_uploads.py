@@ -17,7 +17,7 @@ from tests.db_fixtures import real_db  # noqa: F401 — pytest fixture
 
 FIXTURES = Path(__file__).parent / "fixtures"
 ONET_FILES = ["occupation_data.csv", "job_titles.csv", "software_skills.csv"]
-KEY = {"X-Internal-Key": "k-up"}
+KEY = {"X-Internal-Key": "k-up", "X-Admin-Id": "admin-9"}
 
 
 @pytest.fixture
@@ -314,14 +314,16 @@ def client(db, monkeypatch):
 
 async def test_upload_route(client, db):
     async with client as c:
+        # A spoofed created_by form field is ignored: the job belongs to X-Admin-Id.
         res = await c.post("/internal/admin/taxonomy/jobs", headers=KEY,
-                           data={"source": "onet", "dataset_version": "O*NET 31.0", "created_by": "admin-9"},
+                           data={"source": "onet", "dataset_version": "O*NET 31.0", "created_by": "spoofed-admin"},
                            files={"files": ("db_31_0_csv.zip", make_zip(onet_entries()), "application/zip")})
         assert res.status_code == 202, res.text
         job_id = res.json()["data"]["job_id"]
         await jobs.wait_for_background()
         polled = (await c.get(f"/internal/admin/taxonomy/jobs/{job_id}", headers=KEY)).json()["data"]
         assert polled["status"] == "validated" and polled["created_by"] == "admin-9"
+        assert "spoofed" not in str(polled)
 
         bad = await c.post("/internal/admin/taxonomy/jobs", headers=KEY, data={"source": "onet", "dataset_version": "31.0"},
                            files={"files": ("x.zip", zip_with_info(zipfile.ZipInfo("../evil.csv")), "application/zip")})
@@ -340,3 +342,28 @@ async def test_upload_route_size_limit(client, db, monkeypatch):
                            files={"files": ("big.zip", os.urandom(2 * 1024 * 1024 + 10), "application/zip")})
         assert res.status_code == 413 and res.json()["code"] == "UPLOAD_TOO_LARGE"
         assert await db[jobs.JOBS].count_documents({}) == 0  # refused before reading the body
+
+
+@pytest.mark.parametrize("admin", [None, "cli", "CLI", "unknown", "bad id!", "x" * 65])
+async def test_upload_needs_a_valid_admin_header_before_reading_the_body(client, db, admin):
+    headers = {"X-Internal-Key": "k-up", **({"X-Admin-Id": admin} if admin is not None else {})}
+    async with client as c:
+        res = await c.post("/internal/admin/taxonomy/jobs", headers=headers,
+                           data={"source": "onet", "dataset_version": "31.0", "created_by": "admin-9"},
+                           files={"files": ("d.zip", make_zip(onet_entries()), "application/zip")})
+    assert res.status_code == 400 and res.json()["code"] == "ADMIN_ID_REQUIRED"
+    assert await db[jobs.JOBS].count_documents({}) == 0  # the created_by form field never stands in for it
+
+
+async def test_client_disconnect_during_upload_leaves_no_job(client, db, monkeypatch):
+    from starlette.requests import ClientDisconnect, Request
+
+    async def disconnected(self, **kwargs):
+        raise ClientDisconnect()
+
+    monkeypatch.setattr(Request, "form", disconnected)
+    async with client as c:
+        res = await c.post("/internal/admin/taxonomy/jobs", headers=KEY, data={"source": "onet", "dataset_version": "31.0"},
+                           files={"files": ("d.zip", make_zip(onet_entries()), "application/zip")})
+    assert res.status_code == 422
+    assert await db[jobs.JOBS].count_documents({}) == 0 and staging_dirs() == []

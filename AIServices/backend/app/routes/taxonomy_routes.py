@@ -3,24 +3,26 @@ Internal admin taxonomy routes (09c, Module 10 FE-4 / FR12.5), called by
 CoreServices' /api/admin/taxonomy pass-through. Mounted at /internal (never proxied
 by the gateway); X-Internal-Key required.
 
-  POST /internal/admin/taxonomy/jobs            upload (multipart: source, dataset_version, created_by,
+  GET  /internal/admin/taxonomy/sources         loaded O*NET / ESCO versions, counts, attribution, lock
+  POST /internal/admin/taxonomy/jobs            upload (multipart: source, dataset_version,
                                                 files = one ZIP or the CSV files) → 202, validates in background
   GET  /internal/admin/taxonomy/jobs            list import jobs (page, limit, status, source)
   GET  /internal/admin/taxonomy/jobs/{job_id}   one job (poll for progress)
   POST /internal/admin/taxonomy/jobs/{job_id}/cancel
   POST /internal/admin/taxonomy/jobs/{job_id}/preview   stage + diff + checks (202, background)
   GET  /internal/admin/taxonomy/jobs/{job_id}/diff      ?section=&page=&limit= detail rows
-  POST /internal/admin/taxonomy/jobs/{job_id}/publish   {acknowledge_background_warning, actor} → 202
+  POST /internal/admin/taxonomy/jobs/{job_id}/publish   {acknowledge_background_warning} → 202
   GET  /internal/admin/taxonomy/snapshots               kept snapshots (?pool=publish|edit)
   GET  /internal/admin/taxonomy/snapshots/{id}          one snapshot + what a restore would undo
-  POST /internal/admin/taxonomy/snapshots/{id}/restore  {actor} → 202, whole-state restore in the background
+  POST /internal/admin/taxonomy/snapshots/{id}/restore  → 202, whole-state restore in the background
   GET  /internal/admin/taxonomy/restores[/{restore_id}] restore progress and result (poll)
   GET  /internal/admin/taxonomy/lock            who holds the taxonomy lock, if anyone
 """
 
+import re
 from typing import List, Literal, Optional
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, Header, Query, Request
 from fastapi.responses import JSONResponse
 from starlette.datastructures import UploadFile
 
@@ -33,6 +35,23 @@ from app.services.taxonomy import jobs, pipeline, publishing, snapshots, uploads
 from app.services.taxonomy.lock import TaxonomyBusy, current_lock
 
 router = APIRouter(prefix="/internal/admin/taxonomy", tags=["Internal"], dependencies=[Depends(require_internal_key)])
+
+# The acting admin comes ONLY from X-Admin-Id, set by CoreServices from the verified JWT.
+# It is trusted only because every route here also requires a valid X-Internal-Key
+# (router dependency). Body / form fields named created_by or actor are ignored, and
+# "cli" is reserved for in-process CLI jobs.
+_ADMIN_ID = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+RESERVED_ACTORS = {"cli", "system", "unknown"}
+
+
+async def admin_header(x_admin_id: Optional[str] = Header(default=None)) -> Optional[str]:
+    if not x_admin_id or not _ADMIN_ID.match(x_admin_id) or x_admin_id.lower() in RESERVED_ACTORS:
+        return None
+    return x_admin_id
+
+
+def admin_required() -> JSONResponse:
+    return error(400, "ADMIN_ID_REQUIRED", "X-Admin-Id (the acting admin, set by CoreServices) is required")
 
 
 def error(status: int, code: str, message: str, **extra) -> JSONResponse:
@@ -79,10 +98,13 @@ FORM_OVERHEAD = 1024 * 1024  # multipart boundaries and small fields
 
 
 @router.post("/jobs")
-async def upload(request: Request):
-    """Stage an upload for one source and start validation (202). 413 too large, 422 rejected."""
+async def upload(request: Request, admin: Optional[str] = Depends(admin_header)):
+    """Stage an upload for one source and start validation (202). 413 too large, 422 rejected.
+    The job's created_by is the X-Admin-Id header; a created_by form field is ignored."""
     if get_database() is None:
         return no_db()
+    if admin is None:
+        return admin_required()  # before a single byte of the body is read
     limit = settings.TAXONOMY_MAX_UPLOAD_MB * 1024 * 1024
     length = request.headers.get("content-length")
     if length is None:
@@ -98,7 +120,7 @@ async def upload(request: Request):
         files = [f for f in form.getlist("files") if isinstance(f, UploadFile)]
         try:
             job = await uploads.create_upload_job(
-                source, str(form.get("dataset_version") or ""), str(form.get("created_by") or "unknown")[:100],
+                source, str(form.get("dataset_version") or ""), admin,
                 [(f.filename, f) for f in files],
             )
         except uploads.UploadRejected as exc:
@@ -109,11 +131,13 @@ async def upload(request: Request):
 
 
 @router.post("/jobs/{job_id}/cancel")
-async def cancel(job_id: str):
+async def cancel(job_id: str, admin: Optional[str] = Depends(admin_header)):
     if get_database() is None:
         return no_db()
+    if admin is None:
+        return admin_required()
     try:
-        return {"success": True, "data": jobs.public(await uploads.cancel_job(job_id))}
+        return {"success": True, "data": jobs.public(await uploads.cancel_job(job_id, note=f"Cancelled by admin {admin}"))}
     except jobs.JobNotFound:
         return error(404, "NOT_FOUND", "Import job not found")
     except jobs.JobStateError as exc:
@@ -121,10 +145,12 @@ async def cancel(job_id: str):
 
 
 @router.post("/jobs/{job_id}/preview")
-async def preview(job_id: str):
+async def preview(job_id: str, admin: Optional[str] = Depends(admin_header)):
     """Build the staged data, diff it against the live data and run the checks (FR12.5)."""
     if get_database() is None:
         return no_db()
+    if admin is None:
+        return admin_required()
     try:
         job = await pipeline.start_preview(job_id)
     except jobs.JobNotFound:
@@ -158,19 +184,26 @@ def busy(exc: TaxonomyBusy) -> JSONResponse:
     return error(409, "TAXONOMY_BUSY", str(exc), lock=exc.current)
 
 
-class _PublishIn(BaseModel):
+class _Ignored(BaseModel):
+    """Identity fields a client might send in a body: accepted and IGNORED (X-Admin-Id is used)."""
     model_config = ConfigDict(extra="forbid")
+    actor: Optional[str] = Field(None, exclude=True, max_length=200)
+    created_by: Optional[str] = Field(None, exclude=True, max_length=200)
+
+
+class _PublishIn(_Ignored):
     acknowledge_background_warning: bool = False
-    actor: str = Field("unknown", max_length=100)
 
 
 @router.post("/jobs/{job_id}/publish")
-async def publish(job_id: str, body: _PublishIn):
+async def publish(job_id: str, body: _PublishIn, admin: Optional[str] = Depends(admin_header)):
     """Publish a previewed job (202). 409 busy / not previewed / live data changed; 422 needs the acknowledgement."""
     if get_database() is None:
         return no_db()
+    if admin is None:
+        return admin_required()
     try:
-        job = await publishing.start_publish(job_id, body.acknowledge_background_warning, body.actor)
+        job = await publishing.start_publish(job_id, body.acknowledge_background_warning, admin)
     except jobs.JobNotFound:
         return error(404, "NOT_FOUND", "Import job not found")
     except jobs.JobStateError as exc:
@@ -201,18 +234,19 @@ async def get_snapshot(snapshot_id: str):
         return error(404, "NOT_FOUND", "Snapshot not found")
 
 
-class _RestoreIn(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    actor: str = Field("unknown", max_length=100)
+class _RestoreIn(_Ignored):
+    pass
 
 
 @router.post("/snapshots/{snapshot_id}/restore")
-async def restore(snapshot_id: str, body: _RestoreIn):
+async def restore(snapshot_id: str, body: _RestoreIn, admin: Optional[str] = Depends(admin_header)):
     """Start a whole-state restore (202); poll GET /restores/{restore_id}."""
     if get_database() is None:
         return no_db()
+    if admin is None:
+        return admin_required()
     try:
-        record = await publishing.start_restore(snapshot_id, body.actor)
+        record = await publishing.start_restore(snapshot_id, admin)
     except snapshots.SnapshotNotFound:
         return error(404, "NOT_FOUND", "Snapshot not found")
     except TaxonomyBusy as exc:
@@ -284,35 +318,35 @@ async def get_profession(profession_id: str):
     return await run_guarded(profession_crud.get_profession(profession_id))
 
 
-class _ProfessionEditIn(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class _ProfessionEditIn(_Ignored):
     title: Optional[str] = Field(None, min_length=2, max_length=200)
     description: Optional[str] = Field(None, max_length=5000)
     category: Optional[str] = Field(None, max_length=60)
     active: Optional[bool] = None
-    actor: str = Field("unknown", max_length=100)
 
 
 @router.patch("/professions/{profession_id}")
-async def edit_profession(profession_id: str, body: _ProfessionEditIn):
+async def edit_profession(profession_id: str, body: _ProfessionEditIn, admin: Optional[str] = Depends(admin_header)):
     """Edit title / description / category / active. Imported professions: an admin override
     that survives re-imports (reset with POST .../reset)."""
-    changes = body.model_dump(exclude_unset=True, exclude={"actor"})
+    if admin is None:
+        return admin_required()
+    changes = body.model_dump(exclude_unset=True)
     if not changes:
         return error(422, "VALIDATION_ERROR", "Nothing to change")
-    return await run_guarded(editing.edit_profession(profession_id, changes, body.actor))
+    return await run_guarded(editing.edit_profession(profession_id, changes, admin))
 
 
-class _ResetIn(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class _ResetIn(_Ignored):
     fields: Optional[List[Literal["title", "description", "category", "active"]]] = None
-    actor: str = Field("unknown", max_length=100)
 
 
 @router.post("/professions/{profession_id}/reset")
-async def reset_profession(profession_id: str, body: _ResetIn):
+async def reset_profession(profession_id: str, body: _ResetIn, admin: Optional[str] = Depends(admin_header)):
     """Reset admin overrides to the dataset values (all, or the given fields)."""
-    return await run_guarded(editing.reset_profession(profession_id, body.fields, body.actor))
+    if admin is None:
+        return admin_required()
+    return await run_guarded(editing.reset_profession(profession_id, body.fields, admin))
 
 
 @router.get("/skills")
@@ -327,7 +361,7 @@ async def list_skills(
             "pagination": {k: result[k] for k in ("page", "limit", "total", "pages")}}
 
 
-@router.get("/skills/{name}")
+@router.get("/skills/{name:path}")
 async def get_skill(name: str):
     skill = skills_editor.get_skill(name)
     if not skill:
@@ -335,13 +369,11 @@ async def get_skill(name: str):
     return {"success": True, "data": skill}
 
 
-class _SkillIn(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class _SkillIn(_Ignored):
     name: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = Field(None, max_length=400)
     aliases: Optional[List[str]] = Field(None, max_length=50)
     category: Optional[str] = Field(None, max_length=60)
-    actor: str = Field("unknown", max_length=100)
 
 
 class _SkillValidateIn(_SkillIn):
@@ -351,30 +383,66 @@ class _SkillValidateIn(_SkillIn):
 @router.post("/skills/validate")
 async def validate_skill(body: _SkillValidateIn):
     """Dry run: the errors the change would produce. Nothing is written."""
-    change = body.model_dump(exclude_unset=True, exclude={"actor", "create"})
+    change = body.model_dump(exclude_unset=True, exclude={"create"})
     return {"success": True, "data": skills_editor.validate(change, body.create)}
 
 
 @router.post("/skills")
-async def create_skill(body: _SkillIn):
-    change = body.model_dump(exclude_unset=True, exclude={"actor"})
-    response = await run_guarded(skills_editor.save(change, True, body.actor))
+async def create_skill(body: _SkillIn, admin: Optional[str] = Depends(admin_header)):
+    if admin is None:
+        return admin_required()
+    change = body.model_dump(exclude_unset=True)
+    response = await run_guarded(skills_editor.save(change, True, admin))
     if isinstance(response, dict):
         return JSONResponse(status_code=201, content=response)
     return response
 
 
-class _SkillUpdateIn(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class _SkillUpdateIn(_Ignored):
     description: Optional[str] = Field(None, max_length=400)
     aliases: Optional[List[str]] = Field(None, max_length=50)
     category: Optional[str] = Field(None, max_length=60)
-    actor: str = Field("unknown", max_length=100)
 
 
-@router.put("/skills/{name}")
-async def update_skill(name: str, body: _SkillUpdateIn):
-    change = {"name": name, **body.model_dump(exclude_unset=True, exclude={"actor"})}
+@router.put("/skills/{name:path}")
+async def update_skill(name: str, body: _SkillUpdateIn, admin: Optional[str] = Depends(admin_header)):
+    if admin is None:
+        return admin_required()
+    change = {"name": name, **body.model_dump(exclude_unset=True)}
     if len(change) == 1:
         return error(422, "VALIDATION_ERROR", "Nothing to change")
-    return await run_guarded(skills_editor.save(change, False, body.actor))
+    return await run_guarded(skills_editor.save(change, False, admin))
+
+
+ATTRIBUTION = {
+    "onet": "O*NET 31.0 Database, U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), "
+            "used under CC BY 4.0, modified",
+    "esco": "ESCO v1.2.1 © European Union",
+}
+
+
+@router.get("/sources")
+async def sources():
+    """What is loaded now, per source (for the admin Data sources tab)."""
+    db = get_database()
+    if db is None:
+        return no_db()
+    from app.services.professions.store import ESCO_SKILLS, PROFESSIONS
+
+    data = {}
+    for source in ("onet", "esco"):
+        latest = await db[jobs.JOBS].find_one({"source": source, "status": jobs.PUBLISHED}, sort=[("updated_at", -1)])
+        updated = await db[PROFESSIONS].find_one({"source": source}, {"updated_at": 1}, sort=[("updated_at", -1)])
+        data[source] = {
+            "versions": sorted(v for v in await db[PROFESSIONS].distinct("source_version", {"source": source}) if v),
+            "professions": await db[PROFESSIONS].count_documents({"source": source}),
+            "active": await db[PROFESSIONS].count_documents({"source": source, "active": True}),
+            "last_updated": jobs.public({"t": (updated or {}).get("updated_at")})["t"],
+            "last_published_job": jobs.public({k: latest.get(k) for k in ("job_id", "dataset_version", "created_by",
+                                                                           "updated_at")}) if latest else None,
+            "attribution": ATTRIBUTION[source],
+        }
+    data["esco"]["esco_skills"] = await db[ESCO_SKILLS].count_documents({})
+    data["manual"] = {"professions": await db[PROFESSIONS].count_documents({"source": "manual"}),
+                      "active": await db[PROFESSIONS].count_documents({"source": "manual", "active": True})}
+    return {"success": True, "data": data, "lock": await current_lock()}

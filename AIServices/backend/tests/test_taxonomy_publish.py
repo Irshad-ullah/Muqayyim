@@ -22,7 +22,7 @@ from tests.db_fixtures import real_db  # noqa: F401 — pytest fixture
 
 FIXTURES = Path(__file__).parent / "fixtures"
 REAL_DATA = Path(__file__).resolve().parents[1] / "app" / "data"
-KEY = {"X-Internal-Key": "k-pub"}
+KEY = {"X-Internal-Key": "k-pub", "X-Admin-Id": "admin-7"}
 VOLATILE = {"_id", "created_at", "updated_at"}
 
 
@@ -465,7 +465,10 @@ async def test_publish_and_restore_routes(client, db, checks):
     async with client as c:
         need_ack = await c.post(url, json={}, headers=KEY)
         assert need_ack.status_code == 422 and need_ack.json()["code"] == "BACKGROUND_ACK_REQUIRED"
-        res = await c.post(url, json={"acknowledge_background_warning": True, "actor": "admin-7"}, headers=KEY)
+        no_admin = await c.post(url, json={"acknowledge_background_warning": True}, headers={"X-Internal-Key": "k-pub"})
+        assert no_admin.status_code == 400 and no_admin.json()["code"] == "ADMIN_ID_REQUIRED"
+        # A spoofed actor in the body is ignored: published_by is the X-Admin-Id header.
+        res = await c.post(url, json={"acknowledge_background_warning": True, "actor": "spoofed-admin"}, headers=KEY)
         assert res.status_code == 202 and res.json()["data"]["status"] == "publishing"
         await jobs.wait_for_background()
         done = (await c.get(f"/internal/admin/taxonomy/jobs/{job['job_id']}", headers=KEY)).json()["data"]
@@ -478,12 +481,13 @@ async def test_publish_and_restore_routes(client, db, checks):
         detail = (await c.get(f"/internal/admin/taxonomy/snapshots/{done['snapshot_id']}", headers=KEY)).json()["data"]
         assert detail["imports_undone"][0]["job_id"] == job["job_id"]
         restored = await c.post(f"/internal/admin/taxonomy/snapshots/{done['snapshot_id']}/restore",
-                                json={"actor": "admin-7"}, headers=KEY)
+                                json={"actor": "spoofed-admin", "created_by": "spoofed-admin"}, headers=KEY)
         assert restored.status_code == 202 and restored.json()["data"]["status"] == "restoring"
         restore_id = restored.json()["data"]["restore_id"]
         await jobs.wait_for_background()
         polled = (await c.get(f"/internal/admin/taxonomy/restores/{restore_id}", headers=KEY)).json()["data"]
         assert polled["status"] == "restored" and polled["created_by"] == "admin-7"
+        assert "spoofed" not in str(polled)
         assert polled["result"]["post_restore_checks"]["state_hash_ok"] is True
         assert await db[ESCO_SKILLS].count_documents({}) == 0
         listed_restores = (await c.get("/internal/admin/taxonomy/restores", headers=KEY)).json()["data"]
@@ -496,3 +500,18 @@ async def test_publish_and_restore_routes(client, db, checks):
             assert busy.status_code == 409 and busy.json()["code"] == "TAXONOMY_BUSY"
         finally:
             await lock.release()
+
+
+async def test_sources_route(client, db, checks):
+    await seed_onet(db)
+    job = await previewed(db)
+    await publishing.start_publish(job["job_id"], actor="admin-7", db=db, wait=True)
+    async with client as c:
+        res = await c.get("/internal/admin/taxonomy/sources", headers=KEY)
+    data = res.json()["data"]
+    assert res.status_code == 200 and res.json()["lock"] is None
+    assert data["onet"]["versions"] == ["O*NET 31.0"] and data["onet"]["active"] == 2
+    assert data["esco"]["versions"] == ["ESCO v1.2.1"] and data["esco"]["esco_skills"] == 9
+    assert data["esco"]["last_published_job"]["job_id"] == job["job_id"]
+    assert data["esco"]["last_published_job"]["created_by"] == "admin-1"
+    assert "CC BY 4.0" in data["onet"]["attribution"] and "European Union" in data["esco"]["attribution"]

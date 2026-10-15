@@ -16,7 +16,7 @@ from app.services.taxonomy import cli, jobs, pipeline, uploads
 from tests.db_fixtures import real_db  # noqa: F401 — pytest fixture
 
 FIXTURES = Path(__file__).parent / "fixtures"
-KEY = {"X-Internal-Key": "k-prev"}
+KEY = {"X-Internal-Key": "k-prev", "X-Admin-Id": "admin-1"}
 VOLATILE = {"_id", "created_at", "updated_at"}
 
 

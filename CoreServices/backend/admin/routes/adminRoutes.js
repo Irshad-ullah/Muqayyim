@@ -1,4 +1,5 @@
 import express from 'express';
+import * as taxonomy from '../controllers/adminTaxonomyController.js';
 import { adminAuthMiddleware } from '../middleware/adminMiddleware.js';
 
 import { createAdminUser } from '../controllers/adminAuthController.js';
@@ -57,6 +58,33 @@ router.put('/config/:key', adminAuthMiddleware, updateConfig);
 router.delete('/config/:key', adminAuthMiddleware, deleteConfig);
 
 // ─── Profession Database & Skill Taxonomy ────────────────────────────────────
+// ─── Taxonomy admin (Module 10 FE-4 / FR12.5): pass-through to AIServices ────
+// adminAuthMiddleware runs first on every route, so a non-admin is refused before
+// an upload body is read or anything reaches AIServices.
+router.get('/taxonomy/sources', adminAuthMiddleware, taxonomy.getSources);
+router.get('/taxonomy/lock', adminAuthMiddleware, taxonomy.getLock);
+router.get('/taxonomy/jobs', adminAuthMiddleware, taxonomy.listJobs);
+router.post('/taxonomy/jobs', adminAuthMiddleware, taxonomy.uploadTaxonomy);
+router.get('/taxonomy/jobs/:id', adminAuthMiddleware, taxonomy.getJob);
+router.get('/taxonomy/jobs/:id/diff', adminAuthMiddleware, taxonomy.getJobDiff);
+router.post('/taxonomy/jobs/:id/preview', adminAuthMiddleware, taxonomy.previewJob);
+router.post('/taxonomy/jobs/:id/publish', adminAuthMiddleware, taxonomy.publishJob);
+router.post('/taxonomy/jobs/:id/cancel', adminAuthMiddleware, taxonomy.cancelJob);
+router.get('/taxonomy/snapshots', adminAuthMiddleware, taxonomy.listSnapshots);
+router.get('/taxonomy/snapshots/:id', adminAuthMiddleware, taxonomy.getSnapshot);
+router.post('/taxonomy/snapshots/:id/restore', adminAuthMiddleware, taxonomy.restoreSnapshot);
+router.get('/taxonomy/restores', adminAuthMiddleware, taxonomy.listRestores);
+router.get('/taxonomy/restores/:id', adminAuthMiddleware, taxonomy.getRestore);
+router.get('/taxonomy/professions', adminAuthMiddleware, taxonomy.listProfessions);
+router.get('/taxonomy/professions/:id', adminAuthMiddleware, taxonomy.getProfession);
+router.patch('/taxonomy/professions/:id', adminAuthMiddleware, taxonomy.editProfession);
+router.post('/taxonomy/professions/:id/reset', adminAuthMiddleware, taxonomy.resetProfession);
+router.get('/taxonomy/skills', adminAuthMiddleware, taxonomy.listSkills);
+router.post('/taxonomy/skills/validate', adminAuthMiddleware, taxonomy.validateSkill);
+router.post('/taxonomy/skills', adminAuthMiddleware, taxonomy.createSkill);
+router.get('/taxonomy/skills/:name', adminAuthMiddleware, taxonomy.getSkill);
+router.put('/taxonomy/skills/:name', adminAuthMiddleware, taxonomy.updateSkill);
+
 router.get('/professions', adminAuthMiddleware, listProfessions);
 router.post('/professions', adminAuthMiddleware, createProfession);
 router.put('/professions/:id', adminAuthMiddleware, updateProfession);
