@@ -273,6 +273,7 @@ async def get_restore(restore_id: str):
 
 # ── Part 5: direct edits (lock + edit snapshot + undo on failure) ────────────
 from app.services.professions import crud as profession_crud  # noqa: E402
+from app.services.professions.categories import categories as profession_categories  # noqa: E402
 from app.services.taxonomy import editing, skills_editor  # noqa: E402
 
 
@@ -309,7 +310,7 @@ async def list_professions(
     if get_database() is None:
         return no_db()
     result = await profession_crud.list_professions(page, limit, search, category, active, source)
-    return {"success": True, "data": result["items"],
+    return {"success": True, "data": result["items"], "categories": profession_categories(),
             "pagination": {k: result[k] for k in ("page", "limit", "total", "pages")}}
 
 

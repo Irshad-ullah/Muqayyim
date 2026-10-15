@@ -215,6 +215,21 @@ async def test_restoring_the_edit_snapshot_undoes_the_edits(db, data_copies):
     assert (await db[PROFESSIONS].find_one({"profession_id": DEV}))["title"] == "Software Developers"
 
 
+async def test_restore_dialog_lists_every_edit_it_undoes(db, data_copies):
+    first = await editing.edit_profession(DEV, {"title": "Coders"}, "admin-1", db)
+    name = non_seed_role_skill()
+    await skills_editor.save({"name": name, "description": "Another edited description for the dialog test only"},
+                             False, "admin-2", db)
+    undone = await snapshots.undone_by_restore(first["snapshot_id"], db)
+    # The first edit's own snapshot is included: restoring it undoes that edit too.
+    notes = [(e["created_by"], e["note"]) for e in undone["edits_undone"]]
+    assert notes == [("admin-1", f'profession "Software Developers" ({DEV}): title'),
+                     ("admin-2", f'skill "{name}": description')]
+    assert undone["imports_undone"] == [] and undone["restores_after"] == []
+    latest = (await snapshots.undone_by_restore(undone["edits_undone"][1]["snapshot_id"], db))["edits_undone"]
+    assert [e["created_by"] for e in latest] == ["admin-2"]
+
+
 async def test_edits_need_the_lock(db):
     lock = await TaxonomyLock("job:publishing", "x", db).acquire()
     try:
@@ -258,6 +273,7 @@ async def test_edit_routes(client, db):
     async with client as c:
         listed = (await c.get(f"{base}/professions", params={"search": "software"}, headers=KEY)).json()
         assert listed["pagination"]["total"] >= 1
+        assert "Development" in listed["categories"] and listed["categories"][-1] == "Other"  # for the edit form
         res = await c.patch(f"{base}/professions/{DEV}", json={"title": "Coders", "actor": "spoofed-admin"}, headers=KEY)
         assert res.status_code == 200 and res.json()["data"]["result"]["title"] == "Coders"
         assert res.json()["data"]["result"]["updated_by"] == "admin-3"  # not the spoofed body field

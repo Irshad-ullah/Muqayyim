@@ -480,6 +480,7 @@ async def test_publish_and_restore_routes(client, db, checks):
         assert [s["snapshot_id"] for s in listed] == [done["snapshot_id"]]
         detail = (await c.get(f"/internal/admin/taxonomy/snapshots/{done['snapshot_id']}", headers=KEY)).json()["data"]
         assert detail["imports_undone"][0]["job_id"] == job["job_id"]
+        assert detail["imports_undone"][0]["published_by"] == "admin-7"  # the restore dialog names the publisher
         restored = await c.post(f"/internal/admin/taxonomy/snapshots/{done['snapshot_id']}/restore",
                                 json={"actor": "spoofed-admin", "created_by": "spoofed-admin"}, headers=KEY)
         assert restored.status_code == 202 and restored.json()["data"]["status"] == "restoring"

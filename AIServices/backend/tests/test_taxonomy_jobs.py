@@ -149,6 +149,15 @@ async def test_lock_is_exclusive_and_released(db):
         pass
 
 
+async def test_lock_shows_who_holds_it(db):
+    async with taxonomy_lock("edit:skill", None, db=db, actor="admin-7"):
+        shown = await current_lock(db)
+        assert shown["actor"] == "admin-7" and shown["owner"] == "edit:skill" and "holder" not in shown
+        with pytest.raises(TaxonomyBusy) as err:
+            await TaxonomyLock("job:b", "b", db=db).acquire()
+        assert err.value.current["actor"] == "admin-7"
+
+
 async def test_concurrent_acquire_only_one_wins(db):
     results = await asyncio.gather(*[TaxonomyLock(f"job:{i}", str(i), db=db).acquire() for i in range(5)],
                                    return_exceptions=True)

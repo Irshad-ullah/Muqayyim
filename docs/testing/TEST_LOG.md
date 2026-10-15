@@ -50,7 +50,8 @@ GW = API Gateway Jest, FE node = frontend `node --test`, FE Vitest = frontend Vi
 | 9c Part 6 (Core pass-through) | `7492aa7` | 506 + 1 skipped | n/r | 247 | n/r | n/r | n/r | recorded |
 | 9c Part 7 (gateway) | `ed52928` | n/r | n/r | n/r | 62 | n/r | n/r | recorded |
 | Gateway info line | `a713844` | n/r | n/r | n/r | 62 | n/r | n/r | recorded |
-| Test record (this change) | `99f540a` | 506 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 25 | 21 | automatic |
+| Test record | `99f540a` | 506 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 25 | 21 | automatic |
+| 9c Part 8 (admin UI) | Part 8 commit | 508 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
 
 ¹ From the "Before" column of the 08 change note. ² The 09a2 note records React ↔ Python and Redux ↔ Redis as
 strict xfails in the slow test but gives no run count for this commit.
@@ -61,7 +62,7 @@ strict xfails in the slow test but gives no run count for this commit.
 |---|---|---|
 | `tests/test_embeddings.py` slow test, **Redux ↔ Redis** | strict `xfail` (cosine 0.744 > 0.73) | A known false positive of `BAAI/bge-small-en-v1.5` on the calibrated seed descriptions (benchmark v1). Fixing it would mean editing the 283 seed descriptions the threshold was calibrated on, which is not allowed. Strict: if a change ever pushes it below 0.73 the test reports XPASS and the note must be updated. |
 | `tests/test_embeddings.py` slow test, **React ↔ Python** | strict `xfail` (cosine 0.776 > 0.73) | Found by benchmark v2 (hard negatives). Two very common developer skills whose descriptions share vocabulary. In matching it is filtered by the mutual-nearest-neighbour rule (09b live check: `mutual_nn: false`). |
-| `tests/test_file_checks.py` real-LibreOffice test | skipped | LibreOffice is not installed on the development machine, so the real `.doc` conversion cannot run (08). |
+| `tests/test_file_checks.py` real-LibreOffice test | skipped | LibreOffice is not installed on the development machine, so the real `.doc` conversion cannot run (08). This test belongs to the pending `.doc`-removal change, scheduled after 9c, which will remove or replace it. |
 
 ---
 
@@ -339,7 +340,48 @@ Admin module, untracking `.env` files, Module 4 (CV generator).
 
 **Problems found by testing:** an early 413 reached a still-sending client as a connection reset (Node closes a `Connection: close` request's socket as soon as the response is written) → the body is discarded up to 2 s / 16 MB and then answered (fixed before commit).
 
-## Test record (this change)
+## Test record (recorded)
 
 **Date:** 2026-10-15 · adds `scripts/run_all_tests.{py,ps1,sh}`, this log, `TEST_CATALOG.md`, `test-runs.md` and the
 `CLAUDE.md` rule. The first automatic run is in [test-runs.md](test-runs.md).
+
+## 9c Part 8 — Admin UI: Professions & Skills (recorded)
+
+**Date:** 2026-10-16 · commit: see `git log` ("9c Part 8") · run: [test-runs.md](test-runs.md) entry of 2026-10-16 (Part 8 working tree)
+
+**Automated tests** (run 2026-10-16 00:27, Part 8 working tree on `dd2fce2`, all PASS): AI **508 passed, 1 skipped**; AI slow **2 passed + 2 xfailed**; Core **247**; Gateway **62**; frontend `node --test` **31** (+6), Vitest **70** (+49). The interim run at 00:22 in test-runs.md predates the last polling fixes.
+- FE `pages/admin/AdminTaxonomyPage.spec.jsx` (3) — five tabs; lock banner names the operation and the admin; lock polled every 2 s only while held.
+- FE `pages/admin/taxonomy/DataSourcesTab.spec.jsx` (7) — counts and versions, O*NET / ESCO hints, attribution, upload progress and hand-over, 100 MB client check, 413 / 422 / 504 messages, disabled under the lock.
+- FE `pages/admin/taxonomy/PreviewPublishTab.spec.jsx` (16) — loading / empty / error / failed / running / success, 409 messages, **publish button rules** (amber warning with chef and web rates, "I understand" required, never under the lock), polling only while running (incl. a just-uploaded job), paused while the tab is hidden.
+- FE `pages/admin/taxonomy/HistoryTab.spec.jsx` (8) — snapshots, **restore dialog lists exactly what is undone and needs RESTORE typed**, 429 in the dialog, running restore polled until finished.
+- FE `pages/admin/taxonomy/ProfessionsTab.spec.jsx` (8) — override markers, changed fields only, reset to dataset value, manual professions, 409 busy, disabled under the lock.
+- FE `pages/admin/taxonomy/SkillTaxonomyTab.spec.jsx` (7) — seed read-only, Check, save reports re-embedding, 422 reasons, create, disabled under the lock.
+- FE `pages/admin/taxonomy/taxonomyRules.test.js` (6, `node --test`) — publish rules, background warning, running states, lock label, error messages for 403 / 409 / 413 / 422 / 429 / 503 / 504, upload file checks.
+- AI `test_taxonomy_jobs.py::test_lock_shows_who_holds_it`; `test_taxonomy_edits.py::test_restore_dialog_lists_every_edit_it_undoes`; extra assertions in `::test_edit_routes` (profession categories) and `test_taxonomy_publish.py` (publisher in the restore detail).
+
+**Backend changes made for the UI:** the lock records its `actor`; edit snapshots record a `note` naming the edit; the restore detail names the publisher; the profession list returns the categories.
+
+**Problems found by testing (fixed before commit):**
+- **Restore dialog missed an edit:** `undone_by_restore` listed only edits whose snapshot was strictly newer than the restored one, but an edit snapshot is taken just before its own edit, so restoring it undoes that edit too (same for a pre-restore snapshot) → `$gte`; found by `test_restore_dialog_lists_every_edit_it_undoes`.
+- **Field lost its label:** the "reset to dataset value" button sat inside the field's `<label>`; a button is labelable, so the label named the button and the input had no accessible name → label linked by `htmlFor`, tag outside it; found by `ProfessionsTab.spec.jsx`.
+- **Just-uploaded job not polled:** an upload returns the job as `uploaded` and validation starts a moment later, but `uploaded` was not a polled state, so the page stayed on "Uploaded" → added; found while tracing the upload flow, test added.
+
+**Manual check:** pending — browser walkthrough by the user (checklist below). Independent backup taken first: `~/.muqayyim/taxonomy/manual-backup-2026-10-16-part8` (mongodump of ai_db, 13 collections, plus the data and index files with SHA-256).
+
+Walkthrough checklist (results to be added here):
+1. Restart the AI service on :8000 (the UI uses the new lock / snapshot / category fields; Core, gateway and the Vite dev server need no restart). Sign in as admin.
+2. Sidebar → Professions & Skills (no longer "Soon"). Data sources: O*NET and ESCO cards show versions, profession counts, ESCO skills and last update; both attribution lines are shown.
+3. Switch Source between O*NET and ESCO: the hint lists exactly the needed files, the version field changes.
+4. Choose a file over 100 MB: the size message appears and Upload is disabled.
+5. Upload a text file renamed `fake.zip` as ESCO: a "Not accepted" box with the reason (422); no job appears.
+6. Upload the three O*NET CSVs from `AIServices/data/raw/onet` (O*NET 31.0): progress bar, then the Preview & publish tab opens; the status moves Uploaded → Validating → Validated by itself; rows 1,016 / 54,269 / 31,821.
+7. DevTools → Network: job requests every 2 s while it runs, none once it is Validated; switching to another browser tab during a run pauses them.
+8. Run preview: "Building preview" with progress, then Ready to publish; every diff section 0, coverage live = new, background check passed (chef 3.0 % · web 12.2 %), no amber box. **Do not publish.**
+9. Open the same job in a second browser tab, then Cancel job in the first: Cancelled. In the second tab click Cancel job: a 409 "Not possible now" message.
+10. Professions: search "software developers", edit the title (add " (test)"), Save: toast, "Admin override" tag, row shows "override: title".
+11. Click "reset to dataset value": the title returns, the tag disappears.
+12. Skill taxonomy: open React (lock icon): description read-only with the seed note; aliases editable.
+13. Open Tomcat (no lock icon): change the description, Check (passes), Save: "Saved — re-embedded Tomcat".
+14. History: three "Before edit" snapshots with notes (title edit, reset, Tomcat description). Restore… on the newest: the dialog lists exactly one edit (skill "Tomcat": description — by your admin user id); Restore stays disabled until RESTORE is typed.
+15. Confirm: "Restoring" banner and the lock banner ("Restoring a snapshot — by …"); while it runs, Save on the Professions tab is disabled (a second tab gets "Taxonomy busy" if you are quick). When it finishes: toast, Tomcat's description is the original again.
+16. Optional: sign in as a job seeker and open `/admin/professions` → redirected away.

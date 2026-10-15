@@ -84,7 +84,7 @@ async def start_publish(job_id: str, acknowledge: bool = False, actor: str = "un
         raise PublishRefused(422, "BACKGROUND_ACK_REQUIRED",
                              "The background credit check did not pass on the staged data. "
                              "Confirm that you understand before publishing.")
-    lock = await TaxonomyLock(f"{owner_prefix}:{job_id}", job_id, db).acquire()
+    lock = await TaxonomyLock(f"{owner_prefix}:{job_id}", job_id, db, actor=actor).acquire()
     try:
         # Checked under the lock, so nothing can change the live data between this check and the swap.
         if await pipeline.live_fingerprint(db) != job.get("preview_base"):
@@ -197,7 +197,7 @@ async def start_restore(snapshot_id: str, actor: str = "unknown", db=None, wait:
     db = db if db is not None else get_database()
     record = await snapshots.get_snapshot(snapshot_id, db)
     restore_id = uuid.uuid4().hex
-    lock = await TaxonomyLock(f"restore:{restore_id}", None, db).acquire()
+    lock = await TaxonomyLock(f"restore:{restore_id}", None, db, actor=actor).acquire()
     now = datetime.now(timezone.utc)
     doc = {"restore_id": restore_id, "snapshot_id": snapshot_id, "status": RESTORING, "created_by": actor,
            "created_at": now, "updated_at": now, "pre_restore_snapshot": None, "progress": "Starting",
@@ -271,7 +271,7 @@ async def recover_restore(doc: dict, db) -> Optional[str]:
     """A restore left in "restoring" by a crash: put its pre-restore snapshot back."""
     restore_id = doc["restore_id"]
     try:
-        lock = await TaxonomyLock(f"recovery:restore:{restore_id}", None, db).acquire()
+        lock = await TaxonomyLock(f"recovery:restore:{restore_id}", None, db, actor="system").acquire()
     except TaxonomyBusy:
         return None
     try:
@@ -292,7 +292,7 @@ async def recover_publishing_job(job: dict, db) -> Optional[str]:
     (the publisher may be alive in another process, e.g. the CLI). → the new status or None."""
     job_id = job["job_id"]
     try:
-        lock = await TaxonomyLock(f"recovery:{job_id}", job_id, db).acquire()
+        lock = await TaxonomyLock(f"recovery:{job_id}", job_id, db, actor="system").acquire()
     except TaxonomyBusy:
         return None
     try:

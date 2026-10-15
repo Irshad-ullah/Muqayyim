@@ -1,0 +1,142 @@
+{
+  "run_id": "2026-10-16T002257-dd2fce2",
+  "started_utc": "2026-10-15T19:22:57.559766+00:00",
+  "started_local": "2026-10-16 00:22 Pakistan Standard Time",
+  "duration_s": 254.1,
+  "git": {
+    "commit": "dd2fce2",
+    "commit_full": "dd2fce2f41be5cf5da68c7cdc90544f517f62672",
+    "branch": "main",
+    "subject": "Record the first full test run (99f540a): all suites pass",
+    "clean": false,
+    "changed_files": 18
+  },
+  "environment": {
+    "os": "Windows 11 (10.0.26200)",
+    "python": "3.14.4",
+    "node": "v24.11.1",
+    "npm": "11.6.2",
+    "mongodb": "8.2.5",
+    "python_packages": {
+      "torch": "2.14.1+cpu",
+      "sentence-transformers": "6.1.0",
+      "faiss-cpu": "1.15.1",
+      "numpy": "2.4.4",
+      "fastapi": "0.136.1",
+      "pymongo": "4.17.0",
+      "motor": "3.7.1",
+      "pytest": "9.0.3",
+      "spacy": "3.8.13"
+    },
+    "node_packages": {
+      "core:express": "4.22.1",
+      "core:jest": "29.7.0",
+      "core:mongoose": "7.8.9",
+      "gateway:express": "4.22.1",
+      "gateway:jest": "29.7.0",
+      "gateway:http-proxy-middleware": "2.0.9",
+      "frontend:react": "18.3.1",
+      "frontend:vite": "5.4.21",
+      "frontend:vitest": "2.1.9"
+    },
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "embedding_text_mode": "description",
+    "related_threshold": 0.73
+  },
+  "suites": [
+    {
+      "name": "ai",
+      "label": "AIServices pytest",
+      "command": "pytest -q -p no:warnings -p no:cacheprovider",
+      "exit_code": 0,
+      "wall_s": 157.8,
+      "counts": {
+        "passed": 508,
+        "failed": 0,
+        "skipped": 1,
+        "xfailed": 0,
+        "xpassed": 0,
+        "errors": 0,
+        "deselected": 4
+      },
+      "duration_s": 152.79,
+      "summary": "508 passed, 1 skipped, 4 deselected in 152.79s (0:02:32)",
+      "status": "passed"
+    },
+    {
+      "name": "ai-slow",
+      "label": "AIServices pytest -m slow (real model)",
+      "command": "-p no:warnings -p no:cacheprovider -m slow",
+      "exit_code": 0,
+      "wall_s": 24.5,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "xfailed": 2,
+        "xpassed": 0,
+        "errors": 0,
+        "deselected": 509
+      },
+      "duration_s": 20.03,
+      "summary": "2 passed, 509 deselected, 2 xfailed in 20.03s",
+      "status": "passed"
+    },
+    {
+      "name": "core",
+      "label": "CoreServices Jest",
+      "command": "npm test",
+      "exit_code": 0,
+      "wall_s": 53.9,
+      "counts": {
+        "passed": 247,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "total": 247
+      },
+      "duration_s": 51.927,
+      "summary": "Tests: 247 passed, 247 total | Test Suites: 20 passed, 20 total",
+      "status": "passed"
+    },
+    {
+      "name": "gateway",
+      "label": "API Gateway Jest",
+      "command": "npm test",
+      "exit_code": 0,
+      "wall_s": 6.2,
+      "counts": {
+        "passed": 62,
+        "failed": 0,
+        "skipped": 0,
+        "todo": 0,
+        "total": 62
+      },
+      "duration_s": 4.585,
+      "summary": "Tests: 62 passed, 62 total | Test Suites: 9 passed, 9 total",
+      "status": "passed"
+    },
+    {
+      "name": "frontend",
+      "label": "Frontend node --test + Vitest",
+      "command": "npm test",
+      "exit_code": 0,
+      "wall_s": 11.7,
+      "counts": {
+        "passed": 101,
+        "failed": 0,
+        "skipped": 0,
+        "node_passed": 31,
+        "node_failed": 0,
+        "vitest_passed": 70,
+        "vitest_failed": 0
+      },
+      "duration_s": 9.8,
+      "summary": "node --test: pass 31, fail 0 (0.2s) | Vitest: 70 passed (70) (9.6s)",
+      "status": "passed"
+    }
+  ],
+  "passed": true,
+  "known_expected_failures": "ai-slow: React↔Python (0.776) and Redux↔Redis (0.744) are strict xfails (docs/changes/09a2-embedding-model-selection.md)",
+  "raw_logs": "docs/testing/runs/raw/2026-10-16T002257-dd2fce2"
+}

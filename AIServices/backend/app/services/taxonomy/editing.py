@@ -42,9 +42,9 @@ async def run_edit(description: str, actor: str, apply: Callable[[], Awaitable[d
     """Lock, snapshot, apply, rebuild. → {result, snapshot_id, index}. Raises TaxonomyBusy (409),
     the apply function's own validation errors (nothing changed), or EditFailed."""
     db = db if db is not None else get_database()
-    lock = await TaxonomyLock(f"edit:{description}"[:120], None, db).acquire()
+    lock = await TaxonomyLock(f"edit:{description}"[:120], None, db, actor=actor).acquire()
     try:
-        snapshot = await snapshots.create_snapshot(db, created_by=actor, reason="edit")
+        snapshot = await snapshots.create_snapshot(db, created_by=actor, reason="edit", note=description[:200])
         try:
             result = await apply()
             index = get_role_index()
@@ -73,13 +73,15 @@ async def run_edit(description: str, actor: str, apply: Callable[[], Awaitable[d
 
 async def edit_profession(profession_id: str, body: dict, actor: str, db=None) -> dict:
     db = db if db is not None else get_database()
-    await crud.get_profession(profession_id, db)  # 404 before taking a snapshot
-    return await run_edit(f"profession {profession_id}", actor,
+    current = await crud.get_profession(profession_id, db)  # 404 before taking a snapshot
+    what = ", ".join(sorted(body))
+    return await run_edit(f"profession \"{current.get('title')}\" ({profession_id}): {what}", actor,
                           lambda: crud.update_profession(profession_id, body, actor, db, rebuild=False), db)
 
 
 async def reset_profession(profession_id: str, fields: Optional[list], actor: str, db=None) -> dict:
     db = db if db is not None else get_database()
-    await crud.get_profession(profession_id, db)
-    return await run_edit(f"reset {profession_id}", actor,
+    current = await crud.get_profession(profession_id, db)
+    what = ", ".join(fields) if fields else "all overrides"
+    return await run_edit(f"reset profession \"{current.get('title')}\" ({profession_id}): {what}", actor,
                           lambda: crud.reset_to_dataset(profession_id, fields, actor, db, rebuild=False), db)

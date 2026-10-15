@@ -21,6 +21,7 @@ import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx';
 import AdminUsersPage from './pages/admin/AdminUsersPage.jsx';
 import AdminSystemPage from './pages/admin/AdminSystemPage.jsx';
 import AdminLogsPage from './pages/admin/AdminLogsPage.jsx';
+import AdminTaxonomyPage from './pages/admin/AdminTaxonomyPage.jsx';
 
 export default function App() {
   const { isAuthenticated, user } = useAuth();
@@ -140,6 +141,14 @@ export default function App() {
         element={
           <AdminRoute>
             <AdminLogsPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/professions"
+        element={
+          <AdminRoute>
+            <AdminTaxonomyPage />
           </AdminRoute>
         }
       />

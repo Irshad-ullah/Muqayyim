@@ -47,7 +47,6 @@ const navItems = [
     label: 'Professions & Skills',
     to: '/admin/professions',
     icon: Briefcase,
-    soon: true,
   },
   {
     label: 'Interview Bank',

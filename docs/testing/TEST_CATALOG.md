@@ -80,6 +80,15 @@ properties with no single SRS id.
 | Taxonomy through Core (admin identity from JWT, pass-through, AdminLog, abort) | Core `adminTaxonomy.test.js`; AI `test_taxonomy_uploads.py::test_upload_needs_a_valid_admin_header_before_reading_the_body`, `::test_client_disconnect_during_upload_leaves_no_job` | integration | pass |
 | Taxonomy through the gateway (100 MB stream, 413, timeout, rate limit) | GW `taxonomyRoutes.test.js` | integration | pass |
 | Taxonomy, real data | 9c Parts 2–7 manual checks (uploads, dry runs, publish/restore with 12 measures unchanged, edits restored identical, Core 403, gateway 413) | manual | 2026-10-15, all passed |
+| Admin UI: five tabs, lock banner (who and what holds it), lock polled every 2 s only while held | FE `pages/admin/AdminTaxonomyPage.spec.jsx` | unit (component) | pass |
+| Admin UI: Data sources — counts, versions, O*NET / ESCO file hints, attribution text, upload progress, 100 MB client check, 413 / 422 / 504 messages, upload disabled under the lock | FE `pages/admin/taxonomy/DataSourcesTab.spec.jsx` | unit (component) | pass |
+| Admin UI: Preview & publish — loading / empty / error / running / failed / success; diff and checks; **publish button rules** (previewed only, not under the lock, amber background warning with chef and web rates needs “I understand”); 409 messages; polling every 2 s only while running, paused while the browser tab is hidden | FE `pages/admin/taxonomy/PreviewPublishTab.spec.jsx`; rules in `pages/admin/taxonomy/taxonomyRules.test.js` | unit (component + node) | pass |
+| Admin UI: History — snapshots, restores, jobs; **restore dialog lists exactly what is undone** and needs RESTORE typed; 429 shown in the dialog; running restore polled until it finishes | FE `pages/admin/taxonomy/HistoryTab.spec.jsx` | unit (component) | pass |
+| Admin UI: Professions — override markers, save sends only changed fields, reset to dataset value, no reset for manual professions, 409 busy, everything disabled under the lock | FE `pages/admin/taxonomy/ProfessionsTab.spec.jsx` | unit (component) | pass |
+| Admin UI: Skill taxonomy — seed description read-only, Check (dry-run validation), save reports the re-embedded skill, 422 reasons, create, disabled under the lock | FE `pages/admin/taxonomy/SkillTaxonomyTab.spec.jsx` | unit (component) | pass |
+| Error messages for 403 / 409 / 413 / 422 / 429 (with Retry-After) / 503 / 504 / no connection | FE `pages/admin/taxonomy/taxonomyRules.test.js` | unit | pass |
+| Lock shows its holder; restore list includes the snapshot's own edit; edit snapshots name the edit; publisher named; profession categories for the edit form | AI `test_taxonomy_jobs.py::test_lock_shows_who_holds_it`, `test_taxonomy_edits.py::test_restore_dialog_lists_every_edit_it_undoes`, `::test_edit_routes`, `test_taxonomy_publish.py` (routes) | integration | pass |
+| Admin UI, browser walkthrough | 9c Part 8 checklist (TEST_LOG) | manual | pending — results to be reported by the user |
 
 ## Gateway and cross-cutting
 

@@ -60,8 +60,10 @@ def public_lock(doc: Optional[dict]) -> Optional[dict]:
 
 class TaxonomyLock:
     def __init__(self, owner: str, job_id: Optional[str] = None, db=None,
-                 ttl_seconds: Optional[int] = None, heartbeat_seconds: Optional[float] = None):
+                 ttl_seconds: Optional[int] = None, heartbeat_seconds: Optional[float] = None,
+                 actor: Optional[str] = None):
         self.owner = owner
+        self.actor = actor  # the admin id (or "cli" / "system"), shown to other admins while held
         self.job_id = job_id
         self.db = db
         self.ttl = ttl_seconds or settings.TAXONOMY_LOCK_TTL_SECONDS
@@ -77,7 +79,7 @@ class TaxonomyLock:
 
     async def acquire(self) -> "TaxonomyLock":
         now = _now()
-        fields = {"holder": self.holder, "owner": self.owner, "job_id": self.job_id,
+        fields = {"holder": self.holder, "owner": self.owner, "actor": self.actor, "job_id": self.job_id,
                   "acquired_at": now, "heartbeat_at": now, "expires_at": now + timedelta(seconds=self.ttl)}
         try:
             # Matches only a missing (→ upsert) or expired lock; a live lock makes the
@@ -125,9 +127,9 @@ class TaxonomyLock:
 
 
 @asynccontextmanager
-async def taxonomy_lock(owner: str, job_id: Optional[str] = None, db=None):
+async def taxonomy_lock(owner: str, job_id: Optional[str] = None, db=None, actor: Optional[str] = None):
     """async with taxonomy_lock("job:<id>", job_id): ... — raises TaxonomyBusy."""
-    lock = await TaxonomyLock(owner, job_id, db).acquire()
+    lock = await TaxonomyLock(owner, job_id, db, actor=actor).acquire()
     try:
         yield lock
     finally:

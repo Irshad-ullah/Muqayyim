@@ -240,4 +240,5 @@ async def save(change: dict, create: bool, actor: str, db=None) -> dict:
             embedded = [name]
         return {"skill": get_skill(name), "re_embedded": embedded}
 
-    return await editing.run_edit(f"skill {name}", actor, apply, db)
+    what = "create" if create else ", ".join(sorted(k for k in change if k != "name"))
+    return await editing.run_edit(f"skill \"{name}\": {what}", actor, apply, db)

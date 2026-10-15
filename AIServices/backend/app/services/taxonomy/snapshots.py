@@ -131,7 +131,7 @@ async def source_versions(db) -> Dict[str, List[str]]:
 
 
 async def create_snapshot(db=None, created_by: str = "system", reason: str = "publish",
-                          job_id: Optional[str] = None) -> dict:
+                          job_id: Optional[str] = None, note: Optional[str] = None) -> dict:
     """Write the current state to disk and record it; prunes the reason's pool afterwards."""
     from app.services.taxonomy.pipeline import live_fingerprint
 
@@ -175,6 +175,7 @@ async def create_snapshot(db=None, created_by: str = "system", reason: str = "pu
         "reason": reason,
         "pool": pool_of(reason),
         "job_id": job_id,
+        "note": note,  # edit snapshots: the edit this snapshot was taken before
         "source_versions": await source_versions(db),
         "counts": counts,
         "state_hash": (meta or {}).get("state_hash"),
@@ -222,18 +223,21 @@ async def list_snapshots(db=None, pool: Optional[str] = None) -> List[dict]:
 
 
 async def undone_by_restore(snapshot_id: str, db=None) -> dict:
-    """What restoring this snapshot undoes: imports and edits recorded after it."""
+    """What restoring this snapshot undoes: imports published after it, and the edits and restores
+    whose snapshot is this one or newer (an edit / pre-restore snapshot is taken just before its
+    own change, so restoring it undoes that change too)."""
     from app.services.taxonomy import jobs
 
     db = db if db is not None else get_database()
     record = await get_snapshot(snapshot_id, db)
     after = record["created_at"]
     imports = [{"job_id": j["job_id"], "source": j["source"], "dataset_version": j["dataset_version"],
-                "created_by": j["created_by"], "updated_at": jobs.public(j)["updated_at"]}
+                "created_by": j["created_by"], "published_by": j.get("published_by"),
+                "updated_at": jobs.public(j)["updated_at"]}
                async for j in db[jobs.JOBS].find({"status": jobs.PUBLISHED, "updated_at": {"$gt": after}})]
-    edits = [public(r) async for r in db[SNAPSHOTS].find({"pool": "edit", "created_at": {"$gt": after}})
+    edits = [public(r) async for r in db[SNAPSHOTS].find({"pool": "edit", "created_at": {"$gte": after}})
              .sort("created_at", 1)]
-    restores = [public(r) async for r in db[SNAPSHOTS].find({"reason": "pre-restore", "created_at": {"$gt": after}})]
+    restores = [public(r) async for r in db[SNAPSHOTS].find({"reason": "pre-restore", "created_at": {"$gte": after}})]
     return {"snapshot": public(record), "imports_undone": imports, "edits_undone": edits, "restores_after": restores}
 
 
