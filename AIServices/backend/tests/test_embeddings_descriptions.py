@@ -264,3 +264,26 @@ async def test_reembed_migrates_vectors_and_profiles(db):
     assert keys == ["react", "kafka"] and matrix.shape == (2, 768)
     assert np.allclose(matrix, new.embed_texts([build_embed_text(n).text for n in names]), atol=1e-6)
     assert (await reembed_all(db, new))["embedded"] == 0
+
+
+# ── Pair kinds share one guarded threshold (09b2) ────────────────────────────
+def test_threshold_by_kind_with_guards(monkeypatch):
+    model = "BAAI/bge-small-en-v1.5"
+    monkeypatch.setattr(settings, "ESCO_DESCRIPTIONS_ENABLED", False)
+    assert get_related_threshold(model, "description", kind="described") == 0.73
+    assert get_related_threshold(model, "description", kind="mixed") == 0.73
+    assert not hasattr(settings, "EMBEDDING_RELATED_THRESHOLD_MIXED")  # 0.61 was rejected
+    # Guards: another model or bare-name user text → not measured, for both kinds.
+    for kind in ("described", "mixed"):
+        assert get_related_threshold("sentence-transformers/all-MiniLM-L6-v2", "description", kind=kind) is None
+        assert get_related_threshold(model, "name", kind=kind) is None
+    # Mixed pairs were measured with ESCO label text only.
+    assert get_related_threshold(model, "description", kind="mixed", esco_mode="description") is None
+    monkeypatch.setattr(settings, "ESCO_DESCRIPTIONS_ENABLED", True)
+    assert get_related_threshold(model, "description", kind="mixed") is None
+    assert get_related_threshold(model, "description", kind="described") == 0.73  # unaffected
+
+
+def test_threshold_kind_must_be_known():
+    with pytest.raises(ValueError):
+        get_related_threshold(kind="loose")

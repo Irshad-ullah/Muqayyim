@@ -483,6 +483,43 @@ async def test_mutual_nearest_neighbour_flag(db, index, stub, monkeypatch):
     assert flags == {"a skill": True, "b skill": False}  # B is not React's single nearest role skill
 
 
+async def kinds_setup(db, index, stub):
+    # User: React (curated description) and "Frobskill" (no description).
+    stub.table["frobskill"] = unit(0, 0, 0, 1)
+    stub.table["c skill"] = unit(0.75, 0.661)             # 0.75 to React; no description → mixed
+    stub.table["d skill"] = unit(0.65, 0, 0.76)           # 0.65 to React; no description → mixed
+    stub.table["e skill"] = unit(0, 0, 0, 0.75, 0.661)    # 0.75 to Frobskill; neither described
+    await add_manual(db, "manual:k", "K", ["Vue.js", "c skill", "d skill", "e skill", "Excel"])
+    await index.rebuild(db)
+    return {(r["user_key"], r["role_key"]): r for r in index.search_related(
+        ["react", "frobskill"], stub.embed_texts(["React", "Frobskill"]), user_names=["React", "Frobskill"])}
+
+
+async def test_search_related_reports_kind_with_one_threshold(db, index, stub):
+    results = await kinds_setup(db, index, stub)
+    # described ↔ described
+    assert results[("react", "vue.js")]["kind"] == "described"
+    # described user skill ↔ undescribed role skill: mixed, same 0.73 threshold
+    mixed = results[("react", "c skill")]
+    assert mixed["kind"] == "mixed" and mixed["threshold"] == 0.73
+    assert mixed["similarity"] == pytest.approx(0.75, abs=1e-3)
+    assert {"kind", "threshold", "similarity", "mutual_nn"} <= set(mixed)
+    assert ("react", "d skill") not in results  # 0.65 < 0.73 (a 0.61 mixed threshold was rejected in 09b2)
+    # neither described: kind described, 0.73
+    assert results[("frobskill", "e skill")]["kind"] == "described"
+    assert all(r["threshold"] == 0.73 for r in results.values())
+    assert not any(r.get("mixed_threshold_unmeasured") for r in results.values())
+
+
+async def test_mixed_pairs_flagged_when_esco_text_is_not_labels(db, index, stub, monkeypatch):
+    # With ESCO descriptions enabled, 0.73 was not measured for mixed pairs: still 0.73, but flagged.
+    monkeypatch.setattr(settings, "ESCO_DESCRIPTIONS_ENABLED", True)
+    results = await kinds_setup(db, index, stub)
+    assert results[("react", "c skill")]["mixed_threshold_unmeasured"] is True
+    assert results[("react", "c skill")]["threshold"] == 0.73
+    assert "mixed_threshold_unmeasured" not in results[("react", "vue.js")]
+
+
 async def test_search_refuses_unmeasured_threshold(db, index):
     await add_manual(db, "manual:a", "A", ["React", "Python", "Excel", "Django", "Vue.js"])
     await index.rebuild(db)

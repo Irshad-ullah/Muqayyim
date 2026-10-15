@@ -1,6 +1,6 @@
 # 09b2 — Role-skill description coverage and benchmark v3 (ESCO skills)
 
-**Status:** Parts 1–3 done; Part 4 pending · **Date:** 2026-10-15 · **Affects:** AIServices data files, the ESCO label cleaner, the role-skill index build, evaluation tooling
+**Status:** implemented (Parts 1–4) · **Date:** 2026-10-15 · **Affects:** AIServices data files, the ESCO label cleaner, the role-skill index build, matching configuration, evaluation tooling
 **Builds on:** [09b — profession database and role-skill index](09b-professions-and-index.md), [09a2 — bge-small + descriptions, threshold 0.73](09a2-embedding-model-selection.md)
 
 ## Summary
@@ -15,7 +15,9 @@
 - **Fixes:**
   - The **index build** crashed when stored role-skill names went stale after an alias change. It now re-normalises them.
   - An **intermittent test failure** was traced to a non-deterministic test stub and fixed.
-- **The embedding configuration is frozen after this task** (see [Freeze](#embedding-configuration-freeze)).
+- **Part 3 (benchmark v3):** ESCO skills are best embedded by **label only**. ESCO descriptions hurt and stay disabled.
+- **Part 4:** there is **one related threshold, 0.73, for every pair**. A proposed 0.61 threshold for "mixed" pairs was rejected after a real-data check: at 0.61 an unrelated chef profile received as much related credit as a web profile. Pairs now report their *kind*, and Module 5's credit rule is documented, with mutual_nn required only for described pairs. A background-credit regression check was added.
+- **The embedding configuration is frozen until Module 5's end-to-end evaluation** (see [Embedding configuration (frozen)](#embedding-configuration-frozen)).
 
 ## Part 1 — Coverage (measured before any change)
 
@@ -219,13 +221,118 @@ Requiring mutual_nn removes most true matches to ESCO phrases. Examples: SQL →
 | Guardrail (gain over (a) ≥ 0.02 and recall ≥ 0.90) | **not met**: the chosen option *is* (a), so the gain is 0.000 |
 | **Outcome** | **ESCO descriptions stay disabled** (`ESCO_DESCRIPTIONS_ENABLED=false`) and **the single 0.73 threshold is kept** |
 
-**Consequences for Module 5 (not decided here):**
-1. **At 0.73, matches between a user skill and an ESCO phrase are precise but incomplete:** precision 1.00, recall 0.67 (dev) / 0.74 (held-out). Roughly a quarter to a third of truly related phrase pairs score 0.61–0.73 and would count as "missing". The measured mixed-pair Thr@P95 is 0.61–0.63, more than 0.02 below 0.73. The guardrail as written blocks a second threshold whenever (a) is the winner.
+**What the Part 3 results raised for Module 5** (resolved in Part 4):
+1. **At 0.73, mixed pairs are precise but incomplete:** precision 1.00, recall 0.67 (dev) / 0.74 (held-out). On the benchmark, the mixed-pair Thr@P95 was 0.61–0.63.
 2. **mutual_nn is a poor filter for ESCO phrase skills:** with (a), it keeps only 34 of 98 related pairs that pass the threshold. It still suits tool-to-tool pairs (React → Python was rejected in 09b).
 
-## Embedding configuration freeze
+## Part 4 — Decision and implementation
 
-After this task, the embedding configuration (model, text mode, description sources and related threshold or thresholds) is **frozen**. Later work (Module 5 matching, the admin page) uses it as is. Any change needs a new benchmark round and a re-embed.
+**Decision: one related threshold, 0.73, for every pair.** The pair *kind* is still reported, because Module 5's credit rule treats the two kinds differently (mutual_nn).
+
+### Why a 0.61 mixed threshold was rejected
+
+A second threshold, 0.61 for mixed pairs, was first proposed and implemented. Benchmark v3 supported it on held-out data: precision 0.968 and recall 0.968, against recall 0.74 at 0.73. It was then checked on the **real** role-skill index before committing, and rejected.
+
+**The benchmark's unrelated pairs were not representative of real ESCO phrases.** They were hand-picked to be clearly from different areas. Real ESCO phrases are mostly generic ICT wording, and with this model almost any described skill scores 0.6–0.7 against them. As a result, 0.61 gives related credit almost regardless of who the user is.
+
+The table shows the share of the 1,140 undescribed role skills that a profile's best skill reaches at each threshold (`background_credit_rate.py --sweep`):
+
+| Threshold | Web profile (React, Python, Docker, Figma) | Chef profile (Cooking, Customer Service, Inventory Management) |
+|---|---|---|
+| **0.61** | **60.4 %** | **60.8 %** |
+| 0.65 | 35.8 % | 27.6 % |
+| 0.70 | 13.1 % | 6.8 % |
+| **0.73** | **6.0 %** | **2.8 %** |
+
+At 0.61, the chef profile would get related credit for **98 %** of the "artificial intelligence engineer" phrase skills. Its median across ESCO professions would be 66 %, against 71 % for the web profile, so the score would no longer tell the two profiles apart. At 0.73, the chef profile gets 2.8 % and the web profile 6.0 %.
+
+Lesson: a held-out split checks a threshold against the *kind* of pairs in the set, not against the population it will be used on. Hence the background credit check below.
+
+### What was implemented
+
+- **No new setting:** there is no `EMBEDDING_RELATED_THRESHOLD_MIXED`. It was added and then removed from `settings.py`, `.env.example` and the local `.env`.
+- **`get_related_threshold(model, mode, kind="described" | "mixed", esco_mode=None)`:**
+  - both kinds return the same 0.73, under the existing model / text-mode guard;
+  - `mixed` is additionally valid only when ESCO skills are embedded by **label** (`ESCO_DESCRIPTIONS_ENABLED=false`), the setup benchmark v3 measured;
+  - an unknown kind raises `ValueError`.
+- **`search_related(..., user_names=None)`:**
+  - each pair reports `kind` (`mixed` when the user skill has a curated description and the role skill does not; otherwise `described`), plus `threshold`, `similarity`, `mutual_nn`, `roles`;
+  - if 0.73 is not valid for mixed pairs in the active setup, those pairs are flagged `mixed_threshold_unmeasured`.
+- **Credit rule for Module 5:** documented in `matching_config.py` and below, **not implemented** (no scoring yet).
+
+### Module 5 credit rule (documented only)
+
+For each skill a profession requires:
+
+| Case | Credit |
+|---|---|
+| Same canonical key as one of the user's skills | **matched, 1.0** |
+| Described pair (both described, or neither): similarity ≥ 0.73 **and** mutual_nn | **related, 0.5** |
+| Mixed pair (user skill described, role skill an ESCO label): similarity ≥ 0.73, no mutual check | **related, 0.5** |
+| Otherwise | **missing, 0** |
+
+There is no "hint" threshold. Whether and how near-misses are shown is part of Module 5's UI work.
+
+### Sample users (real model, real index; temporary users removed)
+
+| User | Pairs found (k = 50) | Described, credited (≥ 0.73 and mutual) | Described, not credited (not mutual) | Mixed, credited (≥ 0.73) |
+|---|---|---|---|---|
+| React, Python, Docker, Figma | 189 | 33 | 115 | 41 |
+| React, Docker, Figma | 143 | 23 | 84 | 36 |
+
+- **Top credited pairs:**
+  - React → JavaScript 0.885, CoffeeScript 0.856, Angular 0.848 (described, mutual);
+  - Python → Pandas 0.851, Scikit-learn 0.817 (described, mutual);
+  - Docker → Kubernetes 0.872, Linux 0.811 (described, mutual);
+  - Figma → Adobe XD 0.881 (described, mutual), "design user interface" 0.852 and "use methodologies for user-centered design" 0.848 (mixed).
+- **React → Python (user without Python):** described pair, 0.776, `mutual_nn: false`, so **no credit**. Docker → Python (0.748) also gets no credit.
+
+### Background credit rate (regression check)
+
+`AIServices/eval/background_credit_rate.py` scores a web profile and an unrelated chef profile against all 143 active professions with the credit rule above. It is also wrapped as `tests/test_background_credit_rate.py`, marked `slow`; it needs the model and the imported professions.
+
+**It must be run by Module 5's evaluation and for any future threshold or matching change.** It passes when the chef rate is ≤ 5 % **and** at most half the web rate.
+
+| Profile | Related credit (pooled over non-matched required skills: web 7,488, chef 7,562) | Median per profession | Credited via described / mixed | Highest professions |
+|---|---|---|---|---|
+| Web | **12.2 %** | 10.7 % | 474 / 439 | cloud software developer 37 %, Software Developers 33 %, IoT developer 32 % |
+| Chef | **3.0 %** | 2.7 % | 107 / 123 | Health Informatics Specialists 19 %, Clinical Data Managers 19 %, ICT help desk agent 16 % |
+
+The chef / web ratio is **0.25**, so the check passes. Much of the chef's remaining credit is genuine overlap, e.g. Customer Service → "assist customers" 0.828, Inventory Management → "manage inventory" 0.831.
+
+### Known limitation: doubtful credits remaining at 0.73
+
+Mixed pairs have no mutual check, so some vague ESCO phrases are still credited:
+
+| User skill | Role skill (kind) | Similarity |
+|---|---|---|
+| Docker | resource-efficient technologies (mixed) | 0.779 |
+| Docker | field-programmable gate arrays (mixed) | 0.763 |
+| Docker | decentralized application frameworks (mixed) | 0.755 |
+| Docker | file-based workflow (mixed) | 0.744 |
+| Docker | identify software for warehouse management (mixed) | 0.734 |
+| Python | field-programmable gate arrays (mixed) | 0.749 |
+| Python / Docker | real-time computing (mixed) | 0.760 / 0.733 |
+| Cooking | develop food scanner devices (mixed) | 0.732 |
+| Cooking | printing techniques (mixed) | 0.730 |
+| React | Selenium (described, mutual) | 0.832 |
+| Docker | .NET (described, mutual) | 0.788 |
+
+These are left as they are, because the configuration is frozen. Module 5's end-to-end evaluation should measure their effect on profession scores, with the background credit check as the guard.
+
+## Embedding configuration (frozen)
+
+**No further embedding tuning before Module 5's end-to-end evaluation.** Any change needs a new benchmark round, a re-embed, and the background credit check.
+
+| Item | Value |
+|---|---|
+| Model | `BAAI/bge-small-en-v1.5` (384-dim, CPU, unit vectors, cosine) |
+| User / curated skill text | `description`: "Name: curated description" when one exists, else the name (1,093 curated descriptions) |
+| ESCO skill text | `label` (`ESCO_DESCRIPTIONS_ENABLED=false`); curated descriptions take precedence where they exist |
+| Related threshold | **0.73**, for both pair kinds. Guarded: valid only for the model and user text mode above, and for mixed pairs only with ESCO label text |
+| mutual_nn | K = 10; **required only for described ↔ described pairs** |
+| Credit rule | same key 1.0; described ≥ 0.73 and mutual 0.5; mixed ≥ 0.73 0.5; else 0 |
+| Regression check | `AIServices/eval/background_credit_rate.py` (chef ≤ 5 % and ≤ 0.5 × web) |
 
 ## Verification
 
@@ -233,13 +340,34 @@ After this task, the embedding configuration (model, text mode, description sour
 |---|---|
 | `check_skill_descriptions.py` | passes (4 warnings: 3 seed, 1 frozen) |
 | Benchmark seed entries | unchanged (283) |
-| New tests | `tests/test_role_skill_descriptions.py`: 22 alias cases, 7 "ambiguous word is not an alias" cases, 8 ESCO-map and 7 O*NET-map cases, map targets described, frozen exception. `test_index_renormalises_stale_stored_keys` |
+| New tests (Part 2) | `tests/test_role_skill_descriptions.py`: 22 alias cases, 7 "ambiguous word is not an alias" cases, 8 ESCO-map and 7 O*NET-map cases, map targets described, frozen exception. `test_index_renormalises_stale_stored_keys` |
+| New tests (Part 4) | `get_related_threshold` by kind with guards (other model, name text, ESCO description text) and an unknown kind; `search_related` kind reporting (described ↔ described, mixed, neither described) with one threshold; the `mixed_threshold_unmeasured` flag; `test_background_credit_rate` (slow) |
 | Changed test expectations | description count bound ≤ 1,000 → ≤ 1,200; cleaning case "Epic Systems" → Epic EHR (unknown example now "Frobnicator Suite") |
-| Flakiness loops | before the fix: 1 failure in 9 runs of the professions tests (the test above). After the fix: professions + role-skill tests **20/20** passing (99 tests each), full AI suite **5/5** passing (388 passed, 1 skipped each) |
+| Flakiness loops | before the fix: 1 failure in 9 runs of the professions tests. After the fix: professions + role-skill tests **20/20** passing (99 tests each), full AI suite **5/5** passing (388 passed, 1 skipped each) |
+| Final AI suite (Part 4) | **392 passed, 1 skipped** (4 slow deselected); slow tests (`-m slow`): 2 passed, 2 expected failures (React ↔ Python, Redux ↔ Redis) |
 
 ## Suggested SDS updates
 
-*(Added after Part 3.)*
+**§4.2 — add an "Embedding evaluation" subsection covering three benchmark rounds and the real-data check:**
+
+> "Skill similarity uses BAAI/bge-small-en-v1.5 sentence embeddings (384 dimensions, local CPU). Each skill is embedded on its own; no averaged role or user vectors are used. It was chosen and calibrated in three benchmark rounds on hand-labelled skill pairs.
+>
+> **Round 1** (245 pairs) compared five models with bare-name and 'Name: description' text. Curated descriptions raised related-vs-unrelated ROC-AUC from about 0.87 to about 0.996.
+>
+> **Round 2** (337 pairs, including 92 hard negatives: technical skills from different areas such as React–Python) kept bge-small with descriptions: AUC 0.990 against hard negatives, Recall@5 0.720. The related threshold was set at cosine 0.73, the lowest value with at least 95 % precision (94 % recall).
+>
+> **Round 3** (153 pairs: a curated user skill against an ESCO phrase or knowledge skill; 70 % development / 30 % held-out split) compared three ways of embedding ESCO skills: label only, label with the first sentence of its ESCO description, and label with the full description. Label only was best (held-out AUC 0.985 against hard negatives, against 0.903 and 0.892); ESCO descriptions are therefore not used.
+>
+> A lower threshold for mixed pairs (0.61, held-out precision and recall 0.968) was rejected after a check on the real profession database. An unrelated profile (cooking, customer service, inventory management) received related credit for 60.8 % of ESCO phrase skills at 0.61, the same as a web developer profile (60.4 %); at 0.73 the rates were 2.8 % and 6.0 %.
+>
+> **The final configuration is frozen until Module 5's end-to-end evaluation:**
+> - one related threshold of 0.73, valid only for this model and text setup;
+> - a mutual-nearest-neighbour check (K = 10) for pairs of described skills;
+> - credit: identical skill 1.0, related 0.5, otherwise 0.
+>
+> A background-credit regression check (the unrelated profile's related-credit rate must stay ≤ 5 % and at most half the web profile's) is run for any change to thresholds or matching."
+
+**Table 4.2:** add FAISS (`faiss-cpu`, `IndexFlatIP`) for the role-skill index, if not already added by 09b.
 
 ## Appendix A — top 200 undescribed role skills (before Part 2)
 

@@ -37,7 +37,7 @@ import faiss
 import numpy as np
 
 from app.config.settings import settings
-from app.services.embeddings.descriptions import text_mode
+from app.services.embeddings.descriptions import get_description_provider, text_mode
 from app.services.embeddings.matching_config import get_related_threshold
 from app.services.embeddings.model import ModelNotReady, get_embedder
 from app.services.embeddings.vector_store import plan_texts
@@ -292,38 +292,66 @@ class RoleSkillIndex:
     def roles_for_skill(self, key: str) -> List[dict]:
         return list(self._ready_snapshot().roles.get(key, []))
 
-    def search_related(self, user_keys: List[str], user_matrix: np.ndarray, k: int = 50) -> List[dict]:
+    def search_related(self, user_keys: List[str], user_matrix: np.ndarray, k: int = 50,
+                       user_names: Optional[List[str]] = None) -> List[dict]:
         """
-        Role skills related to the user's skills: cosine >= the related
-        threshold, excluding role skills the user already has (those are
-        exact matches). mutual_nn: the role skill is among the user skill's
-        MUTUAL_NN_K nearest role skills AND the user skill is among the role
-        skill's MUTUAL_NN_K nearest user skills.
+        Role skills related to the user's skills, excluding role skills the user
+        already has (those are exact matches).
+
+        Each pair has a KIND (matching_config): 'mixed' when the user skill has a
+        curated description and the role skill does not, else 'described'. Both
+        kinds use the same guarded threshold (0.73); the kind is reported so the
+        caller can apply the credit rule (mutual_nn only for described pairs).
+        If the threshold is not valid for mixed pairs in the active setup (ESCO
+        text other than labels), mixed pairs use the described threshold and are
+        flagged `mixed_threshold_unmeasured`.
+
+        mutual_nn: the role skill is among the user skill's MUTUAL_NN_K nearest
+        role skills AND the user skill is among the role skill's MUTUAL_NN_K
+        nearest user skills. Reported for every pair; whether it is required is
+        the caller's credit rule (Module 5).
         """
         snapshot = self._ready_snapshot()
-        threshold = get_related_threshold(snapshot.meta.get("model"), snapshot.meta.get("text_mode"))
-        if threshold is None:
+        model, mode = snapshot.meta.get("model"), snapshot.meta.get("text_mode")
+        described_threshold = get_related_threshold(model, mode, kind="described")
+        if described_threshold is None:
             raise ThresholdUnavailable("No related threshold for the index's model and text mode")
+        mixed_threshold = get_related_threshold(model, mode, kind="mixed")
+        mixed_fallback = mixed_threshold is None
+        if mixed_fallback:
+            mixed_threshold = described_threshold
         if not len(user_keys):
             return []
+        provider = get_description_provider()
+        names = user_names or user_keys
+        user_described = [provider.lookup(n) is not None for n in names]
         user_matrix = np.ascontiguousarray(user_matrix, dtype=np.float32)
         owned = set(user_keys)
         nn = settings.MUTUAL_NN_K
         k = min(max(k, nn + len(owned)), snapshot.index.ntotal)
         scores, ids = snapshot.index.search(user_matrix, k)
+        lowest = min(described_threshold, mixed_threshold)
 
         user_top: List[List[str]] = []  # per user skill: its nearest role skills (not owned)
         for row in ids:
             ranked = [snapshot.keys[i] for i in row if i >= 0 and snapshot.keys[i] not in owned]
             user_top.append(ranked[:nn])
 
+        role_described: Dict[str, bool] = {}
         results = []
         for u, (row_scores, row_ids) in enumerate(zip(scores, ids)):
             for score, role_id in zip(row_scores, row_ids):
-                if role_id < 0 or score < threshold:
+                if role_id < 0 or score < lowest:
                     continue
                 role_key = snapshot.keys[role_id]
                 if role_key in owned:
+                    continue
+                role_name = snapshot.names.get(role_key, role_key)
+                if role_key not in role_described:
+                    role_described[role_key] = provider.lookup(role_name) is not None
+                kind = "mixed" if user_described[u] and not role_described[role_key] else "described"
+                threshold = mixed_threshold if kind == "mixed" else described_threshold
+                if score < threshold:
                     continue
                 # The role skill's nearest user skills.
                 sims = user_matrix @ snapshot.matrix[role_id]
@@ -331,10 +359,13 @@ class RoleSkillIndex:
                 results.append({
                     "user_key": user_keys[u],
                     "role_key": role_key,
-                    "role_name": snapshot.names.get(role_key, role_key),
+                    "role_name": role_name,
+                    "kind": kind,
+                    "threshold": threshold,
                     "similarity": round(float(score), 4),
                     "mutual_nn": role_key in user_top[u] and u in nearest_users,
                     "roles": len(snapshot.roles.get(role_key, [])),
+                    **({"mixed_threshold_unmeasured": True} if kind == "mixed" and mixed_fallback else {}),
                 })
         return sorted(results, key=lambda r: -r["similarity"])
 
