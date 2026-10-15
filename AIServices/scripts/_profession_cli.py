@@ -18,9 +18,12 @@ from app.config import database as database_module  # noqa: E402
 from app.config.settings import settings  # noqa: E402
 from app.services.embeddings.model import get_manager  # noqa: E402
 from app.services.embeddings.vector_store import ensure_embedding_indexes  # noqa: E402
-from app.services.professions.imports import publish_import  # noqa: E402
 from app.services.taxonomy import jobs  # noqa: E402
-from app.services.taxonomy.cli import preview_from_directory  # noqa: E402
+from app.services.taxonomy.cli import BackgroundCheckFailed, preview_from_directory, publish_from_directory  # noqa: E402
+from app.services.taxonomy.heartbeat import service_seems_running  # noqa: E402
+from app.services.taxonomy.lock import TaxonomyBusy  # noqa: E402
+from app.services.taxonomy.publishing import PublishRefused  # noqa: E402
+from app.services.taxonomy.snapshots import ensure_snapshot_indexes  # noqa: E402
 from app.services.taxonomy.pipeline import ensure_diff_indexes  # noqa: E402
 from app.services.taxonomy.uploads import UploadRejected, cancel_job  # noqa: E402
 
@@ -65,20 +68,43 @@ async def run(source: str, args) -> int:
     try:
         if args.dry_run:
             return await dry_run(source, args, db)
-        if not args.no_index:
-            await load_model(db)
-        report = await publish_import(source, args.data_dir, args.version, actor=args.actor, db=db,
-                                      rebuild=not args.no_index)
-        print(json.dumps(report.to_dict(), indent=2, ensure_ascii=False, default=str))
-        if not report.ok:
-            print("Import failed: " + "; ".join(report.errors), file=sys.stderr)
-            return 1
-        if not args.dry_run:
-            print("Done. A running AI service picks up the new index on restart or after "
-                  "POST /internal/index/rebuild.", file=sys.stderr)
-        return 0
+        return await publish(source, args, db)
     finally:
         client.close()
+
+
+async def publish(source: str, args, db) -> int:
+    """09c: the same job pipeline as the admin UI: preview, then publish with a snapshot,
+    an atomic swap, the index rebuild and the post-publish checks (rolled back on failure)."""
+    await jobs.ensure_job_indexes(db)
+    await ensure_diff_indexes(db)
+    await ensure_snapshot_indexes(db)
+    await load_model(db)
+    try:
+        job = await publish_from_directory(source, args.data_dir, args.version, db=db,
+                                           acknowledge=args.i_understand_background_check, actor=args.actor)
+    except UploadRejected as exc:
+        print("Upload rejected: " + exc.safe_message, file=sys.stderr)
+        return 1
+    except BackgroundCheckFailed:
+        print("Refused: the background credit check did not pass on the staged data. Review the dry run "
+              "(--dry-run) and re-run with --i-understand-background-check to publish anyway.", file=sys.stderr)
+        return 1
+    except (PublishRefused, TaxonomyBusy) as exc:
+        print("Refused: " + (getattr(exc, "safe_message", None) or str(exc)), file=sys.stderr)
+        return 1
+    report = {k: jobs.public(job).get(k) for k in ("job_id", "source", "dataset_version", "status", "created_by",
+                                                   "snapshot_id", "validation_errors", "diff_summary",
+                                                   "post_publish_checks", "error")}
+    print(json.dumps(report, indent=2, ensure_ascii=False, default=str))
+    if job["status"] != jobs.PUBLISHED:
+        print(f"Publish did not complete: {job['status']} ({job.get('error') or '; '.join(job.get('validation_errors') or [])})",
+              file=sys.stderr)
+        return 1
+    if await service_seems_running(db):
+        print("The AI service is running: its in-memory index is now out of date. Rebuild it with "
+              "POST /internal/index/rebuild or restart the service.", file=sys.stderr)
+    return 0
 
 
 def main(source: str, doc: str) -> None:
@@ -87,6 +113,7 @@ def main(source: str, doc: str) -> None:
                         help="validate and preview through the import-job pipeline (created_by cli); write nothing live")
     parser.add_argument("--data-dir", help="dataset folder (default: PROFESSION_DATA_DIR/<source>)")
     parser.add_argument("--version", help="dataset version label (default from settings)")
-    parser.add_argument("--actor", default="cli", help="who ran the import (stored in the import log)")
-    parser.add_argument("--no-index", action="store_true", help="write professions only; skip embedding and the index rebuild")
+    parser.add_argument("--actor", default="cli", help="who ran the import (the job's created_by; default cli)")
+    parser.add_argument("--i-understand-background-check", action="store_true",
+                        help="publish even if the background credit check fails on the staged data")
     sys.exit(asyncio.run(run(source, parser.parse_args())))

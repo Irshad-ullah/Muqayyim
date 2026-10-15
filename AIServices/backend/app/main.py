@@ -27,7 +27,9 @@ from app.routes.internal_logs_routes import router as internal_logs_router
 from app.routes.profession_routes import router as profession_router
 from app.routes.taxonomy_routes import router as taxonomy_router
 from app.services.taxonomy.heartbeat import run_heartbeat
-from app.services.taxonomy.jobs import ensure_job_indexes, recover_interrupted_jobs
+from app.services.taxonomy.jobs import ensure_job_indexes
+from app.services.taxonomy.publishing import recover as recover_taxonomy_jobs, run_recovery
+from app.services.taxonomy.snapshots import ensure_snapshot_indexes
 from app.services.taxonomy.uploads import run_cleanup
 from app.services.taxonomy.pipeline import ensure_diff_indexes
 from app.config.database import get_database
@@ -89,7 +91,9 @@ async def lifespan(app: FastAPI):
         try:
             await ensure_job_indexes(db)
             await ensure_diff_indexes(db)
-            recovered = await recover_interrupted_jobs(db)
+            await ensure_snapshot_indexes(db)
+            # Jobs interrupted by a restart; a crashed publish is restored from its snapshot.
+            recovered = await recover_taxonomy_jobs(db, at_startup=True)
             if any(recovered.values()):
                 logger.warning("Taxonomy jobs interrupted by a restart: %s", recovered)
         except Exception as exc:  # noqa: BLE001 — the API still starts
@@ -98,6 +102,8 @@ async def lifespan(app: FastAPI):
             embedding_tasks.append(asyncio.create_task(run_heartbeat(db)))
         # Staging cleanup at startup and then every TAXONOMY_CLEANUP_INTERVAL_SECONDS.
         embedding_tasks.append(asyncio.create_task(run_cleanup(db)))
+        # A publish whose lock was still held at startup is recovered once its lock expires.
+        embedding_tasks.append(asyncio.create_task(run_recovery(db)))
     logger.info("✓ Application started successfully")
     
     yield

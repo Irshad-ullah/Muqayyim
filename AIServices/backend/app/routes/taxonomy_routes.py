@@ -10,6 +10,10 @@ by the gateway); X-Internal-Key required.
   POST /internal/admin/taxonomy/jobs/{job_id}/cancel
   POST /internal/admin/taxonomy/jobs/{job_id}/preview   stage + diff + checks (202, background)
   GET  /internal/admin/taxonomy/jobs/{job_id}/diff      ?section=&page=&limit= detail rows
+  POST /internal/admin/taxonomy/jobs/{job_id}/publish   {acknowledge_background_warning, actor} → 202
+  GET  /internal/admin/taxonomy/snapshots               kept snapshots (?pool=publish|edit)
+  GET  /internal/admin/taxonomy/snapshots/{id}          one snapshot + what a restore would undo
+  POST /internal/admin/taxonomy/snapshots/{id}/restore  {actor} → whole-state restore + checks
   GET  /internal/admin/taxonomy/lock            who holds the taxonomy lock, if anyone
 """
 
@@ -22,8 +26,10 @@ from starlette.datastructures import UploadFile
 from app.config.database import get_database
 from app.middleware.internal_auth import require_internal_key
 from app.config.settings import settings
-from app.services.taxonomy import jobs, pipeline, uploads
-from app.services.taxonomy.lock import current_lock
+from pydantic import BaseModel, ConfigDict, Field
+
+from app.services.taxonomy import jobs, pipeline, publishing, snapshots, uploads
+from app.services.taxonomy.lock import TaxonomyBusy, current_lock
 
 router = APIRouter(prefix="/internal/admin/taxonomy", tags=["Internal"], dependencies=[Depends(require_internal_key)])
 
@@ -145,3 +151,70 @@ async def diff_detail(
     result = await pipeline.diff_page(job_id, section, page, limit)
     return {"success": True, "data": result["items"],
             "pagination": {k: result[k] for k in ("page", "limit", "total", "pages")}}
+
+
+def busy(exc: TaxonomyBusy) -> JSONResponse:
+    return error(409, "TAXONOMY_BUSY", str(exc), lock=exc.current)
+
+
+class _PublishIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    acknowledge_background_warning: bool = False
+    actor: str = Field("unknown", max_length=100)
+
+
+@router.post("/jobs/{job_id}/publish")
+async def publish(job_id: str, body: _PublishIn):
+    """Publish a previewed job (202). 409 busy / not previewed / live data changed; 422 needs the acknowledgement."""
+    if get_database() is None:
+        return no_db()
+    try:
+        job = await publishing.start_publish(job_id, body.acknowledge_background_warning, body.actor)
+    except jobs.JobNotFound:
+        return error(404, "NOT_FOUND", "Import job not found")
+    except jobs.JobStateError as exc:
+        return error(409, "JOB_STATE", f"Only a previewed job can be published; this one is {exc.status}",
+                     job_status=exc.status)
+    except publishing.PublishRefused as exc:
+        return error(exc.status, exc.code, exc.safe_message)
+    except TaxonomyBusy as exc:
+        return busy(exc)
+    return JSONResponse(status_code=202, content={"success": True, "data": jobs.public(job)})
+
+
+@router.get("/snapshots")
+async def list_snapshots(pool: Optional[Literal["publish", "edit"]] = None):
+    if get_database() is None:
+        return no_db()
+    return {"success": True, "data": await snapshots.list_snapshots(pool=pool)}
+
+
+@router.get("/snapshots/{snapshot_id}")
+async def get_snapshot(snapshot_id: str):
+    """The snapshot and what restoring it would undo (for the confirmation dialog)."""
+    if get_database() is None:
+        return no_db()
+    try:
+        return {"success": True, "data": await snapshots.undone_by_restore(snapshot_id)}
+    except snapshots.SnapshotNotFound:
+        return error(404, "NOT_FOUND", "Snapshot not found")
+
+
+class _RestoreIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    actor: str = Field("unknown", max_length=100)
+
+
+@router.post("/snapshots/{snapshot_id}/restore")
+async def restore(snapshot_id: str, body: _RestoreIn):
+    if get_database() is None:
+        return no_db()
+    try:
+        result = await publishing.restore(snapshot_id, body.actor)
+    except snapshots.SnapshotNotFound:
+        return error(404, "NOT_FOUND", "Snapshot not found")
+    except TaxonomyBusy as exc:
+        return busy(exc)
+    except snapshots.SnapshotError as exc:
+        return error(422, "SNAPSHOT_UNUSABLE", exc.safe_message)
+    return {"success": True, "data": result}

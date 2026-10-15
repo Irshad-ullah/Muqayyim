@@ -90,6 +90,11 @@ class Settings(BaseSettings):
     # Staging files of unfinished jobs are deleted after this many hours (job → cancelled).
     TAXONOMY_STAGING_TTL_HOURS: int = int(os.getenv("TAXONOMY_STAGING_TTL_HOURS", "24"))
     TAXONOMY_CLEANUP_INTERVAL_SECONDS: int = int(os.getenv("TAXONOMY_CLEANUP_INTERVAL_SECONDS", "3600"))
+    # Snapshot retention: publish / restore pool and direct-edit pool (09c Part 4).
+    TAXONOMY_SNAPSHOTS_KEEP: int = int(os.getenv("TAXONOMY_SNAPSHOTS_KEEP", "5"))
+    TAXONOMY_EDIT_SNAPSHOTS_KEEP: int = int(os.getenv("TAXONOMY_EDIT_SNAPSHOTS_KEEP", "10"))
+    # How often a crashed publish (job left in "publishing", lock expired) is looked for.
+    TAXONOMY_RECOVERY_INTERVAL_SECONDS: int = int(os.getenv("TAXONOMY_RECOVERY_INTERVAL_SECONDS", "60"))
     EMBEDDING_CACHE_DIR: str = os.getenv("EMBEDDING_CACHE_DIR", "./models")
     EMBEDDING_AUTOLOAD: bool = os.getenv("EMBEDDING_AUTOLOAD", "true").lower() != "false"
     EMBEDDING_WORKER_INTERVAL_SECONDS: int = int(os.getenv("EMBEDDING_WORKER_INTERVAL_SECONDS", "30"))

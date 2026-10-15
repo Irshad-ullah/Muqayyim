@@ -241,16 +241,22 @@ def _coverage(db_name: str, professions: str, esco: str) -> dict:
     return {"coverage": result["coverage"], "undescribed_total": result["undescribed_total"], "groups": result["groups"]}
 
 
-async def run_checks(db, collection: str, esco_collection: str, index_dir: Path,
+async def run_checks(db, collection: str, esco_collection: str, index_dir: Optional[Path],
                      live_coverage: bool = True) -> dict:
-    """Coverage (live and the given data) and the background credit check on the given data."""
+    """Coverage (live and the given data) and the background credit check on the given data.
+    For the live collections (post-publish / post-restore) the live index is used."""
     result = {}
-    if live_coverage:
+    live = collection == PROFESSIONS
+    if live_coverage and not live:
         result["coverage_live"] = await asyncio.to_thread(_coverage, db.name, PROFESSIONS, ESCO_SKILLS)
     result["coverage"] = await asyncio.to_thread(_coverage, db.name, collection, esco_collection)
     credit = _load_eval("background_credit_rate")
     try:
-        bg = await credit.run(db=db, collection=collection, index_dir=index_dir, model_wait_seconds=MODEL_WAIT_SECONDS)
+        if live:
+            bg = await credit.run(db=db, model_wait_seconds=MODEL_WAIT_SECONDS)
+        else:
+            bg = await credit.run(db=db, collection=collection, index_dir=index_dir,
+                                  model_wait_seconds=MODEL_WAIT_SECONDS)
         result["background"] = {
             "check": bg["check"],
             "rates": {name: {k: p[k] for k in ("pooled_related_pct", "median_profession_related_pct", "related_by_kind")}
@@ -262,6 +268,10 @@ async def run_checks(db, collection: str, esco_collection: str, index_dir: Path,
         result["background"] = {"error": str(exc) or "The embedding model did not become ready in time"}
         result["background_warning"] = True
     return result
+
+
+async def between_swaps_hook() -> None:
+    """Called between the two collection renames of a publish / restore (tests simulate a crash here)."""
 
 
 # ── preview (job step) ────────────────────────────────────────────────────────

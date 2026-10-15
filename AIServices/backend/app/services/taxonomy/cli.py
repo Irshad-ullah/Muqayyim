@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Optional
 
 from app.services.professions.imports import default_data_dir, default_version
-from app.services.taxonomy import jobs, pipeline, uploads
+from app.services.taxonomy import jobs, pipeline, publishing, uploads
 
 CLI_ACTOR = "cli"
 
@@ -53,3 +53,21 @@ async def preview_from_directory(source: str, data_dir: Optional[str] = None, ve
     await pipeline.start_preview(job["job_id"], db=db)
     await jobs.wait_for_background()
     return await jobs.get_job(job["job_id"], db=db)
+
+
+class BackgroundCheckFailed(Exception):
+    """The staged data failed the background credit check and it was not acknowledged."""
+
+
+async def publish_from_directory(source: str, data_dir: Optional[str] = None, version: Optional[str] = None,
+                                 db=None, acknowledge: bool = False, actor: str = CLI_ACTOR) -> dict:
+    """Upload → validate → preview → publish (inline), exactly as the admin UI does.
+    A failed background check needs `acknowledge` (--i-understand-background-check);
+    without it the job is cancelled and BackgroundCheckFailed is raised."""
+    job = await preview_from_directory(source, data_dir, version, db, actor)
+    if job["status"] != jobs.PREVIEWED:
+        return job
+    if (job.get("checks") or {}).get("background_warning") and not acknowledge:
+        await uploads.cancel_job(job["job_id"], note="Background check failed; not acknowledged", db=db)
+        raise BackgroundCheckFailed(job["job_id"])
+    return await publishing.start_publish(job["job_id"], acknowledge, actor, db, owner_prefix="cli", wait=True)
