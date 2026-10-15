@@ -10,6 +10,7 @@ Checks:
     and IDENTICAL (the 0.72 related threshold was calibrated on them)
   - non-seed descriptions: 8–20 words, no banned marketing words
   - no non-seed description names more than 2 other canonical skills
+    (FROZEN_OVER_LIMIT: older descriptions pushed over by a newer canonical name → warning)
   - every entry has a category (app/data/skill_categories.json); totals per category
 
 Usage (AIServices venv):
@@ -34,6 +35,12 @@ SEED = ROOT / "data" / "benchmark_seed_skills.json"
 
 MIN_WORDS, MAX_WORDS, MAX_OTHER_SKILLS = 8, 20, 2
 BANNED = ["powerful", "popular", "best", "leading", "modern", "easy", "seamless", "cutting-edge"]
+# Existing descriptions are never edited. When a later-added canonical skill makes an
+# existing description name more than MAX_OTHER_SKILLS skills, it is listed here and
+# reported as a warning instead of an error.
+FROZEN_OVER_LIMIT = {
+    "htmx": "AJAX became a canonical skill in 09b2",
+}
 
 if str(BACKEND) not in sys.path:
     sys.path.insert(0, str(BACKEND))
@@ -111,7 +118,7 @@ def run_checks(vocabulary=None) -> dict:
         is_seed = name in seed
         mentioned = [other for other, p in patterns.items() if other != name and p.search(text)]
         if len(mentioned) > MAX_OTHER_SKILLS:
-            offenders.append({"name": name, "seed": is_seed, "mentions": mentioned})
+            offenders.append({"name": name, "seed": is_seed, "frozen": name in FROZEN_OVER_LIMIT, "mentions": mentioned})
         if is_seed:
             continue
         words = word_count(text)
@@ -121,8 +128,9 @@ def run_checks(vocabulary=None) -> dict:
         if hit:
             errors.append(f"banned word {hit.group(0)!r}: {name!r}")
     for o in offenders:
-        (warnings if o["seed"] else errors).append(
-            f"{'seed ' if o['seed'] else ''}description of {o['name']!r} names {len(o['mentions'])} other skills: {o['mentions']}"
+        label = "seed " if o["seed"] else ("frozen " if o["frozen"] else "")
+        (warnings if o["seed"] or o["frozen"] else errors).append(
+            f"{label}description of {o['name']!r} names {len(o['mentions'])} other skills: {o['mentions']}"
         )
 
     for name in descriptions:
@@ -150,7 +158,7 @@ def main() -> int:
     for category, count in report["by_category"].items():
         print(f"  {count:4d}  {category}")
     if report["warnings"]:
-        print(f"\nWarnings ({len(report['warnings'])}, seed entries are kept unchanged):")
+        print(f"\nWarnings ({len(report['warnings'])}, seed and frozen entries are kept unchanged):")
         for w in report["warnings"]:
             print(f"  - {w}")
     if report["errors"]:

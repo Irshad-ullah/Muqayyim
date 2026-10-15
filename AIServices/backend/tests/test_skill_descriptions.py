@@ -31,7 +31,7 @@ def load_checker():
 def test_curated_descriptions_pass_all_checks():
     report = load_checker().run_checks()
     assert report["errors"] == []
-    assert 800 <= report["total"] <= 1000
+    assert 800 <= report["total"] <= 1200  # 985 (09a2) + 108 role skills (09b2)
 
 
 def test_benchmark_seed_entries_are_unchanged():

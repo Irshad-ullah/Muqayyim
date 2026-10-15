@@ -41,7 +41,13 @@ from app.services.embeddings.descriptions import text_mode
 from app.services.embeddings.matching_config import get_related_threshold
 from app.services.embeddings.model import ModelNotReady, get_embedder
 from app.services.embeddings.vector_store import plan_texts
-from app.services.professions.role_skills import active_professions, distinct_role_skills, ensure_role_skill_vectors
+from app.services.professions.store import skill_rank
+from app.services.professions.role_skills import (
+    active_professions,
+    current_skill,
+    distinct_role_skills,
+    ensure_role_skill_vectors,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +83,8 @@ def state_hash(professions: List[dict], model: str, mode: str) -> str:
     pairs = distinct_role_skills(professions)
     digest = hashlib.sha256(f"{model}|{mode}".encode())
     for profession in professions:
-        skills = sorted((s["key"], s["type"], bool(s.get("hot")), bool(s.get("in_demand"))) for s in profession.get("skills") or [])
+        skills = sorted((current_skill(s)[0], s["type"], bool(s.get("hot")), bool(s.get("in_demand")))
+                        for s in profession.get("skills") or [])
         digest.update(json.dumps([profession["profession_id"], skills]).encode())
     for planned in sorted(plan_texts(pairs, mode), key=lambda p: p.key):
         digest.update(f"{planned.key}={planned.hash}".encode())
@@ -85,17 +92,23 @@ def state_hash(professions: List[dict], model: str, mode: str) -> str:
 
 
 def role_map(professions: List[dict]) -> Dict[str, List[dict]]:
-    roles: Dict[str, List[dict]] = {}
+    """key → [{profession_id, title, type, hot, in_demand}], one entry per profession
+    (the strongest type wins if two stored names now share a key)."""
+    roles: Dict[str, Dict[str, dict]] = {}
     for profession in professions:
         for skill in profession.get("skills") or []:
-            roles.setdefault(skill["key"], []).append({
+            entry = {
                 "profession_id": profession["profession_id"],
                 "title": profession.get("title"),
                 "type": skill["type"],
                 "hot": bool(skill.get("hot")),
                 "in_demand": bool(skill.get("in_demand")),
-            })
-    return roles
+            }
+            by_profession = roles.setdefault(current_skill(skill)[0], {})
+            current = by_profession.get(profession["profession_id"])
+            if current is None or skill_rank(entry) > skill_rank(current):
+                by_profession[profession["profession_id"]] = entry
+    return {key: list(entries.values()) for key, entries in roles.items()}
 
 
 @dataclass

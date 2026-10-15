@@ -1,5 +1,6 @@
 """09b: profession database (O*NET + ESCO importers, CRUD) and the role-skill FAISS index."""
 
+import hashlib
 import shutil
 from pathlib import Path
 
@@ -102,7 +103,8 @@ def test_bom_and_multiline_fields_are_read_by_header():
     ("SAS software", "SAS"),
     ("The MathWorks MATLAB", "MATLAB"),
     ("Jenkins CI", "Jenkins"),
-    ("Epic Systems", "Epic Systems"),  # unknown: kept as its own skill
+    ("Epic Systems", "Epic EHR"),
+    ("Frobnicator Suite", "Frobnicator Suite"),  # unknown: kept as its own skill
 ])
 def test_clean_onet_label(label, expected):
     assert cleaning.clean_onet_label(label) == expected
@@ -246,7 +248,10 @@ def test_esco_missing_file(tmp_path):
 
 # ── Stub embedder with controlled geometry ───────────────────────────────────
 class StubEmbedder:
-    """Vectors from a table keyed by skill name (the text before ':'); unknown names are random."""
+    """Vectors from a table keyed by skill name (the text before ':'); unknown names get a
+    deterministic random vector in dimensions FREE_DIMS.. (table vectors use only 0..FREE_DIMS-1)."""
+
+    FREE_DIMS = 5
 
     model_name = "stub/geometry"
 
@@ -264,8 +269,12 @@ class StubEmbedder:
             name = text.split(":", 1)[0].strip().lower()
             vec = self.table.get(name)
             if vec is None:
-                seed = abs(hash(name)) % (2**32)
-                vec = np.random.default_rng(seed).standard_normal(self.dimension)
+                # Deterministic (hash() is randomised per process) and confined to dimensions the
+                # table never uses, so an unknown skill is exactly orthogonal to every table skill.
+                # (A per-process random vector once scored >= 0.73 against React: flaky test.)
+                seed = int.from_bytes(hashlib.sha256(name.encode()).digest()[:8], "little")
+                vec = np.zeros(self.dimension)
+                vec[self.FREE_DIMS:] = np.random.default_rng(seed).standard_normal(self.dimension - self.FREE_DIMS)
             rows.append(np.pad(vec, (0, self.dimension - len(vec))))
         return l2_normalise(np.array(rows))
 
@@ -274,6 +283,7 @@ class StubEmbedder:
 
 
 def unit(*values):
+    assert len(values) <= StubEmbedder.FREE_DIMS  # keep table vectors out of the unknown-skill dimensions
     v = np.zeros(8, dtype=np.float32)
     v[: len(values)] = values
     return v / np.linalg.norm(v)
@@ -420,6 +430,26 @@ async def test_index_build_persist_and_reload(db, index):
     assert await stale.load_or_build(db) == INDEX_READY
     assert stale.last_build_seconds is not None
     assert "rust" in stale.snapshot.position
+
+
+async def test_index_renormalises_stale_stored_keys(db, index):
+    # Stored before "SAS language" became an alias of SAS: the build must not fail and
+    # both names collapse to one key with one entry for the profession (strongest type).
+    from app.services.professions.store import profession_doc
+
+    doc = profession_doc(profession_id="esco:old", title="Old", alt_titles=[], description="", category="Other",
+                         source="esco", source_code="", source_version="ESCO v1.2.1",
+                         skills=[make_skill(n, "optional", n) for n in ["Python", "SQL", "Git", "Docker", "Linux"]])
+    doc["skills"] += [
+        {"name": "SAS language", "key": "sas language", "type": "optional", "hot": False, "in_demand": False, "original_label": "SAS language"},
+        {"name": "SAS", "key": "sas", "type": "essential", "hot": False, "in_demand": False, "original_label": "SAS"},
+    ]
+    await db[PROFESSIONS].insert_one(doc)
+    assert await index.rebuild(db) == INDEX_READY
+    assert "sas language" not in index.snapshot.position and "sas" in index.snapshot.position
+    assert index.roles_for_skill("sas") == [
+        {"profession_id": "esco:old", "title": "Old", "type": "essential", "hot": False, "in_demand": False}
+    ]
 
 
 async def test_inactive_professions_are_not_indexed(db, index):

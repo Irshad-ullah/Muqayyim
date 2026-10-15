@@ -11,6 +11,7 @@ import numpy as np
 
 from app.config.database import get_database
 from app.services.embeddings.descriptions import get_description_provider
+from app.services.embeddings.normalise import normalise_skill
 from app.services.embeddings.vector_store import get_skill_vectors
 from app.services.professions.store import PROFESSIONS, active_filter
 
@@ -23,12 +24,20 @@ async def active_professions(db=None) -> List[dict]:
     return [doc async for doc in db[PROFESSIONS].find(active_filter(), projection).sort("profession_id", 1)]
 
 
+def current_skill(skill: dict) -> Tuple[str, str]:
+    """(key, name) under TODAY's alias table. A stored key can be stale after an alias
+    change (e.g. "SAS language" became an alias of SAS) until the source is re-imported."""
+    key, name = normalise_skill(skill["name"])
+    return (key, name) if key else (skill["key"], skill["name"])
+
+
 def distinct_role_skills(professions: List[dict]) -> List[Tuple[str, str]]:
     """[(key, name)] over the given professions, first-seen name per key."""
     seen: Dict[str, str] = {}
     for profession in professions:
         for skill in profession.get("skills") or []:
-            seen.setdefault(skill["key"], skill["name"])
+            key, name = current_skill(skill)
+            seen.setdefault(key, name)
     return list(seen.items())
 
 

@@ -16,6 +16,7 @@ from app.services.embeddings.descriptions import CURATED_FILE
 from app.services.embeddings.normalise import canonical_name, normalise_skill
 
 NAME_MAP_FILE = Path(__file__).resolve().parents[2] / "data" / "onet_name_map.json"
+ESCO_MAP_FILE = Path(__file__).resolve().parents[2] / "data" / "esco_name_map.json"
 
 
 @lru_cache(maxsize=1)
@@ -121,9 +122,18 @@ def clean_onet_label(label: str) -> str:
 _QUALIFIER = re.compile(r"^(?P<base>.+?)\s*\((?P<qualifier>[^()]*)\)\s*$")
 
 
+@lru_cache(maxsize=1)
+def _esco_map() -> Dict[str, str]:
+    data = json.loads(ESCO_MAP_FILE.read_text(encoding="utf8"))
+    return {k.lower(): v for k, v in data["map"].items()}
+
+
 def clean_esco_label(label: str) -> str:
-    """"Python (computer programming)" → "Python" when the base is a known skill; else unchanged."""
+    """"Python (computer programming)" → "Python" when the base is a known skill; else unchanged.
+    Exact labels in esco_name_map.json (ambiguous base words such as "Source") are mapped first."""
     text = " ".join((label or "").split())
+    if text.lower() in _esco_map():
+        return curated_spelling(_esco_map()[text.lower()])
     match = _QUALIFIER.match(text)
     if match and known(match.group("base")):
         return curated_spelling(match.group("base"))

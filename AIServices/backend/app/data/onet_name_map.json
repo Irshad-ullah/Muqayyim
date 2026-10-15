@@ -30,7 +30,11 @@
     "React": "React",
     "Microsoft Internet Information Services (IIS)": "Internet Information Services",
     "Microsoft Internet Information Services (IIS) Manager": "Internet Information Services",
-    "Extensible markup language XML": "XML"
+    "Extensible markup language XML": "XML",
+    "ESRI ArcGIS ArcPy": "ArcPy",
+    "ESRI ArcGIS Survey 123": "Survey123",
+    "RockWare ArcMap": "ArcMap",
+    "Geographic information system GIS systems": "GIS"
   },
   "vendor_prefixes": [
     "Microsoft",

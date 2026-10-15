@@ -1,0 +1,10 @@
+{
+  "_comment": "ESCO skill labels → skill names, applied before qualifier stripping (09b2). Only for labels whose base word is too ambiguous to be a global alias in skill_aliases.json (e.g. 'Source', 'Salt').",
+  "map": {
+    "MDX": "Multidimensional Expressions",
+    "Salt (tools for software configuration management)": "SaltStack",
+    "RAGE (digital game creation systems)": "RAGE Engine",
+    "Shiva (digital game creation systems)": "ShiVa Engine",
+    "Source (digital game creation systems)": "Source Engine"
+  }
+}
