@@ -28,6 +28,7 @@ from app.routes.profession_routes import router as profession_router
 from app.routes.taxonomy_routes import router as taxonomy_router
 from app.services.taxonomy.heartbeat import run_heartbeat
 from app.services.taxonomy.jobs import ensure_job_indexes, recover_interrupted_jobs
+from app.services.taxonomy.uploads import run_cleanup
 from app.config.database import get_database
 from app.services.professions.imports import refresh_esco_descriptions
 from app.services.professions.role_index import get_role_index
@@ -93,6 +94,8 @@ async def lifespan(app: FastAPI):
             logger.error("Taxonomy job recovery failed: %s", type(exc).__name__)
         if settings.SERVICE_HEARTBEAT_ENABLED:
             embedding_tasks.append(asyncio.create_task(run_heartbeat(db)))
+        # Staging cleanup at startup and then every TAXONOMY_CLEANUP_INTERVAL_SECONDS.
+        embedding_tasks.append(asyncio.create_task(run_cleanup(db)))
     logger.info("✓ Application started successfully")
     
     yield

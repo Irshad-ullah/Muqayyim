@@ -80,6 +80,16 @@ class Settings(BaseSettings):
     # The running AI service records a heartbeat so offline tools (CLI imports) can tell it is up.
     SERVICE_HEARTBEAT_SECONDS: int = int(os.getenv("SERVICE_HEARTBEAT_SECONDS", "60"))
     SERVICE_HEARTBEAT_ENABLED: bool = os.getenv("SERVICE_HEARTBEAT_ENABLED", "true").lower() != "false"
+    # Staging and snapshots live OUTSIDE the repository (default ~/.muqayyim/taxonomy).
+    TAXONOMY_WORK_DIR: str = os.getenv("TAXONOMY_WORK_DIR", "")
+    # Upload limits (09c Part 2; measured against the real ESCO v1.2.1 ZIP: 9.6 MB
+    # compressed, 49.4 MB uncompressed, 19 entries).
+    TAXONOMY_MAX_UPLOAD_MB: int = int(os.getenv("TAXONOMY_MAX_UPLOAD_MB", "100"))
+    TAXONOMY_MAX_UNZIPPED_MB: int = int(os.getenv("TAXONOMY_MAX_UNZIPPED_MB", "500"))
+    TAXONOMY_MAX_ZIP_ENTRIES: int = int(os.getenv("TAXONOMY_MAX_ZIP_ENTRIES", "500"))
+    # Staging files of unfinished jobs are deleted after this many hours (job → cancelled).
+    TAXONOMY_STAGING_TTL_HOURS: int = int(os.getenv("TAXONOMY_STAGING_TTL_HOURS", "24"))
+    TAXONOMY_CLEANUP_INTERVAL_SECONDS: int = int(os.getenv("TAXONOMY_CLEANUP_INTERVAL_SECONDS", "3600"))
     EMBEDDING_CACHE_DIR: str = os.getenv("EMBEDDING_CACHE_DIR", "./models")
     EMBEDDING_AUTOLOAD: bool = os.getenv("EMBEDDING_AUTOLOAD", "true").lower() != "false"
     EMBEDDING_WORKER_INTERVAL_SECONDS: int = int(os.getenv("EMBEDDING_WORKER_INTERVAL_SECONDS", "30"))

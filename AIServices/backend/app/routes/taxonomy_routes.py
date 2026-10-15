@@ -3,19 +3,24 @@ Internal admin taxonomy routes (09c, Module 10 FE-4 / FR12.5), called by
 CoreServices' /api/admin/taxonomy pass-through. Mounted at /internal (never proxied
 by the gateway); X-Internal-Key required.
 
+  POST /internal/admin/taxonomy/jobs            upload (multipart: source, dataset_version, created_by,
+                                                files = one ZIP or the CSV files) → 202, validates in background
   GET  /internal/admin/taxonomy/jobs            list import jobs (page, limit, status, source)
   GET  /internal/admin/taxonomy/jobs/{job_id}   one job (poll for progress)
+  POST /internal/admin/taxonomy/jobs/{job_id}/cancel
   GET  /internal/admin/taxonomy/lock            who holds the taxonomy lock, if anyone
 """
 
 from typing import Literal, Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import JSONResponse
+from starlette.datastructures import UploadFile
 
 from app.config.database import get_database
 from app.middleware.internal_auth import require_internal_key
-from app.services.taxonomy import jobs
+from app.config.settings import settings
+from app.services.taxonomy import jobs, uploads
 from app.services.taxonomy.lock import current_lock
 
 router = APIRouter(prefix="/internal/admin/taxonomy", tags=["Internal"], dependencies=[Depends(require_internal_key)])
@@ -58,3 +63,49 @@ async def lock_status():
     if get_database() is None:
         return no_db()
     return {"success": True, "data": await current_lock()}
+
+
+MAX_FILES = 10
+FORM_OVERHEAD = 1024 * 1024  # multipart boundaries and small fields
+
+
+@router.post("/jobs")
+async def upload(request: Request):
+    """Stage an upload for one source and start validation (202). 413 too large, 422 rejected."""
+    if get_database() is None:
+        return no_db()
+    limit = settings.TAXONOMY_MAX_UPLOAD_MB * 1024 * 1024
+    length = request.headers.get("content-length")
+    if length is None:
+        return error(411, "LENGTH_REQUIRED", "Content-Length is required for uploads")
+    if not length.isdigit() or int(length) > limit + FORM_OVERHEAD:
+        return error(413, "UPLOAD_TOO_LARGE", f"The upload is larger than {settings.TAXONOMY_MAX_UPLOAD_MB} MB")
+    try:
+        form = await request.form(max_files=MAX_FILES, max_fields=10)
+    except Exception:  # noqa: BLE001 — malformed multipart, too many parts
+        return error(422, "UPLOAD_REJECTED", f"Send multipart form data with at most {MAX_FILES} files")
+    try:
+        source = str(form.get("source") or "").strip().lower()
+        files = [f for f in form.getlist("files") if isinstance(f, UploadFile)]
+        try:
+            job = await uploads.create_upload_job(
+                source, str(form.get("dataset_version") or ""), str(form.get("created_by") or "unknown")[:100],
+                [(f.filename, f) for f in files],
+            )
+        except uploads.UploadRejected as exc:
+            return error(exc.status, exc.code, exc.safe_message, errors=exc.errors, job_id=getattr(exc, "job_id", None))
+        return JSONResponse(status_code=202, content={"success": True, "data": jobs.public(job)})
+    finally:
+        await form.close()
+
+
+@router.post("/jobs/{job_id}/cancel")
+async def cancel(job_id: str):
+    if get_database() is None:
+        return no_db()
+    try:
+        return {"success": True, "data": jobs.public(await uploads.cancel_job(job_id))}
+    except jobs.JobNotFound:
+        return error(404, "NOT_FOUND", "Import job not found")
+    except jobs.JobStateError as exc:
+        return error(409, "JOB_STATE", str(exc), job_status=exc.status)

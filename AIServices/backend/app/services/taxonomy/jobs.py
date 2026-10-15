@@ -53,6 +53,7 @@ TRANSITIONS: Dict[str, tuple] = {
     CANCELLED: (),
 }
 RUNNING = (VALIDATING, PREVIEWING, PUBLISHING)
+INTERNAL_FIELDS = ("_id", "staging_dir")  # never sent to clients
 FINAL = (PUBLISHED, FAILED, ROLLED_BACK, CANCELLED)
 
 
@@ -96,7 +97,7 @@ def public(job: Optional[dict]) -> Optional[dict]:
             return [clean(v) for v in value]
         return value
 
-    return clean({k: v for k, v in job.items() if k != "_id"})
+    return clean({k: v for k, v in job.items() if k not in INTERNAL_FIELDS})
 
 
 async def create_job(source: str, dataset_version: str, created_by: str, file_summary: Optional[dict] = None,

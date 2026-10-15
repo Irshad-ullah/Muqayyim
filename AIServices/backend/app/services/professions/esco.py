@@ -5,7 +5,7 @@ Files (`_en` suffix optional; columns read by header name):
   occupations_en.csv                conceptUri, iscoGroup, preferredLabel, altLabels, description, code
   skills_en.csv                     conceptUri, skillType, preferredLabel, altLabels, description
   occupationSkillRelations_en.csv   occupationUri, relationType, skillUri
-  digitalSkillsCollection_en.csv    conceptUri
+  digitalSkillsCollection_en.csv    conceptUri (optional)
 
 Kept: occupations whose ISCO group starts with ESCO_ISCO_PREFIXES. Their
 essential / optional skills come from the relations file, joined by URI.
@@ -31,6 +31,8 @@ FILES = {
     "occupationSkillRelations": ["occupationUri", "relationType", "skillUri"],
     "digitalSkillsCollection": ["conceptUri"],
 }
+# Optional: without it every skill is reported as non-digital (09c).
+OPTIONAL = ("digitalSkillsCollection",)
 
 
 def uri_id(uri: str) -> str:
@@ -41,9 +43,10 @@ def uri_id(uri: str) -> str:
 def parse_esco(data_dir: Path, version: str, *, isco_prefixes=None) -> Dict:
     """→ { docs, esco_skills, stats } without touching the database."""
     prefixes = isco_prefixes if isco_prefixes is not None else csv_list(settings.ESCO_ISCO_PREFIXES)
-    paths = validate_files(Path(data_dir), FILES)
+    paths = validate_files(Path(data_dir), FILES, optional=OPTIONAL)
 
-    digital = {row["conceptUri"] for row in read_rows(paths["digitalSkillsCollection"])}
+    digital = ({row["conceptUri"] for row in read_rows(paths["digitalSkillsCollection"])}
+               if "digitalSkillsCollection" in paths else set())
 
     skills, modified, duplicate_rows = {}, {}, 0
     for row in read_rows(paths["skills"]):
