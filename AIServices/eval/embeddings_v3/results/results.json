@@ -1,0 +1,1559 @@
+{
+  "model": "BAAI/bge-small-en-v1.5",
+  "pairs": 153,
+  "options": {
+    "a": "label only",
+    "b": "label: first sentence (<=25 words)",
+    "c": "label: full description (<=60 words)"
+  },
+  "metrics": {
+    "all": {
+      "a": {
+        "dev": {
+          "n": 107,
+          "auc": 0.9893,
+          "auc_hard": 0.9877,
+          "thr_p95": 0.612,
+          "recall_p95": 0.944,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.667
+          },
+          "distribution": {
+            "2": {
+              "n": 36,
+              "mean": 0.793,
+              "min": 0.579,
+              "p25": 0.762,
+              "median": 0.81,
+              "p75": 0.842,
+              "max": 0.874
+            },
+            "1": {
+              "n": 36,
+              "mean": 0.721,
+              "min": 0.573,
+              "p25": 0.692,
+              "median": 0.731,
+              "p75": 0.762,
+              "max": 0.837
+            },
+            "0 hard": {
+              "n": 26,
+              "mean": 0.542,
+              "min": 0.434,
+              "p25": 0.508,
+              "median": 0.544,
+              "p75": 0.578,
+              "max": 0.632
+            },
+            "0 easy": {
+              "n": 9,
+              "mean": 0.504,
+              "min": 0.43,
+              "p25": 0.445,
+              "median": 0.487,
+              "p75": 0.544,
+              "max": 0.612
+            }
+          }
+        },
+        "heldout": {
+          "n": 46,
+          "auc": 0.9871,
+          "auc_hard": 0.9853,
+          "thr_p95": 0.6305,
+          "recall_p95": 0.968,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.742
+          },
+          "distribution": {
+            "2": {
+              "n": 15,
+              "mean": 0.768,
+              "min": 0.647,
+              "p25": 0.748,
+              "median": 0.774,
+              "p75": 0.804,
+              "max": 0.831
+            },
+            "1": {
+              "n": 16,
+              "mean": 0.745,
+              "min": 0.561,
+              "p25": 0.722,
+              "median": 0.746,
+              "p75": 0.788,
+              "max": 0.837
+            },
+            "0 hard": {
+              "n": 11,
+              "mean": 0.559,
+              "min": 0.482,
+              "p25": 0.532,
+              "median": 0.559,
+              "p75": 0.589,
+              "max": 0.631
+            },
+            "0 easy": {
+              "n": 4,
+              "mean": 0.503,
+              "min": 0.474,
+              "p25": 0.475,
+              "median": 0.489,
+              "p75": 0.517,
+              "max": 0.562
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.612,
+            "precision": 0.968,
+            "recall": 0.968
+          }
+        },
+        "all": {
+          "n": 153,
+          "auc": 0.9899,
+          "auc_hard": 0.9879,
+          "thr_p95": 0.6086,
+          "recall_p95": 0.961,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.689
+          },
+          "distribution": {
+            "2": {
+              "n": 51,
+              "mean": 0.785,
+              "min": 0.579,
+              "p25": 0.748,
+              "median": 0.791,
+              "p75": 0.834,
+              "max": 0.874
+            },
+            "1": {
+              "n": 52,
+              "mean": 0.728,
+              "min": 0.561,
+              "p25": 0.701,
+              "median": 0.739,
+              "p75": 0.78,
+              "max": 0.837
+            },
+            "0 hard": {
+              "n": 37,
+              "mean": 0.547,
+              "min": 0.434,
+              "p25": 0.52,
+              "median": 0.544,
+              "p75": 0.58,
+              "max": 0.632
+            },
+            "0 easy": {
+              "n": 13,
+              "mean": 0.504,
+              "min": 0.43,
+              "p25": 0.474,
+              "median": 0.487,
+              "p75": 0.544,
+              "max": 0.612
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.612,
+            "precision": 0.97,
+            "recall": 0.951
+          }
+        }
+      },
+      "b": {
+        "dev": {
+          "n": 107,
+          "auc": 0.979,
+          "auc_hard": 0.9717,
+          "thr_p95": 0.6134,
+          "recall_p95": 0.903,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.597
+          },
+          "distribution": {
+            "2": {
+              "n": 36,
+              "mean": 0.769,
+              "min": 0.623,
+              "p25": 0.733,
+              "median": 0.76,
+              "p75": 0.81,
+              "max": 0.893
+            },
+            "1": {
+              "n": 36,
+              "mean": 0.697,
+              "min": 0.534,
+              "p25": 0.647,
+              "median": 0.688,
+              "p75": 0.762,
+              "max": 0.835
+            },
+            "0 hard": {
+              "n": 26,
+              "mean": 0.54,
+              "min": 0.453,
+              "p25": 0.508,
+              "median": 0.524,
+              "p75": 0.577,
+              "max": 0.643
+            },
+            "0 easy": {
+              "n": 9,
+              "mean": 0.469,
+              "min": 0.346,
+              "p25": 0.447,
+              "median": 0.49,
+              "p75": 0.512,
+              "max": 0.526
+            }
+          }
+        },
+        "heldout": {
+          "n": 46,
+          "auc": 0.9269,
+          "auc_hard": 0.9032,
+          "thr_p95": 0.6739,
+          "recall_p95": 0.71,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.484
+          },
+          "distribution": {
+            "2": {
+              "n": 15,
+              "mean": 0.74,
+              "min": 0.621,
+              "p25": 0.705,
+              "median": 0.737,
+              "p75": 0.788,
+              "max": 0.831
+            },
+            "1": {
+              "n": 16,
+              "mean": 0.695,
+              "min": 0.514,
+              "p25": 0.656,
+              "median": 0.688,
+              "p75": 0.765,
+              "max": 0.815
+            },
+            "0 hard": {
+              "n": 11,
+              "mean": 0.574,
+              "min": 0.489,
+              "p25": 0.514,
+              "median": 0.54,
+              "p75": 0.623,
+              "max": 0.716
+            },
+            "0 easy": {
+              "n": 4,
+              "mean": 0.497,
+              "min": 0.44,
+              "p25": 0.467,
+              "median": 0.484,
+              "p75": 0.515,
+              "max": 0.58
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.6134,
+            "precision": 0.906,
+            "recall": 0.935
+          }
+        },
+        "all": {
+          "n": 153,
+          "auc": 0.9656,
+          "auc_hard": 0.9551,
+          "thr_p95": 0.6429,
+          "recall_p95": 0.854,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.563
+          },
+          "distribution": {
+            "2": {
+              "n": 51,
+              "mean": 0.761,
+              "min": 0.621,
+              "p25": 0.724,
+              "median": 0.755,
+              "p75": 0.806,
+              "max": 0.893
+            },
+            "1": {
+              "n": 52,
+              "mean": 0.696,
+              "min": 0.514,
+              "p25": 0.649,
+              "median": 0.688,
+              "p75": 0.764,
+              "max": 0.835
+            },
+            "0 hard": {
+              "n": 37,
+              "mean": 0.55,
+              "min": 0.453,
+              "p25": 0.51,
+              "median": 0.534,
+              "p75": 0.597,
+              "max": 0.716
+            },
+            "0 easy": {
+              "n": 13,
+              "mean": 0.478,
+              "min": 0.346,
+              "p25": 0.447,
+              "median": 0.49,
+              "p75": 0.512,
+              "max": 0.58
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.6134,
+            "precision": 0.949,
+            "recall": 0.913
+          }
+        }
+      },
+      "c": {
+        "dev": {
+          "n": 107,
+          "auc": 0.9778,
+          "auc_hard": 0.9701,
+          "thr_p95": 0.5866,
+          "recall_p95": 0.931,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.319
+          },
+          "distribution": {
+            "2": {
+              "n": 36,
+              "mean": 0.741,
+              "min": 0.618,
+              "p25": 0.705,
+              "median": 0.728,
+              "p75": 0.779,
+              "max": 0.893
+            },
+            "1": {
+              "n": 36,
+              "mean": 0.661,
+              "min": 0.534,
+              "p25": 0.619,
+              "median": 0.658,
+              "p75": 0.706,
+              "max": 0.821
+            },
+            "0 hard": {
+              "n": 26,
+              "mean": 0.519,
+              "min": 0.436,
+              "p25": 0.488,
+              "median": 0.511,
+              "p75": 0.541,
+              "max": 0.643
+            },
+            "0 easy": {
+              "n": 9,
+              "mean": 0.45,
+              "min": 0.354,
+              "p25": 0.395,
+              "median": 0.453,
+              "p75": 0.512,
+              "max": 0.526
+            }
+          }
+        },
+        "heldout": {
+          "n": 46,
+          "auc": 0.9204,
+          "auc_hard": 0.8915,
+          "thr_p95": 0.6722,
+          "recall_p95": 0.613,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.355
+          },
+          "distribution": {
+            "2": {
+              "n": 15,
+              "mean": 0.722,
+              "min": 0.526,
+              "p25": 0.687,
+              "median": 0.721,
+              "p75": 0.781,
+              "max": 0.831
+            },
+            "1": {
+              "n": 16,
+              "mean": 0.674,
+              "min": 0.512,
+              "p25": 0.631,
+              "median": 0.658,
+              "p75": 0.709,
+              "max": 0.815
+            },
+            "0 hard": {
+              "n": 11,
+              "mean": 0.538,
+              "min": 0.435,
+              "p25": 0.474,
+              "median": 0.512,
+              "p75": 0.56,
+              "max": 0.716
+            },
+            "0 easy": {
+              "n": 4,
+              "mean": 0.46,
+              "min": 0.443,
+              "p25": 0.45,
+              "median": 0.46,
+              "p75": 0.47,
+              "max": 0.475
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.5866,
+            "precision": 0.935,
+            "recall": 0.935
+          }
+        },
+        "all": {
+          "n": 153,
+          "auc": 0.9608,
+          "auc_hard": 0.948,
+          "thr_p95": 0.5866,
+          "recall_p95": 0.932,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.33
+          },
+          "distribution": {
+            "2": {
+              "n": 51,
+              "mean": 0.736,
+              "min": 0.526,
+              "p25": 0.7,
+              "median": 0.728,
+              "p75": 0.78,
+              "max": 0.893
+            },
+            "1": {
+              "n": 52,
+              "mean": 0.665,
+              "min": 0.512,
+              "p25": 0.622,
+              "median": 0.658,
+              "p75": 0.706,
+              "max": 0.821
+            },
+            "0 hard": {
+              "n": 37,
+              "mean": 0.525,
+              "min": 0.435,
+              "p25": 0.476,
+              "median": 0.512,
+              "p75": 0.543,
+              "max": 0.716
+            },
+            "0 easy": {
+              "n": 13,
+              "mean": 0.453,
+              "min": 0.354,
+              "p25": 0.443,
+              "median": 0.453,
+              "p75": 0.49,
+              "max": 0.526
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.5866,
+            "precision": 0.95,
+            "recall": 0.932
+          }
+        }
+      }
+    },
+    "without_tool_naming": {
+      "a": {
+        "dev": {
+          "n": 96,
+          "auc": 0.9874,
+          "auc_hard": 0.9855,
+          "thr_p95": 0.612,
+          "recall_p95": 0.934,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.607
+          },
+          "distribution": {
+            "2": {
+              "n": 27,
+              "mean": 0.791,
+              "min": 0.579,
+              "p25": 0.745,
+              "median": 0.821,
+              "p75": 0.847,
+              "max": 0.874
+            },
+            "1": {
+              "n": 34,
+              "mean": 0.718,
+              "min": 0.573,
+              "p25": 0.684,
+              "median": 0.725,
+              "p75": 0.759,
+              "max": 0.837
+            },
+            "0 hard": {
+              "n": 26,
+              "mean": 0.542,
+              "min": 0.434,
+              "p25": 0.508,
+              "median": 0.544,
+              "p75": 0.578,
+              "max": 0.632
+            },
+            "0 easy": {
+              "n": 9,
+              "mean": 0.504,
+              "min": 0.43,
+              "p25": 0.445,
+              "median": 0.487,
+              "p75": 0.544,
+              "max": 0.612
+            }
+          }
+        },
+        "heldout": {
+          "n": 42,
+          "auc": 0.9852,
+          "auc_hard": 0.9832,
+          "thr_p95": 0.6305,
+          "recall_p95": 0.963,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.704
+          },
+          "distribution": {
+            "2": {
+              "n": 11,
+              "mean": 0.758,
+              "min": 0.647,
+              "p25": 0.741,
+              "median": 0.771,
+              "p75": 0.791,
+              "max": 0.824
+            },
+            "1": {
+              "n": 16,
+              "mean": 0.745,
+              "min": 0.561,
+              "p25": 0.722,
+              "median": 0.746,
+              "p75": 0.788,
+              "max": 0.837
+            },
+            "0 hard": {
+              "n": 11,
+              "mean": 0.559,
+              "min": 0.482,
+              "p25": 0.532,
+              "median": 0.559,
+              "p75": 0.589,
+              "max": 0.631
+            },
+            "0 easy": {
+              "n": 4,
+              "mean": 0.503,
+              "min": 0.474,
+              "p25": 0.475,
+              "median": 0.489,
+              "p75": 0.517,
+              "max": 0.562
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.612,
+            "precision": 0.963,
+            "recall": 0.963
+          }
+        },
+        "all": {
+          "n": 138,
+          "auc": 0.9882,
+          "auc_hard": 0.9859,
+          "thr_p95": 0.612,
+          "recall_p95": 0.943,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.636
+          },
+          "distribution": {
+            "2": {
+              "n": 38,
+              "mean": 0.781,
+              "min": 0.579,
+              "p25": 0.744,
+              "median": 0.788,
+              "p75": 0.837,
+              "max": 0.874
+            },
+            "1": {
+              "n": 50,
+              "mean": 0.727,
+              "min": 0.561,
+              "p25": 0.699,
+              "median": 0.737,
+              "p75": 0.777,
+              "max": 0.837
+            },
+            "0 hard": {
+              "n": 37,
+              "mean": 0.547,
+              "min": 0.434,
+              "p25": 0.52,
+              "median": 0.544,
+              "p75": 0.58,
+              "max": 0.632
+            },
+            "0 easy": {
+              "n": 13,
+              "mean": 0.504,
+              "min": 0.43,
+              "p25": 0.474,
+              "median": 0.487,
+              "p75": 0.544,
+              "max": 0.612
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.612,
+            "precision": 0.965,
+            "recall": 0.943
+          }
+        }
+      },
+      "b": {
+        "dev": {
+          "n": 96,
+          "auc": 0.9752,
+          "auc_hard": 0.9666,
+          "thr_p95": 0.6205,
+          "recall_p95": 0.885,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.557
+          },
+          "distribution": {
+            "2": {
+              "n": 27,
+              "mean": 0.772,
+              "min": 0.623,
+              "p25": 0.73,
+              "median": 0.772,
+              "p75": 0.817,
+              "max": 0.893
+            },
+            "1": {
+              "n": 34,
+              "mean": 0.692,
+              "min": 0.534,
+              "p25": 0.63,
+              "median": 0.684,
+              "p75": 0.756,
+              "max": 0.835
+            },
+            "0 hard": {
+              "n": 26,
+              "mean": 0.54,
+              "min": 0.453,
+              "p25": 0.508,
+              "median": 0.524,
+              "p75": 0.577,
+              "max": 0.643
+            },
+            "0 easy": {
+              "n": 9,
+              "mean": 0.469,
+              "min": 0.346,
+              "p25": 0.447,
+              "median": 0.49,
+              "p75": 0.512,
+              "max": 0.526
+            }
+          }
+        },
+        "heldout": {
+          "n": 42,
+          "auc": 0.9185,
+          "auc_hard": 0.8923,
+          "thr_p95": 0.7207,
+          "recall_p95": 0.519,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.481
+          },
+          "distribution": {
+            "2": {
+              "n": 11,
+              "mean": 0.742,
+              "min": 0.621,
+              "p25": 0.697,
+              "median": 0.737,
+              "p75": 0.797,
+              "max": 0.831
+            },
+            "1": {
+              "n": 16,
+              "mean": 0.695,
+              "min": 0.514,
+              "p25": 0.656,
+              "median": 0.688,
+              "p75": 0.765,
+              "max": 0.815
+            },
+            "0 hard": {
+              "n": 11,
+              "mean": 0.574,
+              "min": 0.489,
+              "p25": 0.514,
+              "median": 0.54,
+              "p75": 0.623,
+              "max": 0.716
+            },
+            "0 easy": {
+              "n": 4,
+              "mean": 0.497,
+              "min": 0.44,
+              "p25": 0.467,
+              "median": 0.484,
+              "p75": 0.515,
+              "max": 0.58
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.6205,
+            "precision": 0.889,
+            "recall": 0.889
+          }
+        },
+        "all": {
+          "n": 138,
+          "auc": 0.9602,
+          "auc_hard": 0.9481,
+          "thr_p95": 0.6496,
+          "recall_p95": 0.83,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.534
+          },
+          "distribution": {
+            "2": {
+              "n": 38,
+              "mean": 0.763,
+              "min": 0.621,
+              "p25": 0.722,
+              "median": 0.762,
+              "p75": 0.807,
+              "max": 0.893
+            },
+            "1": {
+              "n": 50,
+              "mean": 0.693,
+              "min": 0.514,
+              "p25": 0.636,
+              "median": 0.685,
+              "p75": 0.76,
+              "max": 0.835
+            },
+            "0 hard": {
+              "n": 37,
+              "mean": 0.55,
+              "min": 0.453,
+              "p25": 0.51,
+              "median": 0.534,
+              "p75": 0.597,
+              "max": 0.716
+            },
+            "0 easy": {
+              "n": 13,
+              "mean": 0.478,
+              "min": 0.346,
+              "p25": 0.447,
+              "median": 0.49,
+              "p75": 0.512,
+              "max": 0.58
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.6205,
+            "precision": 0.939,
+            "recall": 0.875
+          }
+        }
+      },
+      "c": {
+        "dev": {
+          "n": 96,
+          "auc": 0.9738,
+          "auc_hard": 0.9647,
+          "thr_p95": 0.6116,
+          "recall_p95": 0.869,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.311
+          },
+          "distribution": {
+            "2": {
+              "n": 27,
+              "mean": 0.745,
+              "min": 0.618,
+              "p25": 0.711,
+              "median": 0.735,
+              "p75": 0.787,
+              "max": 0.893
+            },
+            "1": {
+              "n": 34,
+              "mean": 0.656,
+              "min": 0.534,
+              "p25": 0.614,
+              "median": 0.656,
+              "p75": 0.695,
+              "max": 0.821
+            },
+            "0 hard": {
+              "n": 26,
+              "mean": 0.519,
+              "min": 0.436,
+              "p25": 0.488,
+              "median": 0.511,
+              "p75": 0.541,
+              "max": 0.643
+            },
+            "0 easy": {
+              "n": 9,
+              "mean": 0.45,
+              "min": 0.354,
+              "p25": 0.395,
+              "median": 0.453,
+              "p75": 0.512,
+              "max": 0.526
+            }
+          }
+        },
+        "heldout": {
+          "n": 42,
+          "auc": 0.916,
+          "auc_hard": 0.8855,
+          "thr_p95": 0.7207,
+          "recall_p95": 0.407,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.37
+          },
+          "distribution": {
+            "2": {
+              "n": 11,
+              "mean": 0.725,
+              "min": 0.526,
+              "p25": 0.678,
+              "median": 0.737,
+              "p75": 0.783,
+              "max": 0.831
+            },
+            "1": {
+              "n": 16,
+              "mean": 0.674,
+              "min": 0.512,
+              "p25": 0.631,
+              "median": 0.658,
+              "p75": 0.709,
+              "max": 0.815
+            },
+            "0 hard": {
+              "n": 11,
+              "mean": 0.538,
+              "min": 0.435,
+              "p25": 0.474,
+              "median": 0.512,
+              "p75": 0.56,
+              "max": 0.716
+            },
+            "0 easy": {
+              "n": 4,
+              "mean": 0.46,
+              "min": 0.443,
+              "p25": 0.45,
+              "median": 0.46,
+              "p75": 0.47,
+              "max": 0.475
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.6116,
+            "precision": 0.923,
+            "recall": 0.889
+          }
+        },
+        "all": {
+          "n": 138,
+          "auc": 0.9559,
+          "auc_hard": 0.9416,
+          "thr_p95": 0.6108,
+          "recall_p95": 0.886,
+          "at_0.73": {
+            "precision": 1.0,
+            "recall": 0.33
+          },
+          "distribution": {
+            "2": {
+              "n": 38,
+              "mean": 0.739,
+              "min": 0.526,
+              "p25": 0.703,
+              "median": 0.736,
+              "p75": 0.784,
+              "max": 0.893
+            },
+            "1": {
+              "n": 50,
+              "mean": 0.662,
+              "min": 0.512,
+              "p25": 0.621,
+              "median": 0.656,
+              "p75": 0.697,
+              "max": 0.821
+            },
+            "0 hard": {
+              "n": 37,
+              "mean": 0.525,
+              "min": 0.435,
+              "p25": 0.476,
+              "median": 0.512,
+              "p75": 0.543,
+              "max": 0.716
+            },
+            "0 easy": {
+              "n": 13,
+              "mean": 0.453,
+              "min": 0.354,
+              "p25": 0.443,
+              "median": 0.453,
+              "p75": 0.49,
+              "max": 0.526
+            }
+          },
+          "at_dev_threshold": {
+            "threshold": 0.6116,
+            "precision": 0.95,
+            "recall": 0.864
+          }
+        }
+      }
+    }
+  },
+  "decision": {
+    "dev_auc_hard": {
+      "a": 0.9877,
+      "b": 0.9717,
+      "c": 0.9701
+    },
+    "tied_within_0.01": [
+      "a"
+    ],
+    "chosen": "a",
+    "chosen_dev_threshold": 0.612,
+    "heldout_auc_hard": {
+      "a": 0.9853,
+      "b": 0.9032,
+      "c": 0.8915
+    },
+    "heldout_gain_vs_a": 0.0,
+    "heldout_gain_vs_a_95ci": [
+      0.0,
+      0.0
+    ],
+    "heldout_recall_p95": 0.968,
+    "heldout_at_dev_threshold": {
+      "threshold": 0.612,
+      "precision": 0.968,
+      "recall": 0.968
+    },
+    "guardrail_passed": false,
+    "outcome": "keep the single 0.73 threshold and label-only ESCO text (guardrail not met)"
+  },
+  "worst": {
+    "a": [
+      {
+        "id": "p075",
+        "user_skill": "Bash",
+        "esco_label": "administer ICT system",
+        "label": 1,
+        "negative": null,
+        "split": "heldout",
+        "similarity": 0.5607,
+        "error": 0.0513,
+        "esco_text": "administer ICT system"
+      },
+      {
+        "id": "p097",
+        "user_skill": "REST APIs",
+        "esco_label": "interfacing techniques",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5727,
+        "error": 0.0393,
+        "esco_text": "interfacing techniques"
+      },
+      {
+        "id": "p014",
+        "user_skill": "Jira",
+        "esco_label": "use ICT ticketing system",
+        "label": 2,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.579,
+        "error": 0.033,
+        "esco_text": "use ICT ticketing system"
+      },
+      {
+        "id": "p125",
+        "user_skill": "Kotlin",
+        "esco_label": "perform data mining",
+        "label": 0,
+        "negative": "hard",
+        "split": "dev",
+        "similarity": 0.6316,
+        "error": 0.0196,
+        "esco_text": "perform data mining"
+      },
+      {
+        "id": "p108",
+        "user_skill": "Docker",
+        "esco_label": "design graphics",
+        "label": 0,
+        "negative": "hard",
+        "split": "heldout",
+        "similarity": 0.6305,
+        "error": 0.0185,
+        "esco_text": "design graphics"
+      },
+      {
+        "id": "p105",
+        "user_skill": "React",
+        "esco_label": "perform data mining",
+        "label": 0,
+        "negative": "hard",
+        "split": "dev",
+        "similarity": 0.6195,
+        "error": 0.0075,
+        "esco_text": "perform data mining"
+      },
+      {
+        "id": "p074",
+        "user_skill": "Linux",
+        "esco_label": "administer ICT system",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.6066,
+        "error": 0.0054,
+        "esco_text": "administer ICT system"
+      },
+      {
+        "id": "p096",
+        "user_skill": "REST APIs",
+        "esco_label": "use an application-specific interface",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.6086,
+        "error": 0.0034,
+        "esco_text": "use an application-specific interface"
+      },
+      {
+        "id": "p152",
+        "user_skill": "Selenium",
+        "esco_label": "work safely with machines",
+        "label": 0,
+        "negative": "easy",
+        "split": "dev",
+        "similarity": 0.612,
+        "error": -0.0,
+        "esco_text": "work safely with machines"
+      },
+      {
+        "id": "p106",
+        "user_skill": "Pandas",
+        "esco_label": "design user interface",
+        "label": 0,
+        "negative": "hard",
+        "split": "dev",
+        "similarity": 0.6111,
+        "error": -0.0009,
+        "esco_text": "design user interface"
+      },
+      {
+        "id": "p052",
+        "user_skill": "Figma",
+        "esco_label": "create website wireframe",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.6165,
+        "error": -0.0045,
+        "esco_text": "create website wireframe"
+      },
+      {
+        "id": "p120",
+        "user_skill": "Terraform",
+        "esco_label": "measure software usability",
+        "label": 0,
+        "negative": "hard",
+        "split": "dev",
+        "similarity": 0.607,
+        "error": -0.005,
+        "esco_text": "measure software usability"
+      },
+      {
+        "id": "p111",
+        "user_skill": "Python",
+        "esco_label": "ICT network routing",
+        "label": 0,
+        "negative": "hard",
+        "split": "heldout",
+        "similarity": 0.6062,
+        "error": -0.0058,
+        "esco_text": "ICT network routing"
+      },
+      {
+        "id": "p117",
+        "user_skill": "Git",
+        "esco_label": "perform data mining",
+        "label": 0,
+        "negative": "hard",
+        "split": "heldout",
+        "similarity": 0.5999,
+        "error": -0.0121,
+        "esco_text": "perform data mining"
+      },
+      {
+        "id": "p102",
+        "user_skill": "Scrum",
+        "esco_label": "perform project management",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.6322,
+        "error": -0.0202,
+        "esco_text": "perform project management"
+      }
+    ],
+    "b": [
+      {
+        "id": "p111",
+        "user_skill": "Python",
+        "esco_label": "ICT network routing",
+        "label": 0,
+        "negative": "hard",
+        "split": "heldout",
+        "similarity": 0.7158,
+        "error": 0.1024,
+        "esco_text": "ICT network routing: The processes and techniques for choosing the best paths within an ICT network through which a packet can travel."
+      },
+      {
+        "id": "p075",
+        "user_skill": "Bash",
+        "esco_label": "administer ICT system",
+        "label": 1,
+        "negative": null,
+        "split": "heldout",
+        "similarity": 0.5136,
+        "error": 0.0998,
+        "esco_text": "administer ICT system: Handle components of ICT system by maintaining configuration, managing users, monitoring resource use, performing backups and installing hardware or software to comply with the set"
+      },
+      {
+        "id": "p062",
+        "user_skill": "TensorFlow",
+        "esco_label": "principles of artificial intelligence",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5342,
+        "error": 0.0792,
+        "esco_text": "principles of artificial intelligence: The artificial intelligence theories, applied principles, architectures and systems, such as intelligent agents, multi-agent systems, expert systems, rule-based systems, neural networks, ontologies and cognition theories."
+      },
+      {
+        "id": "p052",
+        "user_skill": "Figma",
+        "esco_label": "create website wireframe",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5539,
+        "error": 0.0595,
+        "esco_text": "create website wireframe: Develop an image or set of images that display the functional elements of a website or page, typically used for planning a website's functionality and"
+      },
+      {
+        "id": "p102",
+        "user_skill": "Scrum",
+        "esco_label": "perform project management",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5549,
+        "error": 0.0585,
+        "esco_text": "perform project management: Manage and plan various resources, such as human resources, budget, deadline, results, and quality necessary for a specific project, and monitor the project's progress in"
+      },
+      {
+        "id": "p124",
+        "user_skill": "Swift",
+        "esco_label": "ICT network routing",
+        "label": 0,
+        "negative": "hard",
+        "split": "heldout",
+        "similarity": 0.6718,
+        "error": 0.0584,
+        "esco_text": "ICT network routing: The processes and techniques for choosing the best paths within an ICT network through which a packet can travel."
+      },
+      {
+        "id": "p108",
+        "user_skill": "Docker",
+        "esco_label": "design graphics",
+        "label": 0,
+        "negative": "hard",
+        "split": "heldout",
+        "similarity": 0.6496,
+        "error": 0.0362,
+        "esco_text": "design graphics: Apply a variety of visual techniques in order to design graphic material."
+      },
+      {
+        "id": "p105",
+        "user_skill": "React",
+        "esco_label": "perform data mining",
+        "label": 0,
+        "negative": "hard",
+        "split": "dev",
+        "similarity": 0.6429,
+        "error": 0.0295,
+        "esco_text": "perform data mining: Explore large datasets to reveal patterns using statistics, database systems or artificial intelligence and present the information in a comprehensible way."
+      },
+      {
+        "id": "p074",
+        "user_skill": "Linux",
+        "esco_label": "administer ICT system",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5855,
+        "error": 0.0279,
+        "esco_text": "administer ICT system: Handle components of ICT system by maintaining configuration, managing users, monitoring resource use, performing backups and installing hardware or software to comply with the set"
+      },
+      {
+        "id": "p125",
+        "user_skill": "Kotlin",
+        "esco_label": "perform data mining",
+        "label": 0,
+        "negative": "hard",
+        "split": "dev",
+        "similarity": 0.6411,
+        "error": 0.0277,
+        "esco_text": "perform data mining: Explore large datasets to reveal patterns using statistics, database systems or artificial intelligence and present the information in a comprehensible way."
+      },
+      {
+        "id": "p081",
+        "user_skill": "Tableau",
+        "esco_label": "perform data analysis",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.6043,
+        "error": 0.0091,
+        "esco_text": "perform data analysis: Collect data and statistics to test and evaluate in order to generate assertions and pattern predictions, with the aim of discovering useful information in a"
+      },
+      {
+        "id": "p067",
+        "user_skill": "Postman",
+        "esco_label": "execute integration testing",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.606,
+        "error": 0.0074,
+        "esco_text": "execute integration testing: Perform testing of system or software components grouped in multiple ways to evaluate their ability to interconnect, their interface and their ability to provide global"
+      },
+      {
+        "id": "p083",
+        "user_skill": "Excel",
+        "esco_label": "perform data analysis",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.6062,
+        "error": 0.0072,
+        "esco_text": "perform data analysis: Collect data and statistics to test and evaluate in order to generate assertions and pattern predictions, with the aim of discovering useful information in a"
+      },
+      {
+        "id": "p064",
+        "user_skill": "Jenkins",
+        "esco_label": "tools for software configuration management",
+        "label": 1,
+        "negative": null,
+        "split": "heldout",
+        "similarity": 0.6108,
+        "error": 0.0026,
+        "esco_text": "tools for software configuration management: The software programs to perform configuration identification, control, status accounting and audit, such as CVS, ClearCase, Subversion, GIT and TortoiseSVN perform this management."
+      },
+      {
+        "id": "p120",
+        "user_skill": "Terraform",
+        "esco_label": "measure software usability",
+        "label": 0,
+        "negative": "hard",
+        "split": "dev",
+        "similarity": 0.6134,
+        "error": -0.0,
+        "esco_text": "measure software usability: Check the convenience of the software product for the end user."
+      }
+    ],
+    "c": [
+      {
+        "id": "p111",
+        "user_skill": "Python",
+        "esco_label": "ICT network routing",
+        "label": 0,
+        "negative": "hard",
+        "split": "heldout",
+        "similarity": 0.7158,
+        "error": 0.1292,
+        "esco_text": "ICT network routing: The processes and techniques for choosing the best paths within an ICT network through which a packet can travel."
+      },
+      {
+        "id": "p124",
+        "user_skill": "Swift",
+        "esco_label": "ICT network routing",
+        "label": 0,
+        "negative": "hard",
+        "split": "heldout",
+        "similarity": 0.6718,
+        "error": 0.0852,
+        "esco_text": "ICT network routing: The processes and techniques for choosing the best paths within an ICT network through which a packet can travel."
+      },
+      {
+        "id": "p075",
+        "user_skill": "Bash",
+        "esco_label": "administer ICT system",
+        "label": 1,
+        "negative": null,
+        "split": "heldout",
+        "similarity": 0.5116,
+        "error": 0.075,
+        "esco_text": "administer ICT system: Handle components of ICT system by maintaining configuration, managing users, monitoring resource use, performing backups and installing hardware or software to comply with the set requirements."
+      },
+      {
+        "id": "p009",
+        "user_skill": "Kali Linux",
+        "esco_label": "ethical hacking principles",
+        "label": 2,
+        "negative": null,
+        "split": "heldout",
+        "similarity": 0.5256,
+        "error": 0.061,
+        "esco_text": "ethical hacking principles: The set of actions that are carried out to detect vulnerabilities within a computerised system in order to improve security within an organisation. They aim to identify and address data breaches and threats in a network."
+      },
+      {
+        "id": "p105",
+        "user_skill": "React",
+        "esco_label": "perform data mining",
+        "label": 0,
+        "negative": "hard",
+        "split": "dev",
+        "similarity": 0.6429,
+        "error": 0.0563,
+        "esco_text": "perform data mining: Explore large datasets to reveal patterns using statistics, database systems or artificial intelligence and present the information in a comprehensible way."
+      },
+      {
+        "id": "p125",
+        "user_skill": "Kotlin",
+        "esco_label": "perform data mining",
+        "label": 0,
+        "negative": "hard",
+        "split": "dev",
+        "similarity": 0.6411,
+        "error": 0.0545,
+        "esco_text": "perform data mining: Explore large datasets to reveal patterns using statistics, database systems or artificial intelligence and present the information in a comprehensible way."
+      },
+      {
+        "id": "p062",
+        "user_skill": "TensorFlow",
+        "esco_label": "principles of artificial intelligence",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5342,
+        "error": 0.0524,
+        "esco_text": "principles of artificial intelligence: The artificial intelligence theories, applied principles, architectures and systems, such as intelligent agents, multi-agent systems, expert systems, rule-based systems, neural networks, ontologies and cognition theories."
+      },
+      {
+        "id": "p095",
+        "user_skill": "Kafka",
+        "esco_label": "inter-organisational middleware system",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5375,
+        "error": 0.0491,
+        "esco_text": "inter-organisational middleware system: A software infrastructure that acts as an intermediary layer between applications to enable data exchange, interoperability and communication. It aims to provide standardised protocols and services between organisations to promote their interaction."
+      },
+      {
+        "id": "p067",
+        "user_skill": "Postman",
+        "esco_label": "execute integration testing",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5441,
+        "error": 0.0425,
+        "esco_text": "execute integration testing: Perform testing of system or software components grouped in multiple ways to evaluate their ability to interconnect, their interface and their ability to provide global functionality."
+      },
+      {
+        "id": "p052",
+        "user_skill": "Figma",
+        "esco_label": "create website wireframe",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5465,
+        "error": 0.0401,
+        "esco_text": "create website wireframe: Develop an image or set of images that display the functional elements of a website or page, typically used for planning a website's functionality and structure."
+      },
+      {
+        "id": "p102",
+        "user_skill": "Scrum",
+        "esco_label": "perform project management",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.553,
+        "error": 0.0336,
+        "esco_text": "perform project management: Manage and plan various resources, such as human resources, budget, deadline, results, and quality necessary for a specific project, and monitor the project's progress in order to achieve a specific goal within a set time and budget."
+      },
+      {
+        "id": "p109",
+        "user_skill": "SQL",
+        "esco_label": "create 3D characters",
+        "label": 0,
+        "negative": "hard",
+        "split": "dev",
+        "similarity": 0.603,
+        "error": 0.0164,
+        "esco_text": "create 3D characters: Develop 3D models by transforming and digitising previously designed characters using specialised 3D tools."
+      },
+      {
+        "id": "p074",
+        "user_skill": "Linux",
+        "esco_label": "administer ICT system",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5866,
+        "error": -0.0,
+        "esco_text": "administer ICT system: Handle components of ICT system by maintaining configuration, managing users, monitoring resource use, performing backups and installing hardware or software to comply with the set requirements."
+      },
+      {
+        "id": "p093",
+        "user_skill": "Microservices",
+        "esco_label": "software architecture models",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5881,
+        "error": -0.0015,
+        "esco_text": "software architecture models: The set of structures and models needed to understand or describe the software system, including the software elements, the relations between them and the properties of both elements and relations."
+      },
+      {
+        "id": "p094",
+        "user_skill": "MongoDB",
+        "esco_label": "unstructured data",
+        "label": 1,
+        "negative": null,
+        "split": "dev",
+        "similarity": 0.5887,
+        "error": -0.0021,
+        "esco_text": "unstructured data: The information that is not arranged in a pre-defined manner or does not have a pre-defined data model and is difficult to understand and find patterns in without using techniques such as data mining."
+      }
+    ]
+  },
+  "mutual_nn": {
+    "note": "For each related pair, the user is just that skill, so mutual_nn reduces to: the ESCO skill is among the user skill's 10 nearest role skills (1,428-skill index rebuilt with the option's ESCO text). Threshold = the option's dev Thr@P95.",
+    "a": {
+      "in_index": 103,
+      "above_threshold": 98,
+      "above_threshold_and_mutual": 34,
+      "threshold": 0.612,
+      "lost_by_mutual_examples": [
+        "SQL -> use query languages (0.786)",
+        "SQL -> manage database (0.685)",
+        "Metasploit -> perform ICT security testing (0.750)",
+        "Kali Linux -> ethical hacking principles (0.647)",
+        "Penetration Testing -> identify ICT system weaknesses (0.694)",
+        "Pandas -> perform data cleansing (0.677)",
+        "Power BI -> deliver visual presentation of data (0.707)",
+        "AWS -> develop with cloud services (0.762)",
+        "Microsoft Azure -> deploy cloud resource (0.746)",
+        "Terraform -> automate cloud tasks (0.796)"
+      ]
+    },
+    "b": {
+      "in_index": 103,
+      "above_threshold": 94,
+      "above_threshold_and_mutual": 20,
+      "threshold": 0.6134,
+      "lost_by_mutual_examples": [
+        "Figma -> design user interface (0.740)",
+        "SQL -> use query languages (0.793)",
+        "SQL -> manage database (0.737)",
+        "PostgreSQL -> database management systems (0.820)",
+        "Selenium -> tools for ICT test automation (0.810)",
+        "Git -> tools for software configuration management (0.690)",
+        "Wireshark -> implement ICT network diagnostic tools (0.662)",
+        "Metasploit -> perform ICT security testing (0.674)",
+        "Kali Linux -> ethical hacking principles (0.621)",
+        "Penetration Testing -> identify ICT system weaknesses (0.750)"
+      ]
+    },
+    "c": {
+      "in_index": 103,
+      "above_threshold": 96,
+      "above_threshold_and_mutual": 16,
+      "threshold": 0.5866,
+      "lost_by_mutual_examples": [
+        "Figma -> design user interface (0.719)",
+        "SQL -> use query languages (0.793)",
+        "SQL -> manage database (0.737)",
+        "PostgreSQL -> database management systems (0.820)",
+        "Selenium -> tools for ICT test automation (0.810)",
+        "Git -> tools for software configuration management (0.690)",
+        "Wireshark -> implement ICT network diagnostic tools (0.664)",
+        "Metasploit -> perform ICT security testing (0.684)",
+        "Penetration Testing -> identify ICT system weaknesses (0.727)",
+        "Pandas -> perform data cleansing (0.666)"
+      ]
+    }
+  }
+}

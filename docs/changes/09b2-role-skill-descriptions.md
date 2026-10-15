@@ -1,6 +1,6 @@
 # 09b2 — Role-skill description coverage and benchmark v3 (ESCO skills)
 
-**Status:** Part 2 implemented; Part 3 (benchmark v3) in progress · **Date:** 2026-10-15 · **Affects:** AIServices data files, the ESCO label cleaner, the role-skill index build, evaluation tooling
+**Status:** Parts 1–3 done; Part 4 pending · **Date:** 2026-10-15 · **Affects:** AIServices data files, the ESCO label cleaner, the role-skill index build, evaluation tooling
 **Builds on:** [09b — profession database and role-skill index](09b-professions-and-index.md), [09a2 — bge-small + descriptions, threshold 0.73](09a2-embedding-model-selection.md)
 
 ## Summary
@@ -139,26 +139,89 @@ The undescribed skills left: 792 phrases, 337 knowledge areas and the 11 misclas
 
 ## Part 3 — Benchmark v3: embedding ESCO phrase and knowledge skills
 
-*(Pair set built; results pending review of the sample pairs.)*
+**Question:** how should an ESCO phrase or knowledge skill be embedded so that it compares fairly with a user's curated skill?
 
-- **Question:** how should an ESCO phrase or knowledge skill be embedded so that it compares fairly with a user's curated skill?
-- **The user side** is always "Name: curated description".
+- **The user side** is always "Name: curated description", the production text.
 - **The ESCO side** has three options:
-  - **(a)** label only;
+  - **(a)** label only (what the index uses today);
   - **(b)** "label: first sentence of the ESCO description" (≤ 25 words);
   - **(c)** "label: full ESCO description" (≤ 60 words).
+- **Model:** the production model (`BAAI/bge-small-en-v1.5`).
+- **Files:** pairs and code are in `AIServices/eval/embeddings_v3/` (`build_pairs.py` → `pairs.json`; `run_benchmark.py` → `results/results.json` and `results/report.md`).
 
-**Set:** `AIServices/eval/embeddings_v3/pairs.json`, built and validated by `build_pairs.py`. It has **153 hand-labelled pairs**:
+### The set
 
-| Label | Count | Notes |
+**153 hand-labelled pairs** (label 2: 51, label 1: 52, label 0: 50, of which 37 are hard negatives and 13 easy).
+
+- **Split:** stratified by label and negative type, seed 42: **dev 107 / held-out 46**.
+- **Review relabels** (applied after the split, so the split is unchanged):
+  - p035, Technical Writing vs "provide technical documentation": 2 → 1;
+  - p057, React vs "implement front-end website design": 1 → 2.
+- **Sensitivity subset:** 15 related pairs whose ESCO *description* names the user skill (e.g. "…such as Selenium", "…Autodesk Maya, Blender"). Every metric is also reported without them.
+
+**Rules fixed before running:**
+- **Selection:** the highest **dev** AUC against hard negatives; if two options are within 0.01, the higher dev recall at 95 % precision wins.
+- **Threshold:** the chosen option's dev Thr@P95.
+- **Guardrail:** ESCO descriptions are enabled, or a second threshold is added, only if, on the **held-out** set, the chosen option's AUC against hard negatives exceeds option (a)'s by ≥ 0.02 **and** its recall at 95 % precision is ≥ 0.90.
+
+### Results
+
+| Option | Split | AUC | **AUC vs hard** | Thr@P95 | Recall@P95 | At 0.73 (precision / recall) |
+|---|---|---|---|---|---|---|
+| **a** label only | dev | 0.989 | **0.988** | 0.612 | 0.944 | 1.00 / 0.667 |
+| | held-out | 0.987 | **0.985** | 0.631 | 0.968 | 1.00 / 0.742 |
+| b first sentence | dev | 0.979 | 0.972 | 0.613 | 0.903 | 1.00 / 0.597 |
+| | held-out | 0.927 | 0.903 | 0.674 | 0.710 | 1.00 / 0.484 |
+| c full description | dev | 0.978 | 0.970 | 0.587 | 0.931 | 1.00 / 0.319 |
+| | held-out | 0.920 | 0.892 | 0.672 | 0.613 | 1.00 / 0.355 |
+
+**Sensitivity (without the 15 tool-naming pairs):** the same ordering, and (a) still wins.
+
+| Option | AUC vs hard (dev / held-out) | Recall@P95 (dev / held-out) |
 |---|---|---|
-| 2 (strongly related) | 51 | |
-| 1 (related) | 52 | |
-| 0 (unrelated) | 50 | 37 hard negatives (technical skills from different areas), 13 easy |
+| a | 0.986 / 0.983 | 0.934 / 0.963 |
+| b | 0.967 / 0.892 | 0.885 / 0.519 |
+| c | 0.965 / 0.886 | 0.869 / 0.407 |
 
-- **Split:** stratified by label and negative type, seed 42. **Dev 107** (36 / 36 / 26 hard / 9 easy) and **held-out 46** (15 / 16 / 11 hard / 4 easy).
-- **Selection rule (fixed before running):** the highest AUC against hard negatives on the dev set; if two options are within 0.01, the higher recall at 95 % precision wins. The threshold is chosen on dev; held-out only confirms.
-- **Guardrail:** ESCO descriptions are enabled, or a second threshold added, **only if** the chosen option improves AUC against hard negatives by **≥ 0.02 over option (a) on the held-out set** and keeps **≥ 90 % recall at 95 % precision**. Otherwise the current single threshold stays.
+Removing those pairs lowers (b) and (c) more than (a). Their small advantage on those pairs came from word overlap.
+
+**Score distributions** (all 153 pairs; mean [min–max]):
+
+| Option | Label 2 | Label 1 | 0 hard | 0 easy |
+|---|---|---|---|---|
+| a | 0.785 [0.579–0.874] | 0.728 [0.561–0.837] | 0.547 [0.434–0.632] | 0.504 [0.430–0.612] |
+| b | 0.761 [0.621–0.893] | 0.696 [0.514–0.835] | 0.550 [0.453–0.716] | 0.478 [0.346–0.580] |
+| c | 0.736 [0.526–0.893] | 0.665 [0.512–0.821] | 0.525 [0.435–0.716] | 0.453 [0.354–0.526] |
+
+**Why the descriptions hurt:** ESCO descriptions are long, generic sentences ("Utilise specialised ICT tools to create computer code…", "Apply cloud networking concepts…"). They pull related pairs down (label-1 mean 0.728 → 0.665) and push some hard negatives up. The worst case is Python vs "ICT network routing", at 0.716 under (b) and (c) against 0.606 under (a).
+
+The 15 worst pairs per option are in `results/report.md`. For (a), the worst are related pairs scoring low: Bash vs "administer ICT system" 0.561, REST APIs vs "interfacing techniques" 0.573, Jira vs "use ICT ticketing system" 0.579. The highest hard negatives are Kotlin vs "perform data mining" 0.632 and Docker vs "design graphics" 0.631.
+
+### mutual_nn against the real role-skill index
+
+The 1,428-skill index was rebuilt in memory with each option's ESCO text. For a single user skill, mutual_nn reduces to "the ESCO skill is among the user skill's 10 nearest role skills".
+
+| Option | Related pairs in the index | ≥ dev Thr@P95 | ≥ threshold **and** mutual |
+|---|---|---|---|
+| a | 103 | 98 | **34** |
+| b | 103 | 94 | 20 |
+| c | 103 | 96 | 16 |
+
+Requiring mutual_nn removes most true matches to ESCO phrases. Examples: SQL → "use query languages" (0.786), AWS → "develop with cloud services" (0.762), Terraform → "automate cloud tasks" (0.796). A user skill's 10 nearest role skills are mostly other tools (SQL → MySQL, T-SQL, PostgreSQL…), so ESCO phrases rarely make the top 10.
+
+### Decision (rules applied exactly as written)
+
+| Step | Result |
+|---|---|
+| Dev AUC vs hard | a 0.988 · b 0.972 · c 0.970; only (a) is within 0.01 of the best |
+| **Chosen** | **(a) label only**; dev Thr@P95 = **0.612** |
+| Held-out confirmation | (a) AUC vs hard 0.985; recall at 95 % precision 0.968; at the dev threshold 0.612, precision 0.968 / recall 0.968 |
+| Guardrail (gain over (a) ≥ 0.02 and recall ≥ 0.90) | **not met**: the chosen option *is* (a), so the gain is 0.000 |
+| **Outcome** | **ESCO descriptions stay disabled** (`ESCO_DESCRIPTIONS_ENABLED=false`) and **the single 0.73 threshold is kept** |
+
+**Consequences for Module 5 (not decided here):**
+1. **At 0.73, matches between a user skill and an ESCO phrase are precise but incomplete:** precision 1.00, recall 0.67 (dev) / 0.74 (held-out). Roughly a quarter to a third of truly related phrase pairs score 0.61–0.73 and would count as "missing". The measured mixed-pair Thr@P95 is 0.61–0.63, more than 0.02 below 0.73. The guardrail as written blocks a second threshold whenever (a) is the winner.
+2. **mutual_nn is a poor filter for ESCO phrase skills:** with (a), it keeps only 34 of 98 related pairs that pass the threshold. It still suits tool-to-tool pairs (React → Python was rejected in 09b).
 
 ## Embedding configuration freeze
 
