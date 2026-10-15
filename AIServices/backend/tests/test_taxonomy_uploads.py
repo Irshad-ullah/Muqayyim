@@ -76,7 +76,9 @@ async def test_onet_zip_is_staged_and_validated(db):
     summary = job["file_summary"]
     assert summary["mode"] == "zip" and summary["zip_entries"] == 5
     assert set(summary["files"]) == set(ONET_FILES)
-    assert sorted(summary["ignored"]) == ["Abilities.csv", "README.txt"]  # extra files ignored, not rejected
+    # Extra files are skipped, not rejected; only counted (names are not kept).
+    assert summary["ignored_count"] == 2 and "ignored" not in summary
+    assert "Abilities" not in str(job) and "README" not in str(job)
     assert summary["validated_files"]["occupation_data.csv"]["rows"] == 5
     # Staged inside the work dir (outside the repo), only the expected files.
     staged = Path(job["staging_dir"])
@@ -107,7 +109,7 @@ async def test_individual_csv_files(db):
     await jobs.wait_for_background()
     job = await jobs.get_job(job["job_id"], db=db)
     assert job["status"] == jobs.VALIDATED and job["file_summary"]["mode"] == "files"
-    assert job["dataset_version"] == "O*NET 31.0" and job["file_summary"]["ignored"] == ["notes.txt"]
+    assert job["dataset_version"] == "O*NET 31.0" and job["file_summary"]["ignored_count"] == 1
 
 
 @pytest.mark.parametrize("source, typed, label", [
@@ -132,7 +134,8 @@ async def test_missing_file_and_wrong_columns(db):
     job = await upload_job(db, "onet", make_zip(entries))
     assert job["status"] == jobs.FAILED and job["error"] == "Validation failed"
     errors = job["validation_errors"]
-    assert any("missing file: job_titles.csv" in e for e in errors)
+    assert errors[0] == ("Missing required file(s): job_titles.csv. O*NET needs occupation_data.csv, "
+                         "job_titles.csv, software_skills.csv.")
     assert any(e.startswith("software_skills.csv: missing column(s)") for e in errors)
     assert job.get("staging_dir") is None and staging_dirs() == []  # deleted on failure
 
@@ -140,8 +143,25 @@ async def test_missing_file_and_wrong_columns(db):
 async def test_wrong_source_files(db):
     job = await upload_job(db, "esco", make_zip(onet_entries()))  # O*NET files uploaded as ESCO
     assert job["status"] == jobs.FAILED
-    assert job["file_summary"]["files"] == {} and len(job["file_summary"]["ignored"]) == 3
-    assert any("missing file: occupations_en.csv" in e for e in job["validation_errors"])
+    assert job["file_summary"]["files"] == {} and job["file_summary"]["ignored_count"] == 3
+    assert job["validation_errors"] == [
+        "Missing required file(s): occupations_en.csv, skills_en.csv, occupationSkillRelations_en.csv. "
+        "ESCO needs occupations_en.csv, skills_en.csv, occupationSkillRelations_en.csv "
+        "(optional: digitalSkillsCollection_en.csv)."]
+
+
+async def test_missing_file_errors_name_only_the_required_files(db):
+    entries = {k: v for k, v in esco_entries().items() if not k.startswith(("skills", "occupationSkill"))}
+    job = await upload_job(db, "esco", make_zip(entries))
+    assert job["validation_errors"] == [
+        "Missing required file(s): skills_en.csv, occupationSkillRelations_en.csv. ESCO needs occupations_en.csv, "
+        "skills_en.csv, occupationSkillRelations_en.csv (optional: digitalSkillsCollection_en.csv)."]
+    assert "staging" not in str(job["validation_errors"]) and ".muqayyim" not in str(job["validation_errors"])
+
+
+async def test_only_required_files_are_extracted(db):
+    job = await upload_job(db, "onet", make_zip(onet_entries(**{"Abilities.csv": b"a,b\n1,2\n", "Skills.csv": b"s\n1\n"})))
+    assert sorted(p.name for p in Path(job["staging_dir"]).iterdir()) == sorted(ONET_FILES)
 
 
 async def test_not_utf8_and_empty_files(db):

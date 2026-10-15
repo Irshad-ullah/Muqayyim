@@ -9,7 +9,9 @@ files are written there; everything is deleted when the job finishes
 Accepted uploads, for ONE source:
   * one ZIP (as downloaded: extra files are ignored, a single top-level folder is fine)
   * or the individual CSV files
-Expected files (case-insensitive; ESCO with or without "_en"):
+Scope: ONLY the files the role-skill data uses are accepted, extracted and stored
+(case-insensitive; ESCO with or without "_en"); everything else in an upload is
+skipped and only counted (no names kept):
   onet  occupation_data.csv, job_titles.csv, software_skills.csv
   esco  occupations_en.csv, skills_en.csv, occupationSkillRelations_en.csv,
         digitalSkillsCollection_en.csv (optional)
@@ -122,7 +124,7 @@ def version_label(source: str, value: str) -> Tuple[str, str]:
 @dataclass
 class Staged:
     files: Dict[str, int] = field(default_factory=dict)  # staged name → bytes
-    ignored: List[str] = field(default_factory=list)
+    ignored: int = 0  # other files are skipped; their names are not kept
     mode: str = "files"
     upload_bytes: int = 0
     zip_entries: int = 0
@@ -135,8 +137,7 @@ class Staged:
             "zip_entries": self.zip_entries,
             "uncompressed_bytes": self.uncompressed_bytes,
             "files": {name: {"bytes": size} for name, size in sorted(self.files.items())},
-            "ignored": self.ignored[:50],
-            "ignored_count": len(self.ignored),
+            "ignored_count": self.ignored,
         }
 
 
@@ -183,7 +184,7 @@ def extract_zip(source: str, zip_path: Path, dest: Path, staged: Staged) -> None
                 continue
             target_name = expected_name(source, info.filename)
             if target_name is None:
-                staged.ignored.append(info.filename[:200])
+                staged.ignored += 1
                 continue
             if target_name in staged.files:
                 raise UploadRejected([f"the ZIP contains {target_name} more than once"], code="ZIP_DUPLICATE")
@@ -240,7 +241,7 @@ async def stage_upload(source: str, uploads: List[Tuple[str, object]], dest: Pat
     for filename, handle in uploads:
         target_name = expected_name(source, filename or "")
         if target_name is None:
-            staged.ignored.append((filename or "")[:200])
+            staged.ignored += 1
             continue
         if target_name in staged.files:
             raise UploadRejected([f"{target_name} was uploaded more than once"])
@@ -256,11 +257,37 @@ def file_spec(source: str) -> Tuple[dict, tuple, tuple]:
     return esco_module.FILES, ("_en", ""), esco_module.OPTIONAL
 
 
+REQUIRED_FILES = {
+    "onet": ["occupation_data.csv", "job_titles.csv", "software_skills.csv"],
+    "esco": ["occupations_en.csv", "skills_en.csv", "occupationSkillRelations_en.csv"],
+}
+OPTIONAL_FILES = {"onet": [], "esco": ["digitalSkillsCollection_en.csv"]}
+SOURCE_NAMES = {"onet": "O*NET", "esco": "ESCO"}
+
+
+def staged_name(source: str, base: str) -> str:
+    return f"{base}.csv" if source == "onet" else f"{base}_en.csv"
+
+
+def missing_files_message(source: str, missing: List[str]) -> str:
+    """Exactly which required files are missing, and the full list for the source."""
+    optional = OPTIONAL_FILES[source]
+    return (f"Missing required file(s): {', '.join(missing)}. {SOURCE_NAMES[source]} needs "
+            f"{', '.join(REQUIRED_FILES[source])}"
+            + (f" (optional: {', '.join(optional)})" if optional else "") + ".")
+
+
 def validate_directory(source: str, directory: Path) -> Tuple[Dict[str, dict], List[str]]:
     """Required files and columns, UTF-8 and row counts — the same rules the importers use.
     → ({file name: {bytes, rows}}, [errors])."""
     spec, suffixes, optional = file_spec(source)
-    found, errors = check_files(directory, spec, suffixes, optional)
+    found, raw_errors = check_files(directory, spec, suffixes, optional)
+    # One message naming exactly the missing files (no paths, no name variants).
+    missing = [staged_name(source, base) for base in spec if base not in optional
+               and not any((Path(directory) / f"{base}{s}.csv").is_file() for s in suffixes)]
+    errors = [e for e in raw_errors if not e.startswith("missing file:")]
+    if missing:
+        errors.insert(0, missing_files_message(source, missing))
     files = {}
     for base, path in found.items():
         rows, problem = scan_rows(path)
