@@ -88,7 +88,7 @@ properties with no single SRS id.
 | Admin UI: Skill taxonomy — seed description read-only, Check (dry-run validation), save reports the re-embedded skill, 422 reasons, create, disabled under the lock | FE `pages/admin/taxonomy/SkillTaxonomyTab.spec.jsx` | unit (component) | pass |
 | Error messages for 403 / 409 / 413 / 422 / 429 (with Retry-After) / 503 / 504 / no connection | FE `pages/admin/taxonomy/taxonomyRules.test.js` | unit | pass |
 | Lock shows its holder; restore list includes the snapshot's own edit; edit snapshots name the edit; publisher named; profession categories for the edit form | AI `test_taxonomy_jobs.py::test_lock_shows_who_holds_it`, `test_taxonomy_edits.py::test_restore_dialog_lists_every_edit_it_undoes`, `::test_edit_routes`, `test_taxonomy_publish.py` (routes) | integration | pass |
-| Admin UI, browser walkthrough | 9c Part 8 checklist (TEST_LOG) | manual | pending — results to be reported by the user |
+| Admin UI, browser walkthrough (upload → validate → preview → cancel, override + reset, non-seed skill edit + restore, 409 and 422 cases, 100 MB client check) | 9c Part 8 checklist (TEST_LOG) | manual | 2026-10-16, 16/16 passed |
 
 ## Gateway and cross-cutting
 
@@ -106,7 +106,7 @@ properties with no single SRS id.
 | **security** — ZIP safety (zip-slip, symlinks, bombs, entry counts) | AI `test_taxonomy_uploads.py::rejected uploads` | unit | pass |
 | **data integrity** — tests never touch real data files | AI `tests/conftest.py` session guard (fails the run if any `app/data/*.json` changes) | unit | pass |
 | **data integrity** — atomic publish, rollback, crash recovery, snapshot SHA-256 manifest | AI `test_taxonomy_publish.py` | integration | pass |
-| **data integrity** — publish → restore leaves real data identical | 9c Part 4 manual check (12 measures) and Part 5 (file SHA-256, index state hash) | manual | 2026-10-15, identical |
+| **data integrity** — publish → restore leaves real data identical | 9c Part 4 manual check (12 measures), Part 5 and Part 8 walkthrough (file SHA-256, index state hash vs an independent backup) | manual | 2026-10-15 / 2026-10-16, identical |
 
 ## Evaluations
 

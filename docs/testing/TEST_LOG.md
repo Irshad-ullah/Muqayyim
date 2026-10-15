@@ -366,9 +366,9 @@ Admin module, untracking `.env` files, Module 4 (CV generator).
 - **Field lost its label:** the "reset to dataset value" button sat inside the field's `<label>`; a button is labelable, so the label named the button and the input had no accessible name → label linked by `htmlFor`, tag outside it; found by `ProfessionsTab.spec.jsx`.
 - **Just-uploaded job not polled:** an upload returns the job as `uploaded` and validation starts a moment later, but `uploaded` was not a polled state, so the page stayed on "Uploaded" → added; found while tracing the upload flow, test added.
 
-**Manual check:** pending — browser walkthrough by the user (checklist below). Independent backup taken first: `~/.muqayyim/taxonomy/manual-backup-2026-10-16-part8` (mongodump of ai_db, 13 collections, plus the data and index files with SHA-256).
+**Manual check:** browser walkthrough on the running app (UI :5174 → gateway :8080 → Core :3000 → AI :8000, real data) by a project team member on 2026-10-16: **16 of 16 steps passed** (checklist below). Independent backup taken first: `~/.muqayyim/taxonomy/manual-backup-2026-10-16-part8` (mongodump of ai_db, 13 collections, plus the data and index files with SHA-256).
 
-Walkthrough checklist (results to be added here):
+Walkthrough checklist (all 16 passed):
 1. Restart the AI service on :8000 (the UI uses the new lock / snapshot / category fields; Core, gateway and the Vite dev server need no restart). Sign in as admin.
 2. Sidebar → Professions & Skills (no longer "Soon"). Data sources: O*NET and ESCO cards show versions, profession counts, ESCO skills and last update; both attribution lines are shown.
 3. Switch Source between O*NET and ESCO: the hint lists exactly the needed files, the version field changes.
@@ -385,3 +385,5 @@ Walkthrough checklist (results to be added here):
 14. History: three "Before edit" snapshots with notes (title edit, reset, Tomcat description). Restore… on the newest: the dialog lists exactly one edit (skill "Tomcat": description — by your admin user id); Restore stays disabled until RESTORE is typed.
 15. Confirm: "Restoring" banner and the lock banner ("Restoring a snapshot — by …"); while it runs, Save on the Professions tab is disabled (a second tab gets "Taxonomy busy" if you are quick). When it finishes: toast, Tomcat's description is the original again.
 16. Optional: sign in as a job seeker and open `/admin/professions` → redirected away.
+
+**Clean-up and evidence after the walkthrough:** the 4 snapshots it created (3 before-edit, 1 pre-restore) were deleted with their files, as were the cancelled O*NET job and the restore record; ai_db then held no snapshots, import jobs or restores. Compared with the backup taken before the walkthrough: the SHA-256 of all five data files (`skill_descriptions.json`, `skill_aliases.json`, `skill_categories.json`, `onet_name_map.json`, `esco_name_map.json`) match; the index state hash (`efaee56a0f04…`) matches both the backup's index metadata and the hash recomputed from the live professions; the FAISS file matches; `Software Developers` has its dataset title and no override; `git status` shows no change under `app/data/`. The manual backups are kept.
