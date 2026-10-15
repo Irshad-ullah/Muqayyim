@@ -277,7 +277,7 @@ async def test_cleanup(db):
         os.utime(path, (day_ago, day_ago))
 
     counts = await uploads.cleanup_staging(db)
-    assert counts == {"removed": 3, "expired_jobs": 1}
+    assert counts == {"removed": 3, "expired_jobs": 1, "staging_collections_dropped": 0}
     assert [p.name for p in staging_dirs()] == [Path(fresh["staging_dir"]).name]
     expired = await jobs.get_job(old["job_id"], db=db)
     assert expired["status"] == jobs.CANCELLED and "Expired after 24 h" in expired["progress"]["message"]

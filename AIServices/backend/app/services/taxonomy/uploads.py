@@ -344,8 +344,12 @@ async def create_upload_job(source: str, dataset_version: str, created_by: str,
 
 
 async def cancel_job(job_id: str, note: str = "Cancelled by an admin", db=None) -> dict:
+    from app.services.taxonomy.pipeline import drop_staging
+
+    db = db if db is not None else get_database()
     job = await jobs.transition(job_id, jobs.CANCELLED, note=note, db=db)
     remove_staging(job.get("staging_dir"))
+    await drop_staging(db, job_id)
     await jobs.update_job(job_id, db, staging_dir=None)
     return await jobs.get_job(job_id, db=db)
 
@@ -386,7 +390,22 @@ async def cleanup_staging(db=None, now: Optional[float] = None) -> Dict[str, int
                 counts["removed"] += 1
             except jobs.JobStateError:
                 pass
+    counts["staging_collections_dropped"] = await drop_orphan_collections(db)
     return counts
+
+
+async def drop_orphan_collections(db) -> int:
+    """Staging collections whose job is finished or gone (e.g. after a crash)."""
+    from app.services.taxonomy.pipeline import STAGING_PREFIX, drop_staging, is_staging_collection
+
+    dropped = 0
+    job_ids = {name.split(STAGING_PREFIX, 1)[1] for name in await db.list_collection_names() if is_staging_collection(name)}
+    for job_id in job_ids:
+        job = await db[jobs.JOBS].find_one({"job_id": job_id}, {"status": 1})
+        if job is None or job["status"] in jobs.FINAL:
+            await drop_staging(db, job_id)
+            dropped += 1
+    return dropped
 
 
 async def run_cleanup(db=None, interval: Optional[float] = None) -> None:

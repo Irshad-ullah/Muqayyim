@@ -18,7 +18,44 @@ from app.config import database as database_module  # noqa: E402
 from app.config.settings import settings  # noqa: E402
 from app.services.embeddings.model import get_manager  # noqa: E402
 from app.services.embeddings.vector_store import ensure_embedding_indexes  # noqa: E402
-from app.services.professions.imports import preview_import, publish_import  # noqa: E402
+from app.services.professions.imports import publish_import  # noqa: E402
+from app.services.taxonomy import jobs  # noqa: E402
+from app.services.taxonomy.cli import preview_from_directory  # noqa: E402
+from app.services.taxonomy.pipeline import ensure_diff_indexes  # noqa: E402
+from app.services.taxonomy.uploads import UploadRejected, cancel_job  # noqa: E402
+
+
+async def load_model(db) -> None:
+    manager = get_manager()
+    print(f"Loading {manager.model_name} ...", file=sys.stderr)
+    started = time.perf_counter()
+    await asyncio.to_thread(manager.load_sync)
+    manager.ready_event.set()
+    print(f"Model ready in {time.perf_counter() - started:.1f}s", file=sys.stderr)
+    await ensure_embedding_indexes(db)
+
+
+async def dry_run(source: str, args, db) -> int:
+    """09c: the same job pipeline as an admin upload (created_by "cli"); nothing live is written."""
+    await jobs.ensure_job_indexes(db)
+    await ensure_diff_indexes(db)
+    await load_model(db)  # the preview runs the background credit check
+    try:
+        job = await preview_from_directory(source, args.data_dir, args.version, db=db, actor=args.actor)
+    except UploadRejected as exc:
+        print("Upload rejected: " + exc.safe_message, file=sys.stderr)
+        return 1
+    report = {k: jobs.public(job).get(k) for k in ("job_id", "source", "dataset_version", "status", "created_by",
+                                                   "file_summary", "validation_errors", "diff_summary", "checks", "error")}
+    print(json.dumps(report, indent=2, ensure_ascii=False, default=str))
+    if job["status"] == jobs.PREVIEWED:
+        await cancel_job(job["job_id"], note="CLI dry run finished", db=db)  # deletes the staged data
+        if (job.get("checks") or {}).get("background_warning"):
+            print("WARNING: the background credit check did not pass on the staged data.", file=sys.stderr)
+        return 0
+    print("Dry run failed: " + "; ".join(job.get("validation_errors") or [job.get("error") or job["status"]]),
+          file=sys.stderr)
+    return 1
 
 
 async def run(source: str, args) -> int:
@@ -27,18 +64,11 @@ async def run(source: str, args) -> int:
     database_module.database = db  # services use the shared database handle
     try:
         if args.dry_run:
-            report = await preview_import(source, args.data_dir, args.version, db=db)
-        else:
-            if not args.no_index:
-                manager = get_manager()
-                print(f"Loading {manager.model_name} ...", file=sys.stderr)
-                started = time.perf_counter()
-                await asyncio.to_thread(manager.load_sync)
-                manager.ready_event.set()
-                print(f"Model ready in {time.perf_counter() - started:.1f}s", file=sys.stderr)
-                await ensure_embedding_indexes(db)
-            report = await publish_import(source, args.data_dir, args.version, actor=args.actor, db=db,
-                                          rebuild=not args.no_index)
+            return await dry_run(source, args, db)
+        if not args.no_index:
+            await load_model(db)
+        report = await publish_import(source, args.data_dir, args.version, actor=args.actor, db=db,
+                                      rebuild=not args.no_index)
         print(json.dumps(report.to_dict(), indent=2, ensure_ascii=False, default=str))
         if not report.ok:
             print("Import failed: " + "; ".join(report.errors), file=sys.stderr)
@@ -53,7 +83,8 @@ async def run(source: str, args) -> int:
 
 def main(source: str, doc: str) -> None:
     parser = argparse.ArgumentParser(description=doc, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--dry-run", action="store_true", help="validate and report what would change; write nothing")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="validate and preview through the import-job pipeline (created_by cli); write nothing live")
     parser.add_argument("--data-dir", help="dataset folder (default: PROFESSION_DATA_DIR/<source>)")
     parser.add_argument("--version", help="dataset version label (default from settings)")
     parser.add_argument("--actor", default="cli", help="who ran the import (stored in the import log)")

@@ -11,11 +11,12 @@ Profession database: ai_db.professions (Module 5 FE-2, Module 10 FE-4).
 Role skills are de-duplicated by canonical key, keeping the strongest type:
 essential > technology (hot or in-demand) > technology > optional.
 A profession with fewer than MIN_SKILLS skills is stored but inactive.
-Admin overrides (disabled_by_admin, category_set_by_admin) survive re-imports.
+Admin overrides (disabled_by_admin; title / description / category _set_by_admin)
+survive re-imports.
 """
 
 from datetime import datetime, timezone
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Tuple
 
 from pymongo import ASCENDING
 
@@ -36,13 +37,13 @@ def active_sources() -> List[str]:
     return [s for s in SOURCES if s in wanted]
 
 
-async def ensure_profession_indexes(db) -> None:
-    coll = db[PROFESSIONS]
+async def ensure_profession_indexes(db, professions: str = PROFESSIONS, esco_skills: str = ESCO_SKILLS) -> None:
+    coll = db[professions]
     await coll.create_index([("profession_id", ASCENDING)], unique=True, name="profession_id_unique")
     await coll.create_index([("source", ASCENDING)], name="source")
     await coll.create_index([("category", ASCENDING)], name="category")
     await coll.create_index([("skills.key", ASCENDING)], name="skills_key")
-    await db[ESCO_SKILLS].create_index([("uri", ASCENDING)], unique=True, name="uri_unique")
+    await db[esco_skills].create_index([("uri", ASCENDING)], unique=True, name="uri_unique")
 
 
 def skill_rank(skill: dict) -> int:
@@ -119,20 +120,37 @@ def comparable(doc: dict) -> dict:
                                      "source_version", "skills", "active", "inactive_reason")}
 
 
-async def upsert_professions(docs: List[dict], db=None) -> Dict[str, int]:
+# Fields an admin can override on an imported profession; the override survives re-imports.
+ADMIN_OVERRIDES = {"title": "title_set_by_admin", "description": "description_set_by_admin",
+                   "category": "category_set_by_admin"}
+
+
+def apply_admin_overrides(doc: dict, current: Optional[dict]) -> Tuple[dict, List[str]]:
+    """The dataset doc with the admin's overrides from `current` kept → (doc, kept fields)."""
+    if not current:
+        return doc, []
+    kept = []
+    if current.get("disabled_by_admin"):
+        # An admin deactivation (or delete) survives re-imports.
+        doc = {**doc, "active": False, "inactive_reason": current.get("inactive_reason")}
+    for field_name, flag in ADMIN_OVERRIDES.items():
+        if current.get(flag):
+            if current.get(field_name) != doc.get(field_name):
+                kept.append(field_name)
+            doc = {**doc, field_name: current.get(field_name)}
+    return doc, kept
+
+
+async def upsert_professions(docs: List[dict], db=None, collection: str = PROFESSIONS) -> Dict[str, int]:
     """Insert or update by profession_id; unchanged documents are not touched."""
     db = db if db is not None else get_database()
-    coll = db[PROFESSIONS]
+    coll = db[collection]
     now = datetime.now(timezone.utc)
     existing = {d["profession_id"]: d async for d in coll.find({"profession_id": {"$in": [d["profession_id"] for d in docs]}})}
     counts = {"inserted": 0, "updated": 0, "unchanged": 0}
     for doc in docs:
         current = existing.get(doc["profession_id"])
-        if current and current.get("disabled_by_admin"):
-            # An admin deactivation (or delete) survives re-imports.
-            doc = {**doc, "active": False, "inactive_reason": current.get("inactive_reason")}
-        if current and current.get("category_set_by_admin"):
-            doc = {**doc, "category": current.get("category")}
+        doc, _ = apply_admin_overrides(doc, current)
         if current and comparable(current) == comparable(doc):
             counts["unchanged"] += 1
             continue
@@ -145,10 +163,11 @@ async def upsert_professions(docs: List[dict], db=None) -> Dict[str, int]:
     return counts
 
 
-async def deactivate_missing(source: str, keep_ids: Iterable[str], reason: str, db=None) -> int:
+async def deactivate_missing(source: str, keep_ids: Iterable[str], reason: str, db=None,
+                             collection: str = PROFESSIONS) -> int:
     """Professions of `source` no longer in the dataset become inactive (never deleted)."""
     db = db if db is not None else get_database()
-    result = await db[PROFESSIONS].update_many(
+    result = await db[collection].update_many(
         {"source": source, "profession_id": {"$nin": list(keep_ids)}, "active": True},
         {"$set": {"active": False, "inactive_reason": reason, "updated_at": datetime.now(timezone.utc)}},
     )

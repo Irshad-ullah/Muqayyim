@@ -41,7 +41,7 @@ from app.services.embeddings.descriptions import get_description_provider, text_
 from app.services.embeddings.matching_config import get_related_threshold
 from app.services.embeddings.model import ModelNotReady, get_embedder
 from app.services.embeddings.vector_store import plan_texts
-from app.services.professions.store import skill_rank
+from app.services.professions.store import PROFESSIONS, skill_rank
 from app.services.professions.role_skills import (
     active_professions,
     current_skill,
@@ -135,8 +135,9 @@ def build_snapshot(pairs, vectors: Dict[str, np.ndarray], roles, meta: dict) -> 
 
 
 class RoleSkillIndex:
-    def __init__(self, directory: Optional[Path] = None):
+    def __init__(self, directory: Optional[Path] = None, collection: str = PROFESSIONS):
         self.directory = Path(directory) if directory else None
+        self.collection = collection  # a staging collection for previews (09c); live by default
         self._snapshot: Optional[Snapshot] = None
         self._lock = asyncio.Lock()
         self._dirty = False
@@ -196,7 +197,7 @@ class RoleSkillIndex:
     # ── building ─────────────────────────────────────────────────────────────
     async def current_state(self, db=None) -> dict:
         embedder = get_embedder()
-        professions = await active_professions(db)
+        professions = await active_professions(db, self.collection)
         return {
             "professions": professions,
             "expected": {"model": embedder.model_name, "text_mode": text_mode(), "state_hash": state_hash(professions, embedder.model_name, text_mode())},

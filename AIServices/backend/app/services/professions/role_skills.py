@@ -18,10 +18,10 @@ from app.services.professions.store import PROFESSIONS, active_filter
 BATCH = 256
 
 
-async def active_professions(db=None) -> List[dict]:
+async def active_professions(db=None, collection: str = PROFESSIONS) -> List[dict]:
     db = db if db is not None else get_database()
     projection = {"_id": 0, "profession_id": 1, "title": 1, "source": 1, "skills": 1}
-    return [doc async for doc in db[PROFESSIONS].find(active_filter(), projection).sort("profession_id", 1)]
+    return [doc async for doc in db[collection].find(active_filter(), projection).sort("profession_id", 1)]
 
 
 def current_skill(skill: dict) -> Tuple[str, str]:

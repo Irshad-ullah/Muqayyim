@@ -29,6 +29,7 @@ from app.routes.taxonomy_routes import router as taxonomy_router
 from app.services.taxonomy.heartbeat import run_heartbeat
 from app.services.taxonomy.jobs import ensure_job_indexes, recover_interrupted_jobs
 from app.services.taxonomy.uploads import run_cleanup
+from app.services.taxonomy.pipeline import ensure_diff_indexes
 from app.config.database import get_database
 from app.services.professions.imports import refresh_esco_descriptions
 from app.services.professions.role_index import get_role_index
@@ -87,6 +88,7 @@ async def lifespan(app: FastAPI):
         # Admin taxonomy jobs (09c): no job step can still be running in a new process.
         try:
             await ensure_job_indexes(db)
+            await ensure_diff_indexes(db)
             recovered = await recover_interrupted_jobs(db)
             if any(recovered.values()):
                 logger.warning("Taxonomy jobs interrupted by a restart: %s", recovered)

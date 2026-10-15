@@ -8,6 +8,8 @@ by the gateway); X-Internal-Key required.
   GET  /internal/admin/taxonomy/jobs            list import jobs (page, limit, status, source)
   GET  /internal/admin/taxonomy/jobs/{job_id}   one job (poll for progress)
   POST /internal/admin/taxonomy/jobs/{job_id}/cancel
+  POST /internal/admin/taxonomy/jobs/{job_id}/preview   stage + diff + checks (202, background)
+  GET  /internal/admin/taxonomy/jobs/{job_id}/diff      ?section=&page=&limit= detail rows
   GET  /internal/admin/taxonomy/lock            who holds the taxonomy lock, if anyone
 """
 
@@ -20,7 +22,7 @@ from starlette.datastructures import UploadFile
 from app.config.database import get_database
 from app.middleware.internal_auth import require_internal_key
 from app.config.settings import settings
-from app.services.taxonomy import jobs, uploads
+from app.services.taxonomy import jobs, pipeline, uploads
 from app.services.taxonomy.lock import current_lock
 
 router = APIRouter(prefix="/internal/admin/taxonomy", tags=["Internal"], dependencies=[Depends(require_internal_key)])
@@ -109,3 +111,37 @@ async def cancel(job_id: str):
         return error(404, "NOT_FOUND", "Import job not found")
     except jobs.JobStateError as exc:
         return error(409, "JOB_STATE", str(exc), job_status=exc.status)
+
+
+@router.post("/jobs/{job_id}/preview")
+async def preview(job_id: str):
+    """Build the staged data, diff it against the live data and run the checks (FR12.5)."""
+    if get_database() is None:
+        return no_db()
+    try:
+        job = await pipeline.start_preview(job_id)
+    except jobs.JobNotFound:
+        return error(404, "NOT_FOUND", "Import job not found")
+    except jobs.JobStateError as exc:
+        return error(409, "JOB_STATE", f"A preview needs a validated job; this one is {exc.status}", job_status=exc.status)
+    return JSONResponse(status_code=202, content={"success": True, "data": jobs.public(job)})
+
+
+@router.get("/jobs/{job_id}/diff")
+async def diff_detail(
+    job_id: str,
+    section: Literal[pipeline.SECTIONS],  # type: ignore[valid-type]
+    page: int = Query(1, ge=1, le=100000),
+    limit: int = Query(50, ge=1, le=200),
+):
+    if get_database() is None:
+        return no_db()
+    try:
+        job = await jobs.get_job(job_id)
+    except jobs.JobNotFound:
+        return error(404, "NOT_FOUND", "Import job not found")
+    if not job.get("diff_summary"):
+        return error(409, "NO_PREVIEW", "This job has no preview yet")
+    result = await pipeline.diff_page(job_id, section, page, limit)
+    return {"success": True, "data": result["items"],
+            "pagination": {k: result[k] for k in ("page", "limit", "total", "pages")}}

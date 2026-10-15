@@ -26,7 +26,7 @@ async def test_unrelated_profile_gets_little_background_credit():
     check = load_check()
     try:
         result = await check.run()
-    except SystemExit as exc:  # no professions imported on this machine
+    except check.CheckUnavailable as exc:  # no professions imported on this machine
         pytest.skip(str(exc))
     chef = result["profiles"]["chef"]["pooled_related_pct"]
     web = result["profiles"]["web"]["pooled_related_pct"]

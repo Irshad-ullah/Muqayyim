@@ -71,17 +71,19 @@ def pct(part: int, whole: int) -> float:
     return round(100 * part / whole, 1) if whole else 0.0
 
 
-def measure(db) -> dict:
+def measure(db, professions_collection: str = PROFESSIONS, esco_collection: str = ESCO_SKILLS) -> dict:
+    """db: a synchronous (pymongo) database. The collections default to the live ones;
+    the 09c preview passes its staging collections."""
     provider = get_description_provider()
     esco_type = {}
-    for doc in db[ESCO_SKILLS].find({}, {"label": 1, "skill_type": 1}):
+    for doc in db[esco_collection].find({}, {"label": 1, "skill_type": 1}):
         esco_type[doc["label"]] = doc.get("skill_type") or ""
 
     distinct = defaultdict(dict)  # source → key → info
     occ = Counter()  # (source, described, kind) counts
     professions_per_key = defaultdict(set)
     info = {}
-    for prof in db[PROFESSIONS].find(active_filter(), {"profession_id": 1, "source": 1, "skills": 1}):
+    for prof in db[professions_collection].find(active_filter(), {"profession_id": 1, "source": 1, "skills": 1}):
         src = prof["source"]
         for s in prof.get("skills") or []:
             described = provider.lookup(s["name"]) is not None

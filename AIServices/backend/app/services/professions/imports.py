@@ -151,10 +151,10 @@ async def preview_import(source: str, data_dir=None, version: Optional[str] = No
     return report
 
 
-async def upsert_esco_skills(skills: List[dict], db) -> Dict[str, int]:
+async def upsert_esco_skills(skills: List[dict], db, collection: str = ESCO_SKILLS) -> Dict[str, int]:
     now = datetime.now(timezone.utc)
     ops = [ReplaceOne({"uri": s["uri"]}, {**s, "updated_at": now}, upsert=True) for s in skills]
-    result = await db[ESCO_SKILLS].bulk_write(ops, ordered=False) if ops else None
+    result = await db[collection].bulk_write(ops, ordered=False) if ops else None
     return {
         "esco_skills": len(skills),
         "esco_skills_inserted": result.upserted_count if result else 0,

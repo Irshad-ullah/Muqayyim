@@ -37,6 +37,7 @@ import os
 import statistics
 import sys
 from pathlib import Path
+from typing import Optional
 
 BACKEND = Path(__file__).resolve().parents[1] / "backend"
 sys.path.insert(0, str(BACKEND))
@@ -131,49 +132,77 @@ def profile_rates(names, embedder, snapshot, professions, provider, threshold, m
         "required_not_matched": pooled_total,
         "highest": per_profession[:5],
         "mixed_credits": mixed_credits,
-        "sweep_undescribed_share_pct": {str(t): round(100 * float((best_undescribed >= t).mean()), 1) for t in SWEEP},
+        "sweep_undescribed_share_pct": {str(t): round(100 * float((best_undescribed >= t).mean()), 1)
+                                        if len(best_undescribed) else 0.0 for t in SWEEP},
     }
 
 
-async def run(sweep: bool = False) -> dict:
+class CheckUnavailable(Exception):
+    """The check cannot run (no professions, threshold not valid for the setup)."""
+
+
+async def run(sweep: bool = False, db=None, collection: Optional[str] = None, index_dir: Optional[Path] = None,
+              model_wait_seconds: Optional[float] = None) -> dict:
+    """
+    db None (CLI): own connection to ai_db, the live professions and the saved index;
+    the model is loaded here if needed.
+    db given (service, 09c preview): `collection` (e.g. a staging collection) is scored
+    with an index built from it in `index_dir`; the service's embedder is used and,
+    if it is still loading, waited for (up to model_wait_seconds).
+    """
     from motor.motor_asyncio import AsyncIOMotorClient
 
     from app.config import database as database_module
     from app.config.settings import settings
     from app.services.embeddings.descriptions import get_description_provider
     from app.services.embeddings.matching_config import get_related_threshold
-    from app.services.embeddings.model import get_manager
+    from app.services.embeddings.model import get_embedder
     from app.services.professions.role_index import RoleSkillIndex
     from app.services.professions.store import PROFESSIONS, active_filter
 
-    client = AsyncIOMotorClient(settings.MONGODB_URL)
-    db = client[settings.AI_DB_NAME]
+    own_client = db is None
+    client = AsyncIOMotorClient(settings.MONGODB_URL) if own_client else None
+    if own_client:
+        db = client[settings.AI_DB_NAME]
     previous = database_module.database
-    database_module.database = db
+    if own_client:
+        database_module.database = db
     try:
-        manager = get_manager()
-        if not manager.ready:
-            await asyncio.to_thread(manager.load_sync)
-            manager.ready_event.set()
-        index = RoleSkillIndex()
-        await index.load_or_build(db)
+        embedder = get_embedder()
+        if not embedder.ready:
+            event = getattr(embedder, "ready_event", None)
+            if own_client and hasattr(embedder, "load_sync"):
+                await asyncio.to_thread(embedder.load_sync)
+                event.set()
+            elif event is not None:
+                await asyncio.wait_for(event.wait(), timeout=model_wait_seconds)
+            else:
+                raise CheckUnavailable("The embedding model is not ready")
+        if collection:
+            index = RoleSkillIndex(directory=index_dir, collection=collection)
+            await index.rebuild(db, persist=index_dir is not None)
+        else:
+            index = RoleSkillIndex()
+            await index.load_or_build(db)
         if index.snapshot is None:
-            raise SystemExit("No role-skill index (no active professions?)")
+            raise CheckUnavailable("No role-skill index (no active professions?)")
         threshold = get_related_threshold(kind="described")
         if threshold is None or get_related_threshold(kind="mixed") != threshold:
-            raise SystemExit("The related threshold is not valid for the active setup")
-        professions = [p async for p in db[PROFESSIONS].find(active_filter(), {"title": 1, "skills": 1})]
+            raise CheckUnavailable("The related threshold is not valid for the active setup")
+        source = collection or PROFESSIONS
+        professions = [p async for p in db[source].find(active_filter(), {"title": 1, "skills": 1})]
         provider = get_description_provider()
         result = {"threshold": threshold, "mutual_k": settings.MUTUAL_NN_K, "professions": len(professions),
                   "role_skills": index.snapshot.meta["count"], "profiles": {}}
         for name, skills in PROFILES.items():
-            rates = profile_rates(skills, manager, index.snapshot, professions, provider, threshold, settings.MUTUAL_NN_K)
+            rates = profile_rates(skills, embedder, index.snapshot, professions, provider, threshold, settings.MUTUAL_NN_K)
             if not sweep:
                 rates.pop("sweep_undescribed_share_pct")
             result["profiles"][name] = rates
     finally:
         database_module.database = previous
-        client.close()
+        if client is not None:
+            client.close()
 
     chef, web = result["profiles"]["chef"]["pooled_related_pct"], result["profiles"]["web"]["pooled_related_pct"]
     result["check"] = {
@@ -190,7 +219,10 @@ def main():
     parser.add_argument("--sweep", action="store_true", help="also report mixed credit share at 0.61-0.73")
     parser.add_argument("--json", help="write the full result to this file")
     args = parser.parse_args()
-    result = asyncio.run(run(args.sweep))
+    try:
+        result = asyncio.run(run(args.sweep))
+    except CheckUnavailable as exc:
+        raise SystemExit(str(exc))
     if args.json:
         Path(args.json).write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf8")
     print(json.dumps(result, indent=2, ensure_ascii=False))
