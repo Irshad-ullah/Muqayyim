@@ -77,3 +77,6 @@ AIServices/backend/models/
 AIServices/data/raw/*
 !AIServices/data/raw/README.md
 AIServices/data/index/
+
+# Raw console output of scripts/run_all_tests (kept locally, not committed)
+docs/testing/runs/raw/
