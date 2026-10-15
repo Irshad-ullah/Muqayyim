@@ -48,7 +48,8 @@ export function createApp(config = loadConfig(), { errorReporter } = {}) {
     onLimitHit: (name, req) => spikes.record(req.ip, { limit: name, requestId: req.requestId }),
   });
   if (config.rateLimitEnabled && !config.jwtSecret) {
-    console.warn('[Gateway] JWT_SECRET not set: the taxonomy publish/restore limit is keyed by client IP, not by user.');
+    // By design (09c): the signing secret stays in the services that verify tokens.
+    console.info('[Gateway] publish/restore rate limit keyed by IP; per-user limiting is not configured by design');
   }
 
   // Trust X-Forwarded-For only from known proxies so req.ip is the real client
