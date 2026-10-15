@@ -79,13 +79,15 @@ def skill_pattern(name: str) -> re.Pattern:
     return re.compile(rf"(?<![\w.+#/-]){re.escape(name)}(?![\w+#])")
 
 
-def run_checks(vocabulary=None) -> dict:
+def run_checks(vocabulary=None, descriptions=None, categories=None, aliases=None) -> dict:
+    """Checks the files, or the given in-memory data (the 09c admin editor validates a
+    proposed change before anything is written). `aliases` is the "canonical" mapping."""
     from app.services.embeddings.normalise import normalise_skill
 
     errors, warnings = [], []
-    descriptions = _load_unique(DESCRIPTIONS)
-    categories = _load_unique(CATEGORIES)
-    aliases = _load_unique(ALIASES)["canonical"]
+    descriptions = descriptions if descriptions is not None else _load_unique(DESCRIPTIONS)
+    categories = categories if categories is not None else _load_unique(CATEGORIES)
+    aliases = aliases if aliases is not None else _load_unique(ALIASES)["canonical"]
     seed = _load_unique(SEED)
 
     keys = {}
@@ -116,7 +118,8 @@ def run_checks(vocabulary=None) -> dict:
             errors.append(f"empty description: {name!r}")
             continue
         is_seed = name in seed
-        mentioned = [other for other, p in patterns.items() if other != name and p.search(text)]
+        # The plain substring test is a fast pre-filter: a match always contains the literal name.
+        mentioned = [other for other, p in patterns.items() if other != name and other in text and p.search(text)]
         if len(mentioned) > MAX_OTHER_SKILLS:
             offenders.append({"name": name, "seed": is_seed, "frozen": name in FROZEN_OVER_LIMIT, "mentions": mentioned})
         if is_seed:

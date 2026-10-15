@@ -117,7 +117,7 @@ def profession_doc(*, profession_id: str, title: str, alt_titles: List[str], des
 def comparable(doc: dict) -> dict:
     """The fields an import owns, for change detection."""
     return {k: doc.get(k) for k in ("title", "alt_titles", "description", "category", "source_code",
-                                     "source_version", "skills", "active", "inactive_reason")}
+                                     "source_version", "skills", "active", "inactive_reason", "dataset_values")}
 
 
 # Fields an admin can override on an imported profession; the override survives re-imports.
@@ -126,18 +126,24 @@ ADMIN_OVERRIDES = {"title": "title_set_by_admin", "description": "description_se
 
 
 def apply_admin_overrides(doc: dict, current: Optional[dict]) -> Tuple[dict, List[str]]:
-    """The dataset doc with the admin's overrides from `current` kept → (doc, kept fields)."""
+    """The dataset doc with the admin's overrides from `current` kept → (doc, kept fields).
+    The dataset's own value of every overridden field is kept in `dataset_values`, so
+    "reset to dataset value" always gives the latest dataset value."""
     if not current:
         return doc, []
     kept = []
     if current.get("disabled_by_admin"):
         # An admin deactivation (or delete) survives re-imports.
         doc = {**doc, "active": False, "inactive_reason": current.get("inactive_reason")}
+    dataset_values = {}
     for field_name, flag in ADMIN_OVERRIDES.items():
         if current.get(flag):
             if current.get(field_name) != doc.get(field_name):
                 kept.append(field_name)
+            dataset_values[field_name] = doc.get(field_name)
             doc = {**doc, field_name: current.get(field_name)}
+    if dataset_values:
+        doc = {**doc, "dataset_values": dataset_values}
     return doc, kept
 
 

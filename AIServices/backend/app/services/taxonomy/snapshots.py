@@ -199,6 +199,14 @@ async def prune(db, pool: str) -> int:
     return len(old)
 
 
+async def delete_snapshot(db, record: dict) -> None:
+    """Remove a snapshot that turned out to be unnecessary (an edit refused by validation)."""
+    path = Path(record.get("path") or "")
+    if path.parent == snapshots_root() and path.is_dir():
+        shutil.rmtree(path, ignore_errors=True)
+    await db[SNAPSHOTS].delete_one({"snapshot_id": record["snapshot_id"]})
+
+
 async def get_snapshot(snapshot_id: str, db=None) -> dict:
     db = db if db is not None else get_database()
     record = await db[SNAPSHOTS].find_one({"snapshot_id": snapshot_id})

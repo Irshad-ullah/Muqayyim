@@ -50,8 +50,8 @@ class CuratedFileProvider:
 
     name = "curated"
 
-    def __init__(self, path: Path = CURATED_FILE):
-        self.path = Path(path)
+    def __init__(self, path: Optional[Path] = None):
+        self.path = Path(path) if path is not None else CURATED_FILE  # resolved at call time (tests use copies)
         self._by_key = self._load()
 
     def _load(self) -> dict:

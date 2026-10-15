@@ -596,11 +596,15 @@ async def test_crud_manual_profession(client, db, index):
         assert missing.status_code == 404 and missing.json()["code"] == "NOT_FOUND"
 
 
-async def test_imported_professions_only_allow_category_and_active(client, db):
+async def test_imported_professions_only_allow_overridable_fields(client, db):
+    # 09c: title / description / category / active are admin overrides; the rest comes from the dataset.
     await publish_import("onet", ONET, "31.0", db=db, rebuild=False)
     async with client as c:
-        locked = await c.patch("/internal/professions/onet:15-1252.00", json={"title": "Coders"}, headers=KEY)
+        locked = await c.patch("/internal/professions/onet:15-1252.00", json={"alt_titles": ["Coders"]}, headers=KEY)
         assert locked.status_code == 409 and locked.json()["code"] == "IMPORTED_PROFESSION"
+        titled = await c.patch("/internal/professions/onet:15-1252.00", json={"title": "Coders"}, headers=KEY)
+        assert titled.status_code == 200 and titled.json()["data"]["title_set_by_admin"] is True
+        assert titled.json()["data"]["dataset_values"] == {"title": "Software Developers"}
         ok = await c.patch("/internal/professions/onet:15-1252.00", json={"category": "Data & AI"}, headers=KEY)
         assert ok.status_code == 200 and ok.json()["data"]["category"] == "Data & AI"
 

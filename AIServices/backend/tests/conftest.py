@@ -10,7 +10,25 @@ os.environ.setdefault("EMBEDDING_AUTOLOAD", "false")
 os.environ.setdefault("ROLE_INDEX_AUTOLOAD", "false")
 os.environ.setdefault("SERVICE_HEARTBEAT_ENABLED", "false")
 
+import hashlib  # noqa: E402
+from pathlib import Path  # noqa: E402
+
 import pytest  # noqa: E402
+
+REAL_DATA_DIR = Path(__file__).resolve().parents[1] / "app" / "data"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def real_data_files_are_never_written():
+    """09c rule: tests use temporary copies of the data files. Fail the run if any
+    real app/data/*.json file changed."""
+    def digest():
+        return {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(REAL_DATA_DIR.glob("*.json"))}
+
+    before = digest()
+    yield
+    changed = [name for name, value in digest().items() if before.get(name) != value]
+    assert not changed, f"Tests modified the real data files: {changed}"
 
 
 @pytest.fixture(autouse=True)

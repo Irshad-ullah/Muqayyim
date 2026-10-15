@@ -18,7 +18,7 @@ by the gateway); X-Internal-Key required.
   GET  /internal/admin/taxonomy/lock            who holds the taxonomy lock, if anyone
 """
 
-from typing import Literal, Optional
+from typing import List, Literal, Optional
 
 from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import JSONResponse
@@ -235,3 +235,146 @@ async def get_restore(restore_id: str):
     if not record:
         return error(404, "NOT_FOUND", "Restore not found")
     return {"success": True, "data": jobs.public(record)}
+
+
+# ── Part 5: direct edits (lock + edit snapshot + undo on failure) ────────────
+from app.services.professions import crud as profession_crud  # noqa: E402
+from app.services.taxonomy import editing, skills_editor  # noqa: E402
+
+
+def edit_error(exc) -> JSONResponse:
+    if isinstance(exc, profession_crud.ProfessionError):
+        return error(exc.status, exc.code, exc.message)
+    if isinstance(exc, editing.EditRefused):
+        return error(exc.status, exc.code, exc.safe_message, errors=exc.errors)
+    if isinstance(exc, TaxonomyBusy):
+        return busy(exc)
+    if isinstance(exc, editing.EditFailed):
+        return error(500, "EDIT_FAILED", exc.safe_message, rolled_back=exc.rolled_back)
+    raise exc
+
+
+async def run_guarded(coro):
+    if get_database() is None:
+        return no_db()
+    try:
+        return {"success": True, "data": await coro}
+    except (profession_crud.ProfessionError, editing.EditRefused, TaxonomyBusy, editing.EditFailed) as exc:
+        return edit_error(exc)
+
+
+@router.get("/professions")
+async def list_professions(
+    page: int = Query(1, ge=1, le=10000),
+    limit: int = Query(20, ge=1, le=100),
+    search: Optional[str] = Query(None, max_length=100),
+    category: Optional[str] = Query(None, max_length=60),
+    active: Optional[bool] = None,
+    source: Optional[Literal["onet", "esco", "manual"]] = None,
+):
+    if get_database() is None:
+        return no_db()
+    result = await profession_crud.list_professions(page, limit, search, category, active, source)
+    return {"success": True, "data": result["items"],
+            "pagination": {k: result[k] for k in ("page", "limit", "total", "pages")}}
+
+
+@router.get("/professions/{profession_id}")
+async def get_profession(profession_id: str):
+    return await run_guarded(profession_crud.get_profession(profession_id))
+
+
+class _ProfessionEditIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    title: Optional[str] = Field(None, min_length=2, max_length=200)
+    description: Optional[str] = Field(None, max_length=5000)
+    category: Optional[str] = Field(None, max_length=60)
+    active: Optional[bool] = None
+    actor: str = Field("unknown", max_length=100)
+
+
+@router.patch("/professions/{profession_id}")
+async def edit_profession(profession_id: str, body: _ProfessionEditIn):
+    """Edit title / description / category / active. Imported professions: an admin override
+    that survives re-imports (reset with POST .../reset)."""
+    changes = body.model_dump(exclude_unset=True, exclude={"actor"})
+    if not changes:
+        return error(422, "VALIDATION_ERROR", "Nothing to change")
+    return await run_guarded(editing.edit_profession(profession_id, changes, body.actor))
+
+
+class _ResetIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    fields: Optional[List[Literal["title", "description", "category", "active"]]] = None
+    actor: str = Field("unknown", max_length=100)
+
+
+@router.post("/professions/{profession_id}/reset")
+async def reset_profession(profession_id: str, body: _ResetIn):
+    """Reset admin overrides to the dataset values (all, or the given fields)."""
+    return await run_guarded(editing.reset_profession(profession_id, body.fields, body.actor))
+
+
+@router.get("/skills")
+async def list_skills(
+    search: Optional[str] = Query(None, max_length=100),
+    category: Optional[str] = Query(None, max_length=60),
+    page: int = Query(1, ge=1, le=10000),
+    limit: int = Query(50, ge=1, le=200),
+):
+    result = skills_editor.list_skills(search, category, page, limit)
+    return {"success": True, "data": result["items"], "categories": result["categories"],
+            "pagination": {k: result[k] for k in ("page", "limit", "total", "pages")}}
+
+
+@router.get("/skills/{name}")
+async def get_skill(name: str):
+    skill = skills_editor.get_skill(name)
+    if not skill:
+        return error(404, "NOT_FOUND", "Skill not found")
+    return {"success": True, "data": skill}
+
+
+class _SkillIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    name: str = Field(..., min_length=1, max_length=100)
+    description: Optional[str] = Field(None, max_length=400)
+    aliases: Optional[List[str]] = Field(None, max_length=50)
+    category: Optional[str] = Field(None, max_length=60)
+    actor: str = Field("unknown", max_length=100)
+
+
+class _SkillValidateIn(_SkillIn):
+    create: bool = False
+
+
+@router.post("/skills/validate")
+async def validate_skill(body: _SkillValidateIn):
+    """Dry run: the errors the change would produce. Nothing is written."""
+    change = body.model_dump(exclude_unset=True, exclude={"actor", "create"})
+    return {"success": True, "data": skills_editor.validate(change, body.create)}
+
+
+@router.post("/skills")
+async def create_skill(body: _SkillIn):
+    change = body.model_dump(exclude_unset=True, exclude={"actor"})
+    response = await run_guarded(skills_editor.save(change, True, body.actor))
+    if isinstance(response, dict):
+        return JSONResponse(status_code=201, content=response)
+    return response
+
+
+class _SkillUpdateIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    description: Optional[str] = Field(None, max_length=400)
+    aliases: Optional[List[str]] = Field(None, max_length=50)
+    category: Optional[str] = Field(None, max_length=60)
+    actor: str = Field("unknown", max_length=100)
+
+
+@router.put("/skills/{name}")
+async def update_skill(name: str, body: _SkillUpdateIn):
+    change = {"name": name, **body.model_dump(exclude_unset=True, exclude={"actor"})}
+    if len(change) == 1:
+        return error(422, "VALIDATION_ERROR", "Nothing to change")
+    return await run_guarded(skills_editor.save(change, False, body.actor))

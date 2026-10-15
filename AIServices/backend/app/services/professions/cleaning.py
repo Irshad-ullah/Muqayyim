@@ -12,7 +12,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Dict, Optional
 
-from app.services.embeddings.descriptions import CURATED_FILE
+from app.services.embeddings import descriptions as descriptions_module
 from app.services.embeddings.normalise import canonical_name, normalise_skill
 
 NAME_MAP_FILE = Path(__file__).resolve().parents[2] / "data" / "onet_name_map.json"
@@ -22,7 +22,7 @@ ESCO_MAP_FILE = Path(__file__).resolve().parents[2] / "data" / "esco_name_map.js
 @lru_cache(maxsize=1)
 def curated_names() -> Dict[str, str]:
     """canonical key → curated name."""
-    data = json.loads(CURATED_FILE.read_text(encoding="utf8"))
+    data = json.loads(descriptions_module.CURATED_FILE.read_text(encoding="utf8"))
     return {normalise_skill(name)[0]: name for name in data}
 
 
