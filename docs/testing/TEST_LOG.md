@@ -50,7 +50,7 @@ GW = API Gateway Jest, FE node = frontend `node --test`, FE Vitest = frontend Vi
 | 9c Part 6 (Core pass-through) | `7492aa7` | 506 + 1 skipped | n/r | 247 | n/r | n/r | n/r | recorded |
 | 9c Part 7 (gateway) | `ed52928` | n/r | n/r | n/r | 62 | n/r | n/r | recorded |
 | Gateway info line | `a713844` | n/r | n/r | n/r | 62 | n/r | n/r | recorded |
-| Test record (this change) | see test-runs.md | first automatic run | | | | | | automatic |
+| Test record (this change) | `99f540a` | 506 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 25 | 21 | automatic |
 
 ¹ From the "Before" column of the 08 change note. ² The 09a2 note records React ↔ Python and Redux ↔ Redis as
 strict xfails in the slow test but gives no run count for this commit.
