@@ -13,7 +13,7 @@ export const startStub = async () => {
     });
     req.on('end', () => {
       hits.push({ method: req.method, url: req.url, headers: req.headers, size });
-      if (req.url.endsWith('/hang')) return; // never answer
+      if (req.url.endsWith('/hang') || req.headers['x-stub-hang']) return; // never answer
       const status = Number(req.headers['x-stub-status'] || 200);
       res.writeHead(status, { 'Content-Type': 'application/json', 'X-Powered-By': 'Express' });
       res.end(JSON.stringify({ upstream: true, status }));

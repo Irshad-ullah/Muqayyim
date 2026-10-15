@@ -6,10 +6,11 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-import { loadConfig, CV_UPLOAD_PATH, pathOf } from './config.js';
+import http from 'http';
+import { loadConfig, CV_UPLOAD_PATH, isTaxonomyUpload, pathOf } from './config.js';
 import { requestId } from './middleware/requestId.js';
-import { createSizeLimit } from './middleware/sizeLimit.js';
-import { createRateLimiters } from './middleware/rateLimits.js';
+import { createSizeLimit, limitFor, refuseAfterDiscard } from './middleware/sizeLimit.js';
+import { createRateLimiters, createTaxonomyPublishLimiter } from './middleware/rateLimits.js';
 import { createErrorReporter } from './services/errorReporter.js';
 import { createSpikeDetector } from './services/rateLimitSpike.js';
 import { createErrorHandler } from './middleware/errorHandler.js';
@@ -43,6 +44,12 @@ export function createApp(config = loadConfig(), { errorReporter } = {}) {
   const limiters = createRateLimiters(config, {
     onLimitHit: (name, req) => spikes.record(req.ip, { limit: name, requestId: req.requestId }),
   });
+  const taxonomyPublishLimiter = createTaxonomyPublishLimiter(config, {
+    onLimitHit: (name, req) => spikes.record(req.ip, { limit: name, requestId: req.requestId }),
+  });
+  if (config.rateLimitEnabled && !config.jwtSecret) {
+    console.warn('[Gateway] JWT_SECRET not set: the taxonomy publish/restore limit is keyed by client IP, not by user.');
+  }
 
   // Trust X-Forwarded-For only from known proxies so req.ip is the real client
   // (used for rate limiting and logs; behind Railway/Render's proxy).
@@ -107,24 +114,47 @@ export function createApp(config = loadConfig(), { errorReporter } = {}) {
   app.post('/api/auth/forgot-password', limiters.passwordReset);
   app.post('/api/auth/reset-password/:token', limiters.passwordReset);
   app.post(CV_UPLOAD_PATH, limiters.cvUpload);
+  // Taxonomy publish and restore: 5 per 15 minutes (shared), per user id or IP.
+  app.post('/api/admin/taxonomy/jobs/:id/publish', taxonomyPublishLimiter);
+  app.post('/api/admin/taxonomy/snapshots/:id/restore', taxonomyPublishLimiter);
 
   // ─── Request size (Content-Length; body is never parsed here) ─────────────────
   app.use('/api', createSizeLimit(config));
 
   // ─── Proxy helpers ────────────────────────────────────────────────────────────
-  // Timeout is the upstream inactivity limit: 60 s for CV uploads, 30 s otherwise.
-  const timeoutFor = (req) => (pathOf(req) === CV_UPLOAD_PATH ? config.uploadTimeoutMs : config.proxyTimeoutMs);
+  // Timeout is the upstream inactivity limit: 5 min for the taxonomy dataset upload,
+  // 60 s for CV uploads, 30 s otherwise (taxonomy publish/restore answer 202 at once).
+  const timeoutFor = (req) => {
+    if (isTaxonomyUpload(req)) return config.taxonomyUploadTimeoutMs;
+    return pathOf(req) === CV_UPLOAD_PATH ? config.uploadTimeoutMs : config.proxyTimeoutMs;
+  };
 
-  function onProxyReq(proxyReq, req) {
+  function onProxyReq(proxyReq, req, res) {
     proxyReq.setTimeout(timeoutFor(req), () => {
       req.gatewayTimedOut = true;
       proxyReq.destroy(new Error('Upstream timeout'));
     });
+    // A taxonomy upload without Content-Length (chunked): count the bytes as they
+    // stream through and stop at the limit. Attached here, in the same tick as the
+    // proxy's pipe, so no chunk is missed or consumed.
+    if (isTaxonomyUpload(req) && req.get('content-length') === undefined) {
+      const { max, body } = limitFor(req, config);
+      let seen = 0;
+      req.on('data', (chunk) => {
+        seen += chunk.length;
+        if (seen <= max || req.gatewayTooLarge) return;
+        req.gatewayTooLarge = true;
+        req.unpipe(proxyReq);
+        proxyReq.destroy(); // Core sees an aborted upload: no job is created
+        refuseAfterDiscard(req, res, body);
+      });
+    }
   }
 
   // Upstream failures become clean JSON (never an HTML page or stack trace).
   function onError(name) {
     return (err, req, res) => {
+      if (req.gatewayTooLarge) return; // the upload was stopped at the limit; the 413 is on its way
       if (res.headersSent) {
         res.end();
         return;
@@ -227,3 +257,29 @@ const app = createApp(config);
 export const AUTH_SERVICE_URL = config.authServiceUrl;
 export const CV_SERVICE_URL = config.cvServiceUrl;
 export default app;
+
+
+// An HTTP server for the app. Clients such as curl send "Expect: 100-continue" for
+// large bodies; Node would answer "100 Continue" automatically and the client would
+// then send the whole body before seeing the 413. Here an oversized request gets
+// its 413 instead of "100 Continue", so the body is never sent.
+export function createServer(appInstance = app, config = loadConfig()) {
+  const server = http.createServer(appInstance);
+  server.on('checkContinue', (req, res) => {
+    const length = Number.parseInt(req.headers['content-length'], 10);
+    req.originalUrl = req.url;
+    const { max, body } = limitFor(req, config);
+    if (Number.isFinite(length) && length > max) {
+      const text = JSON.stringify(body);
+      res.writeHead(413, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': Buffer.byteLength(text),
+        Connection: 'close' });
+      res.end(text);
+      return;
+    }
+    res.writeContinue();
+    appInstance(req, res);
+  });
+  // The whole request (a 100 MB upload) may take up to the upload timeout to arrive.
+  server.requestTimeout = config.taxonomyUploadTimeoutMs + 60 * 1000;
+  return server;
+}

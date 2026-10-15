@@ -1,5 +1,6 @@
 import { rateLimit } from 'express-rate-limit';
 import { pathOf } from '../config.js';
+import { verifiedUserId } from './jwtIdentity.js';
 
 // Per-IP rate limits (SEC-3). Keyed by req.ip, which honours TRUST_PROXY, so
 // behind Railway/Render the real client IP is used.
@@ -60,3 +61,13 @@ export const createRateLimiters = ({ rateLimitEnabled: enabled, rateLimits }, { 
   passwordReset: createLimiter(enabled, 'passwordReset', rateLimits.passwordReset, {}, onLimitHit),
   cvUpload: createLimiter(enabled, 'cvUpload', rateLimits.cvUpload, {}, onLimitHit),
 });
+
+// Taxonomy publish + restore (09c): one shared budget per user id when the token is
+// valid (needs JWT_SECRET in the gateway), otherwise per client IP.
+export const createTaxonomyPublishLimiter = ({ rateLimitEnabled: enabled, rateLimits, jwtSecret }, { onLimitHit } = {}) =>
+  createLimiter(enabled, 'taxonomyPublish', rateLimits.taxonomyPublish, {
+    keyGenerator: (req) => {
+      const userId = verifiedUserId(req, jwtSecret);
+      return userId ? `user:${userId}` : `ip:${req.ip}`;
+    },
+  }, onLimitHit);

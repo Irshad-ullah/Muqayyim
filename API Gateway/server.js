@@ -1,4 +1,4 @@
-import app, { AUTH_SERVICE_URL, CV_SERVICE_URL } from './app.js';
+import app, { AUTH_SERVICE_URL, CV_SERVICE_URL, createServer } from './app.js';
 
 // Process-level failures are reported to CoreServices' error log.
 const reporter = app.locals.errorReporter;
@@ -17,7 +17,7 @@ process.on('uncaughtException', (err) => {
 const PORT = process.env.PORT || 8080;
 
 // ─── Start ────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
+createServer(app).listen(PORT, () => {
   console.log('');
   console.log('🌐  MUQAYYIM API Gateway');
   console.log(`    Listening on   → http://localhost:${PORT}`);

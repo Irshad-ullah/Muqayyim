@@ -32,9 +32,20 @@ export const loadConfig = (env = process.env) => ({
       max: positiveInt(env.RATE_LIMIT_CV_UPLOAD_MAX, 20),
       windowMs: minutes(env.RATE_LIMIT_CV_UPLOAD_WINDOW_MINUTES, 60),
     },
+    // Taxonomy publish + restore (one shared budget), per user when the token is valid.
+    taxonomyPublish: {
+      max: positiveInt(env.RATE_LIMIT_TAXONOMY_PUBLISH_MAX, 5),
+      windowMs: minutes(env.RATE_LIMIT_TAXONOMY_PUBLISH_WINDOW_MINUTES, 15),
+    },
   },
   maxBodyBytes: positiveInt(env.GATEWAY_MAX_BODY_BYTES, 1 * 1024 * 1024),
   maxUploadBytes: positiveInt(env.GATEWAY_MAX_UPLOAD_BYTES, 6 * 1024 * 1024),
+  // Admin taxonomy dataset upload (09c): its own limit; every other route keeps maxBodyBytes.
+  maxTaxonomyUploadBytes: positiveInt(env.GATEWAY_MAX_TAXONOMY_UPLOAD_BYTES, 100 * 1024 * 1024),
+  taxonomyUploadTimeoutMs: positiveInt(env.GATEWAY_TAXONOMY_UPLOAD_TIMEOUT_MS, 5 * 60 * 1000),
+  // Optional: lets the taxonomy publish/restore limit key by user id (verified HS256 token).
+  // Without it that limit is keyed by client IP. Never logged.
+  jwtSecret: env.JWT_SECRET || '',
   proxyTimeoutMs: positiveInt(env.GATEWAY_PROXY_TIMEOUT_MS, 30000),
   uploadTimeoutMs: positiveInt(env.GATEWAY_UPLOAD_TIMEOUT_MS, 60000),
   authServiceUrl: env.AUTH_SERVICE_URL || 'http://localhost:3000',
@@ -46,6 +57,10 @@ export const loadConfig = (env = process.env) => ({
 });
 
 export const CV_UPLOAD_PATH = '/api/cv/upload';
+export const TAXONOMY_UPLOAD_PATH = '/api/admin/taxonomy/jobs';
+
+// The admin taxonomy upload: POST /api/admin/taxonomy/jobs (exactly).
+export const isTaxonomyUpload = (req) => req.method === 'POST' && pathOf(req).replace(/\/+$/, '') === TAXONOMY_UPLOAD_PATH;
 
 // Path without query string, e.g. "/api/cv/upload".
 export const pathOf = (req) => (req.originalUrl || req.url || '').split('?')[0];
