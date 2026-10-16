@@ -64,7 +64,8 @@ class Settings(BaseSettings):
     ONET_SOC_EXCLUDE: str = os.getenv("ONET_SOC_EXCLUDE", "15-1299.00")
     ONET_SKILLS_CAP: int = int(os.getenv("ONET_SKILLS_CAP", "30"))
     ONET_VERSION: str = os.getenv("ONET_VERSION", "31.0")
-    ESCO_ISCO_PREFIXES: str = os.getenv("ESCO_ISCO_PREFIXES", "251,252,351,352,2166")
+    # 3522, not 352: ISCO 3521 (broadcasting and audio-visual technicians) is not an IT role (Module 5, FR7.2).
+    ESCO_ISCO_PREFIXES: str = os.getenv("ESCO_ISCO_PREFIXES", "251,252,351,3522,2166")
     ESCO_VERSION: str = os.getenv("ESCO_VERSION", "1.2.1")
     # ESCO skill descriptions as embedding text: off until ESCO-style text is benchmarked.
     ESCO_DESCRIPTIONS_ENABLED: bool = os.getenv("ESCO_DESCRIPTIONS_ENABLED", "false").lower() == "true"

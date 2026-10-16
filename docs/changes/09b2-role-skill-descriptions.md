@@ -289,7 +289,7 @@ There is no "hint" threshold. Whether and how near-misses are shown is part of M
 
 ### Background credit rate (regression check)
 
-`AIServices/eval/background_credit_rate.py` scores a web profile and an unrelated chef profile against all 143 active professions with the credit rule above. It is also wrapped as `tests/test_background_credit_rate.py`, marked `slow`; it needs the model and the imported professions.
+`AIServices/eval/background_credit_rate.py` scores a web profile and an unrelated chef profile against all active professions (143 at the time; 130 since the Module 5 re-import excluded ISCO 3521) with the credit rule above. It is also wrapped as `tests/test_background_credit_rate.py`, marked `slow`; it needs the model and the imported professions.
 
 **It must be run by Module 5's evaluation and for any future threshold or matching change.** It passes when the chef rate is ≤ 5 % **and** at most half the web rate.
 

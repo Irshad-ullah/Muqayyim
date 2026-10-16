@@ -495,3 +495,39 @@ pushed and tagged `v0.3-admin-taxonomy` (at `547792c`) before this round.
 **2 passed + 2 xfailed**; Core **247**; Gateway **62**; frontend `node --test` **31**, Vitest **70**.
 
 **Manual checks:** none.
+
+---
+
+## Module 5 — ESCO re-import without ISCO 3521: first real use of the 9c pipeline (recorded)
+
+**Date:** 2026-10-16 · commit: "Exclude ISCO 3521 …" (see `git log`) · decision: FR7.2 "only IT/related roles"
+
+**Change:** `ESCO_ISCO_PREFIXES` default `251,252,351,352,2166` → `251,252,351,3522,2166` (`settings.py`, `.env.example`;
+the local `.env` does not set it). `352` would also have matched 3522 (telecommunications engineering technician), which
+stays. ISCO 2166 (graphic and multimedia designers) is kept.
+
+**Procedure (9c CLI pipeline, real data from `AIServices/data/raw/esco`):** independent backup first
+(`~/.muqayyim/taxonomy/manual-backup-2026-10-16-m5-reimport`, mongodump of ai_db, 13 collections, plus the data and
+index files with SHA-256) → `scripts/import_esco.py --dry-run` → review → `scripts/import_esco.py` (publish with its
+automatic snapshot) → rebuild of the running service's index through `POST /internal/index/rebuild`.
+
+**Preview (dry run, job created_by `cli`, cancelled afterwards):** professions added 0, **removed 13**, changed 0;
+required-skill links added 0, removed 561; new undescribed skills 0; active professions 143 → 130; admin overrides kept 0.
+Background check on the staged data: chef 3.2 % vs web 12.9 % (ratio 0.248) — passed. Coverage (distinct role skills
+described) live 20.2 % → staged 22.5 %; occurrences 38.2 % → 41.2 %.
+
+**Publish:** job `d03fd1cf…` `published`, snapshot `20261016T060342-cdf333e0`. Post-publish checks: state hash OK, index
+ready with **1,282** role skills (was 1,428), background check chef 3.2 % / web 12.9 % passed, coverage 22.5 % /
+41.2 %.
+
+**Verification:** exactly 13 professions inactive, all ISCO 3521 (audio-visual technician, boom operator, broadcast
+technician, camera operator, performance rental technician, performance video operator, projectionist, recording studio
+technician, sound designer, sound editor, sound mastering engineer, sound operator, video technician); active 130
+(O\*NET 30, ESCO 100); the running service's index rebuilt (ready, 1,282, 0.32 s); `test_professions.py` 55 passed (no
+test depended on the prefix list).
+
+**Finding (not changed):** the deactivated roles carry the reason "not in ESCO v1.2.1", although they are in ESCO and
+were excluded by the ISCO selection; the reason text comes from 9b's deactivation code.
+
+**Follow-up:** the running AI service still holds the old prefix list in memory (it only matters for an ESCO upload
+through the admin UI) until it is restarted.
