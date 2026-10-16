@@ -689,9 +689,9 @@ quick action.
   selection is now derived during render (the chosen career if still visible, else the first); 8 of 8 repeated runs and
   the next full run passed. That earlier failed full run (20:40) is kept in test-runs.md.
 
-**Manual check:** pending — browser walkthrough by the user (checklist below).
+**Manual check:** browser walkthrough on the running app by a project team member on 2026-10-16: **steps 1–12 passed; optional step 13 (new account without skills) not run** (that state is covered by the component test).
 
-Walkthrough checklist (results to be added here):
+Walkthrough checklist (1–12 passed, 13 not run):
 1. Sign in as a job seeker with skills in the profile. The navbar shows "Career Matches"; the dashboard shows a
    "Career Matches" quick action. Open it.
 2. While loading, "Finding your career matches…" shows; then the ranked list (highest % first) with the first career

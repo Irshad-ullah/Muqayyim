@@ -85,7 +85,7 @@ properties with no single SRS id.
 | FR7.9 back to the dashboard, always visible | FE `CareerMatchesPage.spec.jsx` (states) | component | pass |
 | FR7.10 page states: loading, no skills, each 503 code, 504, generic error, low match, pending polling every 5 s only while visible | FE `CareerMatchesPage.spec.jsx` (states); `careerRules.test.js` (error views) | component | pass |
 | Accessibility: keyboard list navigation, labelled controls, no nested buttons, status not by colour alone | FE `CareerMatchesPage.spec.jsx` (keyboard, ESCO row, skill rows) | component | pass |
-| Career Matching page, browser walkthrough | Module 5 Part 3 checklist (TEST_LOG) | manual | pending — results to be reported by the user |
+| Career Matching page, browser walkthrough | Module 5 Part 3 checklist (TEST_LOG) | manual | 2026-10-16: steps 1–12 passed; optional step 13 not run |
 | Deactivation reason: "not in dataset" vs "excluded by role filter" | AI `test_professions.py::test_publish_deactivates_…`, `::test_a_profession_no_longer_in_the_dataset_…`, `::test_isco_filter_reason_corrects_…` | integration | pass |
 
 ## Module 10 — admin
