@@ -1,0 +1,11 @@
+{
+  "ram_mb_current": {
+    "start": 433,
+    "with_bi_encoder": 574,
+    "with_reranker": 1958,
+    "after_scoring_500": 1996
+  },
+  "ram_mb_peak": 2063,
+  "pairs": 500,
+  "pairs_per_second": 7.9
+}

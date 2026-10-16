@@ -1,0 +1,861 @@
+{
+  "threshold": 0.8,
+  "summary": {
+    "essential_phrases": 749,
+    "essential_occurrences": 2160,
+    "by_skill_type": {
+      "knowledge": 242,
+      "": 5,
+      "skill/competence": 502
+    },
+    "with_tool_at_0_80": 247,
+    "with_tool_at_0_80_pct": 33.0,
+    "with_tool_by_skill_type": {
+      "knowledge": 107,
+      "skill/competence": 137,
+      "": 3
+    },
+    "occurrences_covered": 795,
+    "occurrences_covered_pct": 36.8,
+    "option_b_mapping_size_all_role_skills": 178
+  },
+  "examples_most_used": [
+    [
+      "computer programming",
+      "Pascal",
+      0.806,
+      19
+    ],
+    [
+      "analyse business requirements",
+      "Business Analysis",
+      0.912,
+      13
+    ],
+    [
+      "systems development life-cycle",
+      "Software Development Life Cycle",
+      0.904,
+      13
+    ],
+    [
+      "use software design patterns",
+      "Design Patterns",
+      0.904,
+      13
+    ],
+    [
+      "tools for software configuration management",
+      "Puppet",
+      0.871,
+      13
+    ],
+    [
+      "ICT debugging tools",
+      "Debugging",
+      0.816,
+      13
+    ],
+    [
+      "integrated development environment software",
+      "Visual Studio",
+      0.811,
+      13
+    ],
+    [
+      "web programming",
+      "CoffeeScript",
+      0.836,
+      12
+    ],
+    [
+      "debug software",
+      "Debugging",
+      0.831,
+      12
+    ],
+    [
+      "resource description framework query language",
+      "SQL",
+      0.816,
+      12
+    ],
+    [
+      "levels of software testing",
+      "ISTQB",
+      0.812,
+      11
+    ],
+    [
+      "execute software tests",
+      "Test Automation",
+      0.811,
+      11
+    ],
+    [
+      "query languages",
+      "SQL",
+      0.82,
+      10
+    ],
+    [
+      "develop automated migration methods",
+      "Database Migrations",
+      0.815,
+      10
+    ],
+    [
+      "utilise computer-aided software engineering tools",
+      "Software Engineering",
+      0.849,
+      9
+    ],
+    [
+      "cyber attack counter-measures",
+      "Cybersecurity",
+      0.834,
+      9
+    ],
+    [
+      "business process modelling",
+      "Business Analysis",
+      0.816,
+      9
+    ],
+    [
+      "database development tools",
+      "phpMyAdmin",
+      0.843,
+      8
+    ],
+    [
+      "cloud technologies",
+      "Cloud Computing",
+      0.841,
+      8
+    ],
+    [
+      "ICT security standards",
+      "ISO 27001",
+      0.835,
+      8
+    ],
+    [
+      "provide software testing documentation",
+      "Technical Documentation",
+      0.82,
+      8
+    ],
+    [
+      "manage system security",
+      "Windows Administration",
+      0.803,
+      8
+    ],
+    [
+      "database management systems",
+      "MySQL",
+      0.892,
+      7
+    ],
+    [
+      "design graphics",
+      "Graphic Design",
+      0.849,
+      7
+    ],
+    [
+      "translate requirements into visual design",
+      "Visual Design",
+      0.842,
+      7
+    ],
+    [
+      "build business relationships",
+      "Client Relationship Management",
+      0.827,
+      7
+    ],
+    [
+      "manage IT security compliances",
+      "ISO 27001",
+      0.813,
+      7
+    ],
+    [
+      "perform ICT security testing",
+      "Security Testing",
+      0.804,
+      7
+    ],
+    [
+      "task algorithmisation",
+      "Multitasking",
+      0.803,
+      7
+    ],
+    [
+      "identify ICT system weaknesses",
+      "Vulnerability Assessment",
+      0.802,
+      7
+    ]
+  ],
+  "near_misses_0_75_to_0_80": [
+    [
+      "interpret technical texts",
+      "Technical Writing",
+      0.795,
+      18
+    ],
+    [
+      "analyse software specifications",
+      "Code Coverage",
+      0.799,
+      17
+    ],
+    [
+      "digital systems",
+      "Distributed Systems",
+      0.763,
+      17
+    ],
+    [
+      "develop software prototype",
+      "Prototyping",
+      0.796,
+      15
+    ],
+    [
+      "create flowchart diagram",
+      "Microsoft Visio",
+      0.77,
+      12
+    ],
+    [
+      "integrate system components",
+      "Integration Testing",
+      0.754,
+      11
+    ],
+    [
+      "use markup languages",
+      "HTML",
+      0.787,
+      11
+    ],
+    [
+      "ICT network security risks",
+      "Network Security",
+      0.781,
+      10
+    ],
+    [
+      "migrate existing data",
+      "Database Migrations",
+      0.768,
+      10
+    ],
+    [
+      "security engineering",
+      "Application Security",
+      0.767,
+      10
+    ],
+    [
+      "ICT system programming",
+      "Erlang",
+      0.764,
+      9
+    ],
+    [
+      "collect customer feedback on applications",
+      "Customer Service",
+      0.777,
+      9
+    ],
+    [
+      "develop digital content",
+      "Content Design",
+      0.768,
+      9
+    ],
+    [
+      "information structure",
+      "Information Architecture",
+      0.769,
+      9
+    ],
+    [
+      "solve ICT system problems",
+      "IT Support",
+      0.784,
+      8
+    ],
+    [
+      "use scripting programming",
+      "VBScript",
+      0.776,
+      8
+    ],
+    [
+      "analyse ICT system",
+      "Data Analysis",
+      0.762,
+      7
+    ],
+    [
+      "finish project within budget",
+      "Budgeting",
+      0.757,
+      7
+    ],
+    [
+      "identify ICT security risks",
+      "Vulnerability Assessment",
+      0.786,
+      7
+    ],
+    [
+      "identify customer requirements",
+      "Customer Service",
+      0.762,
+      7
+    ]
+  ],
+  "profiles": {
+    "devops": {
+      "label": "DevOps engineer",
+      "skills": [
+        "Docker",
+        "Kubernetes",
+        "Terraform",
+        "AWS",
+        "Linux",
+        "Jenkins",
+        "Ansible",
+        "Bash",
+        "Git",
+        "Prometheus",
+        "CI/CD"
+      ],
+      "roles": [
+        {
+          "title": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "rank_before": 1,
+          "rank_after": 1,
+          "score_before": 59.1,
+          "score_after": 59.1,
+          "required": 22,
+          "phrases_mapped": 0,
+          "mapped_tools_held": 0,
+          "changes": []
+        },
+        {
+          "title": "Information Security Engineers",
+          "source": "onet",
+          "rank_before": 2,
+          "rank_after": 2,
+          "score_before": 53.8,
+          "score_after": 53.8,
+          "required": 13,
+          "phrases_mapped": 0,
+          "mapped_tools_held": 0,
+          "changes": []
+        },
+        {
+          "title": "Computer and Information Research Scientists",
+          "source": "onet",
+          "rank_before": 3,
+          "rank_after": 3,
+          "score_before": 46.6,
+          "score_after": 46.6,
+          "required": 29,
+          "phrases_mapped": 0,
+          "mapped_tools_held": 0,
+          "changes": []
+        },
+        {
+          "title": "Digital Forensics Analysts",
+          "source": "onet",
+          "rank_before": 4,
+          "rank_after": 4,
+          "score_before": 45.0,
+          "score_after": 45.0,
+          "required": 10,
+          "phrases_mapped": 0,
+          "mapped_tools_held": 0,
+          "changes": []
+        },
+        {
+          "title": "Computer Network Architects",
+          "source": "onet",
+          "rank_before": 5,
+          "rank_after": 5,
+          "score_before": 42.3,
+          "score_after": 42.3,
+          "required": 13,
+          "phrases_mapped": 0,
+          "mapped_tools_held": 0,
+          "changes": []
+        },
+        {
+          "title": "Network and Computer Systems Administrators",
+          "source": "onet",
+          "rank_before": 6,
+          "rank_after": 6,
+          "score_before": 41.2,
+          "score_after": 41.2,
+          "required": 17,
+          "phrases_mapped": 0,
+          "mapped_tools_held": 0,
+          "changes": []
+        },
+        {
+          "title": "cloud DevOps engineer",
+          "source": "esco",
+          "rank_before": 7,
+          "rank_after": 16,
+          "score_before": 37.5,
+          "score_after": 29.2,
+          "required": 24,
+          "phrases_mapped": 8,
+          "mapped_tools_held": 1,
+          "changes": [
+            {
+              "phrase": "design cloud architecture",
+              "status_before": "related",
+              "tool": "Cloud Architecture",
+              "cosine": 0.867,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "design cloud networks",
+              "status_before": "related",
+              "tool": "Cloud Networking",
+              "cosine": 0.88,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "deploy cloud resource",
+              "status_before": "related",
+              "tool": "Terraform",
+              "cosine": 0.803,
+              "tool_held": true,
+              "status_after": "matched"
+            },
+            {
+              "phrase": "manage disaster recovery plans",
+              "status_before": "missing",
+              "tool": "Disaster Recovery",
+              "cosine": 0.821,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "develop with cloud services",
+              "status_before": "related",
+              "tool": "Codenvy",
+              "cosine": 0.806,
+              "tool_held": false,
+              "status_after": "related"
+            },
+            {
+              "phrase": "design database in the cloud",
+              "status_before": "related",
+              "tool": "Database Design",
+              "cosine": 0.854,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "implement cloud security and compliance",
+              "status_before": "related",
+              "tool": "Cloud Security",
+              "cosine": 0.849,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "manage cloud data and storage",
+              "status_before": "related",
+              "tool": "Cloud Computing",
+              "cosine": 0.817,
+              "tool_held": false,
+              "status_after": "missing"
+            }
+          ]
+        },
+        {
+          "title": "cloud engineer",
+          "source": "esco",
+          "rank_before": 18,
+          "rank_after": 22,
+          "score_before": 25.8,
+          "score_after": 18.2,
+          "required": 33,
+          "phrases_mapped": 10,
+          "mapped_tools_held": 1,
+          "changes": [
+            {
+              "phrase": "design cloud architecture",
+              "status_before": "related",
+              "tool": "Cloud Architecture",
+              "cosine": 0.867,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "debug software",
+              "status_before": "missing",
+              "tool": "Debugging",
+              "cosine": 0.831,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "respond to incidents in cloud",
+              "status_before": "related",
+              "tool": "Amazon CloudWatch",
+              "cosine": 0.807,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "design cloud networks",
+              "status_before": "related",
+              "tool": "Cloud Networking",
+              "cosine": 0.88,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "deploy cloud resource",
+              "status_before": "related",
+              "tool": "Terraform",
+              "cosine": 0.803,
+              "tool_held": true,
+              "status_after": "matched"
+            },
+            {
+              "phrase": "develop with cloud services",
+              "status_before": "related",
+              "tool": "Codenvy",
+              "cosine": 0.806,
+              "tool_held": false,
+              "status_after": "related"
+            },
+            {
+              "phrase": "design database in the cloud",
+              "status_before": "related",
+              "tool": "Database Design",
+              "cosine": 0.854,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "analyse business requirements",
+              "status_before": "missing",
+              "tool": "Business Analysis",
+              "cosine": 0.912,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "implement cloud security and compliance",
+              "status_before": "related",
+              "tool": "Cloud Security",
+              "cosine": 0.849,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "manage cloud data and storage",
+              "status_before": "related",
+              "tool": "Cloud Computing",
+              "cosine": 0.817,
+              "tool_held": false,
+              "status_after": "missing"
+            }
+          ]
+        },
+        {
+          "title": "ICT system administrator",
+          "source": "esco",
+          "rank_before": 60,
+          "rank_after": 59,
+          "score_before": 4.7,
+          "score_after": 4.8,
+          "required": 32,
+          "phrases_mapped": 5,
+          "mapped_tools_held": 0,
+          "changes": [
+            {
+              "phrase": "manage system security",
+              "status_before": "missing",
+              "tool": "Windows Administration",
+              "cosine": 0.803,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "use back-up and recovery tools",
+              "status_before": "missing",
+              "tool": "Backup and Recovery",
+              "cosine": 0.81,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "implement a virtual private network",
+              "status_before": "missing",
+              "tool": "VMware",
+              "cosine": 0.812,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "perform backups",
+              "status_before": "missing",
+              "tool": "Backup and Recovery",
+              "cosine": 0.819,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "support ICT system users",
+              "status_before": "missing",
+              "tool": "IT Support",
+              "cosine": 0.824,
+              "tool_held": false,
+              "status_after": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    "mobile": {
+      "label": "Mobile developer",
+      "skills": [
+        "Kotlin",
+        "Swift",
+        "Android",
+        "iOS",
+        "Flutter",
+        "Dart",
+        "Firebase",
+        "Git",
+        "REST APIs",
+        "React Native"
+      ],
+      "roles": [
+        {
+          "title": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "rank_before": 1,
+          "rank_after": 1,
+          "score_before": 29.2,
+          "score_after": 29.2,
+          "required": 24,
+          "phrases_mapped": 0,
+          "mapped_tools_held": 0,
+          "changes": []
+        },
+        {
+          "title": "Blockchain Engineers",
+          "source": "onet",
+          "rank_before": 2,
+          "rank_after": 2,
+          "score_before": 25.0,
+          "score_after": 25.0,
+          "required": 20,
+          "phrases_mapped": 0,
+          "mapped_tools_held": 0,
+          "changes": []
+        },
+        {
+          "title": "software developer",
+          "source": "esco",
+          "rank_before": 3,
+          "rank_after": 3,
+          "score_before": 2.1,
+          "score_after": 2.1,
+          "required": 24,
+          "phrases_mapped": 5,
+          "mapped_tools_held": 0,
+          "changes": [
+            {
+              "phrase": "develop automated migration methods",
+              "status_before": "missing",
+              "tool": "Database Migrations",
+              "cosine": 0.815,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "utilise computer-aided software engineering tools",
+              "status_before": "missing",
+              "tool": "Software Engineering",
+              "cosine": 0.849,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "debug software",
+              "status_before": "missing",
+              "tool": "Debugging",
+              "cosine": 0.831,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "use software design patterns",
+              "status_before": "missing",
+              "tool": "Design Patterns",
+              "cosine": 0.904,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "use technical drawing software",
+              "status_before": "missing",
+              "tool": "AutoCAD",
+              "cosine": 0.809,
+              "tool_held": false,
+              "status_after": "missing"
+            }
+          ]
+        },
+        {
+          "title": "Software Developers",
+          "source": "onet",
+          "rank_before": 3,
+          "rank_after": 3,
+          "score_before": 23.3,
+          "score_after": 23.3,
+          "required": 30,
+          "phrases_mapped": 0,
+          "mapped_tools_held": 0,
+          "changes": []
+        },
+        {
+          "title": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "rank_before": 4,
+          "rank_after": 4,
+          "score_before": 22.7,
+          "score_after": 22.7,
+          "required": 22,
+          "phrases_mapped": 0,
+          "mapped_tools_held": 0,
+          "changes": []
+        },
+        {
+          "title": "Web Developers",
+          "source": "onet",
+          "rank_before": 5,
+          "rank_after": 5,
+          "score_before": 21.7,
+          "score_after": 21.7,
+          "required": 30,
+          "phrases_mapped": 0,
+          "mapped_tools_held": 0,
+          "changes": []
+        },
+        {
+          "title": "mobile application developer",
+          "source": "esco",
+          "rank_before": 28,
+          "rank_after": 28,
+          "score_before": 5.6,
+          "score_after": 5.6,
+          "required": 18,
+          "phrases_mapped": 4,
+          "mapped_tools_held": 0,
+          "changes": [
+            {
+              "phrase": "develop automated migration methods",
+              "status_before": "missing",
+              "tool": "Database Migrations",
+              "cosine": 0.815,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "utilise computer-aided software engineering tools",
+              "status_before": "missing",
+              "tool": "Software Engineering",
+              "cosine": 0.849,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "debug software",
+              "status_before": "missing",
+              "tool": "Debugging",
+              "cosine": 0.831,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "use software design patterns",
+              "status_before": "missing",
+              "tool": "Design Patterns",
+              "cosine": 0.904,
+              "tool_held": false,
+              "status_after": "missing"
+            }
+          ]
+        },
+        {
+          "title": "industrial mobile devices software developer",
+          "source": "esco",
+          "rank_before": 29,
+          "rank_after": 29,
+          "score_before": 5.3,
+          "score_after": 5.3,
+          "required": 19,
+          "phrases_mapped": 4,
+          "mapped_tools_held": 0,
+          "changes": [
+            {
+              "phrase": "utilise computer-aided software engineering tools",
+              "status_before": "missing",
+              "tool": "Software Engineering",
+              "cosine": 0.849,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "debug software",
+              "status_before": "missing",
+              "tool": "Debugging",
+              "cosine": 0.831,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "use software design patterns",
+              "status_before": "missing",
+              "tool": "Design Patterns",
+              "cosine": 0.904,
+              "tool_held": false,
+              "status_after": "missing"
+            },
+            {
+              "phrase": "design application interfaces",
+              "status_before": "missing",
+              "tool": "UI Design",
+              "cosine": 0.849,
+              "tool_held": false,
+              "status_after": "missing"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -761,3 +761,17 @@ vector-cache writes, no `career_matches` entries — `skill_vectors` 1,500 and `
 frontend 36 + 88. (No new tests: Part 4 adds evaluation scripts and documentation.)
 
 **Manual checks:** none beyond the evaluation.
+
+## Module 5.1 — ESCO phrase → tool mapping, sandboxed experiment: steps A–C (recorded)
+
+**Date:** 2026-10-16 · folder `AIServices/eval/esco_phrase_mapping/` (sandbox: no production code, data or settings
+changed; nothing adopted) · report `results/report.md`
+
+- **A.** 749 ESCO essential phrases (2,160 occurrences); 247 (33 %) have a described skill at bi-encoder cosine ≥ 0.80.
+  Module 5's option (b) replaced mapped phrases with the tool, so a phrase that earned 0.5 became missing when the tool
+  was not held (cloud DevOps engineer 37.5 → 29.2 %, rank 7 → 16); the Module 5 (b) row therefore understates an
+  additive mapping, which step D measures.
+- **B.** `BAAI/bge-reranker-base` on CPU over 14,980 pairs (top 20 per phrase): 7.7 pairs/s, ~32 min, +~1.4 GB RAM
+  (peak 2,063 MB; re-measured separately after a ctypes bug gave 0 in the main run). 77 phrases have a candidate ≥ 0.8.
+- **C.** 147-pair calibration set exported blind (no scores) for labelling; stopped here as briefed.
+- **Automated tests:** none run (no production code changed).

@@ -1,0 +1,38 @@
+{
+  "model": "BAAI/bge-reranker-base",
+  "device": "cpu",
+  "torch_threads": 4,
+  "top_k": 20,
+  "batch": 32,
+  "phrases": 749,
+  "described_skills": 1093,
+  "pairs": 14980,
+  "seconds": {
+    "bi_encoder_and_candidates": 61.4,
+    "reranker_load": 330.1,
+    "reranker_scoring": 1933.0,
+    "total": 2324.8
+  },
+  "pairs_per_second": 7.7,
+  "ram_mb": {
+    "after_reranker_load": 0,
+    "current_after_scoring": 0,
+    "peak": 0
+  },
+  "score_distribution": {
+    ">= 0.5": 349,
+    ">= 0.7": 158,
+    ">= 0.8": 99,
+    ">= 0.9": 41,
+    ">= 0.95": 15
+  },
+  "phrases_with_a_candidate": {
+    ">= 0.5": 210,
+    ">= 0.7": 110,
+    ">= 0.8": 77,
+    ">= 0.9": 33,
+    ">= 0.95": 14
+  },
+  "query_template": "Does using {skill} demonstrate the ability to {phrase}?",
+  "passage_template": "{skill}: {curated description}"
+}
