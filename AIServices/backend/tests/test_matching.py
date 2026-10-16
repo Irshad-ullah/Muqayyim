@@ -299,3 +299,85 @@ async def test_credits_agree_with_a_brute_force_reading_of_the_rule(db, index, m
         assert any(v["kind"] == "mixed" for v in got.values()) and any(v["kind"] == "described" for v in got.values())
     finally:
         model_module.use_embedder(None)
+
+
+# ── internal routes (Part 2) ──────────────────────────────────────────────────
+@pytest.fixture
+def client(matching_db, monkeypatch):
+    import httpx
+    from fastapi import FastAPI
+
+    from app.routes import matching_routes
+
+    monkeypatch.setattr(settings, "INTERNAL_API_KEY", "k-match")
+    app = FastAPI()
+    app.include_router(matching_routes.router)
+    return httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://localhost")
+
+
+KEY = {"X-Internal-Key": "k-match"}
+BASE = "/internal/matching/matches"
+
+
+def as_user(user_id):
+    return {**KEY, "X-User-Id": user_id}
+
+
+async def test_list_and_detail_routes(client, caplog):
+    caplog.set_level("INFO")
+    async with client as c:
+        listed = await c.get(BASE, headers=as_user("u1"))
+        assert listed.status_code == 200
+        data = listed.json()["data"]
+        assert data["state"] == "ready" and data["results"][0]["profession_id"] == "manual:web"
+        detail = await c.get(f"{BASE}/manual:web", headers=as_user("u1"))
+        assert detail.status_code == 200 and detail.json()["data"]["members"][0]["score"] == 60.0
+        assert (await c.get(BASE, headers={"X-User-Id": "u1"})).status_code == 401  # internal key required
+        assert (await c.get(BASE, headers=KEY)).json()["code"] == "INVALID_USER_ID"  # X-User-Id required
+    # FR7.10 / logging: the user id is hashed, skills are never logged.
+    text = "\n".join(r.getMessage() for r in caplog.records)
+    assert "career matches user=" in text and "results=2" in text
+    assert "u1" not in text.split("user=")[1][:12] and "React" not in text and "Python" not in text
+
+
+async def test_unknown_inactive_and_malformed_ids(client, matching_db):
+    await matching_db[PROFESSIONS].update_one({"profession_id": "manual:sheets"}, {"$set": {"active": False}})
+    async with client as c:
+        for pid in ("manual:nope", "manual:sheets"):          # unknown, inactive
+            res = await c.get(f"{BASE}/{pid}", headers=as_user("u1"))
+            assert res.status_code == 404 and res.json() == {"success": False, "code": "PROFESSION_NOT_FOUND",
+                                                             "message": "That career was not found."}
+        assert (await c.get(f"{BASE}/bad id!", headers=as_user("u1"))).status_code == 404
+        assert (await c.get(BASE, headers=as_user("not valid"))).json()["code"] == "INVALID_USER_ID"
+
+
+async def test_no_skills_is_a_state_not_an_error(client):
+    async with client as c:
+        res = await c.get(BASE, headers=as_user("newuser"))
+    assert res.status_code == 200 and res.json()["data"]["state"] == "no_skills"
+
+
+async def test_not_ready_states_have_their_own_codes_and_retry_hints(client, matching_db, stub, monkeypatch):
+    from app.services.professions import role_index as role_index_module
+
+    async with client as c:
+        await matching_db[USER_SKILL_PROFILES].update_one({"user_id": "u1"}, {"$set": {"embedding_status": "pending"}})
+        res = await c.get(BASE, headers=as_user("u1"))
+        assert res.status_code == 503 and res.json()["code"] == "EMBEDDINGS_PENDING"
+        assert res.headers["Retry-After"] == "10" and res.json()["retry_after_seconds"] == 10
+        monkeypatch.setattr(type(stub), "ready", False)
+        assert (await c.get(BASE, headers=as_user("u1"))).json()["code"] == "MODEL_LOADING"
+        monkeypatch.setattr(type(stub), "ready", True)
+        await matching_db[USER_SKILL_PROFILES].update_one({"user_id": "u1"}, {"$set": {"embedding_status": "done"}})
+
+        empty = role_index_module.RoleSkillIndex(None)
+        monkeypatch.setattr(role_index_module, "_index", empty, raising=False)
+        role_index_module.use_role_index(empty)
+        res = await c.get(BASE, headers=as_user("u1"))
+        assert res.status_code == 503 and res.json()["code"] == "INDEX_BUILDING"
+        empty.state = role_index_module.WAITING_FOR_MODEL
+        assert (await c.get(BASE, headers=as_user("u1"))).json()["code"] == "MODEL_LOADING"
+        empty.state = role_index_module.NO_PROFESSIONS
+        assert (await c.get(BASE, headers=as_user("u1"))).json()["code"] == "NO_PROFESSIONS"
+    for body in (res.json(),):
+        assert "Traceback" not in body["message"] and "index" not in body["message"].lower()

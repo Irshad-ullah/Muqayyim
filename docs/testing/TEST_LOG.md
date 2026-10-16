@@ -55,7 +55,9 @@ GW = API Gateway Jest, FE node = frontend `node --test`, FE Vitest = frontend Vi
 | 9c Part 9 (CLI tests, 09c doc) | `547792c` | 517 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
 | Housekeeping (gateway test timeouts, LibreOffice note) | `d199a07`, `25a8044` | 517 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
 | Module 5: ESCO re-import without ISCO 3521 | `3deea26` | 517 + 1 skipped ¹ | n/r | n/r | n/r | n/r | n/r | recorded |
-| Module 5 Part 1 (scoring) | Part 1 commit | 535 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
+| Module 5 Part 1 (scoring) | `ed93d73` | 535 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
+| Deactivation reason fix | `f0efb58` | 96 (3 files) ² | n/r | n/r | n/r | n/r | n/r | recorded |
+| Module 5 Part 2 (API) | Part 2 commit | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 31 | 70 | automatic |
 
 ¹ From the "Before" column of the 08 change note. ² The 09a2 note records React ↔ Python and Redux ↔ Redis as
 strict xfails in the slow test but gives no run count for this commit.
@@ -563,6 +565,7 @@ professions → 126 results (the 4 expected exact-title merges: Data Scientists,
 Developers, Web Developers), 140 ms; nothing written (`career_matches` still empty). Personal skills not recorded.
 
 ¹ `test_professions.py` only (55 passed) at that commit; the full run is the Part 1 row.
+² `test_professions.py`, `test_taxonomy_preview.py`, `test_taxonomy_publish.py`; the full run is the Part 2 row.
 
 ## Deactivation reason: "not in dataset" vs "excluded by role filter" (recorded)
 
@@ -588,3 +591,55 @@ run is recorded with Module 5 Part 2).
 publish (snapshot `20261016T062804-dce8767b`; state hash OK, index 1,282, background chef 3.2 % / web 12.9 % passed) →
 inactive reasons now: "excluded by role filter (ISCO selection)" × 13; active 130; the running service's index rebuilt
 (ready, 1,282).
+
+## Module 5 Part 2 — Career matching API: AI routes, Core pass-through, gateway (recorded)
+
+**Date:** 2026-10-16 · commit: "Module 5 Part 2" (see `git log`) · requirements FR7.1–FR7.7, FR7.10
+
+**What was built:**
+- AI `app/routes/matching_routes.py` — `GET /internal/matching/matches` and `GET /internal/matching/matches/{profession_id}`
+  (internal key; the user is `X-User-Id`, set by Core from the verified JWT). Not-ready states have their own 503 codes
+  with `Retry-After` and `retry_after_seconds`: `EMBEDDINGS_PENDING` (10 s), `MODEL_LOADING` (15 s), `INDEX_BUILDING`
+  (10 s), `NO_PROFESSIONS` (60 s); `MATCHING_UNAVAILABLE` for the database or configuration; `PROFESSION_NOT_FOUND` (404)
+  for a malformed, unknown or inactive id; "no skills" is a state (`state: no_skills`), not an error. Logs: a 12-character
+  hash of the user id, the result count, cached or not, and the time — no skills, no ids.
+- Core `GET /api/career-matches` and `GET /api/career-matches/:professionId` (`careerMatchController.js`, auth
+  middleware): the user id only from the JWT, never from the URL, query, body or headers; the profession id validated
+  before calling AI (404, no AI call); AI's codes and `Retry-After` passed through; anything else from AI → 503
+  `MATCHING_UNAVAILABLE` with a safe message; AI unreachable → 503 `MATCHING_UNAVAILABLE`; timeout → 504
+  `MATCHING_TIMEOUT`. Logs: user hash, status, result count, time.
+- Gateway: `/api/career-matches` → Core with the normal limits; listed under endpoints and health.
+
+**Automated tests** (run 2026-10-16 11:37, all PASS; the machine was loaded — AI suite 244 s): AI **541 passed,
+1 skipped** (+6, incl. the 2 reason tests); AI slow 2 + 2 xfailed; Core **263** (+16); Gateway **67** (+5); frontend 31 + 70.
+- AI `tests/test_matching.py` (+4) — list and detail routes, internal key and `X-User-Id` required, logs without skills;
+  unknown / inactive / malformed ids → the same safe 404; "no skills" state; every not-ready code with its retry hint.
+- Core `tests/careerMatches.test.js` (16) — no token → 401 with no AI call; **another user's id in the query, body or a
+  header is ignored: each user gets only their own matches**; Authorization not forwarded; malformed ids → 404 without an
+  AI call; AI 404 passed through; EMBEDDINGS_PENDING / MODEL_LOADING / INDEX_BUILDING / NO_PROFESSIONS → 503 with code,
+  message and Retry-After; AI down → 503 MATCHING_UNAVAILABLE; AI too slow → 504 MATCHING_TIMEOUT; an AI 500 is not shown
+  to the user; the log line holds the user hash, not the id or email.
+- Gateway `tests/careerMatchesRoute.test.js` (5) — both paths proxied to Core with the token; the 1 MB limit applies;
+  `/internal/matching/*` blocked.
+
+**Manual check** through gateway :8180 → Core :3100 → AI :8100 (new code, real databases; the running 8080 / 3000 / 8000
+services untouched), with a token for the existing real profile (16 skills; the token and id were kept out of the output):
+
+| # | Call | Result | Time (first run) | Time (second run, machine loaded) |
+|---|---|---|---|---|
+| 1 | list, cold | 200, 126 results, best 57.5 %, low_match false | 467 ms (AI 163 ms) | 1,610 ms (AI 475 ms) |
+| 2 | list, cached | 200, cached | 208 ms (AI 14 ms, Core 25 ms) | 838–935 ms (AI 58 ms) |
+| 3 | details `onet:15-1299.07` | 200, 20 required / 10 optional / 4 gaps, 4 explanation lines | 308 ms | 1,176 ms |
+| 4 | unknown `onet:99-9999.00` | 404 PROFESSION_NOT_FOUND "That career was not found." | 312 ms | 1,176 ms |
+| 5 | no token | 401 NO_TOKEN | 182 ms | 765 ms |
+| 6 | `/internal/matching/…` via the gateway | 404 | — | — |
+
+Top 5 (both runs identical): Blockchain Engineers 57.5 % [O\*NET], Software Developers 55.0 % [ESCO + O\*NET merged],
+Software Quality Assurance Analysts and Testers 54.2 % [O\*NET], Web and Digital Interface Designers 54.2 % [O\*NET],
+Web Developers 53.3 % [ESCO + O\*NET merged]. The ~180 ms floor in the first run is there even for the 401, which never
+reaches AI, so it is per-request overhead outside matching.
+
+**Problem found by the manual check (fixed before commit):** the first design put the user id in the AI path
+(`/internal/matching/users/<id>`), so uvicorn's access log recorded the raw id (12 lines). The id moved to an
+`X-User-Id` header (accepted only with the internal key, like `X-Admin-Id` in 9c); after restarting the test instances
+the AI and Core logs contained it 0 times. The cache entry the check created was deleted and the test instances stopped.

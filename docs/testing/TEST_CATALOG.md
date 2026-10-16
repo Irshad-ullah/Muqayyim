@@ -72,6 +72,12 @@ properties with no single SRS id.
 | Duplicate roles across sources merged on exact titles only | AI `test_matching.py::test_exact_titles_merge_…` | unit | pass |
 | FR7.4 / FR7.5 / FR7.7 breakdown (held / related / missing), template explanation, stored gap list; low-match flag | AI `test_matching.py::test_explanation_…`, `::test_low_match_note_and_details`, `::test_scores_every_profession_…` | unit + integration | pass |
 | Result cache per user, invalidated by skill, profession, index or taxonomy-file changes | AI `test_matching.py::test_the_cache_is_used_and_invalidated` | integration | pass |
+| **security** — a user only ever gets their own matches (user id from the JWT only; other ids in query / body / headers ignored; `X-User-Id` only with the internal key) | Core `careerMatches.test.js::identity`; AI `test_matching.py::test_list_and_detail_routes` | integration | pass |
+| FR7.10 distinct, safe errors: EMBEDDINGS_PENDING / MODEL_LOADING / INDEX_BUILDING / NO_PROFESSIONS (503 + Retry-After), MATCHING_UNAVAILABLE (503), MATCHING_TIMEOUT (504), PROFESSION_NOT_FOUND (404) | AI `test_matching.py::test_not_ready_states_…`, `::test_unknown_inactive_and_malformed_ids`; Core `careerMatches.test.js` (errors, validation) | integration | pass |
+| Logging without personal data (user id hashed; no skills) | AI `test_matching.py::test_list_and_detail_routes`; Core `careerMatches.test.js::logging`; manual log scan | integration + manual | pass; 2026-10-16: 0 raw ids after the fix |
+| Gateway route `/api/career-matches` → Core; `/internal/matching/*` blocked | GW `careerMatchesRoute.test.js` | integration | pass |
+| Career matching API, live (gateway → Core → AI, real profile) | Module 5 Part 2 manual check (TEST_LOG) | manual | 2026-10-16: list, cached list, details, 404, 401 as expected |
+| Deactivation reason: "not in dataset" vs "excluded by role filter" | AI `test_professions.py::test_publish_deactivates_…`, `::test_a_profession_no_longer_in_the_dataset_…`, `::test_isco_filter_reason_corrects_…` | integration | pass |
 
 ## Module 10 — admin
 

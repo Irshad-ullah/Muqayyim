@@ -26,6 +26,7 @@ from app.middleware.validation import register_validation_error_handler
 from app.routes.internal_logs_routes import router as internal_logs_router
 from app.routes.profession_routes import router as profession_router
 from app.routes.taxonomy_routes import router as taxonomy_router
+from app.routes.matching_routes import router as matching_router
 from app.services.taxonomy.heartbeat import run_heartbeat
 from app.services.taxonomy.jobs import ensure_job_indexes
 from app.services.taxonomy.publishing import ensure_restore_indexes, recover as recover_taxonomy_jobs, run_recovery
@@ -209,6 +210,7 @@ app.include_router(internal_router)  # service-to-service, X-Internal-Key
 app.include_router(internal_logs_router)  # admin log view, via CoreServices
 app.include_router(profession_router)  # Module 10 FE-4 professions + role-skill index, via CoreServices
 app.include_router(taxonomy_router)  # Module 10 FE-4 / FR12.5 admin taxonomy jobs, via CoreServices
+app.include_router(matching_router)  # Module 5 career matching, via CoreServices
 
 
 # Root endpoint
