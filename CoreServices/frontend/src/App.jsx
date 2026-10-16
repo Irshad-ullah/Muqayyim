@@ -15,6 +15,7 @@ import CVParsingPage from './pages/CVParsingPage.jsx';
 import ProfileBuilderPage from './pages/ProfileBuilderPage.jsx';
 import ViewProfilePage from './pages/ViewProfilePage.jsx';
 import CVGeneratorPage from './pages/CVGeneratorPage.jsx';
+import CareerMatchesPage from './pages/CareerMatchesPage.jsx';
 
 // Admin pages
 import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx';
@@ -92,6 +93,18 @@ export default function App() {
             {user?.role === 'Admin'
               ? <Navigate to="/admin/dashboard" replace />
               : <ViewProfilePage />}
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Module 5 — Semantic Career Matching */}
+      <Route
+        path="/career-matches"
+        element={
+          <ProtectedRoute>
+            {user?.role === 'Admin'
+              ? <Navigate to="/admin/dashboard" replace />
+              : <CareerMatchesPage />}
           </ProtectedRoute>
         }
       />

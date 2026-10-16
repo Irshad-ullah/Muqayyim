@@ -1,0 +1,55 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { errorView, matchesFilters, skillNote, visibleResults } from './careerRules.js';
+
+const r = (id, score, extra = {}) => ({
+  profession_id: id, title: id, score, matched: 0, category: 'Development', source: 'onet',
+  sources: [{ source: 'onet', profession_id: id }], categories: ['Development'], ...extra,
+});
+const RESULTS = [
+  r('a', 40), r('b', 70), r('c', 10, { category: 'Design', categories: ['Design'] }),
+  r('d', 55, { source: 'esco', sources: [{ source: 'esco', profession_id: 'd' }] }),
+  r('e', 30, { sources: [{ source: 'onet' }, { source: 'esco' }], categories: ['Data & AI', 'Management & Product'] }),
+];
+const ids = (list) => list.map((x) => x.profession_id);
+
+test('sorting: by match % both ways and by title', () => {
+  assert.deepEqual(ids(visibleResults(RESULTS).shown), ['b', 'd', 'a', 'e', 'c']);
+  assert.deepEqual(ids(visibleResults(RESULTS, { sort: 'score_asc' }).shown), ['c', 'e', 'a', 'd', 'b']);
+  assert.deepEqual(ids(visibleResults(RESULTS, { sort: 'title' }).shown), ['a', 'b', 'c', 'd', 'e']);
+});
+
+test('filters: category matches either source of a merged role; source; minimum %', () => {
+  assert.equal(matchesFilters(RESULTS[4], { category: 'Management & Product' }), true);
+  assert.equal(matchesFilters(RESULTS[4], { category: 'Data & AI' }), true);
+  assert.equal(matchesFilters(RESULTS[4], { source: 'esco' }), true); // merged O*NET + ESCO
+  assert.deepEqual(ids(visibleResults(RESULTS, { source: 'esco' }).shown), ['d', 'e']);
+  assert.deepEqual(ids(visibleResults(RESULTS, { minScore: 50 }).shown), ['b', 'd']);
+});
+
+test('at least 3 careers are always shown: the closest others top the list up', () => {
+  const { shown, extra } = visibleResults(RESULTS, { category: 'Design' });
+  assert.deepEqual(ids(shown), ['c']);
+  assert.deepEqual(ids(extra), ['b', 'd']); // the best of the rest
+  assert.equal(visibleResults(RESULTS, { minScore: 100 }).extra.length, 3);
+  assert.equal(visibleResults(RESULTS).extra.length, 0);
+  assert.equal(visibleResults([r('x', 5)], { minScore: 50 }).extra.length, 1); // never more than exist
+});
+
+test('every error code has its own safe view; only EMBEDDINGS_PENDING polls', () => {
+  const kinds = ['EMBEDDINGS_PENDING', 'MODEL_LOADING', 'INDEX_BUILDING', 'NO_PROFESSIONS', 'MATCHING_UNAVAILABLE', 'MATCHING_TIMEOUT']
+    .map((code) => errorView({ code }));
+  assert.deepEqual(kinds.map((k) => k.kind), ['pending', 'starting', 'starting', 'unavailable', 'unavailable', 'timeout']);
+  assert.deepEqual(kinds.map((k) => Boolean(k.poll)), [true, false, false, false, false, false]);
+  assert.equal(new Set(kinds.map((k) => k.title)).size, 6);
+  const generic = errorView(Object.assign(new Error('KeyError at service.py'), { code: 'SOMETHING' }));
+  assert.equal(generic.kind, 'error');
+  assert.doesNotMatch(generic.message, /KeyError|service\.py/);
+});
+
+test('skill notes say the status in words and name the user skill behind a related credit', () => {
+  assert.equal(skillNote({ status: 'matched', via: { source: 'cv' } }), 'Held — from your CV');
+  assert.equal(skillNote({ status: 'related', via: { name: 'Express', source: 'github', similarity: 0.812 } }),
+    'Related — via your Express (from GitHub), similarity 0.81');
+  assert.equal(skillNote({ status: 'missing' }), 'Missing');
+});

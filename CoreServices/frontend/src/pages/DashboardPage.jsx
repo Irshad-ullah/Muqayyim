@@ -20,6 +20,7 @@ import {
   PenSquare,
   Eye,
   FileText,
+  Compass,
 } from 'lucide-react';
 
 const quickActions = [
@@ -46,6 +47,14 @@ const quickActions = [
     to: '/cv-generator',
     color: 'text-sky-600',
     bg: 'bg-sky-50',
+  },
+  {
+    icon: Compass,
+    label: 'Career Matches',
+    description: 'See which IT careers fit your skills',
+    to: '/career-matches',
+    color: 'text-amber-600',
+    bg: 'bg-amber-50',
   },
   {
     icon: Eye,

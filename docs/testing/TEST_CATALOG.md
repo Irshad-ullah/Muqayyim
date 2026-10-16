@@ -77,6 +77,15 @@ properties with no single SRS id.
 | Logging without personal data (user id hashed; no skills) | AI `test_matching.py::test_list_and_detail_routes`; Core `careerMatches.test.js::logging`; manual log scan | integration + manual | pass; 2026-10-16: 0 raw ids after the fix |
 | Gateway route `/api/career-matches` → Core; `/internal/matching/*` blocked | GW `careerMatchesRoute.test.js` | integration | pass |
 | Career matching API, live (gateway → Core → AI, real profile) | Module 5 Part 2 manual check (TEST_LOG) | manual | 2026-10-16: list, cached list, details, 404, 401 as expected |
+| FR7.3 at least 3 matches shown, highest first (top-up when filters leave fewer) | FE `pages/careers/careerRules.test.js`; FE `pages/CareerMatchesPage.spec.jsx` (list, filters) | unit + component | pass |
+| FR7.4 required skills held / related / missing (icon **and words**; related names the user skill behind it); optional skills | FE `CareerMatchesPage.spec.jsx` (details); `careerRules.test.js` (skill notes) | component | pass |
+| FR7.5 / FR7.6 explanation and details for a career; merged roles show both source lists; ESCO tooltip; attribution | FE `CareerMatchesPage.spec.jsx` (details) | component | pass |
+| FR7.7 "Generate learning path (coming soon)" disabled, with the gap count | FE `CareerMatchesPage.spec.jsx` (merged details) | component | pass |
+| FR7.8 sort and filter (category, source, minimum %), instant | FE `CareerMatchesPage.spec.jsx` (sorting and filtering); `careerRules.test.js` | unit + component | pass |
+| FR7.9 back to the dashboard, always visible | FE `CareerMatchesPage.spec.jsx` (states) | component | pass |
+| FR7.10 page states: loading, no skills, each 503 code, 504, generic error, low match, pending polling every 5 s only while visible | FE `CareerMatchesPage.spec.jsx` (states); `careerRules.test.js` (error views) | component | pass |
+| Accessibility: keyboard list navigation, labelled controls, no nested buttons, status not by colour alone | FE `CareerMatchesPage.spec.jsx` (keyboard, ESCO row, skill rows) | component | pass |
+| Career Matching page, browser walkthrough | Module 5 Part 3 checklist (TEST_LOG) | manual | pending — results to be reported by the user |
 | Deactivation reason: "not in dataset" vs "excluded by role filter" | AI `test_professions.py::test_publish_deactivates_…`, `::test_a_profession_no_longer_in_the_dataset_…`, `::test_isco_filter_reason_corrects_…` | integration | pass |
 
 ## Module 10 — admin

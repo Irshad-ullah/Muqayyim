@@ -57,7 +57,8 @@ GW = API Gateway Jest, FE node = frontend `node --test`, FE Vitest = frontend Vi
 | Module 5: ESCO re-import without ISCO 3521 | `3deea26` | 517 + 1 skipped ¹ | n/r | n/r | n/r | n/r | n/r | recorded |
 | Module 5 Part 1 (scoring) | `ed93d73` | 535 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
 | Deactivation reason fix | `f0efb58` | 96 (3 files) ² | n/r | n/r | n/r | n/r | n/r | recorded |
-| Module 5 Part 2 (API) | Part 2 commit | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 31 | 70 | automatic |
+| Module 5 Part 2 (API) | `ef001ec` | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 31 | 70 | automatic |
+| Module 5 Part 3 (Career Matching page) | Part 3 commit | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
 
 ¹ From the "Before" column of the 08 change note. ² The 09a2 note records React ↔ Python and Redux ↔ Redis as
 strict xfails in the slow test but gives no run count for this commit.
@@ -643,3 +644,73 @@ reaches AI, so it is per-request overhead outside matching.
 (`/internal/matching/users/<id>`), so uvicorn's access log recorded the raw id (12 lines). The id moved to an
 `X-User-Id` header (accepted only with the internal key, like `X-Admin-Id` in 9c); after restarting the test instances
 the AI and Core logs contained it 0 times. The cache entry the check created was deleted and the test instances stopped.
+
+## Module 5 Part 3 — Career Matching page (Mockup M6) (recorded)
+
+**Date:** 2026-10-16 · commit: "Module 5 Part 3" (see `git log`) · requirements FR7.3–FR7.10
+
+**What was built:** `/career-matches` (`pages/CareerMatchesPage.jsx`, `pages/careers/CareerDetails.jsx`,
+`pages/careers/careerRules.js`, `services/careerMatchService.js`); a "Career Matches" link in the navbar and a dashboard
+quick action.
+- List on the left (title, match %, source badges, category, held / related / missing counts), details on the right;
+  on narrow screens the details are below the list and the page scrolls to them on selection.
+- Sort by match % (either way) or title; filter by category (a merged role matches either source's category), source and
+  minimum %; all in the browser on the loaded list (instant, no reload).
+- At least 3 careers are always on screen (FR7.3): when the filters leave fewer, the closest other careers are added
+  under "Your closest other careers".
+- States: loading; no skills (links to the Profile Builder and CV upload); EMBEDDINGS_PENDING (polls every 5 s only while
+  the tab is visible, with "Check now"); MODEL_LOADING / INDEX_BUILDING / NO_PROFESSIONS / MATCHING_UNAVAILABLE (own
+  messages, "Try again"); MATCHING_TIMEOUT; a generic error without internal details; the low-match note when the best
+  result is under 20 %; a not-found message for a career that disappeared.
+- Details: required skills with an icon **and words** ("Held — from your CV", "Related — via your React (from your CV),
+  similarity 0.90", "Missing"); optional skills (collapsed, not counted); the explanation; for merged roles both source
+  lists with a note; the ESCO info tooltip; O\*NET / ESCO attribution per list; "Generate learning path (coming soon)"
+  disabled, with the number of skills to learn; "Back to dashboard" always visible (FR7.9).
+- Keyboard: ↑ / ↓ / Home / End move through the list and select; every control is labelled.
+
+**Automated tests** (run 2026-10-16 20:50, all PASS; the machine was loaded — AI suite 252 s): AI 541 + 1 skipped; AI slow
+2 + 2 xfailed; Core 263; Gateway 67; frontend `node --test` **36** (+5), Vitest **88** (+18).
+- `pages/careers/careerRules.test.js` (5, node) — sorting both ways and by title; filters (merged roles match either
+  category and source; minimum %); the top-up to 3; one safe view per error code, only EMBEDDINGS_PENDING polls; skill
+  notes in words naming the user skill behind a related credit.
+- `pages/CareerMatchesPage.spec.jsx` (18, Vitest) — loading → ranked list with the best career selected; no-skills links;
+  each 503 code's message and retry; 504 and a generic error without internal text; EMBEDDINGS_PENDING polling every 5 s,
+  paused while hidden, stopped when ready; the low-match note (and its absence); sorting and filtering without reloading;
+  the top-up to 3; the minimum-% slider; keyboard navigation; merged details (both lists, attribution, note, disabled
+  learning-path button with the gap count); held / related / missing in words; the single-source ESCO tooltip and
+  attribution, and no button nested in a list row; a disappeared career.
+
+**Problems found by testing (fixed before commit):**
+- **A button inside a button:** the ESCO info button sat inside the list row's button (invalid HTML; breaks keyboard and
+  screen-reader use) — React's DOM-nesting warning in the test run. The list now shows a non-interactive marker with a
+  `title`; the focusable tooltip stays in the details panel; a test checks no button is nested in a row.
+- **No career selected on the first frame:** the first career was selected in an effect after the list rendered, so for
+  one render nothing was selected (a test failed intermittently, once in a full run under load, on `aria-current`). The
+  selection is now derived during render (the chosen career if still visible, else the first); 8 of 8 repeated runs and
+  the next full run passed. That earlier failed full run (20:40) is kept in test-runs.md.
+
+**Manual check:** pending — browser walkthrough by the user (checklist below).
+
+Walkthrough checklist (results to be added here):
+1. Sign in as a job seeker with skills in the profile. The navbar shows "Career Matches"; the dashboard shows a
+   "Career Matches" quick action. Open it.
+2. While loading, "Finding your career matches…" shows; then the ranked list (highest % first) with the first career
+   selected and its details on the right.
+3. Each row shows the title, match %, source badge(s) (O\*NET / ESCO, both for a merged role such as Software Developers)
+   and the category; ESCO-only rows show an info marker whose hover text explains lower ESCO scores.
+4. In the details: required skills each have an icon and the words Held / Related / Missing; a related skill names which
+   of your skills earned it and the similarity; optional skills expand and say they are not counted.
+5. Open a merged role (Software Developers or Web Developers): both the O\*NET list and the ESCO list are shown, each with
+   its attribution, and the note says the higher match is shown.
+6. Open an ESCO-only role: the info button next to ESCO shows the tooltip on hover and on keyboard focus; the ESCO
+   attribution is at the bottom.
+7. "Generate learning path (coming soon)" is disabled and the number of skills to learn is shown next to it.
+8. Change "Sort by" (lowest first, title): the list reorders at once, with no loading state.
+9. Filter by a category, then by source, then drag "Minimum match": the list updates at once; when fewer than 3 careers
+   are left, "Your closest other careers" tops the list up to 3.
+10. Click a row, then use ↑ / ↓ / Home / End: the focus and the selection move together and the details follow.
+11. Narrow the browser to phone width: the details appear below the list and selecting a row scrolls to them.
+12. "Back to dashboard" works from the page (and is still there in an error state, e.g. with the AI service stopped:
+    "Career matching is unavailable" with "Try again" — optional).
+13. Optional: with a new account without skills, the page shows "Add your skills…" with links to the Profile Builder and
+    CV upload.

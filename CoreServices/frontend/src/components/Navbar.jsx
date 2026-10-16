@@ -10,6 +10,7 @@ import {
   FileUp,
   PenSquare,
   FileText,
+  Compass,
   Menu,
   X,
 } from 'lucide-react';
@@ -40,6 +41,7 @@ export default function Navbar() {
     { to: '/cv-parsing',      label: 'CV Parsing',       icon: FileUp },
     { to: '/profile-builder', label: 'Profile Builder',  icon: PenSquare },
     { to: '/cv-generator',    label: 'CV Generator',     icon: FileText },
+    { to: '/career-matches',  label: 'Career Matches',   icon: Compass },
     { to: '/profile',         label: 'Account',          icon: User },
   ];
 
