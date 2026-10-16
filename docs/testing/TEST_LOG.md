@@ -54,6 +54,8 @@ GW = API Gateway Jest, FE node = frontend `node --test`, FE Vitest = frontend Vi
 | 9c Part 8 (admin UI) | `30ada9f` | 508 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
 | 9c Part 9 (CLI tests, 09c doc) | `547792c` | 517 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
 | Housekeeping (gateway test timeouts, LibreOffice note) | `d199a07`, `25a8044` | 517 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
+| Module 5: ESCO re-import without ISCO 3521 | `3deea26` | 517 + 1 skipped ¹ | n/r | n/r | n/r | n/r | n/r | recorded |
+| Module 5 Part 1 (scoring) | Part 1 commit | 535 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
 
 ¹ From the "Before" column of the 08 change note. ² The 09a2 note records React ↔ Python and Redux ↔ Redis as
 strict xfails in the slow test but gives no run count for this commit.
@@ -531,3 +533,33 @@ were excluded by the ISCO selection; the reason text comes from 9b's deactivatio
 
 **Follow-up:** the running AI service still holds the old prefix list in memory (it only matters for an ESCO upload
 through the admin UI) until it is restarted.
+
+## Module 5 Part 1 — Career matching scores (recorded)
+
+**Date:** 2026-10-16 · commit: "Module 5 Part 1" (see `git log`) · requirements FR7.1–FR7.5, FR7.7 (gap list), FE-3/FE-4
+
+**What was built:** `app/services/matching/` — `scoring.py` (pure: required/optional split with the top-up to 10, the
+credit rule with the pair kind decided from both skills' description status, match %, duplicate-title merge, ranking,
+template explanations) and `service.py` (the user's merged profile skills re-normalised through today's aliases, vectors
+from the cache, `search_related` with k = every role skill, all active professions scored, a per-user cache in
+`ai_db.career_matches` keyed by the algorithm version, the skills, the index state hash, the live fingerprint and the
+alias / description file signatures; the stored gap list per profession for Module 6). Startup creates the cache index.
+
+**Automated tests** (run 2026-10-16 11:11 on the Part 1 working tree, all PASS): AI **535 passed, 1 skipped** (+18);
+AI slow 2 + 2 xfailed; Core 247; Gateway 62; frontend 31 + 70.
+- AI `tests/test_matching.py` (18) — O\*NET required = in-demand; short lists topped up to 10 in stored order (O\*NET and
+  ESCO); credit rule kinds from description status (an undescribed user skill earns nothing even when search_related
+  calls the pair "described"; mixed pairs need no mutual check); best pair per role skill; match % counts required skills
+  only; stale duplicate keys count once; exact-title merge across sources (higher score shown, both sources, categories
+  union; an O\*NET alternative title is not merged); deterministic ranking; template explanations naming skill sources
+  and the ESCO note; the service scores every profession, asks `search_related` for every role skill, uses and
+  invalidates the cache (profession write, skill change), re-normalises a stale stored key through today's aliases,
+  refuses pending embeddings and model mismatches, flags low matches, gives details and 404s an unknown profession; and a
+  **brute-force check over the full similarity matrix** that the credits equal the rule applied pair by pair. 3 of 3
+  repeated runs passed.
+
+**Manual check (real data, read only):** `compute()` for the one existing user profile (16 skills): 130 active
+professions → 126 results (the 4 expected exact-title merges: Data Scientists, Database Administrators, Software
+Developers, Web Developers), 140 ms; nothing written (`career_matches` still empty). Personal skills not recorded.
+
+¹ `test_professions.py` only (55 passed) at that commit; the full run is the Part 1 row.

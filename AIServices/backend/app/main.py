@@ -32,6 +32,7 @@ from app.services.taxonomy.publishing import ensure_restore_indexes, recover as 
 from app.services.taxonomy.snapshots import ensure_snapshot_indexes
 from app.services.taxonomy.uploads import run_cleanup
 from app.services.taxonomy.pipeline import ensure_diff_indexes
+from app.services.matching.service import ensure_matching_indexes
 from app.config.database import get_database
 from app.services.professions.imports import refresh_esco_descriptions
 from app.services.professions.role_index import get_role_index
@@ -87,6 +88,10 @@ async def lifespan(app: FastAPI):
             logger.error("Profession setup failed: %s", type(exc).__name__)
         if settings.ROLE_INDEX_AUTOLOAD:
             embedding_tasks.append(asyncio.create_task(get_role_index().load_or_build(db)))
+        try:
+            await ensure_matching_indexes(db)  # Module 5: one cached career-match list per user
+        except Exception as exc:  # noqa: BLE001 — the API still starts
+            logger.error("Career matching setup failed: %s", type(exc).__name__)
         # Admin taxonomy jobs (09c): no job step can still be running in a new process.
         try:
             await ensure_job_indexes(db)

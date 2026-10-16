@@ -122,3 +122,18 @@ Result: **PASS** · total time 288 s
 | Frontend node --test + Vitest | ✅ 101 passed (31 node + 70 Vitest), 0 failed | 10.1 s | `node --test: pass 31, fail 0 (0.2s) \| Vitest: 70 passed (70) (9.8s)` |
 
 Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).
+
+## 2026-10-16 11:11 Pakistan Standard Time · `3deea26` (main, 3 uncommitted change(s))
+
+Commit: Exclude ISCO 3521 from the ESCO selection (Module 5, FR7.2)  
+Result: **PASS** · total time 172 s
+
+| Suite | Result | Duration | Summary line |
+|---|---|---|---|
+| AIServices pytest | ✅ 535 passed, 0 failed, 1 skipped, 4 deselected | 107.7 s | `535 passed, 1 skipped, 4 deselected in 107.65s (0:01:47)` |
+| AIServices pytest -m slow (real model) | ✅ 2 passed, 0 failed, 2 xfailed, 536 deselected | 8.9 s | `2 passed, 536 deselected, 2 xfailed in 8.90s` |
+| CoreServices Jest | ✅ 247 passed, 0 failed | 34.6 s | `Tests: 247 passed, 247 total \| Test Suites: 20 passed, 20 total` |
+| API Gateway Jest | ✅ 62 passed, 0 failed | 4.1 s | `Tests: 62 passed, 62 total \| Test Suites: 9 passed, 9 total` |
+| Frontend node --test + Vitest | ✅ 101 passed (31 node + 70 Vitest), 0 failed | 9.4 s | `node --test: pass 31, fail 0 (0.2s) \| Vitest: 70 passed (70) (9.2s)` |
+
+Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).

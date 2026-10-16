@@ -64,6 +64,14 @@ properties with no single SRS id.
 | Credit rule (same key 1.0; described ≥ 0.73 + mutual 0.5; mixed ≥ 0.73 0.5) | documented in the frozen configuration; pair kinds tested in `test_professions.py::search_related` | unit | pass (rule itself not yet used by matching) |
 | Background credit rate (unrelated profile credited ≤ 5 % and ≤ 0.5 × related) | AI `test_background_credit_rate.py` (slow); `AIServices/eval/background_credit_rate.py` | evaluation (real data) | 2026-10-15: chef 3.0 % vs web 12.2 % — pass |
 | Role-skill description coverage | `AIServices/eval/role_skill_coverage.py` | evaluation (real data) | 2026-10-15: distinct 20.2 %, occurrences 38.2 % |
+| FR7.2 only IT / related roles: ISCO 3521 excluded (ESCO re-import through the 9c pipeline) | 9c CLI dry run + publish on real data | manual | 2026-10-16: exactly 13 removed, 130 active, background check passed |
+| FR7.1 the user's latest skills: merged profile skills, only when embeddings are done; re-normalised through today's aliases | AI `test_matching.py::test_user_skills_are_normalised_through_todays_aliases`, `::test_pending_embeddings_and_missing_profiles` | integration | pass |
+| FE-3 / FE-4 skill-to-skill credit rule (matched 1.0; described + mutual 0.5; mixed 0.5; kind from description status) | AI `test_matching.py::test_credit_rule_…`, `::test_the_best_pair_…`, `::test_credits_agree_with_a_brute_force_reading_of_the_rule` | unit + integration | pass |
+| FR7.2 / FR7.3 every active profession scored (search_related with k = all), ranked highest first | AI `test_matching.py::test_scores_every_profession_with_the_credit_rule`, `::test_search_related_is_asked_for_every_role_skill`, `::test_ranking_…` | integration | pass |
+| Match % = credits over required skills (O\*NET in-demand, ESCO essential, topped up to 10) | AI `test_matching.py::test_onet_required_…`, `::test_short_lists_…`, `::test_esco_required_…`, `::test_match_percent_…` | unit | pass |
+| Duplicate roles across sources merged on exact titles only | AI `test_matching.py::test_exact_titles_merge_…` | unit | pass |
+| FR7.4 / FR7.5 / FR7.7 breakdown (held / related / missing), template explanation, stored gap list; low-match flag | AI `test_matching.py::test_explanation_…`, `::test_low_match_note_and_details`, `::test_scores_every_profession_…` | unit + integration | pass |
+| Result cache per user, invalidated by skill, profession, index or taxonomy-file changes | AI `test_matching.py::test_the_cache_is_used_and_invalidated` | integration | pass |
 
 ## Module 10 — admin
 
