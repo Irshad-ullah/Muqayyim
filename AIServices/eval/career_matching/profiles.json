@@ -1,0 +1,62 @@
+{
+  "_comment": "Module 5 career-matching sanity profiles. Written and committed BEFORE the evaluation was run (expectations first). Acceptable roles are matched by exact title against any source; a merged O*NET + ESCO result counts if either title is acceptable. The chef profile is the non-IT control: no IT role may score above 20%.",
+  "created": "2026-10-16",
+  "profiles": [
+    {
+      "id": "web",
+      "label": "Web developer",
+      "skills": ["React", "JavaScript", "TypeScript", "HTML", "CSS", "Node.js", "Git", "REST APIs", "Tailwind CSS", "Webpack"],
+      "acceptable": ["Web Developers", "web developer", "user interface developer", "Web and Digital Interface Designers"]
+    },
+    {
+      "id": "backend",
+      "label": "Backend Python developer",
+      "skills": ["Python", "Django", "Flask", "PostgreSQL", "SQL", "REST APIs", "Docker", "Git", "Redis", "Celery", "Linux"],
+      "acceptable": ["Software Developers", "software developer", "Computer Programmers", "cloud software developer"]
+    },
+    {
+      "id": "data",
+      "label": "Data scientist",
+      "skills": ["Python", "pandas", "NumPy", "scikit-learn", "SQL", "Machine Learning", "Statistics", "Jupyter", "TensorFlow", "Data Visualization", "Tableau"],
+      "acceptable": ["Data Scientists", "data scientist", "data analyst", "artificial intelligence engineer"]
+    },
+    {
+      "id": "devops",
+      "label": "DevOps engineer",
+      "skills": ["Docker", "Kubernetes", "Terraform", "AWS", "Linux", "Jenkins", "Ansible", "Bash", "Git", "Prometheus", "CI/CD"],
+      "acceptable": ["cloud DevOps engineer", "cloud engineer", "Network and Computer Systems Administrators", "ICT system administrator"]
+    },
+    {
+      "id": "mobile",
+      "label": "Mobile developer",
+      "skills": ["Kotlin", "Swift", "Android", "iOS", "Flutter", "Dart", "Firebase", "Git", "REST APIs", "React Native"],
+      "acceptable": ["mobile application developer", "industrial mobile devices software developer", "Software Developers", "software developer"]
+    },
+    {
+      "id": "uiux",
+      "label": "UI/UX designer",
+      "skills": ["Figma", "Adobe XD", "Sketch", "User Research", "Wireframing", "Prototyping", "Usability Testing", "HTML", "CSS", "Adobe Photoshop"],
+      "acceptable": ["Web and Digital Interface Designers", "user interface designer", "user experience analyst", "web designer"]
+    },
+    {
+      "id": "qa",
+      "label": "QA tester",
+      "skills": ["Selenium", "Test Automation", "Manual Testing", "JIRA", "Postman", "Cypress", "Python", "SQL", "API Testing", "Regression Testing"],
+      "acceptable": ["Software Quality Assurance Analysts and Testers", "software tester", "ICT test analyst", "ICT system tester"]
+    },
+    {
+      "id": "chef",
+      "label": "Chef (non-IT control)",
+      "skills": ["Cooking", "Customer Service", "Inventory Management", "Food Safety", "Menu Planning", "Team Leadership", "Budgeting", "Time Management"],
+      "acceptable": [],
+      "control": true,
+      "max_score": 20
+    }
+  ],
+  "pass_mark": {
+    "top3_hits_min": 6,
+    "top5_hits_min": 7,
+    "it_profiles": 7,
+    "chef_best_below": 20
+  }
+}
