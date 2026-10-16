@@ -96,7 +96,7 @@ properties with no single SRS id.
 
 | Requirement | Tests | Type | Status |
 |---|---|---|---|
-| SEC-3 / SDS §3.3.2 rate limits | GW `rateLimit.test.js`, `rateLimitConfig.test.js` | integration | pass |
+| SEC-3 / SDS §3.3.2 rate limits | GW `rateLimit.test.js`, `rateLimitConfig.test.js` (30 s per-test timeout: an app is built per case) | integration | pass |
 | Body size limits and timeouts (413, 502, 504) | GW `limitsAndTimeouts.test.js` | integration | pass |
 | Request IDs, helmet headers, CORS | GW `requestIdHeaders.test.js`; Core `requestId.test.js`; AI `test_request_id.py` | integration | pass |
 | `X-Forwarded-For`, trust proxy | GW `forwarding.test.js` | integration | pass |

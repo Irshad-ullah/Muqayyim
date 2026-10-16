@@ -52,7 +52,8 @@ GW = API Gateway Jest, FE node = frontend `node --test`, FE Vitest = frontend Vi
 | Gateway info line | `a713844` | n/r | n/r | n/r | 62 | n/r | n/r | recorded |
 | Test record | `99f540a` | 506 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 25 | 21 | automatic |
 | 9c Part 8 (admin UI) | `30ada9f` | 508 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
-| 9c Part 9 (CLI tests, 09c doc) | Part 9 commit | 517 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
+| 9c Part 9 (CLI tests, 09c doc) | `547792c` | 517 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
+| Housekeeping (gateway test timeouts, LibreOffice note) | `d199a07`, `25a8044` | 517 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
 
 ¹ From the "Before" column of the 08 change note. ² The 09a2 note records React ↔ Python and Redux ↔ Redis as
 strict xfails in the slow test but gives no run count for this commit.
@@ -420,7 +421,7 @@ Vitest **70**.
 The machine was heavily loaded at the time (AI suite 238 s instead of ~100 s, Vitest 96 s instead of ~10 s); nothing in
 the gateway changed in Part 9. Re-run alone 3 of 3 passed (2.1–2.3 s), the full gateway suite 62/62 in 5.3 s, and the
 full run at 10:02 passed. **Follow-up:** this test is timing-sensitive under load; giving it a longer timeout is a
-candidate for a later clean-up (not changed here: outside 9c).
+candidate for a later clean-up (not changed here: outside 9c). Done in the housekeeping round (`d199a07`).
 
 **Manual checks:** none (documentation and tests only).
 
@@ -472,3 +473,25 @@ before every manual check on the real database.
 
 **Known expected failures:** unchanged — the two strict xfails (Redux ↔ Redis, React ↔ Python) and the LibreOffice skip
 (LibreOffice is not installed on this machine; `.doc` support is kept unchanged by decision).
+
+---
+
+## Housekeeping after 9c (recorded)
+
+**Date:** 2026-10-16 · commits `d199a07` (gateway test timeouts), `25a8044` (LibreOffice note), then this record. 9c was
+pushed and tagged `v0.3-admin-taxonomy` (at `547792c`) before this round.
+
+- **Gateway tests made robust under load:** `rateLimitConfig`, `taxonomyRoutes`, `limitsAndTimeouts` and `errorReporting`
+  build a gateway app per case; each now allows 30 s per test (`jest.setTimeout(30_000)`) instead of Jest's 5 s default,
+  after "RATE_LIMIT_ENABLED=false disables every limiter" timed out once under heavy machine load (09:49 run). Test
+  configuration only; gateway behaviour unchanged; 62/62.
+- **LibreOffice note corrected:** the real-LibreOffice test is skipped because LibreOffice is not installed on this
+  machine; `.doc` support is kept unchanged by decision and no removal is planned (the earlier ".doc-removal" note was
+  wrong and is removed).
+- **Manual backups:** `manual-backup-2026-10-15` and `manual-backup-2026-10-15-part5` deleted (outside the repository);
+  `manual-backup-2026-10-16-part8` kept until Module 5 works.
+
+**Automated tests** (run 2026-10-16 10:19 on `25a8044`, clean tree, all PASS): AI **517 passed, 1 skipped**; AI slow
+**2 passed + 2 xfailed**; Core **247**; Gateway **62**; frontend `node --test` **31**, Vitest **70**.
+
+**Manual checks:** none.

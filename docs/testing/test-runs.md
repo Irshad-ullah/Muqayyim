@@ -107,3 +107,18 @@ Result: **PASS** · total time 438 s
 | Frontend node --test + Vitest | ✅ 101 passed (31 node + 70 Vitest), 0 failed | 13.9 s | `node --test: pass 31, fail 0 (0.3s) \| Vitest: 70 passed (70) (13.7s)` |
 
 Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).
+
+## 2026-10-16 10:19 Pakistan Standard Time · `25a8044` (main, clean)
+
+Commit: TEST_LOG: the LibreOffice skip is expected; .doc support stays as it is  
+Result: **PASS** · total time 288 s
+
+| Suite | Result | Duration | Summary line |
+|---|---|---|---|
+| AIServices pytest | ✅ 517 passed, 0 failed, 1 skipped, 4 deselected | 193.3 s | `517 passed, 1 skipped, 4 deselected in 193.28s (0:03:13)` |
+| AIServices pytest -m slow (real model) | ✅ 2 passed, 0 failed, 2 xfailed, 518 deselected | 14.1 s | `2 passed, 518 deselected, 2 xfailed in 14.13s` |
+| CoreServices Jest | ✅ 247 passed, 0 failed | 53.6 s | `Tests: 247 passed, 247 total \| Test Suites: 20 passed, 20 total` |
+| API Gateway Jest | ✅ 62 passed, 0 failed | 4.7 s | `Tests: 62 passed, 62 total \| Test Suites: 9 passed, 9 total` |
+| Frontend node --test + Vitest | ✅ 101 passed (31 node + 70 Vitest), 0 failed | 10.1 s | `node --test: pass 31, fail 0 (0.2s) \| Vitest: 70 passed (70) (9.8s)` |
+
+Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).
