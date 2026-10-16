@@ -76,6 +76,8 @@ properties with no single SRS id.
 | FR12.4 uploads: ZIP / CSV, required files named exactly, validation | AI `test_taxonomy_uploads.py` | unit + integration | pass |
 | FR12.5 preview before publishing (diff, checks, staging indexes, UI = CLI) | AI `test_taxonomy_preview.py` | integration | pass |
 | FR12.4 publish, snapshots, restore (202 + polling), rollback, crash recovery | AI `test_taxonomy_publish.py` | integration | pass |
+| FR12.4 command-line importers: dry run writes nothing live and cancels its job, failed validation reported, `--i-understand-background-check` required to publish past a failed check, refused under the lock, "service running" warning, flags reach the run; audit record `created_by = "cli"` | AI `test_taxonomy_cli.py` | integration | pass |
+| Crash recovery and clean-up run periodically and survive a failed round (`run_recovery`, `run_cleanup`) | AI `test_taxonomy_cli.py::test_recovery_loop_runs_periodically_and_survives_a_failure`, `::test_cleanup_loop_runs_periodically_and_survives_a_failure` | unit | pass |
 | FR12.4 direct edits: overrides, skill taxonomy, seed read-only, vector repair | AI `test_taxonomy_edits.py` | integration | pass |
 | Taxonomy through Core (admin identity from JWT, pass-through, AdminLog, abort) | Core `adminTaxonomy.test.js`; AI `test_taxonomy_uploads.py::test_upload_needs_a_valid_admin_header_before_reading_the_body`, `::test_client_disconnect_during_upload_leaves_no_job` | integration | pass |
 | Taxonomy through the gateway (100 MB stream, 413, timeout, rate limit) | GW `taxonomyRoutes.test.js` | integration | pass |

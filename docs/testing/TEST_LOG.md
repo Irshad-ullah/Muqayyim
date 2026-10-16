@@ -51,7 +51,8 @@ GW = API Gateway Jest, FE node = frontend `node --test`, FE Vitest = frontend Vi
 | 9c Part 7 (gateway) | `ed52928` | n/r | n/r | n/r | 62 | n/r | n/r | recorded |
 | Gateway info line | `a713844` | n/r | n/r | n/r | 62 | n/r | n/r | recorded |
 | Test record | `99f540a` | 506 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 25 | 21 | automatic |
-| 9c Part 8 (admin UI) | Part 8 commit | 508 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
+| 9c Part 8 (admin UI) | `30ada9f` | 508 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
+| 9c Part 9 (CLI tests, 09c doc) | Part 9 commit | 517 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
 
 ¹ From the "Before" column of the 08 change note. ² The 09a2 note records React ↔ Python and Redux ↔ Redis as
 strict xfails in the slow test but gives no run count for this commit.
@@ -387,3 +388,87 @@ Walkthrough checklist (all 16 passed):
 16. Optional: sign in as a job seeker and open `/admin/professions` → redirected away.
 
 **Clean-up and evidence after the walkthrough:** the 4 snapshots it created (3 before-edit, 1 pre-restore) were deleted with their files, as were the cancelled O*NET job and the restore record; ai_db then held no snapshots, import jobs or restores. Compared with the backup taken before the walkthrough: the SHA-256 of all five data files (`skill_descriptions.json`, `skill_aliases.json`, `skill_categories.json`, `onet_name_map.json`, `esco_name_map.json`) match; the index state hash (`efaee56a0f04…`) matches both the backup's index metadata and the hash recomputed from the live professions; the FAISS file matches; `Software Developers` has its dataset title and no override; `git status` shows no change under `app/data/`. The manual backups are kept.
+
+## 9c Part 9 — Test-gap review, CLI tests and the 09c change note (recorded)
+
+**Date:** 2026-10-16 · commit: see `git log` ("9c Part 9") · note: `docs/changes/09c-admin-taxonomy.md`
+
+**Test-gap review.** Every 9c requirement and approved decision was checked against the tests (the matrix is in
+TEST_CATALOG, Module 10 rows, and in the 09c note). Two gaps were found and closed:
+- **The command-line importers' script layer was untested** (`scripts/_profession_cli.py`): the service functions under
+  it were tested, but not the flags, exit codes, messages or what a dry run leaves behind.
+- **The periodic loops were untested** (`run_recovery` every 60 s, `run_cleanup` hourly): recovery and clean-up were tested
+  as single calls, but not that the loops keep running after a failed round — the recovery loop is what rescues a crashed
+  CLI publish while the service keeps running.
+
+Not added, with the reason: an automated end-to-end test across gateway → Core → AI (each hop is tested against a stub of
+the next and the full chain was checked manually in Parts 6–8; recorded as a limitation in the 09c note); tests for
+`scripts/run_all_tests.py` itself (outside 9c; its output was checked by hand on every run so far).
+
+**New test file:** AI `tests/test_taxonomy_cli.py` (9) — dry run writes nothing live and cancels its job; dry run reports a
+failed validation; publish refused past a failed background check without `--i-understand-background-check` (job
+cancelled, nothing live); publish with the flag records the acknowledgement and takes a snapshot; "service running"
+warning; refused while the lock is held; command-line flags reach the run; recovery loop and clean-up loop run
+periodically and survive a failed round. 5 of 5 repeated runs passed.
+
+**Automated tests** (run 2026-10-16 10:02 on the Part 9 working tree, `399b120` + changes, all PASS): AI **517 passed,
+1 skipped** (+9); AI slow **2 passed + 2 xfailed**; Core **247**; Gateway **62**; frontend `node --test` **31**,
+Vitest **70**.
+
+**A failed run, recorded as it happened:** the run at 09:49 failed one Gateway test, `rateLimitConfig.test.js` —
+"RATE_LIMIT_ENABLED=false disables every limiter" exceeded Jest's 5 s default timeout (it sends 25 requests in a row).
+The machine was heavily loaded at the time (AI suite 238 s instead of ~100 s, Vitest 96 s instead of ~10 s); nothing in
+the gateway changed in Part 9. Re-run alone 3 of 3 passed (2.1–2.3 s), the full gateway suite 62/62 in 5.3 s, and the
+full run at 10:02 passed. **Follow-up:** this test is timing-sensitive under load; giving it a longer timeout is a
+candidate for a later clean-up (not changed here: outside 9c).
+
+**Manual checks:** none (documentation and tests only).
+
+---
+
+## 9c summary — admin taxonomy (Parts 1–9)
+
+**Dates / commits:** 2026-10-15 … 2026-10-16 · `d7a0596`, `47361bd`, `9ca7e0d`, `95abfad`, `e5e5524`, `a1060aa`,
+`f5cf51e`, `ce47708`, `7492aa7`, `ed52928`, `a713844`, `30ada9f`, `399b120`, Part 9 · note: `docs/changes/09c-admin-taxonomy.md`
+
+**Suite totals, before 9c → after Part 9.** "Before" is AI at `cc560fa` (the last commit before 9c); the other suites as first recorded at 9c Part 1 (`d7a0596`), which changed only AI tests:
+
+| Suite | Before | After | Added |
+|---|---|---|---|
+| AI pytest | 392 + 1 skipped | 517 + 1 skipped | +125 |
+| AI slow | 2 + 2 xfailed | 2 + 2 xfailed | 0 |
+| Core Jest | 229 | 247 | +18 |
+| Gateway Jest | 46 | 62 | +16 |
+| Frontend `node --test` | 25 | 31 | +6 |
+| Frontend Vitest | 21 | 70 | +49 |
+| **Total** | **715** | **929** | **+214** |
+
+**New test files:** AI `test_taxonomy_jobs.py`, `test_taxonomy_uploads.py`, `test_taxonomy_preview.py`,
+`test_taxonomy_publish.py`, `test_taxonomy_edits.py`, `test_taxonomy_cli.py`; Core `adminTaxonomy.test.js`; Gateway
+`taxonomyRoutes.test.js`; frontend `AdminTaxonomyPage.spec.jsx`, `taxonomy/DataSourcesTab.spec.jsx`,
+`PreviewPublishTab.spec.jsx`, `HistoryTab.spec.jsx`, `ProfessionsTab.spec.jsx`, `SkillTaxonomyTab.spec.jsx`,
+`taxonomyRules.test.js`; plus the `tests/conftest.py` session guard (real data files never written by tests).
+
+**Manual checks (all passed):** Part 2 real ESCO ZIP and O\*NET / ESCO CSVs validated (row counts identical to 09b);
+Part 3 dry runs with an empty diff; Part 4 crash recovery on the test database and a real publish → restore identical in
+12 measures; Part 5 one edit of each kind restored with identical file hashes and index state hash; Part 6 non-admin 403
+before the body, spoofed identity ignored, AdminLog; Part 7 101 MB → 413 with 0 bytes sent (Expect) or after 16.5 MB;
+Part 8 browser walkthrough 16/16, data identical to the backup afterwards. An independent `mongodump` backup was taken
+before every manual check on the real database.
+
+**Problems found by testing (all fixed before the commit of their part):**
+
+| Part | Problem | Found by | Fix |
+|---|---|---|---|
+| 2 | A 409 response crashed: the error helper's `status` argument clashed with the job's status field | route test | the field is sent as `job_status` |
+| 3 | The background check divided by zero when every role skill is described; its `SystemExit` would have stopped the service from a background task | preview tests | guarded; `CheckUnavailable` |
+| 4 | "Live data changed" was checked before the lock, so a concurrent publish got the wrong refusal | concurrent-publish test | checked under the lock |
+| 5 | After a restore the restored description had no vector (the vector cache is not in a snapshot) | real-data manual check | `repair_vectors()` after every restore (`ce47708`) |
+| 5 | The description checker took 2.4 s per call | test timing | substring pre-filter, 0.3 s, same results |
+| 7 | An early 413 reached a still-sending client as a connection reset | gateway tests (supertest) | discard up to 2 s / 16 MB, then answer |
+| 8 | The restore dialog left out the restored snapshot's own edit | new AI test | `$gte` |
+| 8 | A field lost its accessible label (a button inside the `<label>`) | component test | label linked by `htmlFor` |
+| 8 | A just-uploaded job was not polled, so the page stayed on "Uploaded" | tracing the flow; test added | `uploaded` is a polled state |
+
+**Known expected failures:** unchanged — the two strict xfails (Redux ↔ Redis, React ↔ Python) and the LibreOffice skip
+(belongs to the `.doc`-removal change after 9c).
