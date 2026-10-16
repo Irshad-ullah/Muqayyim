@@ -41,7 +41,8 @@ def uri_id(uri: str) -> str:
 
 
 def parse_esco(data_dir: Path, version: str, *, isco_prefixes=None) -> Dict:
-    """→ { docs, esco_skills, stats } without touching the database."""
+    """→ { docs, esco_skills, stats, filtered_ids } without touching the database. filtered_ids: the
+    occupations in the dataset that the ISCO selection leaves out (their reason differs from "not in")."""
     prefixes = isco_prefixes if isco_prefixes is not None else csv_list(settings.ESCO_ISCO_PREFIXES)
     paths = validate_files(Path(data_dir), FILES, optional=OPTIONAL)
 
@@ -68,13 +69,15 @@ def parse_esco(data_dir: Path, version: str, *, isco_prefixes=None) -> Dict:
             "source_version": f"ESCO v{version}",
         }
 
-    occupations, per_group = {}, Counter()
+    occupations, per_group, filtered_ids = {}, Counter(), []
     for row in read_rows(paths["occupations"]):
         group = row["iscoGroup"]
         prefix = next((p for p in sorted(prefixes, key=len, reverse=True) if group.startswith(p)), None)
         if prefix:
             occupations[row["conceptUri"]] = row
             per_group[prefix] += 1
+        else:
+            filtered_ids.append(f"esco:{uri_id(row['conceptUri'])}")  # in the dataset, outside the role filter
 
     relations = defaultdict(list)
     relation_types, missing_skill_uris = Counter(), 0
@@ -139,4 +142,4 @@ def parse_esco(data_dir: Path, version: str, *, isco_prefixes=None) -> Dict:
         "described_pct": round(100 * len(described) / len(names), 1) if names else 0.0,
         "top_undescribed_skills": undescribed.most_common(30),
     }
-    return {"docs": docs, "esco_skills": list(skills.values()), "stats": stats}
+    return {"docs": docs, "esco_skills": list(skills.values()), "stats": stats, "filtered_ids": filtered_ids}

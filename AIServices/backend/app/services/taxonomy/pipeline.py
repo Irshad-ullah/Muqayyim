@@ -115,7 +115,8 @@ async def stage(db, job_id: str, source: str, directory: Path, version_number: s
     parsed = await asyncio.to_thread(parse, source, directory, version_number)
     written = await upsert_professions(parsed["docs"], db, collection=names["professions"])
     written["deactivated"] = await deactivate_missing(
-        source, [d["profession_id"] for d in parsed["docs"]], f"not in {label}", db, collection=names["professions"])
+        source, [d["profession_id"] for d in parsed["docs"]], f"not in {label}", db, collection=names["professions"],
+        filtered_ids=parsed.get("filtered_ids", ()))
     if source == "esco":
         written.update(await upsert_esco_skills(parsed["esco_skills"], db, collection=names["esco_skills"]))
     parsed["written"] = written

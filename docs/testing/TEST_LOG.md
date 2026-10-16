@@ -563,3 +563,28 @@ professions → 126 results (the 4 expected exact-title merges: Data Scientists,
 Developers, Web Developers), 140 ms; nothing written (`career_matches` still empty). Personal skills not recorded.
 
 ¹ `test_professions.py` only (55 passed) at that commit; the full run is the Part 1 row.
+
+## Deactivation reason: "not in dataset" vs "excluded by role filter" (recorded)
+
+**Date:** 2026-10-16 · commit: "Deactivation reason …" (see `git log`)
+
+**Problem (found during the Module 5 re-import):** roles removed by the ISCO / SOC selection were recorded as
+"not in ESCO v1.2.1" / "not in O\*NET 31.0", although they are in the dataset. **Fix:** the parsers return the dataset
+roles the selection leaves out (`filtered_ids`); `deactivate_missing` records "excluded by role filter (ISCO selection)"
+(or "(SOC selection)") for those, corrects a filtered role that is already inactive with another reason (unless an admin
+disabled it), and keeps "not in <dataset version>" for roles truly absent. Both the direct import and the 9c staging
+pipeline use it.
+
+**Automated tests:** `test_professions.py`, `test_taxonomy_preview.py`, `test_taxonomy_publish.py` — 96 passed (the full
+run is recorded with Module 5 Part 2).
+- New: `test_a_profession_no_longer_in_the_dataset_is_marked_not_in_dataset`,
+  `test_isco_filter_reason_corrects_old_records_but_not_admin_ones` (filtered → filter reason; an old wrong reason is
+  corrected; an admin-disabled one is kept).
+- **Changed expectation:** `test_publish_deactivates_professions_missing_from_dataset` dropped 15-2051 by the SOC
+  selection and expected "not in O\*NET 31.0" — that was the bug; it now expects "excluded by role filter (SOC selection)".
+
+**Correction of the 13 real records (9c CLI pipeline):** fresh backup `manual-backup-2026-10-16-m5-reason` (mongodump,
+14 collections, plus files) → dry run: empty diff (0 added / removed / changed, 130 → 130, background check passed) →
+publish (snapshot `20261016T062804-dce8767b`; state hash OK, index 1,282, background chef 3.2 % / web 12.9 % passed) →
+inactive reasons now: "excluded by role filter (ISCO selection)" × 13; active 130; the running service's index rebuilt
+(ready, 1,282).

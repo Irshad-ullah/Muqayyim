@@ -169,15 +169,33 @@ async def upsert_professions(docs: List[dict], db=None, collection: str = PROFES
     return counts
 
 
+FILTER_REASON = {"onet": "excluded by role filter (SOC selection)", "esco": "excluded by role filter (ISCO selection)"}
+
+
 async def deactivate_missing(source: str, keep_ids: Iterable[str], reason: str, db=None,
-                             collection: str = PROFESSIONS) -> int:
-    """Professions of `source` no longer in the dataset become inactive (never deleted)."""
+                             collection: str = PROFESSIONS, filtered_ids: Iterable[str] = ()) -> int:
+    """Professions of `source` that are not kept become inactive (never deleted), with the reason:
+    - in the dataset but outside the role filter (`filtered_ids`) → FILTER_REASON[source]; one that is
+      already inactive with another reason is corrected too, unless an admin disabled it;
+    - not in the dataset at all → `reason` ("not in <dataset version>")."""
     db = db if db is not None else get_database()
-    result = await db[collection].update_many(
-        {"source": source, "profession_id": {"$nin": list(keep_ids)}, "active": True},
-        {"$set": {"active": False, "inactive_reason": reason, "updated_at": datetime.now(timezone.utc)}},
-    )
-    return result.modified_count
+    now = datetime.now(timezone.utc)
+    keep = list(keep_ids)
+    kept = set(keep)
+    filtered = [pid for pid in filtered_ids if pid not in kept]
+    changed = 0
+    if filtered:
+        filter_reason = FILTER_REASON.get(source, "excluded by role filter")
+        changed += (await db[collection].update_many(
+            {"source": source, "profession_id": {"$in": filtered}, "disabled_by_admin": {"$ne": True},
+             "$or": [{"active": True}, {"inactive_reason": {"$ne": filter_reason}}]},
+            {"$set": {"active": False, "inactive_reason": filter_reason, "updated_at": now}},
+        )).modified_count
+    changed += (await db[collection].update_many(
+        {"source": source, "profession_id": {"$nin": keep + filtered}, "active": True},
+        {"$set": {"active": False, "inactive_reason": reason, "updated_at": now}},
+    )).modified_count
+    return changed
 
 
 def active_filter() -> dict:

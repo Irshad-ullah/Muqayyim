@@ -216,7 +216,8 @@ async def publish_import(source: str, data_dir=None, version: Optional[str] = No
     written = await upsert_professions(parsed["docs"], db)
     label = f"O*NET {report.version}" if report.source == "onet" else f"ESCO v{report.version}"
     written["deactivated"] = await deactivate_missing(
-        report.source, [d["profession_id"] for d in parsed["docs"]], f"not in {label}", db
+        report.source, [d["profession_id"] for d in parsed["docs"]], f"not in {label}", db,
+        filtered_ids=parsed.get("filtered_ids", ()),
     )
     if report.source == "esco":
         written.update(await upsert_esco_skills(parsed["esco_skills"], db))

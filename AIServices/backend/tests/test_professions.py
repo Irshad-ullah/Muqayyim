@@ -355,7 +355,40 @@ async def test_publish_deactivates_professions_missing_from_dataset(db, monkeypa
     assert preview.removed == ["onet:15-2051.00"]
     await publish_import("onet", ONET, "31.0", db=db, rebuild=False)
     gone = await db[PROFESSIONS].find_one({"profession_id": "onet:15-2051.00"})
-    assert gone["active"] is False and gone["inactive_reason"] == "not in O*NET 31.0"
+    # Still in the dataset, but outside the SOC selection: not "not in O*NET 31.0".
+    assert gone["active"] is False and gone["inactive_reason"] == "excluded by role filter (SOC selection)"
+
+
+async def test_a_profession_no_longer_in_the_dataset_is_marked_not_in_dataset(db):
+    from app.services.professions.store import profession_doc
+
+    await publish_import("onet", ONET, "31.0", db=db, rebuild=False)
+    retired = profession_doc(profession_id="onet:15-9999.00", title="Retired Role", alt_titles=[], description="",
+                             category="Other", source="onet", source_code="15-9999.00", source_version="O*NET 30.0",
+                             skills=[make_skill(n, "technology", n) for n in ("Python", "SQL", "Git")])
+    retired["active"] = True
+    await db[PROFESSIONS].insert_one(retired)
+    await publish_import("onet", ONET, "31.0", db=db, rebuild=False)
+    doc = await db[PROFESSIONS].find_one({"profession_id": "onet:15-9999.00"})
+    assert doc["active"] is False and doc["inactive_reason"] == "not in O*NET 31.0"
+
+
+async def test_isco_filter_reason_corrects_old_records_but_not_admin_ones(db, monkeypatch):
+    await publish_import("esco", ESCO, "1.2.1", db=db, rebuild=False)
+    # Records deactivated before the fix carry the wrong reason; an admin-disabled one keeps its own.
+    await db[PROFESSIONS].update_one({"profession_id": "esco:ana-0002"},
+                                     {"$set": {"active": False, "inactive_reason": "not in ESCO v1.2.1"}})
+    monkeypatch.setattr(settings, "ESCO_ISCO_PREFIXES", "2512")  # ICT system analyst (2511) is now filtered out
+    await publish_import("esco", ESCO, "1.2.1", db=db, rebuild=False)
+    analyst = await db[PROFESSIONS].find_one({"profession_id": "esco:ana-0002"})
+    assert analyst["active"] is False and analyst["inactive_reason"] == "excluded by role filter (ISCO selection)"
+    assert (await db[PROFESSIONS].find_one({"profession_id": "esco:dev-0001"}))["active"] is True
+    assert await db[PROFESSIONS].find_one({"profession_id": "esco:chef-003"}) is None  # filtered, never imported
+
+    await db[PROFESSIONS].update_one({"profession_id": "esco:ana-0002"},
+                                     {"$set": {"inactive_reason": "disabled by admin", "disabled_by_admin": True}})
+    await publish_import("esco", ESCO, "1.2.1", db=db, rebuild=False)
+    assert (await db[PROFESSIONS].find_one({"profession_id": "esco:ana-0002"}))["inactive_reason"] == "disabled by admin"
 
 
 async def test_publish_esco_stores_all_skills(db):

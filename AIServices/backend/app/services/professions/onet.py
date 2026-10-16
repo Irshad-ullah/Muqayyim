@@ -41,19 +41,22 @@ def selected(code: str, prefixes: List[str], exclude: List[str]) -> bool:
 
 
 def parse_onet(data_dir: Path, version: str, *, prefixes=None, exclude=None, cap=None) -> Dict:
-    """→ { docs, stats } without touching the database."""
+    """→ { docs, stats, filtered_ids } without touching the database. filtered_ids: occupations in the
+    dataset that the SOC selection leaves out (their reason differs from "not in")."""
     prefixes = prefixes if prefixes is not None else csv_list(settings.ONET_SOC_PREFIXES)
     exclude = exclude if exclude is not None else csv_list(settings.ONET_SOC_EXCLUDE)
     cap = cap if cap is not None else settings.ONET_SKILLS_CAP
     paths = validate_files(Path(data_dir), FILES, suffixes=("",))
 
-    occupations, excluded = {}, []
+    occupations, excluded, filtered_ids = {}, [], []
     for row in read_rows(paths["occupation_data"]):
         code = row["O*NET-SOC Code"]
         if code in exclude and any(code.startswith(p) for p in prefixes):
             excluded.append({"code": code, "title": row["Title"]})
         if selected(code, prefixes, exclude):
             occupations[code] = row
+        else:
+            filtered_ids.append(f"onet:{code}")  # in the dataset, outside the role filter
 
     alt_titles = defaultdict(list)
     for row in read_rows(paths["job_titles"]):
@@ -113,4 +116,4 @@ def parse_onet(data_dir: Path, version: str, *, prefixes=None, exclude=None, cap
         "described_pct": round(100 * described / skills_total, 1) if skills_total else 0.0,
         "top_unmapped_labels": unmapped.most_common(30),
     }
-    return {"docs": docs, "stats": stats}
+    return {"docs": docs, "stats": stats, "filtered_ids": filtered_ids}
