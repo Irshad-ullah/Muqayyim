@@ -1,0 +1,1760 @@
+{
+  "notes": {
+    "a_esco_roles_knowledge_skill_counts": {
+      "min": 1,
+      "median": 26.0,
+      "max": 81,
+      "roles_below_5": 4
+    },
+    "b_map_threshold": 0.8,
+    "b_phrases_mapped": 178,
+    "b_examples": [
+      [
+        "analyse business requirements",
+        "Business Analysis",
+        0.912
+      ],
+      [
+        "develop automated software tests",
+        "Test Automation",
+        0.909
+      ],
+      [
+        "use software design patterns",
+        "Design Patterns",
+        0.904
+      ],
+      [
+        "design the physical outlook of games",
+        "Game Design",
+        0.896
+      ],
+      [
+        "perform dimensionality reduction",
+        "Dimensionality Reduction",
+        0.893
+      ],
+      [
+        "test system accessibility for users with special needs",
+        "Accessibility Testing",
+        0.884
+      ],
+      [
+        "implement data quality processes",
+        "Data Quality",
+        0.883
+      ],
+      [
+        "conduct search engine optimisation",
+        "SEO",
+        0.882
+      ],
+      [
+        "design cloud networks",
+        "Cloud Networking",
+        0.88
+      ],
+      [
+        "analyse network configuration and performance",
+        "Network Troubleshooting",
+        0.877
+      ],
+      [
+        "implement front-end website design",
+        "Front-End Development",
+        0.876
+      ],
+      [
+        "build recommender systems",
+        "Recommender Systems",
+        0.874
+      ],
+      [
+        "use object-oriented programming",
+        "Object-Oriented Programming",
+        0.874
+      ],
+      [
+        "operate relational database management system",
+        "Microsoft SQL Server",
+        0.872
+      ],
+      [
+        "analyse business processes",
+        "Business Analysis",
+        0.871
+      ],
+      [
+        "manage software releases",
+        "Release Management",
+        0.871
+      ],
+      [
+        "track key performance indicators",
+        "KPI Reporting",
+        0.87
+      ],
+      [
+        "plan software testing",
+        "Test Planning",
+        0.869
+      ],
+      [
+        "design cloud architecture",
+        "Cloud Architecture",
+        0.867
+      ],
+      [
+        "measure software usability",
+        "Usability Testing",
+        0.864
+      ],
+      [
+        "design database scheme",
+        "Database Design",
+        0.864
+      ],
+      [
+        "design user interface",
+        "UI/UX Design",
+        0.863
+      ],
+      [
+        "develop creative ideas",
+        "Creativity",
+        0.862
+      ],
+      [
+        "develop animations",
+        "Animation",
+        0.858
+      ],
+      [
+        "use digital illustration techniques",
+        "Illustration",
+        0.858
+      ]
+    ],
+    "c_thresholds": [
+      0.8,
+      0.85
+    ]
+  },
+  "options": {
+    "baseline": {
+      "sanity": {
+        "top3": 6,
+        "top5": 6,
+        "it": 7,
+        "chef_best": {
+          "title": "Computer Systems Analysts",
+          "score": 15.0
+        },
+        "profiles": [
+          {
+            "id": "web",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Web and Digital Interface Designers",
+              "score": 58.3
+            },
+            "top5": [
+              [
+                "Web and Digital Interface Designers",
+                58.3
+              ],
+              [
+                "Software Developers",
+                40.0
+              ],
+              [
+                "Blockchain Engineers",
+                40.0
+              ],
+              [
+                "web designer",
+                40.0
+              ],
+              [
+                "Web Developers",
+                38.3
+              ]
+            ],
+            "acceptable_ranks": {
+              "Web Developers": 5,
+              "web developer": 5,
+              "user interface developer": 10,
+              "Web and Digital Interface Designers": 1
+            },
+            "esco_only_top10": 2
+          },
+          {
+            "id": "backend",
+            "control": false,
+            "first_rank": 2,
+            "best": {
+              "title": "Blockchain Engineers",
+              "score": 45.0
+            },
+            "top5": [
+              [
+                "Blockchain Engineers",
+                45.0
+              ],
+              [
+                "Software Developers",
+                41.7
+              ],
+              [
+                "Computer Systems Engineers/Architects",
+                40.9
+              ],
+              [
+                "Web Developers",
+                38.3
+              ],
+              [
+                "Software Quality Assurance Analysts and Testers",
+                37.5
+              ]
+            ],
+            "acceptable_ranks": {
+              "Software Developers": 2,
+              "software developer": 2,
+              "Computer Programmers": 9,
+              "cloud software developer": 7
+            },
+            "esco_only_top10": 1
+          },
+          {
+            "id": "data",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Data Scientists",
+              "score": 50.0
+            },
+            "top5": [
+              [
+                "Data Scientists",
+                50.0
+              ],
+              [
+                "Health Informatics Specialists",
+                45.5
+              ],
+              [
+                "Data Warehousing Specialists",
+                45.0
+              ],
+              [
+                "Business Intelligence Analysts",
+                39.3
+              ],
+              [
+                "Database Architects",
+                38.5
+              ]
+            ],
+            "acceptable_ranks": {
+              "Data Scientists": 1,
+              "data scientist": 1,
+              "data analyst": 10,
+              "artificial intelligence engineer": 6
+            },
+            "esco_only_top10": 4
+          },
+          {
+            "id": "devops",
+            "control": false,
+            "first_rank": 6,
+            "best": {
+              "title": "Computer Systems Engineers/Architects",
+              "score": 59.1
+            },
+            "top5": [
+              [
+                "Computer Systems Engineers/Architects",
+                59.1
+              ],
+              [
+                "Information Security Engineers",
+                53.8
+              ],
+              [
+                "Computer and Information Research Scientists",
+                46.6
+              ],
+              [
+                "Digital Forensics Analysts",
+                45.0
+              ],
+              [
+                "Computer Network Architects",
+                42.3
+              ]
+            ],
+            "acceptable_ranks": {
+              "cloud DevOps engineer": 7,
+              "cloud engineer": 18,
+              "Network and Computer Systems Administrators": 6,
+              "ICT system administrator": 60
+            },
+            "esco_only_top10": 3
+          },
+          {
+            "id": "mobile",
+            "control": false,
+            "first_rank": 3,
+            "best": {
+              "title": "Software Quality Assurance Analysts and Testers",
+              "score": 29.2
+            },
+            "top5": [
+              [
+                "Software Quality Assurance Analysts and Testers",
+                29.2
+              ],
+              [
+                "Blockchain Engineers",
+                25.0
+              ],
+              [
+                "Software Developers",
+                23.3
+              ],
+              [
+                "Computer Systems Engineers/Architects",
+                22.7
+              ],
+              [
+                "Web Developers",
+                21.7
+              ]
+            ],
+            "acceptable_ranks": {
+              "mobile application developer": 28,
+              "industrial mobile devices software developer": 29,
+              "Software Developers": 3,
+              "software developer": 3
+            },
+            "esco_only_top10": 0
+          },
+          {
+            "id": "uiux",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Web and Digital Interface Designers",
+              "score": 58.3
+            },
+            "top5": [
+              [
+                "Web and Digital Interface Designers",
+                58.3
+              ],
+              [
+                "web designer",
+                35.0
+              ],
+              [
+                "user interface designer",
+                31.5
+              ],
+              [
+                "Web Administrators",
+                31.0
+              ],
+              [
+                "user interface developer",
+                29.4
+              ]
+            ],
+            "acceptable_ranks": {
+              "Web and Digital Interface Designers": 1,
+              "user interface designer": 3,
+              "user experience analyst": 12,
+              "web designer": 2
+            },
+            "esco_only_top10": 5
+          },
+          {
+            "id": "qa",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Software Quality Assurance Analysts and Testers",
+              "score": 41.7
+            },
+            "top5": [
+              [
+                "Software Quality Assurance Analysts and Testers",
+                41.7
+              ],
+              [
+                "Computer Systems Analysts",
+                35.0
+              ],
+              [
+                "Blockchain Engineers",
+                30.0
+              ],
+              [
+                "Information Technology Project Managers",
+                30.0
+              ],
+              [
+                "ICT test analyst",
+                30.0
+              ]
+            ],
+            "acceptable_ranks": {
+              "Software Quality Assurance Analysts and Testers": 1,
+              "software tester": 9,
+              "ICT test analyst": 5,
+              "ICT system tester": 20
+            },
+            "esco_only_top10": 2
+          },
+          {
+            "id": "chef",
+            "control": true,
+            "first_rank": null,
+            "best": {
+              "title": "Computer Systems Analysts",
+              "score": 15.0
+            },
+            "top5": [
+              [
+                "Computer Systems Analysts",
+                15.0
+              ],
+              [
+                "Document Management Specialists",
+                15.0
+              ],
+              [
+                "ICT help desk agent",
+                15.0
+              ],
+              [
+                "Business Intelligence Analysts",
+                14.3
+              ],
+              [
+                "Health Informatics Specialists",
+                13.6
+              ]
+            ],
+            "acceptable_ranks": {},
+            "esco_only_top10": 4
+          }
+        ]
+      },
+      "background": {
+        "web": {
+          "pooled_pct": 12.9,
+          "credit_weighted_pct": 6.5
+        },
+        "chef": {
+          "pooled_pct": 3.2,
+          "credit_weighted_pct": 1.6
+        },
+        "passed": true
+      }
+    },
+    "a_esco_knowledge_only": {
+      "sanity": {
+        "top3": 6,
+        "top5": 6,
+        "it": 7,
+        "chef_best": {
+          "title": "Computer Systems Analysts",
+          "score": 15.0
+        },
+        "profiles": [
+          {
+            "id": "web",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Web and Digital Interface Designers",
+              "score": 58.3
+            },
+            "top5": [
+              [
+                "Web and Digital Interface Designers",
+                58.3
+              ],
+              [
+                "Software Developers",
+                40.0
+              ],
+              [
+                "Blockchain Engineers",
+                40.0
+              ],
+              [
+                "web designer",
+                40.0
+              ],
+              [
+                "Web Developers",
+                38.3
+              ]
+            ],
+            "acceptable_ranks": {
+              "Web Developers": 5,
+              "web developer": 5,
+              "user interface developer": 9,
+              "Web and Digital Interface Designers": 1
+            },
+            "esco_only_top10": 3
+          },
+          {
+            "id": "backend",
+            "control": false,
+            "first_rank": 3,
+            "best": {
+              "title": "Blockchain Engineers",
+              "score": 45.0
+            },
+            "top5": [
+              [
+                "Blockchain Engineers",
+                45.0
+              ],
+              [
+                "data centre operator",
+                45.0
+              ],
+              [
+                "Software Developers",
+                41.7
+              ],
+              [
+                "Computer Systems Engineers/Architects",
+                40.9
+              ],
+              [
+                "cloud software developer",
+                40.0
+              ]
+            ],
+            "acceptable_ranks": {
+              "Software Developers": 3,
+              "software developer": 3,
+              "Computer Programmers": 13,
+              "cloud software developer": 5
+            },
+            "esco_only_top10": 3
+          },
+          {
+            "id": "data",
+            "control": false,
+            "first_rank": 2,
+            "best": {
+              "title": "computer vision engineer",
+              "score": 53.8
+            },
+            "top5": [
+              [
+                "computer vision engineer",
+                53.8
+              ],
+              [
+                "Data Scientists",
+                50.0
+              ],
+              [
+                "Health Informatics Specialists",
+                45.5
+              ],
+              [
+                "Data Warehousing Specialists",
+                45.0
+              ],
+              [
+                "artificial intelligence engineer",
+                39.5
+              ]
+            ],
+            "acceptable_ranks": {
+              "Data Scientists": 2,
+              "data scientist": 2,
+              "data analyst": 8,
+              "artificial intelligence engineer": 5
+            },
+            "esco_only_top10": 5
+          },
+          {
+            "id": "devops",
+            "control": false,
+            "first_rank": 6,
+            "best": {
+              "title": "Computer Systems Engineers/Architects",
+              "score": 59.1
+            },
+            "top5": [
+              [
+                "Computer Systems Engineers/Architects",
+                59.1
+              ],
+              [
+                "Information Security Engineers",
+                53.8
+              ],
+              [
+                "Computer and Information Research Scientists",
+                46.6
+              ],
+              [
+                "Digital Forensics Analysts",
+                45.0
+              ],
+              [
+                "Computer Network Architects",
+                42.3
+              ]
+            ],
+            "acceptable_ranks": {
+              "cloud DevOps engineer": 8,
+              "cloud engineer": 23,
+              "Network and Computer Systems Administrators": 6,
+              "ICT system administrator": 65
+            },
+            "esco_only_top10": 2
+          },
+          {
+            "id": "mobile",
+            "control": false,
+            "first_rank": 3,
+            "best": {
+              "title": "Software Quality Assurance Analysts and Testers",
+              "score": 29.2
+            },
+            "top5": [
+              [
+                "Software Quality Assurance Analysts and Testers",
+                29.2
+              ],
+              [
+                "Blockchain Engineers",
+                25.0
+              ],
+              [
+                "Software Developers",
+                23.3
+              ],
+              [
+                "Computer Systems Engineers/Architects",
+                22.7
+              ],
+              [
+                "Web Developers",
+                21.7
+              ]
+            ],
+            "acceptable_ranks": {
+              "mobile application developer": 24,
+              "industrial mobile devices software developer": 23,
+              "Software Developers": 3,
+              "software developer": 3
+            },
+            "esco_only_top10": 1
+          },
+          {
+            "id": "uiux",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Web and Digital Interface Designers",
+              "score": 58.3
+            },
+            "top5": [
+              [
+                "Web and Digital Interface Designers",
+                58.3
+              ],
+              [
+                "web designer",
+                45.0
+              ],
+              [
+                "user interface designer",
+                31.8
+              ],
+              [
+                "Web Administrators",
+                31.0
+              ],
+              [
+                "animator",
+                30.0
+              ]
+            ],
+            "acceptable_ranks": {
+              "Web and Digital Interface Designers": 1,
+              "user interface designer": 3,
+              "user experience analyst": 16,
+              "web designer": 2
+            },
+            "esco_only_top10": 7
+          },
+          {
+            "id": "qa",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Software Quality Assurance Analysts and Testers",
+              "score": 41.7
+            },
+            "top5": [
+              [
+                "Software Quality Assurance Analysts and Testers",
+                41.7
+              ],
+              [
+                "Computer Systems Analysts",
+                35.0
+              ],
+              [
+                "data warehouse designer",
+                31.8
+              ],
+              [
+                "Blockchain Engineers",
+                30.0
+              ],
+              [
+                "Information Technology Project Managers",
+                30.0
+              ]
+            ],
+            "acceptable_ranks": {
+              "Software Quality Assurance Analysts and Testers": 1,
+              "software tester": 34,
+              "ICT test analyst": 8,
+              "ICT system tester": 32
+            },
+            "esco_only_top10": 5
+          },
+          {
+            "id": "chef",
+            "control": true,
+            "first_rank": null,
+            "best": {
+              "title": "Computer Systems Analysts",
+              "score": 15.0
+            },
+            "top5": [
+              [
+                "Computer Systems Analysts",
+                15.0
+              ],
+              [
+                "Document Management Specialists",
+                15.0
+              ],
+              [
+                "Business Intelligence Analysts",
+                14.3
+              ],
+              [
+                "Health Informatics Specialists",
+                13.6
+              ],
+              [
+                "3D modeller",
+                10.0
+              ]
+            ],
+            "acceptable_ranks": {},
+            "esco_only_top10": 6
+          }
+        ]
+      },
+      "background": {
+        "web": {
+          "pooled_pct": 14.9,
+          "credit_weighted_pct": 7.5
+        },
+        "chef": {
+          "pooled_pct": 3.6,
+          "credit_weighted_pct": 1.8
+        },
+        "passed": true
+      }
+    },
+    "b_phrase_to_tool": {
+      "sanity": {
+        "top3": 6,
+        "top5": 6,
+        "it": 7,
+        "chef_best": {
+          "title": "ICT help desk agent",
+          "score": 15.8
+        },
+        "profiles": [
+          {
+            "id": "web",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Web and Digital Interface Designers",
+              "score": 58.3
+            },
+            "top5": [
+              [
+                "Web and Digital Interface Designers",
+                58.3
+              ],
+              [
+                "Software Developers",
+                40.0
+              ],
+              [
+                "Blockchain Engineers",
+                40.0
+              ],
+              [
+                "Web Developers",
+                38.3
+              ],
+              [
+                "web designer",
+                35.0
+              ]
+            ],
+            "acceptable_ranks": {
+              "Web Developers": 4,
+              "web developer": 4,
+              "user interface developer": 10,
+              "Web and Digital Interface Designers": 1
+            },
+            "esco_only_top10": 2
+          },
+          {
+            "id": "backend",
+            "control": false,
+            "first_rank": 2,
+            "best": {
+              "title": "Blockchain Engineers",
+              "score": 45.0
+            },
+            "top5": [
+              [
+                "Blockchain Engineers",
+                45.0
+              ],
+              [
+                "Software Developers",
+                41.7
+              ],
+              [
+                "Computer Systems Engineers/Architects",
+                40.9
+              ],
+              [
+                "Web Developers",
+                38.3
+              ],
+              [
+                "Software Quality Assurance Analysts and Testers",
+                37.5
+              ]
+            ],
+            "acceptable_ranks": {
+              "Software Developers": 2,
+              "software developer": 2,
+              "Computer Programmers": 8,
+              "cloud software developer": 18
+            },
+            "esco_only_top10": 0
+          },
+          {
+            "id": "data",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Data Scientists",
+              "score": 50.0
+            },
+            "top5": [
+              [
+                "Data Scientists",
+                50.0
+              ],
+              [
+                "Health Informatics Specialists",
+                45.5
+              ],
+              [
+                "Data Warehousing Specialists",
+                45.0
+              ],
+              [
+                "Business Intelligence Analysts",
+                39.3
+              ],
+              [
+                "Database Architects",
+                38.5
+              ]
+            ],
+            "acceptable_ranks": {
+              "Data Scientists": 1,
+              "data scientist": 1,
+              "data analyst": 13,
+              "artificial intelligence engineer": 7
+            },
+            "esco_only_top10": 1
+          },
+          {
+            "id": "devops",
+            "control": false,
+            "first_rank": 6,
+            "best": {
+              "title": "Computer Systems Engineers/Architects",
+              "score": 59.1
+            },
+            "top5": [
+              [
+                "Computer Systems Engineers/Architects",
+                59.1
+              ],
+              [
+                "Information Security Engineers",
+                53.8
+              ],
+              [
+                "Computer and Information Research Scientists",
+                46.6
+              ],
+              [
+                "Digital Forensics Analysts",
+                45.0
+              ],
+              [
+                "Computer Network Architects",
+                42.3
+              ]
+            ],
+            "acceptable_ranks": {
+              "cloud DevOps engineer": 16,
+              "cloud engineer": 22,
+              "Network and Computer Systems Administrators": 6,
+              "ICT system administrator": 59
+            },
+            "esco_only_top10": 0
+          },
+          {
+            "id": "mobile",
+            "control": false,
+            "first_rank": 3,
+            "best": {
+              "title": "Software Quality Assurance Analysts and Testers",
+              "score": 29.2
+            },
+            "top5": [
+              [
+                "Software Quality Assurance Analysts and Testers",
+                29.2
+              ],
+              [
+                "Blockchain Engineers",
+                25.0
+              ],
+              [
+                "Software Developers",
+                23.3
+              ],
+              [
+                "Computer Systems Engineers/Architects",
+                22.7
+              ],
+              [
+                "Web Developers",
+                21.7
+              ]
+            ],
+            "acceptable_ranks": {
+              "mobile application developer": 28,
+              "industrial mobile devices software developer": 29,
+              "Software Developers": 3,
+              "software developer": 3
+            },
+            "esco_only_top10": 0
+          },
+          {
+            "id": "uiux",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Web and Digital Interface Designers",
+              "score": 58.3
+            },
+            "top5": [
+              [
+                "Web and Digital Interface Designers",
+                58.3
+              ],
+              [
+                "web designer",
+                30.0
+              ],
+              [
+                "Web Administrators",
+                28.6
+              ],
+              [
+                "Video Game Designers",
+                25.0
+              ],
+              [
+                "user interface designer",
+                21.2
+              ]
+            ],
+            "acceptable_ranks": {
+              "Web and Digital Interface Designers": 1,
+              "user interface designer": 5,
+              "user experience analyst": 14,
+              "web designer": 2
+            },
+            "esco_only_top10": 6
+          },
+          {
+            "id": "qa",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Software Quality Assurance Analysts and Testers",
+              "score": 41.7
+            },
+            "top5": [
+              [
+                "Software Quality Assurance Analysts and Testers",
+                41.7
+              ],
+              [
+                "Computer Systems Analysts",
+                35.0
+              ],
+              [
+                "Blockchain Engineers",
+                30.0
+              ],
+              [
+                "Information Technology Project Managers",
+                30.0
+              ],
+              [
+                "Computer Systems Engineers/Architects",
+                25.0
+              ]
+            ],
+            "acceptable_ranks": {
+              "Software Quality Assurance Analysts and Testers": 1,
+              "software tester": 14,
+              "ICT test analyst": 8,
+              "ICT system tester": 27
+            },
+            "esco_only_top10": 1
+          },
+          {
+            "id": "chef",
+            "control": true,
+            "first_rank": null,
+            "best": {
+              "title": "ICT help desk agent",
+              "score": 15.8
+            },
+            "top5": [
+              [
+                "ICT help desk agent",
+                15.8
+              ],
+              [
+                "Computer Systems Analysts",
+                15.0
+              ],
+              [
+                "Document Management Specialists",
+                15.0
+              ],
+              [
+                "Business Intelligence Analysts",
+                14.3
+              ],
+              [
+                "Health Informatics Specialists",
+                13.6
+              ]
+            ],
+            "acceptable_ranks": {},
+            "esco_only_top10": 4
+          }
+        ]
+      },
+      "background": {
+        "web": {
+          "pooled_pct": 10.9,
+          "credit_weighted_pct": 5.4
+        },
+        "chef": {
+          "pooled_pct": 3.3,
+          "credit_weighted_pct": 1.7
+        },
+        "passed": true
+      }
+    },
+    "c_full_mixed_credit_0.80": {
+      "sanity": {
+        "top3": 6,
+        "top5": 6,
+        "it": 7,
+        "chef_best": {
+          "title": "ICT help desk agent",
+          "score": 20.0
+        },
+        "profiles": [
+          {
+            "id": "web",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Web and Digital Interface Designers",
+              "score": 58.3
+            },
+            "top5": [
+              [
+                "Web and Digital Interface Designers",
+                58.3
+              ],
+              [
+                "Software Developers",
+                40.0
+              ],
+              [
+                "Blockchain Engineers",
+                40.0
+              ],
+              [
+                "web designer",
+                40.0
+              ],
+              [
+                "Web Developers",
+                38.3
+              ]
+            ],
+            "acceptable_ranks": {
+              "Web Developers": 5,
+              "web developer": 5,
+              "user interface developer": 9,
+              "Web and Digital Interface Designers": 1
+            },
+            "esco_only_top10": 2
+          },
+          {
+            "id": "backend",
+            "control": false,
+            "first_rank": 2,
+            "best": {
+              "title": "Blockchain Engineers",
+              "score": 45.0
+            },
+            "top5": [
+              [
+                "Blockchain Engineers",
+                45.0
+              ],
+              [
+                "Software Developers",
+                41.7
+              ],
+              [
+                "Computer Systems Engineers/Architects",
+                40.9
+              ],
+              [
+                "Web Developers",
+                38.3
+              ],
+              [
+                "Software Quality Assurance Analysts and Testers",
+                37.5
+              ]
+            ],
+            "acceptable_ranks": {
+              "Software Developers": 2,
+              "software developer": 2,
+              "Computer Programmers": 10,
+              "cloud software developer": 6
+            },
+            "esco_only_top10": 1
+          },
+          {
+            "id": "data",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Data Scientists",
+              "score": 50.0
+            },
+            "top5": [
+              [
+                "Data Scientists",
+                50.0
+              ],
+              [
+                "Health Informatics Specialists",
+                45.5
+              ],
+              [
+                "Data Warehousing Specialists",
+                45.0
+              ],
+              [
+                "Business Intelligence Analysts",
+                39.3
+              ],
+              [
+                "artificial intelligence engineer",
+                38.7
+              ]
+            ],
+            "acceptable_ranks": {
+              "Data Scientists": 1,
+              "data scientist": 1,
+              "data analyst": 8,
+              "artificial intelligence engineer": 5
+            },
+            "esco_only_top10": 5
+          },
+          {
+            "id": "devops",
+            "control": false,
+            "first_rank": 6,
+            "best": {
+              "title": "Computer Systems Engineers/Architects",
+              "score": 59.1
+            },
+            "top5": [
+              [
+                "Computer Systems Engineers/Architects",
+                59.1
+              ],
+              [
+                "Information Security Engineers",
+                53.8
+              ],
+              [
+                "Computer and Information Research Scientists",
+                46.6
+              ],
+              [
+                "Digital Forensics Analysts",
+                45.0
+              ],
+              [
+                "Computer Network Architects",
+                42.3
+              ]
+            ],
+            "acceptable_ranks": {
+              "cloud DevOps engineer": 8,
+              "cloud engineer": 18,
+              "Network and Computer Systems Administrators": 6,
+              "ICT system administrator": 61
+            },
+            "esco_only_top10": 3
+          },
+          {
+            "id": "mobile",
+            "control": false,
+            "first_rank": 3,
+            "best": {
+              "title": "Software Quality Assurance Analysts and Testers",
+              "score": 29.2
+            },
+            "top5": [
+              [
+                "Software Quality Assurance Analysts and Testers",
+                29.2
+              ],
+              [
+                "Blockchain Engineers",
+                25.0
+              ],
+              [
+                "Software Developers",
+                23.3
+              ],
+              [
+                "Computer Systems Engineers/Architects",
+                22.7
+              ],
+              [
+                "Web Developers",
+                21.7
+              ]
+            ],
+            "acceptable_ranks": {
+              "mobile application developer": 28,
+              "industrial mobile devices software developer": 29,
+              "Software Developers": 3,
+              "software developer": 3
+            },
+            "esco_only_top10": 0
+          },
+          {
+            "id": "uiux",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Web and Digital Interface Designers",
+              "score": 58.3
+            },
+            "top5": [
+              [
+                "Web and Digital Interface Designers",
+                58.3
+              ],
+              [
+                "user interface designer",
+                42.6
+              ],
+              [
+                "user interface developer",
+                41.2
+              ],
+              [
+                "web designer",
+                35.0
+              ],
+              [
+                "Web Administrators",
+                31.0
+              ]
+            ],
+            "acceptable_ranks": {
+              "Web and Digital Interface Designers": 1,
+              "user interface designer": 2,
+              "user experience analyst": 6,
+              "web designer": 4
+            },
+            "esco_only_top10": 6
+          },
+          {
+            "id": "qa",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "ICT test analyst",
+              "score": 45.0
+            },
+            "top5": [
+              [
+                "ICT test analyst",
+                45.0
+              ],
+              [
+                "Software Quality Assurance Analysts and Testers",
+                41.7
+              ],
+              [
+                "software tester",
+                40.0
+              ],
+              [
+                "Computer Systems Analysts",
+                35.0
+              ],
+              [
+                "digital games tester",
+                35.0
+              ]
+            ],
+            "acceptable_ranks": {
+              "Software Quality Assurance Analysts and Testers": 2,
+              "software tester": 3,
+              "ICT test analyst": 1,
+              "ICT system tester": 11
+            },
+            "esco_only_top10": 6
+          },
+          {
+            "id": "chef",
+            "control": true,
+            "first_rank": null,
+            "best": {
+              "title": "ICT help desk agent",
+              "score": 20.0
+            },
+            "top5": [
+              [
+                "ICT help desk agent",
+                20.0
+              ],
+              [
+                "Computer Systems Analysts",
+                15.0
+              ],
+              [
+                "Document Management Specialists",
+                15.0
+              ],
+              [
+                "Business Intelligence Analysts",
+                14.3
+              ],
+              [
+                "Health Informatics Specialists",
+                13.6
+              ]
+            ],
+            "acceptable_ranks": {},
+            "esco_only_top10": 4
+          }
+        ]
+      },
+      "background": {
+        "web": {
+          "pooled_pct": 12.9,
+          "credit_weighted_pct": 6.7
+        },
+        "chef": {
+          "pooled_pct": 3.2,
+          "credit_weighted_pct": 1.6
+        },
+        "passed": true
+      }
+    },
+    "c_full_mixed_credit_0.85": {
+      "sanity": {
+        "top3": 6,
+        "top5": 6,
+        "it": 7,
+        "chef_best": {
+          "title": "Computer Systems Analysts",
+          "score": 15.0
+        },
+        "profiles": [
+          {
+            "id": "web",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Web and Digital Interface Designers",
+              "score": 58.3
+            },
+            "top5": [
+              [
+                "Web and Digital Interface Designers",
+                58.3
+              ],
+              [
+                "Software Developers",
+                40.0
+              ],
+              [
+                "Blockchain Engineers",
+                40.0
+              ],
+              [
+                "web designer",
+                40.0
+              ],
+              [
+                "Web Developers",
+                38.3
+              ]
+            ],
+            "acceptable_ranks": {
+              "Web Developers": 5,
+              "web developer": 5,
+              "user interface developer": 10,
+              "Web and Digital Interface Designers": 1
+            },
+            "esco_only_top10": 2
+          },
+          {
+            "id": "backend",
+            "control": false,
+            "first_rank": 2,
+            "best": {
+              "title": "Blockchain Engineers",
+              "score": 45.0
+            },
+            "top5": [
+              [
+                "Blockchain Engineers",
+                45.0
+              ],
+              [
+                "Software Developers",
+                41.7
+              ],
+              [
+                "Computer Systems Engineers/Architects",
+                40.9
+              ],
+              [
+                "Web Developers",
+                38.3
+              ],
+              [
+                "Software Quality Assurance Analysts and Testers",
+                37.5
+              ]
+            ],
+            "acceptable_ranks": {
+              "Software Developers": 2,
+              "software developer": 2,
+              "Computer Programmers": 9,
+              "cloud software developer": 7
+            },
+            "esco_only_top10": 1
+          },
+          {
+            "id": "data",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Data Scientists",
+              "score": 50.0
+            },
+            "top5": [
+              [
+                "Data Scientists",
+                50.0
+              ],
+              [
+                "Health Informatics Specialists",
+                45.5
+              ],
+              [
+                "Data Warehousing Specialists",
+                45.0
+              ],
+              [
+                "Business Intelligence Analysts",
+                39.3
+              ],
+              [
+                "Database Architects",
+                38.5
+              ]
+            ],
+            "acceptable_ranks": {
+              "Data Scientists": 1,
+              "data scientist": 1,
+              "data analyst": 10,
+              "artificial intelligence engineer": 7
+            },
+            "esco_only_top10": 4
+          },
+          {
+            "id": "devops",
+            "control": false,
+            "first_rank": 6,
+            "best": {
+              "title": "Computer Systems Engineers/Architects",
+              "score": 59.1
+            },
+            "top5": [
+              [
+                "Computer Systems Engineers/Architects",
+                59.1
+              ],
+              [
+                "Information Security Engineers",
+                53.8
+              ],
+              [
+                "Computer and Information Research Scientists",
+                46.6
+              ],
+              [
+                "Digital Forensics Analysts",
+                45.0
+              ],
+              [
+                "Computer Network Architects",
+                42.3
+              ]
+            ],
+            "acceptable_ranks": {
+              "cloud DevOps engineer": 7,
+              "cloud engineer": 18,
+              "Network and Computer Systems Administrators": 6,
+              "ICT system administrator": 60
+            },
+            "esco_only_top10": 3
+          },
+          {
+            "id": "mobile",
+            "control": false,
+            "first_rank": 3,
+            "best": {
+              "title": "Software Quality Assurance Analysts and Testers",
+              "score": 29.2
+            },
+            "top5": [
+              [
+                "Software Quality Assurance Analysts and Testers",
+                29.2
+              ],
+              [
+                "Blockchain Engineers",
+                25.0
+              ],
+              [
+                "Software Developers",
+                23.3
+              ],
+              [
+                "Computer Systems Engineers/Architects",
+                22.7
+              ],
+              [
+                "Web Developers",
+                21.7
+              ]
+            ],
+            "acceptable_ranks": {
+              "mobile application developer": 28,
+              "industrial mobile devices software developer": 29,
+              "Software Developers": 3,
+              "software developer": 3
+            },
+            "esco_only_top10": 0
+          },
+          {
+            "id": "uiux",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Web and Digital Interface Designers",
+              "score": 58.3
+            },
+            "top5": [
+              [
+                "Web and Digital Interface Designers",
+                58.3
+              ],
+              [
+                "web designer",
+                35.0
+              ],
+              [
+                "user interface designer",
+                33.3
+              ],
+              [
+                "user interface developer",
+                32.4
+              ],
+              [
+                "Web Administrators",
+                31.0
+              ]
+            ],
+            "acceptable_ranks": {
+              "Web and Digital Interface Designers": 1,
+              "user interface designer": 3,
+              "user experience analyst": 9,
+              "web designer": 2
+            },
+            "esco_only_top10": 5
+          },
+          {
+            "id": "qa",
+            "control": false,
+            "first_rank": 1,
+            "best": {
+              "title": "Software Quality Assurance Analysts and Testers",
+              "score": 41.7
+            },
+            "top5": [
+              [
+                "Software Quality Assurance Analysts and Testers",
+                41.7
+              ],
+              [
+                "Computer Systems Analysts",
+                35.0
+              ],
+              [
+                "Blockchain Engineers",
+                30.0
+              ],
+              [
+                "Information Technology Project Managers",
+                30.0
+              ],
+              [
+                "ICT test analyst",
+                30.0
+              ]
+            ],
+            "acceptable_ranks": {
+              "Software Quality Assurance Analysts and Testers": 1,
+              "software tester": 9,
+              "ICT test analyst": 5,
+              "ICT system tester": 20
+            },
+            "esco_only_top10": 2
+          },
+          {
+            "id": "chef",
+            "control": true,
+            "first_rank": null,
+            "best": {
+              "title": "Computer Systems Analysts",
+              "score": 15.0
+            },
+            "top5": [
+              [
+                "Computer Systems Analysts",
+                15.0
+              ],
+              [
+                "Document Management Specialists",
+                15.0
+              ],
+              [
+                "ICT help desk agent",
+                15.0
+              ],
+              [
+                "Business Intelligence Analysts",
+                14.3
+              ],
+              [
+                "Health Informatics Specialists",
+                13.6
+              ]
+            ],
+            "acceptable_ranks": {},
+            "esco_only_top10": 4
+          }
+        ]
+      },
+      "background": {
+        "web": {
+          "pooled_pct": 12.9,
+          "credit_weighted_pct": 6.6
+        },
+        "chef": {
+          "pooled_pct": 3.2,
+          "credit_weighted_pct": 1.6
+        },
+        "passed": true
+      }
+    }
+  }
+}

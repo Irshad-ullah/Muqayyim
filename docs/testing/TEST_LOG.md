@@ -58,7 +58,8 @@ GW = API Gateway Jest, FE node = frontend `node --test`, FE Vitest = frontend Vi
 | Module 5 Part 1 (scoring) | `ed93d73` | 535 + 1 skipped | 2 + 2 xfailed | 247 | 62 | 31 | 70 | automatic |
 | Deactivation reason fix | `f0efb58` | 96 (3 files) ² | n/r | n/r | n/r | n/r | n/r | recorded |
 | Module 5 Part 2 (API) | `ef001ec` | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 31 | 70 | automatic |
-| Module 5 Part 3 (Career Matching page) | Part 3 commit | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
+| Module 5 Part 3 (Career Matching page) | `4b59b36` | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
+| Module 5 Part 4 (evaluation, doc) | Part 4 commit | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
 
 ¹ From the "Before" column of the 08 change note. ² The 09a2 note records React ↔ Python and Redux ↔ Redis as
 strict xfails in the slow test but gives no run count for this commit.
@@ -714,3 +715,45 @@ Walkthrough checklist (1–12 passed, 13 not run):
     "Career matching is unavailable" with "Try again" — optional).
 13. Optional: with a new account without skills, the page shows "Add your skills…" with links to the Profile Builder and
     CV upload.
+
+## Module 5 Part 4 — Evaluation and the change note (recorded)
+
+**Date:** 2026-10-16 · commits: expectations `205bca1` (committed before running anything), then "Module 5 Part 4"
+(see `git log`) · note: `docs/changes/11-career-matching.md` · data: `AIServices/eval/career_matching/`
+
+**Evaluation (real data, read-only):** `run_eval.py` scored the 8 sanity profiles in `profiles.json` with the production
+scoring code, the persisted index (1,282 role skills) and the real model; profile skills were embedded in memory (no
+vector-cache writes, no `career_matches` entries — `skill_vectors` 1,500 and `career_matches` 1 before and after).
+
+| Profile | First acceptable role (rank, %) | Top-3 | Top-5 |
+|---|---|---|---|
+| Web developer | Web and Digital Interface Designers (1, 58.3 %) | ✓ | ✓ |
+| Backend Python | Software Developers, merged (2, 41.7 %) | ✓ | ✓ |
+| Data scientist | Data Scientists, merged (1, 50.0 %) | ✓ | ✓ |
+| DevOps engineer | Network and Computer Systems Administrators (6, 41.2 %) | ✗ | ✗ |
+| Mobile developer | Software Developers, merged (3, 23.3 %) | ✓ | ✓ |
+| UI/UX designer | Web and Digital Interface Designers (1, 58.3 %) | ✓ | ✓ |
+| QA tester | Software Quality Assurance Analysts and Testers (1, 41.7 %) | ✓ | ✓ |
+| Chef (control) | best IT role 15.0 % (Computer Systems Analysts) | — | — |
+
+- **Top-3 6 / 7, top-5 6 / 7, chef 15.0 % → pass mark (top-3 ≥ 6, top-5 = 7, chef < 20 %) NOT met.** Nothing was changed.
+- **Background credit check** (`eval/background_credit_rate.py`): chef 3.2 % vs web 12.9 % → PASS.
+- **ESCO bias:** ESCO-only roles are 0–50 % of a profile's top 10; best ESCO-only rank 2 (UI/UX) to 13 (mobile).
+- **Doubtful credits:** none of the known pairs is behind a top-5 result; judged doubtful after the run: "a different
+  tool" 0–12 and "another language" 0–14 credits per profile (e.g. Git → Jira 0.80, Selenium → React 0.83,
+  JavaScript → Python 0.85; chef: Cooking → Microsoft Word 0.75).
+- **Failing profile — DevOps:** the top role is O\*NET Computer Systems Engineers/Architects (59.1 %; its alternative
+  titles include Cloud Engineer — plausible, but not in the committed expectations, which were not changed); O\*NET has
+  no DevOps occupation and ESCO cloud DevOps engineer ranks 7th (37.5 %: 1 held, 16 related through ability phrases capped
+  at 0.5, 7 missing) — the ESCO bias. Mobile passes only via Software Developers (ESCO mobile application developer 5.6 %:
+  generic programming phrases, no mobile tools — a missing-skills problem).
+- **Options measured, none adopted** (`options.py`, patched in-process; its baseline reproduces the official background
+  check exactly): (a) ESCO knowledge skills only — 6/7, 6/7, chef 15.0 %, background 3.6 / 14.9 % PASS; (b) phrases →
+  tools (cosine ≥ 0.80, 178 phrases) — 6/7, 6/7, chef 15.8 %, 3.3 / 10.9 % PASS; (c) full mixed credit ≥ 0.80 — 6/7, 6/7,
+  **chef 20.0 % (fails the chef mark)**, 3.2 / 12.9 % PASS; (c) ≥ 0.85 — 6/7, 6/7, chef 15.0 %, PASS. None lifts an
+  acceptable DevOps role into the top 5. **Decision open.**
+
+**Automated tests** (run 2026-10-16 21:40, all PASS): AI 541 + 1 skipped; AI slow 2 + 2 xfailed; Core 263; Gateway 67;
+frontend 36 + 88. (No new tests: Part 4 adds evaluation scripts and documentation.)
+
+**Manual checks:** none beyond the evaluation.
