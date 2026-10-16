@@ -7,9 +7,7 @@ embeddings, the frozen configuration, professions and the role-skill index) and 
 Part 2 API `ef001ec` · Part 3 page `4b59b36` (walkthrough `dfee1ac`) · evaluation expectations `205bca1` · Part 4
 evaluation and this note — see `git log`.
 
-> **Status: the evaluation's pass mark is not met** (top-5 hit rate 6 / 7; top-3 6 / 7 and the chef control pass). The
-> design was **not changed**; the failing profile, the causes and three measured options are reported below for a
-> decision.
+> **Status: pass mark not fully met (top-5 6/7). Accepted by team decision because all three measured alternatives performed the same or worse.** Official result: top-3 6 / 7 (pass), top-5 6 / 7 (fail), chef control 15.0 % (pass). Scoring and the committed expectations were not changed.
 
 ## Summary
 
@@ -135,9 +133,7 @@ skills embedded in memory; no vector-cache or career_matches writes — counts i
   phrases and on doubtful ones (Cooking → Microsoft Word 0.75, Inventory Management → SAS 0.77). Full lists in
   `results/report.md`.
 
-**Why DevOps fails.** The top-ranked role is O\*NET **Computer Systems Engineers/Architects** (59.1 %, 9 of 22 held);
-its alternative titles include Cloud Engineer and Cloud Platform Engineer, so it is a plausible match that was not in
-the committed expectations (which were not changed afterwards). O\*NET has no DevOps occupation; ESCO **cloud DevOps
+**Why DevOps fails.** The first acceptable role, Network and Computer Systems Administrators, is at rank 6 (41.2 %). O\*NET has no DevOps occupation; ESCO **cloud DevOps
 engineer** ranks 7th (37.5 %) with 1 held, 16 related — nearly all ESCO ability phrases capped at 0.5 — and 7 missing:
 the **ESCO bias**. Mobile passes only through Software Developers: ESCO **mobile application developer** scores 5.6 %
 because its required skills are generic programming phrases with no mobile tools (a missing-skills problem of the role
@@ -154,23 +150,41 @@ official way — its baseline reproduces 3.2 / 12.9):
 | (c) full credit for a mixed pair ≥ 0.80 | 6 / 7 | 6 / 7 | **20.0 %** (fails the chef mark) | 3.2 / 12.9 % PASS |
 | (c) full credit for a mixed pair ≥ 0.85 | 6 / 7 | 6 / 7 | 15.0 % | 3.2 / 12.9 % PASS |
 
-None of them lifts an acceptable DevOps role into the top 5. The decision is open.
+None of them lifts an acceptable DevOps role into the top 5.
+
+**Decision (2026-10-16): the current design is accepted** — pass mark not fully met (top-5 6/7), accepted by team decision because all three measured alternatives performed the same or worse. No option was adopted.
+
+**Post-hoc observation (made after the run; the verdict is unchanged).** DevOps' rank-1 result, O\*NET **Computer Systems Engineers/Architects** (59.1 %), lists Cloud Engineer and Cloud Platform Engineer among its alternative titles, and O\*NET has no DevOps occupation. It was not in the expectations committed before the run, so it does not count as a hit.
 
 ## Known limitations
 
-1. **ESCO bias.** About 95 % of ESCO essential skills are label-only phrases; they can earn at most 0.5 (a user rarely
-   holds the exact phrase), so ESCO roles score lower than comparable O\*NET roles. The page explains this on ESCO
-   results; the evaluation measures it (above).
-2. **Doubtful related credits.** The frozen 0.73 threshold with mutual nearest neighbours still credits some pairs that
-   are not substitutes (Git → Jira, React → Figma, JavaScript → Python). They are visible to the user (the details name
-   the user skill behind every related credit) and count half.
-3. **Role lists without the tools.** Some roles' required lists contain no tools for their field (ESCO mobile application
-   developer); no scoring rule can fix that.
-4. **Alias keys.** Stored skill keys go stale after an alias edit; matching re-normalises user skills and role skills
+1. **No O\*NET DevOps (or mobile) occupation.** DevOps profiles are matched to neighbouring O\*NET roles (systems
+   engineers / architects, network administrators) and to ESCO roles only.
+2. **ESCO DevOps and mobile role lists are generic phrases without tools.** ESCO *cloud DevOps engineer* is required
+   mostly to "design cloud architecture", "deploy cloud resource" and similar phrases (at most 0.5 each); ESCO *mobile
+   application developer* lists generic programming phrases and no mobile tools (5.6 % for a mobile profile). More
+   generally about 95 % of ESCO essential skills are label-only phrases, so ESCO roles score lower than comparable O\*NET
+   roles (the ESCO bias; the page explains it on ESCO results).
+3. **Related credits between different tools and languages** from the frozen configuration (0.73 with mutual nearest
+   neighbours): e.g. JavaScript → Python 0.85, Git → Jira 0.80, Selenium → React 0.83. They count half and are visible
+   to the user (every related credit names the user skill behind it).
+4. **Odd credits for the non-IT control:** e.g. Cooking → Microsoft Word 0.75, Inventory Management → SAS 0.77; the
+   chef's best IT role still stays at 15.0 %.
+5. **A small evaluation:** 7 IT profiles + 1 control, written by the team; no real users yet.
+6. **Alias keys.** Stored skill keys go stale after an alias edit; matching re-normalises user skills and role skills
    with today's aliases at match time (09c note), so no re-save is needed. A renamed user skill without a cached vector is
    embedded once on demand.
-5. **Older embeddings routes** still put the user id in the AI path (Module 2); queued as housekeeping.
-6. The credit rule, threshold and K are frozen; no tuning was done.
+7. **Older embeddings routes** still put the user id in the AI path (Module 2); queued as housekeeping.
+8. The credit rule, threshold and K are frozen; no tuning was done.
+
+## Future work
+
+- **An ESCO–O\*NET crosswalk** (occupations and skills), so an ESCO role can borrow the named tools of its O\*NET
+  counterpart and duplicate roles merge beyond exact titles.
+- **A cross-encoder reranker for related pairs** (re-scoring each bi-encoder pair above 0.73) to drop credits between
+  different tools and languages; and for mapping ESCO ability phrases to the tools that demonstrate them (sandboxed
+  experiment: Module 5.1, `AIServices/eval/esco_phrase_mapping/`).
+- **Re-evaluation with real users** (their own profiles and their judgement of the top results).
 
 ## Suggested SDS text
 

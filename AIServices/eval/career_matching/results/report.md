@@ -4,6 +4,8 @@ Generated 2026-10-16T16:34:24.460365+00:00 · model `BAAI/bge-small-en-v1.5` · 
 
 Expectations (`profiles.json`) were committed before this run.
 
+> **Status: pass mark not fully met (top-5 6/7). Accepted by team decision because all three measured alternatives performed the same or worse.** Official result: top-3 6 / 7 (pass), top-5 6 / 7 (fail), chef control 15.0 % (pass). Scoring and the committed expectations were not changed.
+
 ## Result
 
 - Top-3 hit rate: **6 / 7** (pass mark ≥ 6)
@@ -496,3 +498,9 @@ The pass mark fails on **top-5 = 6 / 7**: the DevOps profile's first acceptable 
 
 - ESCO **mobile application developer** scores 5.6 % (rank 24–28 under every option): its required skills are generic programming phrases ("computer programming", "debug software", "use software libraries", …) with no mobile tools, and Kotlin / Swift / Flutter / Dart are not related to them above 0.73. O\*NET has no mobile occupation. This is a **missing-skills** problem of the role list, not of the credit rule.
 
+
+## Team decision and post-hoc observation
+
+**Decision (2026-10-16):** the current design is accepted — pass mark not fully met (top-5 6/7), accepted by team decision because all three measured alternatives performed the same or worse. No option was adopted; scoring and the committed expectations are unchanged.
+
+**Post-hoc observation (made after the run; the verdict is unchanged).** DevOps' rank-1 result, O\*NET **Computer Systems Engineers/Architects** (59.1 %), lists Cloud Engineer and Cloud Platform Engineer among its alternative titles, and O\*NET has no DevOps occupation. It was not in the expectations committed before the run, so it does not count as a hit.

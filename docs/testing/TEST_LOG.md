@@ -751,7 +751,11 @@ vector-cache writes, no `career_matches` entries — `skill_vectors` 1,500 and `
   check exactly): (a) ESCO knowledge skills only — 6/7, 6/7, chef 15.0 %, background 3.6 / 14.9 % PASS; (b) phrases →
   tools (cosine ≥ 0.80, 178 phrases) — 6/7, 6/7, chef 15.8 %, 3.3 / 10.9 % PASS; (c) full mixed credit ≥ 0.80 — 6/7, 6/7,
   **chef 20.0 % (fails the chef mark)**, 3.2 / 12.9 % PASS; (c) ≥ 0.85 — 6/7, 6/7, chef 15.0 %, PASS. None lifts an
-  acceptable DevOps role into the top 5. **Decision open.**
+  acceptable DevOps role into the top 5.
+- **Decision (2026-10-16): the current design is accepted** — pass mark not fully met (top-5 6/7), accepted by team decision because all three measured alternatives performed the same or worse. Official result kept: top-3 6/7 pass, top-5 6/7 fail, chef 15.0 % pass.
+- **Post-hoc observation (verdict unchanged):** DevOps' #1, O\*NET Computer Systems Engineers/Architects (59.1 %), lists Cloud Engineer / Cloud Platform Engineer among its alternative titles; O\*NET has no DevOps occupation.
+
+**Module 5 is complete** (accepted 2026-10-16).
 
 **Automated tests** (run 2026-10-16 21:40, all PASS): AI 541 + 1 skipped; AI slow 2 + 2 xfailed; Core 263; Gateway 67;
 frontend 36 + 88. (No new tests: Part 4 adds evaluation scripts and documentation.)
