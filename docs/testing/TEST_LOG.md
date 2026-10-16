@@ -63,7 +63,7 @@ strict xfails in the slow test but gives no run count for this commit.
 |---|---|---|
 | `tests/test_embeddings.py` slow test, **Redux ↔ Redis** | strict `xfail` (cosine 0.744 > 0.73) | A known false positive of `BAAI/bge-small-en-v1.5` on the calibrated seed descriptions (benchmark v1). Fixing it would mean editing the 283 seed descriptions the threshold was calibrated on, which is not allowed. Strict: if a change ever pushes it below 0.73 the test reports XPASS and the note must be updated. |
 | `tests/test_embeddings.py` slow test, **React ↔ Python** | strict `xfail` (cosine 0.776 > 0.73) | Found by benchmark v2 (hard negatives). Two very common developer skills whose descriptions share vocabulary. In matching it is filtered by the mutual-nearest-neighbour rule (09b live check: `mutual_nn: false`). |
-| `tests/test_file_checks.py` real-LibreOffice test | skipped | LibreOffice is not installed on the development machine, so the real `.doc` conversion cannot run (08). This test belongs to the pending `.doc`-removal change, scheduled after 9c, which will remove or replace it. |
+| `tests/test_file_checks.py` real-LibreOffice test | skipped | LibreOffice is not installed on the development machine, so the real `.doc` conversion cannot run (08). `.doc` support is kept unchanged by decision (no removal is planned), so this skip is expected on any machine without LibreOffice. |
 
 ---
 
@@ -471,4 +471,4 @@ before every manual check on the real database.
 | 8 | A just-uploaded job was not polled, so the page stayed on "Uploaded" | tracing the flow; test added | `uploaded` is a polled state |
 
 **Known expected failures:** unchanged — the two strict xfails (Redux ↔ Redis, React ↔ Python) and the LibreOffice skip
-(belongs to the `.doc`-removal change after 9c).
+(LibreOffice is not installed on this machine; `.doc` support is kept unchanged by decision).
