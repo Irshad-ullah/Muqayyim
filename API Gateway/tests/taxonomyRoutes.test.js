@@ -1,7 +1,12 @@
+import { jest } from '@jest/globals';
 import crypto from 'node:crypto';
 import http from 'http';
 import request from 'supertest';
 import { startStub, useTargets } from './stub.js';
+
+// These tests build a gateway app per case and send many requests through supertest; on a
+// loaded machine that can exceed Jest's 5 s default (seen once on 2026-10-16), so allow 30 s.
+jest.setTimeout(30_000);
 
 // 09c Part 7: the admin taxonomy routes at the gateway — streamed upload with its own
 // size limit and timeout, the publish/restore rate limit, and nothing else loosened.

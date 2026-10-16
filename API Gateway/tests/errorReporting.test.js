@@ -11,6 +11,10 @@ import express from 'express';
 import { requestId } from '../middleware/requestId.js';
 import { createErrorHandler } from '../middleware/errorHandler.js';
 
+// These tests build a gateway app per case and send many requests through supertest; on a
+// loaded machine that can exceed Jest's 5 s default (seen once on 2026-10-16), so allow 30 s.
+jest.setTimeout(30_000);
+
 const KEY = 'gw-test-internal-key';
 
 // Fake CoreServices log endpoint: records every POST /internal/logs.

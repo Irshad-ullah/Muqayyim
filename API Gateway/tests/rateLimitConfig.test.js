@@ -1,5 +1,10 @@
+import { jest } from '@jest/globals';
 import request from 'supertest';
 import { startStub, useTargets } from './stub.js';
+
+// These tests build a gateway app per case and send many requests through supertest; on a
+// loaded machine that can exceed Jest's 5 s default (seen once on 2026-10-16), so allow 30 s.
+jest.setTimeout(30_000);
 
 // Env-driven configuration: limits are read when app.js is imported, so each
 // scenario imports a fresh copy of the app with different settings.
