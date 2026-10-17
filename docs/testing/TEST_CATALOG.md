@@ -146,7 +146,8 @@ properties with no single SRS id.
 | Review step: side by side, highlighted flags with reasons, Accept / Discard / Edit, nothing saved automatically | FE `CvAssist.spec.jsx::review step` | component | pass |
 | Limit and outage messages (daily limit / busy / unavailable), text untouched | FE `CvAssist.spec.jsx::limits and outages…`; `cvAssistService.test.js`; Core `aiAssist.test.js` (error pass-through) | component + unit | pass |
 | CV assist, real provider through the gateway (latency, tokens, usage records, no personal data sent) | 12 Part 2 manual check (TEST_LOG) | manual | 2026-10-17: 3 calls OK; no personal data in the outgoing text; 2 post-check false positives found and fixed. Fix (v2): "graduate" flagged in the old summary offline; one v2 summary (served from cache, made by the user's walkthrough): "student pursuing", no flags |
-| Consent and review flow, browser walkthrough | 12 Part 2 checklist (TEST_LOG) | manual | pending — results to be reported by the user |
+| Consent and review flow, browser walkthrough | 12 Part 2 checklist (TEST_LOG) | manual | pass — 2026-10-17, all 12 steps (incl. experience Generate / Improve); ran while c587fbb was hot-reloaded |
+| In-progress degree with an end date → summary says in progress with the expected year | 12 Part 2 fix follow-up check (TEST_LOG) | manual | pass — 2026-10-17 (end date 2027-06) |
 
 ## Gateway and cross-cutting
 

@@ -868,7 +868,10 @@ no content. Consent given for the check and withdrawn afterwards. Generated text
 - Found while writing: the consent handlers lacked error handling — wrapped with `handleServerError`; the button / notice
   flow was simplified ('dialog' outcome) before testing.
 
-**Manual check (browser walkthrough):** pending — checklist below, to be done by the user.
+**Manual check (browser walkthrough, 2026-10-17, tester: a project team member):** **all 12 steps pass**, including
+experience Generate / Improve on an experience entry added to the profile for the walkthrough. Note: the walkthrough ran
+while commit c587fbb (Part 2 fix, cv_assist v2) was being applied — the dev servers hot-reloaded the changes — so it
+covers parts of both the Part 2 code and the fix. Evidence: the tester's report; screenshots not recorded.
 
 Browser walkthrough checklist (results to be added here):
 1. Restart Core, gateway and AI (new routes); sign in as a job seeker with a profile. Account page: "AI writing help —
@@ -922,3 +925,7 @@ Browser walkthrough checklist (results to be added here):
 **Problems found by testing:** the status gap itself (found by the user from the real output). While writing: the
 retry list first recorded axios' generic `ERR_BAD_RESPONSE` instead of the HTTP status; it now records the status
 (found by the new test).
+
+**Follow-up check (2026-10-17, tester: a project team member):** after the education entry was given an end date
+(2027-06, so Core sends `in_progress` with `expected_year` 2027), the generated summary described the degree as in
+progress and mentioned the expected graduation year — the status fix works as intended. Exact output not recorded.
