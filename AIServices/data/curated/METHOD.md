@@ -1,6 +1,6 @@
-# Curated modern IT roles (v1.0.0-draft): method
+# Curated modern IT roles (v1.0.0): method
 
-**Status:** draft for team review. Not imported.
+**Status:** version 1.0.0, adopted in Module 5.2 (2026-10-17): imported through the taxonomy pipeline as source `curated`; it replaces ESCO in career matching. The per-requirement team review (`review.csv`) is still pending.
 **Purpose:** replace the ESCO roles in Muqayyim's career matching with a small set of modern IT roles that O*NET
 does not cover specifically. Every requirement is a concrete, learnable tool or practice (needed for matching and
 for Module 6 learning paths).

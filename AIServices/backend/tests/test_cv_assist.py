@@ -65,8 +65,9 @@ def test_regressions_from_the_real_manual_check():
     # ...but a single word keeps the strict rule: Java is not JavaScript.
     assert ("Java", truthfulness.REASON_SKILL) in reasons("Wrote services in Java.", {"skills": ["JavaScript"]})
     # 3. An expansion the input does not contain stays flagged (JWT → "JSON Web Token").
-    assert ("JSON", truthfulness.REASON_SKILL) in reasons("Implemented JSON Web Token (JWT) authentication.",
-                                                          {"current": "Implemented JWT-based authentication."})
+    # (Module 5.2 made "json web token (jwt)" an alias of JWT, so the whole expansion is now one flagged span.)
+    flagged = reasons("Implemented JSON Web Token (JWT) authentication.", {"current": "Implemented JWT-based authentication."})
+    assert any("JSON" in text and reason == truthfulness.REASON_SKILL for text, reason in flagged)
 
 
 REAL_SUMMARY = ("Computer Science graduate with a Bachelor's degree from Comsats University Islamabad. Proficient in "

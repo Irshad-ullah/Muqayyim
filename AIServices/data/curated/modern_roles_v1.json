@@ -1,8 +1,8 @@
 {
   "dataset": "muqayyim-curated-modern-roles",
-  "version": "1.0.0-draft",
+  "version": "1.0.0",
   "created": "2026-10-17",
-  "status": "DRAFT - pending team review",
+  "status": "1.0.0 - adopted in Module 5.2 (2026-10-17); per-requirement team review (review.csv) still pending",
   "method": "Roles chosen where O*NET IT occupations have no specific equivalent and at least one independent source describes the role. Skill evidence: R=listed in that role's roadmap.sh roadmap; S=used by >=10% of professional developers (SO 2025); P=listed for that role in a Pakistan in-demand jobs guide; C=named in an official certification outline. importance=essential when evidence comes from >=2 different source types, else optional. Alternatives (e.g. React or Angular) form one requirement satisfied by any member (any_of). Skills must be mapped to Muqayyim skill keys before import; from_onet is computed locally from O*NET software_skills.csv.",
   "sources": {
     "R": "roadmap.sh role roadmap (github.com/kamranahmedse/developer-roadmap, commit 2584fbd)",
@@ -969,7 +969,7 @@
           ]
         },
         {
-          "skill": "Composer",
+          "skill": "PHP Composer",
           "kind": "tool",
           "evidence": [
             "R"
@@ -979,7 +979,7 @@
           ],
           "importance": "optional",
           "any_of": [
-            "Composer"
+            "PHP Composer"
           ]
         },
         {
@@ -1311,7 +1311,7 @@
           ]
         },
         {
-          "skill": "Combine",
+          "skill": "Combine Framework",
           "kind": "tool",
           "evidence": [
             "R"
@@ -1321,7 +1321,7 @@
           ],
           "importance": "optional",
           "any_of": [
-            "Combine"
+            "Combine Framework"
           ]
         },
         {
@@ -2353,24 +2353,14 @@
             "R"
           ],
           "roadmap_topics": [
-            "devsecops:container-security"
-          ],
-          "importance": "optional",
-          "any_of": [
-            "Container security"
-          ]
-        },
-        {
-          "skill": "Container image scanning",
-          "kind": "practice",
-          "evidence": [
-            "R"
-          ],
-          "roadmap_topics": [
+            "devsecops:container-security",
             "devsecops:image-scanning"
           ],
           "importance": "optional",
           "any_of": [
+            "Container security"
+          ],
+          "merged_from": [
             "Container image scanning"
           ]
         },
@@ -4161,5 +4151,6 @@
       ]
     }
   ],
-  "onet_evidence": "O applied 2026-10-17 by eval/curated_roles/add_onet_evidence.py from data/raw/onet/software_skills.csv (related_onet_code; importer cleaning + skill keys)"
+  "onet_evidence": "O applied 2026-10-17 by eval/curated_roles/add_onet_evidence.py from data/raw/onet/software_skills.csv (related_onet_code; importer cleaning + skill keys)",
+  "skill_list_note": "Module 5.2 adoption (2026-10-17): every any_of skill is in the Muqayyim skill list (eval/curated_roles/apply_skill_proposals.py); 'Container image scanning' merged into 'Container security'; 'Composer' / 'Combine' renamed to 'PHP Composer' / 'Combine Framework'."
 }

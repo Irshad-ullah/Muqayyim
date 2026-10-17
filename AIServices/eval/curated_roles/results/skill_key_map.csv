@@ -24,7 +24,7 @@ Backend Developer,PostgreSQL / MySQL / MongoDB,MySQL,mysql,MySQL,mapped
 Backend Developer,PostgreSQL / MySQL / MongoDB,MongoDB,mongodb,MongoDB,mapped
 Backend Developer,Redis,Redis,redis,Redis,mapped
 Backend Developer,REST APIs,REST APIs,rest apis,REST APIs,mapped
-Backend Developer,JSON Web Token (JWT),JSON Web Token (JWT),json web token (jwt),,missing
+Backend Developer,JSON Web Token (JWT),JSON Web Token (JWT),jwt,JWT,alias
 Backend Developer,Docker,Docker,docker,Docker,mapped
 Backend Developer,Git,Git,git,Git,mapped
 Backend Developer,Unit testing,Unit testing,unit testing,Unit Testing,mapped
@@ -40,12 +40,12 @@ Full-Stack Developer,PostgreSQL / SQL,PostgreSQL,postgresql,PostgreSQL,mapped
 Full-Stack Developer,PostgreSQL / SQL,SQL,sql,SQL,mapped
 Full-Stack Developer,Redis,Redis,redis,Redis,mapped
 Full-Stack Developer,REST APIs,REST APIs,rest apis,REST APIs,mapped
-Full-Stack Developer,JSON Web Token (JWT),JSON Web Token (JWT),json web token (jwt),,missing
+Full-Stack Developer,JSON Web Token (JWT),JSON Web Token (JWT),jwt,JWT,alias
 Full-Stack Developer,Tailwind CSS,Tailwind CSS,tailwind css,Tailwind CSS,mapped
 Full-Stack Developer,Git,Git,git,Git,mapped
 Full-Stack Developer,GitHub Actions,GitHub Actions,github actions,GitHub Actions,mapped
 Full-Stack Developer,Linux,Linux,linux,Linux,mapped
-Full-Stack Developer,Amazon Web Services (AWS),Amazon Web Services (AWS),amazon web services (aws),,missing
+Full-Stack Developer,Amazon Web Services (AWS),Amazon Web Services (AWS),aws,AWS,alias
 WordPress Developer,WordPress,WordPress,wordpress,WordPress,mapped
 WordPress Developer,PHP,PHP,php,PHP,mapped
 WordPress Developer,HTML,HTML,html,HTML,mapped
@@ -53,23 +53,23 @@ WordPress Developer,CSS,CSS,css,CSS,mapped
 WordPress Developer,JavaScript,JavaScript,javascript,JavaScript,mapped
 WordPress Developer,MySQL,MySQL,mysql,MySQL,mapped
 WordPress Developer,WordPress theme development,WordPress theme development,wordpress theme development,WordPress Theme Development,mapped
-WordPress Developer,WordPress plugin development,WordPress plugin development,wordpress plugin development,,missing
-WordPress Developer,WordPress REST API,WordPress REST API,wordpress rest api,,missing
-WordPress Developer,Gutenberg block editor,Gutenberg block editor,gutenberg block editor,,missing
-WordPress Developer,WP-CLI,WP-CLI,wp cli,,missing
-WordPress Developer,Composer,Composer,composer,,missing
-WordPress Developer,Search engine optimization (SEO),Search engine optimization (SEO),search engine optimization (seo),,missing
+WordPress Developer,WordPress plugin development,WordPress plugin development,wordpress plugin development,WordPress Plugin Development,mapped
+WordPress Developer,WordPress REST API,WordPress REST API,wordpress rest api,WordPress REST API,mapped
+WordPress Developer,Gutenberg block editor,Gutenberg block editor,gutenberg,Gutenberg,alias
+WordPress Developer,WP-CLI,WP-CLI,wp cli,WP-CLI,mapped
+WordPress Developer,PHP Composer,PHP Composer,php composer,PHP Composer,mapped
+WordPress Developer,Search engine optimization (SEO),Search engine optimization (SEO),seo,SEO,alias
 Android Developer,Kotlin / Java,Kotlin,kotlin,Kotlin,mapped
 Android Developer,Kotlin / Java,Java,java,Java,mapped
 Android Developer,Android SDK,Android SDK,android sdk,Android SDK,mapped
 Android Developer,Jetpack Compose,Jetpack Compose,jetpack compose,Jetpack Compose,mapped
 Android Developer,Android Studio,Android Studio,android studio,Android Studio,mapped
-Android Developer,Gradle,Gradle,gradle,,missing
+Android Developer,Gradle,Gradle,gradle,Gradle,mapped
 Android Developer,Kotlin Coroutines,Kotlin Coroutines,kotlin coroutines,Kotlin Coroutines,mapped
-Android Developer,MVVM architecture,MVVM architecture,mvvm architecture,,missing
-Android Developer,Room,Room,room,,missing
+Android Developer,MVVM architecture,MVVM architecture,mvvm,MVVM,alias
+Android Developer,Room,Room,room database,Room Database,alias
 Android Developer,Retrofit,Retrofit,retrofit,Retrofit,mapped
-Android Developer,Hilt,Hilt,hilt,,missing
+Android Developer,Hilt,Hilt,hilt,Hilt,mapped
 Android Developer,Firebase,Firebase,firebase,Firebase,mapped
 Android Developer,JUnit,JUnit,junit,JUnit,mapped
 Android Developer,Espresso,Espresso,espresso,Espresso,mapped
@@ -79,14 +79,14 @@ iOS Developer,SwiftUI / UIKit,SwiftUI,swiftui,SwiftUI,mapped
 iOS Developer,SwiftUI / UIKit,UIKit,uikit,UIKit,mapped
 iOS Developer,Xcode,Xcode,xcode,Xcode,mapped
 iOS Developer,Core Data,Core Data,core data,Core Data,mapped
-iOS Developer,Combine,Combine,combine,,missing
-iOS Developer,Swift concurrency (async/await),Swift concurrency (async/await),swift concurrency (async/await),,missing
-iOS Developer,URLSession,URLSession,urlsession,,missing
+iOS Developer,Combine Framework,Combine Framework,combine framework,Combine Framework,mapped
+iOS Developer,Swift concurrency (async/await),Swift concurrency (async/await),swift concurrency,Swift Concurrency,alias
+iOS Developer,URLSession,URLSession,urlsession,URLSession,mapped
 iOS Developer,XCTest,XCTest,xctest,XCTest,mapped
-iOS Developer,Swift Package Manager,Swift Package Manager,swift package manager,,missing
-iOS Developer,MVVM architecture,MVVM architecture,mvvm architecture,,missing
+iOS Developer,Swift Package Manager,Swift Package Manager,swift package manager,Swift Package Manager,mapped
+iOS Developer,MVVM architecture,MVVM architecture,mvvm,MVVM,alias
 iOS Developer,Objective-C,Objective-C,objective c,Objective-C,mapped
-iOS Developer,TestFlight,TestFlight,testflight,,missing
+iOS Developer,TestFlight,TestFlight,testflight,TestFlight,mapped
 iOS Developer,Git,Git,git,Git,mapped
 Cross-Platform Mobile Developer,Flutter / React Native,Flutter,flutter,Flutter,mapped
 Cross-Platform Mobile Developer,Flutter / React Native,React Native,react native,React Native,mapped
@@ -113,11 +113,11 @@ DevOps Engineer,Ansible,Ansible,ansible,Ansible,mapped
 DevOps Engineer,Jenkins / GitHub Actions / GitLab CI,Jenkins,jenkins,Jenkins,mapped
 DevOps Engineer,Jenkins / GitHub Actions / GitLab CI,GitHub Actions,github actions,GitHub Actions,mapped
 DevOps Engineer,Jenkins / GitHub Actions / GitLab CI,GitLab CI,gitlab ci,GitLab CI,mapped
-DevOps Engineer,Amazon Web Services (AWS),Amazon Web Services (AWS),amazon web services (aws),,missing
+DevOps Engineer,Amazon Web Services (AWS),Amazon Web Services (AWS),aws,AWS,alias
 DevOps Engineer,Prometheus,Prometheus,prometheus,Prometheus,mapped
 DevOps Engineer,Grafana,Grafana,grafana,Grafana,mapped
 DevOps Engineer,Nginx,Nginx,nginx,Nginx,mapped
-Cloud Engineer,Amazon Web Services (AWS) / Microsoft Azure / Google Cloud,Amazon Web Services (AWS),amazon web services (aws),,missing
+Cloud Engineer,Amazon Web Services (AWS) / Microsoft Azure / Google Cloud,Amazon Web Services (AWS),aws,AWS,alias
 Cloud Engineer,Amazon Web Services (AWS) / Microsoft Azure / Google Cloud,Microsoft Azure,microsoft azure,Microsoft Azure,mapped
 Cloud Engineer,Amazon Web Services (AWS) / Microsoft Azure / Google Cloud,Google Cloud,google cloud,Google Cloud,mapped
 Cloud Engineer,Amazon EC2,Amazon EC2,amazon ec2,Amazon EC2,mapped
@@ -140,23 +140,22 @@ Site Reliability Engineer,Docker,Docker,docker,Docker,mapped
 Site Reliability Engineer,Prometheus,Prometheus,prometheus,Prometheus,mapped
 Site Reliability Engineer,Grafana,Grafana,grafana,Grafana,mapped
 Site Reliability Engineer,OpenTelemetry,OpenTelemetry,opentelemetry,OpenTelemetry,mapped
-Site Reliability Engineer,Elastic Stack (ELK),Elastic Stack (ELK),elastic stack (elk),,missing
+Site Reliability Engineer,Elastic Stack (ELK),Elastic Stack (ELK),elk stack,ELK Stack,alias
 Site Reliability Engineer,Terraform,Terraform,terraform,Terraform,mapped
 Site Reliability Engineer,Incident response,Incident response,incident response,Incident Response,mapped
 Site Reliability Engineer,Load balancing,Load balancing,load balancing,Load Balancing,mapped
-Site Reliability Engineer,Service level objectives (SLOs),Service level objectives (SLOs),service level objectives (slos),,missing
-Site Reliability Engineer,"Networking (TCP/IP, DNS, HTTP)","Networking (TCP/IP, DNS, HTTP)","networking (tcp/ip, dns, http)",,missing
+Site Reliability Engineer,Service level objectives (SLOs),Service level objectives (SLOs),service level objectives,Service Level Objectives,alias
+Site Reliability Engineer,"Networking (TCP/IP, DNS, HTTP)","Networking (TCP/IP, DNS, HTTP)",networking fundamentals,Networking Fundamentals,alias
 DevSecOps Engineer,Docker,Docker,docker,Docker,mapped
 DevSecOps Engineer,Kubernetes,Kubernetes,kubernetes,Kubernetes,mapped
-DevSecOps Engineer,Container security,Container security,container security,,missing
-DevSecOps Engineer,Container image scanning,Container image scanning,container image scanning,,missing
-DevSecOps Engineer,Software supply chain security (SBOM),Software supply chain security (SBOM),software supply chain security (sbom),,missing
-DevSecOps Engineer,OWASP Top 10,OWASP Top 10,owasp top 10,,missing
+DevSecOps Engineer,Container security,Container security,container security,Container Security,mapped
+DevSecOps Engineer,Software supply chain security (SBOM),Software supply chain security (SBOM),software supply chain security,Software Supply Chain Security,alias
+DevSecOps Engineer,OWASP Top 10,OWASP Top 10,owasp,OWASP,alias
 DevSecOps Engineer,Threat modeling,Threat modeling,threat modeling,Threat Modeling,mapped
 DevSecOps Engineer,Burp Suite,Burp Suite,burp suite,Burp Suite,mapped
 DevSecOps Engineer,Nessus,Nessus,nessus,Nessus,mapped
 DevSecOps Engineer,SIEM,SIEM,siem,SIEM,mapped
-DevSecOps Engineer,Identity and access management (IAM),Identity and access management (IAM),identity and access management (iam),,missing
+DevSecOps Engineer,Identity and access management (IAM),Identity and access management (IAM),identity and access management,Identity and Access Management,alias
 DevSecOps Engineer,Python,Python,python,Python,mapped
 DevSecOps Engineer,Bash,Bash,bash,Bash,mapped
 DevSecOps Engineer,Secure coding,Secure coding,secure coding,Secure Coding,mapped
@@ -168,11 +167,11 @@ Data Engineer,Apache Spark / Databricks,Databricks,databricks,Databricks,mapped
 Data Engineer,Apache Airflow,Apache Airflow,airflow,Airflow,alias
 Data Engineer,Apache Kafka,Apache Kafka,kafka,Kafka,alias
 Data Engineer,dbt,dbt,dbt,dbt,mapped
-Data Engineer,Google BigQuery / Amazon Redshift / Snowflake,Google BigQuery,google bigquery,,missing
+Data Engineer,Google BigQuery / Amazon Redshift / Snowflake,Google BigQuery,bigquery,BigQuery,alias
 Data Engineer,Google BigQuery / Amazon Redshift / Snowflake,Amazon Redshift,amazon redshift,Amazon Redshift,mapped
 Data Engineer,Google BigQuery / Amazon Redshift / Snowflake,Snowflake,snowflake,Snowflake,mapped
 Data Engineer,PostgreSQL,PostgreSQL,postgresql,PostgreSQL,mapped
-Data Engineer,Apache Hadoop,Apache Hadoop,apache hadoop,,missing
+Data Engineer,Apache Hadoop,Apache Hadoop,hadoop,Hadoop,alias
 Data Engineer,Docker,Docker,docker,Docker,mapped
 Data Engineer,Data modeling,Data modeling,data modeling,Data Modeling,mapped
 Data Engineer,ETL,ETL,etl,ETL,mapped
@@ -203,15 +202,15 @@ Machine Learning Engineer,Computer vision,Computer vision,computer vision,Comput
 Machine Learning Engineer,Feature engineering,Feature engineering,feature engineering,Feature Engineering,mapped
 Machine Learning Engineer,Model evaluation,Model evaluation,model evaluation,Model Evaluation,mapped
 Machine Learning Engineer,Statistics,Statistics,statistics,Statistics,mapped
-Machine Learning Engineer,Jupyter,Jupyter,jupyter,,missing
+Machine Learning Engineer,Jupyter,Jupyter,jupyter notebook,Jupyter Notebook,alias
 Machine Learning Engineer,Docker,Docker,docker,Docker,mapped
 MLOps Engineer,Python,Python,python,Python,mapped
 MLOps Engineer,Docker,Docker,docker,Docker,mapped
 MLOps Engineer,Kubernetes,Kubernetes,kubernetes,Kubernetes,mapped
 MLOps Engineer,MLflow / Kubeflow,MLflow,mlflow,MLflow,mapped
-MLOps Engineer,MLflow / Kubeflow,Kubeflow,kubeflow,,missing
+MLOps Engineer,MLflow / Kubeflow,Kubeflow,kubeflow,Kubeflow,mapped
 MLOps Engineer,Apache Airflow,Apache Airflow,airflow,Airflow,alias
-MLOps Engineer,DVC,DVC,dvc,,missing
+MLOps Engineer,DVC,DVC,dvc,DVC,mapped
 MLOps Engineer,Jenkins / GitHub Actions,Jenkins,jenkins,Jenkins,mapped
 MLOps Engineer,Jenkins / GitHub Actions,GitHub Actions,github actions,GitHub Actions,mapped
 MLOps Engineer,Terraform,Terraform,terraform,Terraform,mapped
@@ -222,20 +221,20 @@ MLOps Engineer,PyTorch / TensorFlow / scikit-learn,scikit-learn,scikit learn,Sci
 MLOps Engineer,Apache Spark,Apache Spark,apache spark,Apache Spark,mapped
 MLOps Engineer,Git,Git,git,Git,mapped
 AI Engineer (LLM Applications),Python,Python,python,Python,mapped
-AI Engineer (LLM Applications),Large language models (LLMs),Large language models (LLMs),large language models (llms),,missing
+AI Engineer (LLM Applications),Large language models (LLMs),Large language models (LLMs),large language models,Large Language Models,alias
 AI Engineer (LLM Applications),Prompt engineering,Prompt engineering,prompt engineering,Prompt Engineering,mapped
-AI Engineer (LLM Applications),Retrieval-augmented generation (RAG),Retrieval-augmented generation (RAG),retrieval augmented generation (rag),,missing
+AI Engineer (LLM Applications),Retrieval-augmented generation (RAG),Retrieval-augmented generation (RAG),retrieval augmented generation,Retrieval-Augmented Generation,alias
 AI Engineer (LLM Applications),Embeddings,Embeddings,embeddings,Embeddings,mapped
 AI Engineer (LLM Applications),Vector databases,Vector databases,vector databases,Vector Databases,mapped
 AI Engineer (LLM Applications),LangChain / LlamaIndex,LangChain,langchain,LangChain,mapped
 AI Engineer (LLM Applications),LangChain / LlamaIndex,LlamaIndex,llamaindex,LlamaIndex,mapped
 AI Engineer (LLM Applications),OpenAI API / Google Gemini API / Ollama / Hugging Face,OpenAI API,openai api,OpenAI API,mapped
-AI Engineer (LLM Applications),OpenAI API / Google Gemini API / Ollama / Hugging Face,Google Gemini API,google gemini api,,missing
+AI Engineer (LLM Applications),OpenAI API / Google Gemini API / Ollama / Hugging Face,Google Gemini API,gemini api,Gemini API,alias
 AI Engineer (LLM Applications),OpenAI API / Google Gemini API / Ollama / Hugging Face,Ollama,ollama,Ollama,mapped
 AI Engineer (LLM Applications),OpenAI API / Google Gemini API / Ollama / Hugging Face,Hugging Face,hugging face transformers,Hugging Face Transformers,alias
 AI Engineer (LLM Applications),AI agents,AI agents,ai agents,AI Agents,mapped
 AI Engineer (LLM Applications),Fine-tuning,Fine-tuning,fine tuning,Fine-Tuning,mapped
-AI Engineer (LLM Applications),LLM evaluation,LLM evaluation,llm evaluation,,missing
+AI Engineer (LLM Applications),LLM evaluation,LLM evaluation,llm evaluation,LLM Evaluation,mapped
 UI/UX Designer,Figma / Adobe XD / Sketch,Figma,figma,Figma,mapped
 UI/UX Designer,Figma / Adobe XD / Sketch,Adobe XD,adobe xd,Adobe XD,mapped
 UI/UX Designer,Figma / Adobe XD / Sketch,Sketch,sketch,Sketch,mapped
@@ -243,7 +242,7 @@ UI/UX Designer,Wireframing,Wireframing,wireframing,Wireframing,mapped
 UI/UX Designer,Prototyping,Prototyping,prototyping,Prototyping,mapped
 UI/UX Designer,User research,User research,user research,User Research,mapped
 UI/UX Designer,Usability testing,Usability testing,usability testing,Usability Testing,mapped
-UI/UX Designer,User personas,User personas,user personas,,missing
+UI/UX Designer,User personas,User personas,personas,Personas,alias
 UI/UX Designer,Design systems,Design systems,design systems,Design Systems,mapped
 UI/UX Designer,Information architecture,Information architecture,information architecture,Information Architecture,mapped
 UI/UX Designer,Typography,Typography,typography,Typography,mapped
@@ -255,24 +254,24 @@ Product Manager (Software),Agile / Scrum / Kanban,Scrum,scrum,Scrum,mapped
 Product Manager (Software),Agile / Scrum / Kanban,Kanban,kanban,Kanban,mapped
 Product Manager (Software),Jira,Jira,jira,Jira,mapped
 Product Manager (Software),Product roadmapping,Product roadmapping,product roadmapping,Product Roadmapping,mapped
-Product Manager (Software),Product requirements documents,Product requirements documents,product requirements documents,,missing
+Product Manager (Software),Product requirements documents,Product requirements documents,product requirements documents,Product Requirements Documents,mapped
 Product Manager (Software),User stories,User stories,user stories,User Stories,mapped
 Product Manager (Software),A/B testing,A/B testing,a/b testing,A/B Testing,mapped
-Product Manager (Software),Product analytics,Product analytics,product analytics,,missing
-Product Manager (Software),Amplitude,Amplitude,amplitude,,missing
+Product Manager (Software),Product analytics,Product analytics,product analytics,Product Analytics,mapped
+Product Manager (Software),Amplitude,Amplitude,amplitude,Amplitude,mapped
 Product Manager (Software),SQL,SQL,sql,SQL,mapped
-Product Manager (Software),Market analysis,Market analysis,market analysis,,missing
-Product Manager (Software),"Prioritization frameworks (RICE, MoSCoW)","Prioritization frameworks (RICE, MoSCoW)","prioritization frameworks (rice, moscow)",,missing
+Product Manager (Software),Market analysis,Market analysis,market research,Market Research,alias
+Product Manager (Software),"Prioritization frameworks (RICE, MoSCoW)","Prioritization frameworks (RICE, MoSCoW)",prioritization frameworks,Prioritization Frameworks,alias
 Game Developer,Unity / Unreal Engine / Godot,Unity,unity,Unity,mapped
 Game Developer,Unity / Unreal Engine / Godot,Unreal Engine,unreal engine,Unreal Engine,mapped
 Game Developer,Unity / Unreal Engine / Godot,Godot,godot,Godot,mapped
 Game Developer,C# / C++,C#,c#,C#,mapped
 Game Developer,C# / C++,C++,c++,C++,mapped
-Game Developer,Game physics,Game physics,game physics,,missing
-Game Developer,Game AI,Game AI,game ai,,missing
-Game Developer,Linear algebra for games,Linear algebra for games,linear algebra for games,,missing
-Game Developer,Shaders (HLSL/GLSL),Shaders (HLSL/GLSL),shaders (hlsl/glsl),,missing
+Game Developer,Game physics,Game physics,game physics,Game Physics,mapped
+Game Developer,Game AI,Game AI,game ai,Game AI,mapped
+Game Developer,Linear algebra for games,Linear algebra for games,linear algebra,Linear Algebra,alias
+Game Developer,Shaders (HLSL/GLSL),Shaders (HLSL/GLSL),shader programming,Shader Programming,alias
 Game Developer,OpenGL / Vulkan / DirectX,OpenGL,opengl,OpenGL,mapped
 Game Developer,OpenGL / Vulkan / DirectX,Vulkan,vulkan,Vulkan,mapped
 Game Developer,OpenGL / Vulkan / DirectX,DirectX,directx,DirectX,mapped
-Game Developer,Collision detection,Collision detection,collision detection,,missing
+Game Developer,Collision detection,Collision detection,collision detection,Collision Detection,mapped

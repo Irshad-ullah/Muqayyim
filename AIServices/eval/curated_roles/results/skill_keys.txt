@@ -20,25 +20,25 @@ Active Listening
 Actix Web
 Ada
 Adaptability
-adobe acrobat
 Adobe Acrobat
+adobe acrobat
 adobe acrobat pro
 Adobe After Effects
 Adobe Creative Cloud
 adobe creative cloud
-Adobe Illustrator
 adobe illustrator
+Adobe Illustrator
 Adobe InDesign
-Adobe Lightroom
 adobe lightroom
-adobe photoshop
+Adobe Lightroom
 Adobe Photoshop
+adobe photoshop
 adobe photoshop lightroom
 Adobe Premiere Pro
 Adobe XD
 Affiliate Marketing
-agile
 Agile
+agile
 agile development
 agile methodology
 Agriculture
@@ -68,12 +68,17 @@ Amazon SNS
 Amazon SQS
 Amazon VPC
 amazon web services
+amazon web services (aws)
+amplitude
+Amplitude
+amplitude analytics
 Anaconda
 Analytical Thinking
 android
-Android Development
 android development
+Android Development
 Android Jetpack
+android room
 Android SDK
 Android Studio
 angular
@@ -87,13 +92,14 @@ ansible
 Ant Design
 apache airflow
 Apache Flink
+apache hadoop
 Apache Hive
 Apache HTTP Server
 apache kafka
 apache maven
 Apache NiFi
-apache spark
 Apache Spark
+apache spark
 apache subversion
 Apache Superset
 apache tomcat
@@ -104,8 +110,10 @@ APL
 Apollo GraphQL
 App Store Connect
 Appium
+apple combine
 apple macos
 apple safari
+apple testflight
 Application Security
 ArcGIS
 arcgis
@@ -123,8 +131,8 @@ asp.net core
 aspnet
 aspnet core
 assembly
-assembly language
 Assembly Language
+assembly language
 Astro
 asynchronous javascript and xml
 Asynchronous Programming
@@ -139,8 +147,8 @@ autodesk maya
 autodesk navisworks
 autodesk revit
 autodesk sketchbook
-aws
 AWS
+aws
 AWS Amplify
 AWS CloudFormation
 AWS Glue
@@ -160,31 +168,33 @@ Background Jobs
 Backup and Recovery
 Balsamiq
 Banking Operations
-Bash
 bash
+Bash
 bash scripting
 Beautiful Soup
 Behavior-Driven Development
+behaviour trees
 bentley microstation
 BGP
 bgp
 Big Data
 Big O Notation
 BigCommerce
+bigquery
 BigQuery
 Bitbucket
 Bitbucket Pipelines
-blackarch
 BlackArch
+blackarch
 blackarch linux
-blackberry
 BlackBerry
+blackberry
 blackberry os
 Blender
 Bloc
 block chain
-Blockchain
 blockchain
+Blockchain
 Blogging
 Blue-Green Deployment
 Bookkeeping
@@ -205,10 +215,10 @@ Business Development
 Business Intelligence
 C
 c sharp
-c#
 C#
-C++
+c#
 c++
+C++
 CA Datacom
 ca datacom
 ca datacom/db
@@ -231,8 +241,8 @@ Chakra UI
 Chatbot Development
 Chef
 ci cd
-ci/cd
 CI/CD
+ci/cd
 cicd
 circle ci
 circleci
@@ -271,7 +281,11 @@ Codenvy
 CoffeeScript
 Cold Calling
 Collaboration
+Collision Detection
 Color Theory
+combine (swift)
+Combine Framework
+combine framework
 Command Line
 common lisp
 Communication
@@ -279,18 +293,22 @@ Compensation and Benefits
 Competitive Programming
 Compiler Design
 Compliance
+composer (php)
 CompTIA Security+
 Computer Architecture
 Computer Graphics
 computer networking
 Computer Networking
 computer networks
-Computer Vision
 computer vision
+Computer Vision
 Concurrency
 Conflict Resolution
 Confluence
 Construction Management
+container image scanning
+Container Security
+container security
 Containerization
 Content Delivery Networks
 Content Design
@@ -339,11 +357,12 @@ cv
 cyber security
 Cybersecurity
 cybersecurity
-Cypress
 cypress
+Cypress
 D3.js
-dart
+dagger hilt
 Dart
+dart
 Dashboard Design
 Dask
 data analysis
@@ -360,13 +379,14 @@ Data Modeling
 Data Pipelines
 Data Quality
 Data Replication
-Data Science
 data science
+Data Science
 Data Storytelling
 Data Structures
 data structures & algorithms
-data structures and algorithms
 Data Structures and Algorithms
+data structures and algorithms
+data version control
 data visualisation
 Data Visualization
 data visualization
@@ -385,8 +405,8 @@ db2
 dbt
 Debugging
 Decision Making
-deep learning
 Deep Learning
+deep learning
 deeplearning
 DeFi
 Delphi
@@ -406,18 +426,18 @@ Disaster Recovery
 Discrete Mathematics
 Distributed Systems
 Distributed Tracing
-django
 Django
+django
 Django ORM
 django rest
-django rest framework
 Django REST Framework
+django rest framework
 dl
 DNS
-Docker
 docker
-Docker Compose
+Docker
 docker compose
+Docker Compose
 docker-compose
 Doctrine
 DOM Manipulation
@@ -430,6 +450,8 @@ Driving
 Drizzle ORM
 Drupal
 dsa
+DVC
+dvc
 Dynamic Programming
 dynamo db
 DynamoDB
@@ -442,13 +464,16 @@ eclinicalworks ehr
 Eclipse
 ecmascript
 elastic search
-elasticsearch
+elastic stack
+elastic stack (elk)
 Elasticsearch
+elasticsearch
 Electrical Engineering
 Electronic Health Records
 Elementor
 Elixir
 elk
+elk stack
 ELK Stack
 Elm
 Eloquent
@@ -481,10 +506,11 @@ Ethereum
 Ethers.js
 Ethical Hacking
 ETL
+evaluating llms
 Event Planning
 Event-Driven Architecture
-Excel
 excel
+Excel
 Excel Formulas
 Explainable AI
 Exploratory Data Analysis
@@ -493,8 +519,8 @@ Expo
 express
 express js
 Express Middleware
-express.js
 Express.js
+express.js
 expressjs
 F#
 Facebook Ads
@@ -519,14 +545,14 @@ firebase
 Firebase
 Firebase Cloud Messaging
 Firebase Hosting
-firestore
 Firestore
+firestore
 firewall
 Firewalls
 firewalls
 First Aid
-Flask
 flask
+Flask
 Flexibility
 flutter
 Flutter
@@ -542,9 +568,13 @@ Frostbite
 frostbite engine
 Functional Programming
 g suite
+Game AI
+game ai
 Game Design
 Game Development
 game maker
+game physics
+Game Physics
 GameMaker
 gamemaker
 gamemaker studio
@@ -552,21 +582,24 @@ GameSalad
 Gatsby
 gcp
 GDPR
+gemini
+Gemini API
+gemini api
 gen ai
 genai
-generative ai
 Generative AI
+generative ai
 geographic information system
 geographic information systems
 ggplot2
 gh actions
-gimp
 GIMP
+gimp
 Gin
 gis
 GIS
-git
 Git
+git
 github
 GitHub
 GitHub Actions
@@ -575,6 +608,7 @@ GitLab
 gitlab
 GitLab CI
 GitOps
+glsl
 gnu image manipulation program
 Go
 go lang
@@ -582,28 +616,36 @@ Godot
 golang
 Google Ads
 Google Analytics
+google bigquery
 google cloud
 Google Cloud
 google cloud platform
 Google Cloud Run
 Google Colab
+google gemini api
 Google Kubernetes Engine
 Google Play Console
 Google Sheets
-Google Workspace
 google workspace
+Google Workspace
 Gradio
+gradle
+Gradle
+gradle build tool
 Grafana
 graph ql
 Graph Theory
 Graphic Design
-graphql
 GraphQL
+graphql
 Groovy
 Group Policy
 gRPC
 gsuite
 Gunicorn
+gutenberg
+Gutenberg
+gutenberg block editor
 hadoop
 Hadoop
 Hapi
@@ -622,9 +664,13 @@ HeroEngine
 Heroku
 Hibernate
 High Availability
+Hilt
+hilt
+hilt dependency injection
+hlsl
 Hospitality Management
-html
 HTML
+html
 html5
 htmx
 HTTP
@@ -638,6 +684,7 @@ Hyper-V
 Hyperledger Fabric
 Hyperparameter Tuning
 Hypothesis Testing
+iam
 IBM DataStage
 ibm datastage
 IBM Db2
@@ -647,14 +694,17 @@ ibm infosphere datastage
 IBM InfoSphere Information Server
 IBM MQ
 ibm mq
-ibm websphere
 IBM WebSphere
+ibm websphere
 ibm websphere mq
+identity and access management
 Identity and Access Management
+identity and access management (iam)
 iis
 Illustration
 illustrator
 Image Classification
+image scanning
 Image Segmentation
 Incident Response
 IndexedDB
@@ -665,8 +715,8 @@ informatica
 informatica powercenter
 Informatica PowerCenter
 Information Architecture
-Information Security
 information security
+Information Security
 informix
 Informix
 infosec
@@ -696,16 +746,16 @@ IT Support
 ITIL
 Jakarta EE
 Jasmine
-java
 Java
+java
 java script
 java se
-JavaScript
 javascript
+JavaScript
 javascript style sheets
 JAX
-jenkins
 Jenkins
+jenkins
 jest
 Jest
 Jetpack Compose
@@ -721,36 +771,46 @@ jquery
 js
 json
 JSON
+json web token
+json web token (jwt)
+json web tokens
 JSSS
 jsss
 Julia
 JUnit
+jupyter
+jupyter notebook
 Jupyter Notebook
+jupyterlab
+jwt
 JWT
 k6
 k8s
-kafka
 Kafka
+kafka
 Kaggle Competitions
 Kali Linux
 Kanban
 Karma
 Katalon Studio
 KDevelop
-Keras
 keras
+Keras
 Keyword Research
 Knex.js
 Koa
-Kotlin
 kotlin
+Kotlin
 Kotlin Coroutines
 Kotlin Multiplatform
 KPI Reporting
 Ktor
 kube
-kubernetes
+Kubeflow
+kubeflow
+kubeflow pipelines
 Kubernetes
+kubernetes
 Kubernetes Operators
 Labor Law
 LAN/WAN
@@ -760,8 +820,9 @@ Laravel
 laravel
 Large Language Models
 large language models
-LDAP
+large language models (llms)
 ldap
+LDAP
 Lead Generation
 Leadership
 Lean
@@ -776,16 +837,21 @@ lightroom
 lightweight directory access protocol
 Linear
 Linear Algebra
-linq
+linear algebra
+linear algebra for games
 LINQ
-Linux
+linq
 linux
+Linux
 Linux Server Administration
 Lisp
 lisp
 Lit
 LlamaIndex
 llm
+llm evals
+llm evaluation
+LLM Evaluation
 llms
 Load Balancing
 Load Testing
@@ -802,15 +868,17 @@ mac os x
 machine learning
 Machine Learning
 machinelearning
-macOS
 macos
+macOS
 Magento
 Mailchimp
 Maltego
 Malware Analysis
 Manual Testing
 MariaDB
+market analysis
 Market Research
+market research
 Marketing Analytics
 Marketing Strategy
 MarkLogic
@@ -820,8 +888,8 @@ matlab
 MATLAB
 matplotlib
 Matplotlib
-Maven
 maven
+Maven
 maya
 Maya
 Mechanical Engineering
@@ -837,13 +905,13 @@ micro services
 Microcontrollers
 Micronaut
 microservice architecture
-microservices
 Microservices
+microservices
 Microsoft 365 Administration
 microsoft access
 Microsoft Access
-microsoft azure
 Microsoft Azure
+microsoft azure
 microsoft excel
 Microsoft Exchange
 microsoft iis
@@ -858,8 +926,8 @@ microsoft sql server
 microsoft sql server integration services
 microsoft sql server reporting services
 Microsoft Teams
-Microsoft Visio
 microsoft visio
+Microsoft Visio
 microsoft visual basic
 microsoft visual c++
 microsoft windows
@@ -883,15 +951,17 @@ Mocking
 Mockito
 Model Deployment
 Model Evaluation
+model-view-viewmodel
 Monday.com
 mongo
 mongo db
-MongoDB
 mongodb
+MongoDB
 MongoDB Atlas
 Mongoose
 mongoose
 Monitoring
+moscow method
 Motion Graphics
 mqseries
 MQTT
@@ -909,6 +979,9 @@ Multidimensional Expressions
 Multitasking
 Multithreading
 MVC Architecture
+MVVM
+mvvm
+mvvm architecture
 my sql
 mysql
 MySQL
@@ -916,8 +989,8 @@ MySQL Workbench
 N1QL
 n1ql
 Named Entity Recognition
-natural language processing
 Natural Language Processing
+natural language processing
 Navisworks
 navisworks
 navisworks jetstream
@@ -926,23 +999,25 @@ Neo4j
 Nessus
 nest
 nest.js
-NestJS
 nestjs
+NestJS
 Netlify
 Network Administration
 Network Monitoring
 Network Security
 Network Troubleshooting
 networking
+networking (tcp/ip, dns, http)
+networking fundamentals
 Networking Fundamentals
 Neural Networks
 New Relic
-nexpose
 Nexpose
+nexpose
 next
 next js
-next.js
 Next.js
+next.js
 nextjs
 Nexus Repository
 NFTs
@@ -959,9 +1034,10 @@ nodejs
 NoSQL
 Notion
 npm
+nsurlsession
 num py
-numpy
 NumPy
+numpy
 Nursing
 nuxt
 Nuxt.js
@@ -970,8 +1046,8 @@ nuxtjs
 OAuth
 Object Detection
 object oriented programming
-object-oriented programming
 Object-Oriented Programming
+object-oriented programming
 Objective-C
 ObjectStore
 Observability
@@ -986,13 +1062,13 @@ oops
 open cv
 OpenAI API
 OpenAPI
-opencv
 OpenCV
-openedge abl
+opencv
 OpenEdge ABL
+openedge abl
 openedge advanced business language
-openedge database
 OpenEdge Database
+openedge database
 OpenGL
 OpenID Connect
 OpenShift
@@ -1001,8 +1077,8 @@ Operating System Concepts
 Operating Systems
 Operations Management
 oracle
-Oracle ADF
 oracle adf
+Oracle ADF
 oracle application development framework
 Oracle Data Integrator
 Oracle Database
@@ -1010,16 +1086,19 @@ oracle database
 oracle db
 oracle relational database
 oracle sql
-oracle sql developer
 Oracle SQL Developer
+oracle sql developer
 Oracle Warehouse Builder
-Oracle WebLogic
 oracle weblogic
+Oracle WebLogic
 Organizational Skills
 os x
 osx
 outlook
 OWASP
+owasp
+owasp top 10
+owasp top ten
 OWASP ZAP
 owasp zap
 owasp zed attack proxy
@@ -1029,6 +1108,7 @@ Parallel Computing
 Parcel
 Pascal
 Password Management
+pathfinding
 Patient Care
 Pay-Per-Click Advertising
 Payment Gateway Integration
@@ -1044,6 +1124,7 @@ Performance Management
 Performance Testing
 Perl
 Personas
+personas
 Persuasion
 pg
 pgAdmin
@@ -1052,11 +1133,14 @@ Phaser
 Phoenix
 Photography
 photoshop
-PHP
 php
+PHP
+PHP Composer
+php composer
 php7
 php8
 phpMyAdmin
+physics engines
 Pinecone
 Pivot Tables
 PL/pgSQL
@@ -1081,17 +1165,26 @@ power bi
 powerbi
 powercenter
 PowerShell
+prd
+prds
 Preact
 presentation
 Presentation Skills
 presentation skills
 presentations
 Print Design
+prioritisation frameworks
+prioritization frameworks
+Prioritization Frameworks
+prioritization frameworks (rice, moscow)
 Prisma
 Probability
 Problem Solving
 Procurement
+Product Analytics
 Product Management
+Product Requirements Documents
+product requirements documents
 Product Roadmapping
 progress 4gl
 progress abl
@@ -1123,8 +1216,8 @@ Pygame
 Pyramid
 pyspark
 PyTest
-Python
 python
+Python
 python 3
 python3
 PyTorch
@@ -1146,6 +1239,7 @@ R
 r programming
 R Shiny
 RabbitMQ
+rag
 rage engine
 RAGE Engine
 rails
@@ -1154,11 +1248,11 @@ Rapid Application Development
 rapid7 nexpose
 Raspberry Pi
 Rate Limiting
-React
 react
+React
 react js
-React Native
 react native
+React Native
 React Query
 React Router
 React Testing Library
@@ -1172,8 +1266,8 @@ Recruitment
 Recurrent Neural Networks
 Recursion
 Red Hat Enterprise Linux
-redis
 Redis
+redis
 Redux
 redux
 redux toolkit
@@ -1194,18 +1288,22 @@ rest
 rest api
 rest apis
 REST APIs
-rest assured
 REST Assured
+rest assured
 rest-assured
 restassured
 restful
 restful api
 restful apis
 Retail Sales
+retrieval augmented generation
+retrieval-augmented generation
 Retrieval-Augmented Generation
+retrieval-augmented generation (rag)
 Retrofit
 Revit
 revit
+rice
 Risk Assessment
 Risk Management
 Riverpod
@@ -1215,26 +1313,29 @@ Robot Framework
 Robotics
 rockstar advanced game engine
 Rollup
+room
 Room Database
+room database
+room persistence library
 ror
 ROS
 Routing and Switching
 rtk
 RTOS
-ruby
 Ruby
-Ruby on Rails
+ruby
 ruby on rails
+Ruby on Rails
 Rust
 rust
 rustlang
-Safari
 safari
+Safari
 Sales
 Salesforce
 salt stack
-saltstack
 SaltStack
+saltstack
 SAML
 samurai web testing framework
 Samurai Web Testing Framework
@@ -1242,33 +1343,37 @@ samurai wtf
 Sanity
 SAP
 sap bods
-sap data services
 SAP Data Services
-sap r/3
+sap data services
 SAP R/3
+sap r/3
 sap r3
 SAS
 sas
 sas language
 Sass
 sass
+sbom
 SCADA
 Scala
 Scalability
 Scheduling
 sci-kit learn
 scikit learn
-Scikit-learn
 scikit-learn
+Scikit-learn
 scikitlearn
 Scrapy
 Scratch
-scrum
 Scrum
+scrum
 Scrum Master
 scss
 Seaborn
 Search Engine Marketing
+search engine optimisation
+search engine optimization
+search engine optimization (seo)
 Secure Coding
 Security Auditing
 Security Awareness
@@ -1281,23 +1386,30 @@ Sensors
 Sentiment Analysis
 Sentry
 SEO
+seo
 Sequelize
 Server Management
 Server-Sent Events
 Server-Side Rendering
 Serverless
+service level objectives
+Service Level Objectives
+service level objectives (slos)
 ServiceNow
 Session Management
 sh
 shadcn/ui
+shader programming
 Shader Programming
+shaders
+shaders (hlsl/glsl)
 Sharding
 sharepoint
 SharePoint
 sharepoint online
 shell script
-Shell Scripting
 shell scripting
+Shell Scripting
 shiva engine
 ShiVa Engine
 shiva3d
@@ -1311,10 +1423,12 @@ Site Reliability Engineering
 Six Sigma
 Sketch
 sketchbook
-sketchbook pro
 SketchBook Pro
+sketchbook pro
 sklearn
 Slack
+slo
+slos
 Smalltalk
 Smart Contracts
 Smoke Testing
@@ -1328,8 +1442,12 @@ Socket.IO
 socket.io
 socketio
 Software Architecture
+software bill of materials
 Software Development Life Cycle
 Software Engineering
+Software Supply Chain Security
+software supply chain security
+software supply chain security (sbom)
 software testing automation framework
 SOLID Principles
 solidity
@@ -1338,20 +1456,21 @@ SolidJS
 SolidWorks
 SonarQube
 Sorting Algorithms
-Source Engine
 source engine
-spacy
+Source Engine
 spaCy
+spacy
 spark
 SPARQL
 Speech Recognition
 spiral development
-spiral model
 Spiral Model
+spiral model
 Splunk
 Splunk Enterprise Security
-Spring
+spm
 spring
+Spring
 Spring Boot
 spring boot
 spring framework
@@ -1359,14 +1478,14 @@ spring mvc
 springboot
 Sprint Planning
 SPSS
-sql
 SQL
+sql
 sql developer
 SQL Injection
 SQL Queries
 sql server
-sql server integration services
 SQL Server Integration Services
+sql server integration services
 SQL Server Reporting Services
 sql server reporting services
 sql++
@@ -1398,8 +1517,8 @@ Stress Management
 Stripe
 Styled Components
 Subnetting
-Subversion
 subversion
+Subversion
 Supabase
 Supervised Learning
 Supply Chain Management
@@ -1411,21 +1530,27 @@ Svelte
 sveltejs
 svn
 Swagger
-Swift
 swift
+Swift
+swift async/await
+swift concurrency
+Swift Concurrency
+swift concurrency (async/await)
+Swift Package Manager
+swift package manager
 SwiftUI
 Symfony
-synfig
 Synfig
+synfig
 synfig studio
 System Administration
 System Design
 t-sql
-Tableau
 tableau
+Tableau
 tailwind
-Tailwind CSS
 tailwind css
+Tailwind CSS
 tailwindcss
 Talent Acquisition
 Tally ERP
@@ -1442,12 +1567,14 @@ tensorflow
 Teradata
 teradata
 teradata database
-Terraform
 terraform
+Terraform
 Test Automation
 Test Case Design
 Test Planning
 Test-Driven Development
+TestFlight
+testflight
 TestNG
 TestRail
 Text Classification
@@ -1459,8 +1586,8 @@ Three.js
 Time Management
 Time Series Analysis
 TimescaleDB
-Tomcat
 tomcat
+Tomcat
 torch
 Tornado
 Traefik
@@ -1492,11 +1619,11 @@ UI/UX Design
 UIKit
 uiux
 UML
-Unit Testing
 unit testing
+Unit Testing
 unit tests
-Unity
 unity
+Unity
 unity 3d
 unity3d
 unix
@@ -1504,8 +1631,11 @@ unix shell
 Unreal Engine
 Unsupervised Learning
 Urdu Language
+URLSession
+urlsession
 Usability Testing
 User Flows
+user personas
 User Research
 User Stories
 Uvicorn
@@ -1517,8 +1647,8 @@ vanilla js
 vb6
 VBA
 vbs
-vbscript
 VBScript
+vbscript
 Vector Databases
 Verbal Communication
 Vercel
@@ -1540,8 +1670,8 @@ visual c++
 Visual Design
 Visual Studio
 Visual Studio Code
-Vite
 vite
+Vite
 vitejs
 Vitest
 VLAN
@@ -1549,8 +1679,8 @@ VMware
 VPN
 vue
 vue js
-Vue.js
 vue.js
+Vue.js
 vuejs
 Vulkan
 Vulnerability Assessment
@@ -1574,11 +1704,11 @@ Webflow
 Webhooks
 weblogic
 weblogic server
-Webpack
 webpack
+Webpack
 websocket
-WebSockets
 websockets
+WebSockets
 websphere
 websphere application server
 websphere mq
@@ -1599,8 +1729,18 @@ WooCommerce
 word press
 wordpress
 WordPress
+wordpress block editor
+wordpress plugin development
+WordPress Plugin Development
+wordpress plugins
+wordpress rest api
+WordPress REST API
 WordPress Theme Development
 Work Ethic
+wp cli
+wp rest api
+wp-cli
+WP-CLI
 Written Communication
 Xamarin
 Xcode
