@@ -11,7 +11,8 @@ publish (previewed → publishing → published | rolled_back | failed):
     3. rebuild the role-skill index (atomic file swap; embeds new skills with the
        frozen pipeline)
     4. post-publish checks: index state_hash matches the data, coverage, background
-       credit rates
+       credit rates, and the ESCO requirement groups (Module 5.1) equal the preview's
+       staged count — an unexpected drop fails the publish (→ rolled_back)
   any failure after the snapshot restores it automatically → rolled_back.
 
 restore (202 + polling; ai_db.restore_jobs: restoring → restored | rolled_back | failed):
@@ -56,8 +57,11 @@ class PublishCheckFailed(Exception):
 
 
 # ── checks after publish / restore ───────────────────────────────────────────
-async def post_checks(db) -> dict:
+async def post_checks(db, expected_role_map: Optional[int] = None) -> dict:
+    """`expected_role_map`: the number of ESCO requirement groups the live data must have (the preview's staged
+    count after a publish, the snapshot's count after a restore); None = not checked."""
     index = get_role_index()
+    role_map_actual = await snapshots.role_map_adjusted(db)
     professions = await active_professions(db)
     expected = state_hash(professions, get_embedder().model_name, text_mode())
     actual = index.snapshot.meta.get("state_hash") if index.snapshot else None
@@ -67,6 +71,8 @@ async def post_checks(db) -> dict:
         "state_hash": actual,
         "index": index.health(),
         "fingerprint": await pipeline.live_fingerprint(db),
+        "role_map": {"adjusted": role_map_actual, "expected": expected_role_map,
+                     "ok": expected_role_map is None or role_map_actual == expected_role_map},
         **checks,
     }
 
@@ -119,9 +125,13 @@ async def _publish(job: dict, lock: TaxonomyLock, actor: str, db) -> None:
         if index.state != READY:
             raise PublishCheckFailed(f"The role-skill index could not be rebuilt ({index.state})")
         await jobs.set_progress(job_id, "Running the post-publish checks", db=db)
-        post = await post_checks(db)
+        expected = ((job.get("diff_summary") or {}).get("role_map") or {}).get("staged_adjusted")
+        post = await post_checks(db, expected_role_map=expected)
         if not post["state_hash_ok"]:
             raise PublishCheckFailed("The rebuilt index does not match the published data (state_hash)")
+        if not post["role_map"]["ok"]:
+            raise PublishCheckFailed(f"ESCO requirement groups: {post['role_map']['adjusted']} live, "
+                                     f"{expected} expected from the preview")
         await jobs.transition(job_id, jobs.PUBLISHED, note="Published", db=db, post_publish_checks=post)
         _finish_files(job)
         await jobs.update_job(job_id, db, staging_dir=None)
@@ -226,7 +236,10 @@ async def _restore(doc: dict, record: dict, lock: TaxonomyLock, actor: str, db) 
                            progress=f"Restoring snapshot {record['snapshot_id']}")
         restored = await snapshots.restore_files(db, record)
         await _set_restore(db, restore_id, progress="Running the post-restore checks")
-        post = await post_checks(db)
+        post = await post_checks(db, expected_role_map=(record.get("counts") or {}).get("role_map_adjusted"))
+        if not post["role_map"]["ok"]:
+            raise PublishCheckFailed(f"ESCO requirement groups: {post['role_map']['adjusted']} after the restore, "
+                                     f"{post['role_map']['expected']} in the snapshot")
         await _set_restore(db, restore_id, status=RESTORED, progress="Restored",
                            result={"restore": restored, "post_restore_checks": post})
         await db[snapshots.SNAPSHOTS].update_one(

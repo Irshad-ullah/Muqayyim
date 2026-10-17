@@ -10,7 +10,7 @@ skill, so no profession is missed), and get_related_threshold through search_rel
 
 Cache key: algorithm version + the user's re-normalised skills + the index state hash + the
 live professions fingerprint (any profession write, incl. admin overrides) + the alias and
-description files' signatures. A different key → recompute.
+description files' signatures + the ESCO role map's hash (Module 5.1). A different key → recompute.
 """
 
 import hashlib
@@ -29,6 +29,7 @@ from app.services.embeddings.normalise import normalise_skill
 from app.services.embeddings.user_profiles import DONE, EmbeddingsPending, get_user_skill_record
 from app.services.embeddings.vector_store import get_skill_vectors, load_vectors
 from app.services.matching import scoring
+from app.services.professions import esco_role_map
 from app.services.professions.role_index import get_role_index
 from app.services.professions.role_skills import current_skill
 from app.services.professions.store import PROFESSIONS, active_filter
@@ -108,6 +109,7 @@ async def cache_key(owned: Dict[str, dict], db) -> str:
         "live": await live_fingerprint(db),
         "aliases": _file_signature(normalise_module.ALIASES_FILE),
         "descriptions": _file_signature(descriptions_module.CURATED_FILE),
+        "role_map": esco_role_map.map_hash(),
     }
     return hashlib.sha256(json.dumps(parts, sort_keys=True).encode()).hexdigest()
 

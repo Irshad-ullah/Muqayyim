@@ -6,7 +6,7 @@ TAXONOMY_WORK_DIR/snapshots/<id>/ (outside the repository):
   professions.jsonl.gz, esco_skills.jsonl.gz   (MongoDB Extended JSON, one doc per line;
                                                 role-skill links live inside the professions)
   index/role_skills.faiss, index/role_skills.meta.json
-  data/<the five editable app/data JSON files>
+  data/<the editable app/data JSON files, incl. the ESCO role map (Module 5.1)>
   manifest.json                                 (sha256 + size of every file)
 and one ai_db.taxonomy_snapshots record:
   { snapshot_id, created_at, created_by, reason, pool, job_id, source_versions,
@@ -42,7 +42,7 @@ from app.services.professions.store import ESCO_SKILLS, PROFESSIONS, ensure_prof
 SNAPSHOTS = "taxonomy_snapshots"
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 DATA_FILES = ("skill_descriptions.json", "skill_aliases.json", "skill_categories.json",
-              "onet_name_map.json", "esco_name_map.json")
+              "onet_name_map.json", "esco_name_map.json", "esco_role_phrase_skill_map.json")
 POOLS = {"publish": ("publish", "pre-restore"), "edit": ("edit",)}
 JSON_OPTIONS = json_util.CANONICAL_JSON_OPTIONS
 
@@ -121,6 +121,14 @@ async def _dump(db, collection: str, target: Path) -> int:
     return count
 
 
+async def role_map_adjusted(db, collection: str = PROFESSIONS) -> int:
+    """ESCO requirement groups in the active professions (Module 5.1; the post-check figure)."""
+    from app.services.professions.esco_role_map import count_groups
+
+    docs = [d async for d in db[collection].find({"active": True, "source": "esco"}, {"_id": 0, "active": 1, "source": 1, "skills": 1})]
+    return count_groups(docs)
+
+
 async def source_versions(db) -> Dict[str, List[str]]:
     versions = {}
     for source in ("onet", "esco", "manual"):
@@ -146,6 +154,7 @@ async def create_snapshot(db=None, created_by: str = "system", reason: str = "pu
             "professions": await _dump(db, PROFESSIONS, tmp / "professions.jsonl.gz"),
             "esco_skills": await _dump(db, ESCO_SKILLS, tmp / "esco_skills.jsonl.gz"),
             "active_professions": await db[PROFESSIONS].count_documents({"active": True}),
+            "role_map_adjusted": await role_map_adjusted(db),
         }
         (tmp / "index").mkdir()
         meta = None
@@ -280,13 +289,14 @@ def reload_taxonomy_files() -> None:
     """Drop every cache built from the app/data JSON files (after a restore or an edit)."""
     from app.services.embeddings import normalise
     from app.services.embeddings.descriptions import use_description_provider
-    from app.services.professions import categories, cleaning
+    from app.services.professions import categories, cleaning, esco_role_map
 
     normalise._alias_table.cache_clear()
     cleaning.curated_names.cache_clear()
     cleaning._onet_config.cache_clear()
     cleaning._esco_map.cache_clear()
     categories._config.cache_clear()
+    esco_role_map.reload_role_map()
     use_description_provider(None)
 
 

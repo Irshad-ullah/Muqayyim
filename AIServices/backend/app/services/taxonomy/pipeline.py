@@ -9,7 +9,9 @@ result.
            The live collections are never written.
   diff     staged vs live: professions added / removed / changed (title,
            description, category, with "kept admin override"), role-skill links
-           added / removed, new skills without a description, counts per category.
+           added / removed, new skills without a description, counts per category,
+           and the ESCO role map (Module 5.1): requirements adjusted live vs staged,
+           undescribed essential pairs not in the map (e.g. new roles), stale entries.
            A summary goes into the job; every item into ai_db.import_job_diffs
            (paginated detail endpoint).
   checks   role_skill_coverage (live vs staged) and background_credit_rate on the
@@ -34,6 +36,7 @@ from app.config.database import get_database
 from app.config.settings import settings
 from app.services.embeddings.descriptions import get_description_provider
 from app.services.professions.esco import parse_esco
+from app.services.professions.esco_role_map import count_groups
 from app.services.professions.imports import upsert_esco_skills
 from app.services.professions.onet import parse_onet
 from app.services.professions.role_skills import current_skill
@@ -139,7 +142,20 @@ def _links(professions: Dict[str, dict]) -> Dict[Tuple[str, str], dict]:
     return links
 
 
-async def diff(db, job_id: str, source: str, parsed_docs: List[dict]) -> dict:
+def role_map_summary(live: Dict[str, dict], staged: Dict[str, dict], parsed_stats: Optional[dict]) -> dict:
+    """The ESCO role map in the preview: adjusted requirements live → staged, and from the parse the undescribed
+    essential pairs that are not in the map (new roles / new skills after a re-import) and stale entries.
+    `dropped` warns when fewer requirements would be adjusted after publishing."""
+    stats = (parsed_stats or {}).get("role_map") or {}
+    live_n, staged_n = count_groups(live.values()), count_groups(staged.values())
+    return {"live_adjusted": live_n, "staged_adjusted": staged_n, "dropped": staged_n < live_n,
+            "essential_not_in_map": stats.get("essential_not_in_map", 0),
+            "essential_not_in_map_examples": stats.get("essential_not_in_map_examples", []),
+            "essential_reviewed_unmapped": stats.get("essential_reviewed_unmapped", 0),
+            "stale_entries": stats.get("stale_entries", 0), "stale_mapped_entries": stats.get("stale_mapped_entries", 0)}
+
+
+async def diff(db, job_id: str, source: str, parsed_docs: List[dict], parsed_stats: Optional[dict] = None) -> dict:
     names = staging_names(job_id)
     projection = {"_id": 0, "profession_id": 1, "title": 1, "description": 1, "category": 1, "active": 1,
                   "source": 1, "skills": 1, "inactive_reason": 1,
@@ -190,6 +206,7 @@ async def diff(db, job_id: str, source: str, parsed_docs: List[dict]) -> dict:
         await db[DIFFS].insert_many(rows, ordered=True)
     kept_total = sum(1 for i in items["professions_changed"] if i["kept_admin_override"])
     return {
+        "role_map": role_map_summary(live, staged, parsed_stats),
         "counts": {section: len(items[section]) for section in SECTIONS},
         "samples": {section: items[section][:SAMPLE] for section in SECTIONS},
         "kept_admin_overrides": kept_total,
@@ -308,7 +325,7 @@ async def _preview(job: dict, db) -> None:
     base = await live_fingerprint(db)
     parsed = await stage(db, job_id, job["source"], directory, number, label)
     await jobs.set_progress(job_id, "Comparing with the live data", db=db)
-    summary = await diff(db, job_id, job["source"], parsed["docs"])
+    summary = await diff(db, job_id, job["source"], parsed["docs"], parsed.get("stats"))
     summary["import_stats"] = _jsonable(parsed["stats"])
     summary["written"] = parsed["written"]
     await jobs.set_progress(job_id, "Running coverage and the background credit check", db=db)

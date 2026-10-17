@@ -14,6 +14,11 @@ The pair kind is decided HERE from both skills' actual description status. (The 
 search_related labels a pair "described" whenever it is not "mixed", which includes an
 undescribed user skill; such pairs get no credit.)
 
+ESCO requirement groups (Module 5.1, esco_role_map.py): a mapped ESCO phrase is ONE requirement whose
+listed alternatives each satisfy it — the phrase itself (same key) → matched; else any alternative the
+user holds → matched (1.0, via that skill); else the rule above for the phrase (related / missing).
+The group is shown by its label ("Kotlin / Swift / Java / … (computer programming)").
+
 Match % = Σ credits over the REQUIRED role skills ÷ their number × 100. Required: O*NET
 in-demand, ESCO essential, topped up to MIN_REQUIRED in stored order (O*NET: in-demand →
 hot; ESCO: essential → optional). The other role skills are shown as optional, not counted.
@@ -22,11 +27,13 @@ hot; ESCO: essential → optional). The other role skills are shown as optional,
 import re
 from typing import Dict, Iterable, List, Optional, Tuple
 
+from app.services.professions.esco_role_map import alternative_keys, is_group
+
 MATCHED, RELATED, MISSING = "matched", "related", "missing"
 MATCHED_CREDIT, RELATED_CREDIT = 1.0, 0.5
 MIN_REQUIRED = 10
 LOW_MATCH_PERCENT = 20.0  # display only: the "low match" note when even the best result is below it
-ALGORITHM_VERSION = "1"  # part of the cache key; bump when the scoring rules change
+ALGORITHM_VERSION = "2"  # part of the cache key; bump when the scoring rules change (2: ESCO requirement groups)
 
 SOURCE_LABELS = {"manual": "your profile", "cv": "your CV", "github": "GitHub"}
 ATTRIBUTION = {
@@ -96,6 +103,21 @@ def assess(skill_key: str, skill_name: str, owned: Dict[str, dict], related: Dic
     return {"name": skill_name, "key": skill_key, "status": MISSING, "credit": 0.0}
 
 
+def assess_group(skill: dict, skill_key: str, skill_name: str, owned: Dict[str, dict], related: Dict[str, dict]) -> dict:
+    """One ESCO requirement group → a row: the phrase itself, then any alternative (1.0), then related / missing."""
+    group = {"phrase": skill.get("phrase") or skill_name, "phrase_uri": skill.get("phrase_uri"),
+             "alternatives": [a["name"] for a in skill.get("alternatives") or []]}
+    if skill_key not in owned:
+        held = [k for k in alternative_keys(skill) if k in owned]
+        if held:
+            user = owned[held[0]]
+            return {"name": skill.get("label") or skill_name, "key": skill_key, "status": MATCHED, "credit": MATCHED_CREDIT,
+                    "via": {"name": user["name"], "source": user.get("source"), "group": True,
+                            "also": [owned[k]["name"] for k in held[1:]]}, "group": group}
+    row = assess(skill_key, skill_name, owned, related)
+    return {**row, "name": skill.get("label") or skill_name, "group": group}
+
+
 def score_profession(profession: dict, owned: Dict[str, dict], related: Dict[str, dict], current_skill) -> dict:
     """The full breakdown of one profession. `current_skill(skill) -> (key, name)` applies today's aliases."""
     required, optional = split_required(profession)
@@ -107,7 +129,7 @@ def score_profession(profession: dict, owned: Dict[str, dict], related: Dict[str
             if key in seen:
                 continue  # two stored names that now share a key count once
             seen.add(key)
-            out.append(assess(key, name, owned, related))
+            out.append(assess_group(skill, key, name, owned, related) if is_group(skill) else assess(key, name, owned, related))
         return out
 
     required_rows, optional_rows = rows(required), rows(optional)
@@ -182,6 +204,14 @@ def _join(names: List[str], limit: int = 5) -> str:
     return f"{text} and {rest} more" if rest > 0 else text
 
 
+def _any_of(names: List[str], limit: int = 4) -> str:
+    """"A, B, C or D" (+ "and N more alternatives") — the alternatives of a missing requirement group."""
+    shown = names[:limit]
+    text = ", ".join(shown[:-1]) + (" or " if len(shown) > 1 else "") + shown[-1] if shown else ""
+    rest = len(names) - len(shown)
+    return f"{text} (and {rest} more alternatives)" if rest > 0 else text
+
+
 def _from(source: Optional[str]) -> str:
     return SOURCE_LABELS.get(source or "", "your profile")
 
@@ -197,7 +227,9 @@ def explain(result: dict) -> List[str]:
     if matched:
         by_source: Dict[str, List[str]] = {}
         for r in matched:
-            by_source.setdefault(_from(r["via"].get("source")), []).append(r["name"])
+            # A group held through one of its alternatives names the skill and the ability it shows.
+            shown = f"{r['via']['name']} (shows: {r['group']['phrase']})" if r["via"].get("group") else r["name"]
+            by_source.setdefault(_from(r["via"].get("source")), []).append(shown)
         parts = [f"{_join(names)} (from {label})" for label, names in by_source.items()]
         lines.append("You already have " + "; ".join(parts) + ".")
     if related:
@@ -205,7 +237,9 @@ def explain(result: dict) -> List[str]:
         more = f" and {len(related) - 4} more" if len(related) > 4 else ""
         lines.append("Related skills count half: " + ", ".join(pairs) + more + ".")
     if missing:
-        lines.append(f"To close the gap, learn {_join([r['name'] for r in missing])}.")
+        names = [f"one of {_any_of(r['group']['alternatives'])} (for {r['group']['phrase']})" if r.get("group") else r["name"]
+                 for r in missing]
+        lines.append(f"To close the gap, learn {_join(names)}.")
     else:
         lines.append("You have or are close to every key skill for this role.")
     if result["source"] == "esco":
