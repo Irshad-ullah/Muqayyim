@@ -1,0 +1,41 @@
+{
+  "_comment": "Module 5.1 (role-aware phrase mapping, sandbox): 6 NEW sanity profiles, written and committed BEFORE the mapping evaluation (2026-10-17). Same format as profiles.json; acceptable = exact active role titles. The chef control and its rule stay in profiles.json (unchanged). Not used by the production evaluation (run_eval.py reads profiles.json only).",
+  "profiles": [
+    {
+      "id": "cloud",
+      "label": "Cloud engineer",
+      "skills": ["AWS", "Microsoft Azure", "Terraform", "Docker", "Kubernetes", "Linux", "Python", "Bash", "Ansible", "Git"],
+      "acceptable": ["cloud engineer", "cloud DevOps engineer", "cloud architect", "cloud software developer"]
+    },
+    {
+      "id": "android",
+      "label": "Android developer",
+      "skills": ["Kotlin", "Java", "Android Studio", "Android SDK", "Jetpack Compose", "Firebase", "SQLite", "Retrofit", "Git"],
+      "acceptable": ["mobile application developer", "industrial mobile devices software developer", "Software Developers", "software developer"]
+    },
+    {
+      "id": "data_eng",
+      "label": "Data engineer",
+      "skills": ["Python", "SQL", "Apache Spark", "Apache Airflow", "Apache Kafka", "PostgreSQL", "Snowflake", "dbt", "Hadoop", "Docker", "AWS"],
+      "acceptable": ["data engineer", "Data Warehousing Specialists", "data warehouse designer", "database developer"]
+    },
+    {
+      "id": "security",
+      "label": "Security analyst",
+      "skills": ["Wireshark", "Splunk", "Nmap", "Metasploit", "Burp Suite", "SIEM", "Kali Linux", "Linux", "Python", "Firewalls", "Incident Response"],
+      "acceptable": ["Information Security Analysts", "ICT security administrator", "cyber incident responder", "ICT security technician"]
+    },
+    {
+      "id": "gamedev",
+      "label": "Game developer",
+      "skills": ["Unity", "C#", "Unreal Engine", "C++", "Blender", "Godot", "OpenGL", "Git", "Visual Studio"],
+      "acceptable": ["digital games developer", "Video Game Designers", "digital games designer"]
+    },
+    {
+      "id": "it_support",
+      "label": "IT support",
+      "skills": ["Windows", "Active Directory", "Microsoft Office", "macOS", "ServiceNow", "ITIL", "TCP/IP", "Hardware Troubleshooting", "Network Troubleshooting", "Computer Networking"],
+      "acceptable": ["Computer User Support Specialists", "ICT help desk agent", "ICT technician", "Computer Network Support Specialists"]
+    }
+  ]
+}
