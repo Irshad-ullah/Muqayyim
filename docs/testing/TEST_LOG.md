@@ -59,7 +59,8 @@ GW = API Gateway Jest, FE node = frontend `node --test`, FE Vitest = frontend Vi
 | Deactivation reason fix | `f0efb58` | 96 (3 files) ² | n/r | n/r | n/r | n/r | n/r | recorded |
 | Module 5 Part 2 (API) | `ef001ec` | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 31 | 70 | automatic |
 | Module 5 Part 3 (Career Matching page) | `4b59b36` | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
-| Module 5 Part 4 (evaluation, doc) | Part 4 commit | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
+| Module 5 Part 4 (evaluation, doc) | `efd8990` | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
+| 12 Part 1 (shared LLM client) | Part 1 commit | 573 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
 
 ¹ From the "Before" column of the 08 change note. ² The 09a2 note records React ↔ Python and Redux ↔ Redis as
 strict xfails in the slow test but gives no run count for this commit.
@@ -775,3 +776,48 @@ changed; nothing adopted) · report `results/report.md`
   (peak 2,063 MB; re-measured separately after a ctypes bug gave 0 in the main run). 77 phrases have a candidate ≥ 0.8.
 - **C.** 147-pair calibration set exported blind (no scores) for labelling; stopped here as briefed.
 - **Automated tests:** none run (no production code changed).
+
+## 12 Part 1 — Shared LLM client (recorded)
+
+**Date:** 2026-10-17 · commit: "12 Part 1" (see `git log`) · note: `docs/changes/12-llm-integration.md`
+
+**What was built:** `AIServices/backend/app/services/llm/` — one provider-agnostic client (`generate_text`,
+`generate_json`) with a Gemini REST adapter and a fake adapter; settings `LLM_*` (placeholders in `.env.example`; LLM
+off by default); timeouts, retries on 429 / 5xx with backoff, a global limiter at 80 % of the project's limits shared
+through ai_db, a per-user daily quota (Pacific day), a 7-day cache of identical requests, JSON validation with one
+corrective retry, data minimisation, delimited data blocks against prompt injection, versioned prompt files, usage
+records without content, internal routes (`/internal/llm/status`, `/usage`, `/user-data`). No feature uses it yet.
+
+**Limits used:** the project's numbers were not supplied (`RPM = __, TPM = __, RPD = __`); defaults RPM 5, TPM 100,000,
+RPD 100 → effective 4 / 80,000 / 80; quota 20 per user per day.
+
+**Automated tests** (run 2026-10-17 10:31, all PASS): AI **573 passed, 1 skipped** (+32; deselected 4 slow + 1
+`llm_live`); AI slow 2 + 2 xfailed; Core 263; Gateway 67; frontend 36 + 88.
+- AI `tests/test_llm.py` (32) — disabled fallback (and recorded); provider selection by settings (no key → off); the
+  default client in tests is disabled; success + usage record + cache (a hit costs no provider call and no quota; never
+  another user's output); usage summary per feature; per-user quota; global RPM at 80 % with roll-back of refused calls;
+  daily and token limits; **concurrent calls cannot overshoot the limit**; retries on 503 / 429 honouring the provider's
+  delay; no retry on other errors; timeout not retried; retries exhausted; a long retry delay reported, not slept;
+  invalid JSON → corrective retry; wrong shape → retry; invalid twice → clean failure, not cached; **contact details
+  (name, e-mail, phone, address, links, photo) never appear in the outgoing request** while the task's facts do;
+  **prompt-injection text stays inside its data block** (spoofed delimiters defused, never in the system instruction);
+  logs hold no prompt, response or user id; **consent withdrawal deletes only that user's cached outputs**; the Pacific
+  day around both DST changes; the Gemini adapter's request, response and errors (MockTransport, no network); tests cannot
+  reach the real provider; the internal routes (key required, never the API key in the output).
+- `tests/test_llm_live.py` (1, marker `llm_live`, excluded by default) — one smoke call with the real key (not run).
+
+**Problems found by testing (fixed before commit):**
+- **PyMongo debug logging wrote cached outputs:** with the root logger at DEBUG, PyMongo's command log contained the
+  cache document (the model's answer). The service logs at INFO, but one debug switch would have written CV text from
+  every collection; `app/config/logging_setup.py` now pins the PyMongo loggers to WARNING; the log test runs with the
+  service's logging setup at DEBUG.
+- **False refusals under concurrency:** two requests creating the same new limit counter at the same moment — the
+  second insert hit a duplicate key, which was read as "counter full", so only 3 of 4 allowed calls went through (an
+  intermittent test failure, 3 of 8 runs). On a duplicate key the counter is now re-checked with a plain conditional
+  update; 12 of 12 repeated runs passed. (A fixed clock was also added so limit tests cannot cross a minute boundary.)
+- Found while writing (no test needed to fail): the startup log block had been inserted inside the database setup so
+  that the taxonomy crash recovery became its `else` branch — moved before that block; data minimisation first blocked
+  a plain `name` key (which would have dropped project names) and treated "2019-2023" as a phone number and "ASP.NET" /
+  "socket.io" as links — narrowed (personal objects and name variants only; ≥ 10 digits; lower-case domains).
+
+**Manual checks:** none (no key used; the live check comes with Part 2).

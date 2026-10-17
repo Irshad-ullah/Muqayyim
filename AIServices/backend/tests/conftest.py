@@ -51,3 +51,29 @@ def fake_embedder(request, monkeypatch):
     model_module.use_embedder(fake)
     yield fake
     model_module.use_embedder(None)
+
+
+@pytest.fixture(autouse=True)
+def llm_never_calls_the_real_provider(request, monkeypatch):
+    """12: no test may reach the real LLM API except the opt-in `llm_live` ones. Every other test
+    starts with the LLM client reset (features see it disabled unless the test installs a client
+    with the fake provider), and the Gemini adapter fails loudly if anything tries to use it."""
+    from app.services.llm import client as llm_client
+    from app.services.llm.providers import gemini
+
+    if request.node.get_closest_marker("llm_live"):
+        yield
+        return
+
+    real_generate = gemini.GeminiProvider.generate
+
+    async def guarded(self, request_, timeout_s):
+        # An adapter test injects an httpx client with a MockTransport (no network): allowed.
+        if self._client is None or not isinstance(getattr(self._client, "_transport", None), __import__("httpx").MockTransport):
+            raise AssertionError("Tests must not call the real LLM provider (use FakeProvider, or mark the test llm_live).")
+        return await real_generate(self, request_, timeout_s)
+
+    monkeypatch.setattr(gemini.GeminiProvider, "generate", guarded)
+    llm_client.use_llm_client(llm_client.LLMClient(None))  # disabled unless a test installs its own
+    yield
+    llm_client.use_llm_client(None)

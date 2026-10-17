@@ -14,6 +14,7 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config.settings import settings
+from app.config.logging_setup import configure_logging
 from app.config.database import connect_to_mongo, close_mongo_connection
 from app.routes.cv_routes import router as cv_router
 from app.routes.internal_routes import router as internal_router
@@ -27,6 +28,7 @@ from app.routes.internal_logs_routes import router as internal_logs_router
 from app.routes.profession_routes import router as profession_router
 from app.routes.taxonomy_routes import router as taxonomy_router
 from app.routes.matching_routes import router as matching_router
+from app.routes.llm_routes import router as llm_router
 from app.services.taxonomy.heartbeat import run_heartbeat
 from app.services.taxonomy.jobs import ensure_job_indexes
 from app.services.taxonomy.publishing import ensure_restore_indexes, recover as recover_taxonomy_jobs, run_recovery
@@ -34,6 +36,7 @@ from app.services.taxonomy.snapshots import ensure_snapshot_indexes
 from app.services.taxonomy.uploads import run_cleanup
 from app.services.taxonomy.pipeline import ensure_diff_indexes
 from app.services.matching.service import ensure_matching_indexes
+from app.services.llm.client import ensure_llm_indexes, get_llm_client
 from app.config.database import get_database
 from app.services.professions.imports import refresh_esco_descriptions
 from app.services.professions.role_index import get_role_index
@@ -41,11 +44,8 @@ from app.services.professions.role_skills import professions_health
 from app.services.professions.store import ensure_profession_indexes
 from app.services.error_logger import is_db_connection_error, log_error, request_context
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+# Configure logging (PyMongo's command logging is kept quiet: it would write CV / profile data)
+configure_logging(logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -78,6 +78,15 @@ async def lifespan(app: FastAPI):
             asyncio.create_task(run_worker(manager.ready_event, settings.EMBEDDING_WORKER_INTERVAL_SECONDS)),
         ]
 
+    # LLM (12): report the state once; the key is never logged.
+    llm = get_llm_client().status()  # never logs the key
+    if llm["enabled"]:
+        logger.info("LLM enabled: provider=%s model=%s", llm["provider"], llm["model"])
+    elif settings.LLM_ENABLED:
+        logger.warning("LLM_ENABLED is true but no API key is set for provider %s; AI features are off", settings.LLM_PROVIDER)
+    else:
+        logger.info("LLM disabled (LLM_ENABLED=false); AI features degrade gracefully")
+
     # Professions (09b): indexes, optional ESCO descriptions, then the role-skill
     # FAISS index — loaded from disk if still valid, else rebuilt in the background.
     db = get_database()
@@ -93,6 +102,10 @@ async def lifespan(app: FastAPI):
             await ensure_matching_indexes(db)  # Module 5: one cached career-match list per user
         except Exception as exc:  # noqa: BLE001 — the API still starts
             logger.error("Career matching setup failed: %s", type(exc).__name__)
+        try:
+            await ensure_llm_indexes(db)  # 12: llm_limits / llm_cache / llm_usage
+        except Exception as exc:  # noqa: BLE001 — the API still starts
+            logger.error("LLM setup failed: %s", type(exc).__name__)
         # Admin taxonomy jobs (09c): no job step can still be running in a new process.
         try:
             await ensure_job_indexes(db)
@@ -211,6 +224,7 @@ app.include_router(internal_logs_router)  # admin log view, via CoreServices
 app.include_router(profession_router)  # Module 10 FE-4 professions + role-skill index, via CoreServices
 app.include_router(taxonomy_router)  # Module 10 FE-4 / FR12.5 admin taxonomy jobs, via CoreServices
 app.include_router(matching_router)  # Module 5 career matching, via CoreServices
+app.include_router(llm_router)  # 12: LLM status, usage, user-data deletion, via CoreServices
 
 
 # Root endpoint

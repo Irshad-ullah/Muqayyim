@@ -115,6 +115,25 @@ class Settings(BaseSettings):
     # Error-log retention (TTL index on error_logs.timestamp), in days.
     LOG_RETENTION_DAYS: int = int(os.getenv("LOG_RETENTION_DAYS", "30"))
 
+    # ── LLM (12): one shared client in AIServices (app/services/llm). The key is never logged. ──
+    # Off unless enabled AND (for a real provider) a key is set; features then degrade gracefully.
+    LLM_ENABLED: bool = os.getenv("LLM_ENABLED", "false").lower() == "true"
+    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "gemini")  # gemini | fake
+    LLM_MODEL: str = os.getenv("LLM_MODEL", "gemini-3.5-flash-lite")  # or gemini-3.8-flash
+    LLM_API_KEY: str = os.getenv("LLM_API_KEY", "")
+    LLM_BASE_URL: str = os.getenv("LLM_BASE_URL", "https://generativelanguage.googleapis.com/v1beta")
+    LLM_TIMEOUT_S: float = float(os.getenv("LLM_TIMEOUT_S", "15"))  # PER-3: AI content within 15 s
+    LLM_MAX_OUTPUT_TOKENS: int = int(os.getenv("LLM_MAX_OUTPUT_TOKENS", "1024"))
+    LLM_MAX_RETRIES: int = int(os.getenv("LLM_MAX_RETRIES", "2"))  # on 429 / 5xx only
+    # The provider's limits for this project (Google applies them per project; daily reset at midnight
+    # Pacific). The global limiter allows LLM_LIMIT_FRACTION of them.
+    LLM_RPM: int = int(os.getenv("LLM_RPM", "5"))
+    LLM_TPM: int = int(os.getenv("LLM_TPM", "100000"))
+    LLM_RPD: int = int(os.getenv("LLM_RPD", "100"))
+    LLM_LIMIT_FRACTION: float = float(os.getenv("LLM_LIMIT_FRACTION", "0.8"))
+    LLM_USER_DAILY_QUOTA: int = int(os.getenv("LLM_USER_DAILY_QUOTA", "20"))
+    LLM_CACHE_TTL_DAYS: int = int(os.getenv("LLM_CACHE_TTL_DAYS", "7"))
+
     # CORS Configuration
     # Include both localhost and 127.0.0.1 since dev servers may use either.
     CORS_ORIGINS: list = [

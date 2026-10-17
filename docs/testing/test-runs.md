@@ -197,3 +197,18 @@ Result: **PASS** · total time 419 s
 | Frontend node --test + Vitest | ✅ 124 passed (36 node + 88 Vitest), 0 failed | 52.2 s | `node --test: pass 36, fail 0 (0.2s) \| Vitest: 88 passed (88) (52.0s)` |
 
 Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).
+
+## 2026-10-17 10:31 Pakistan Standard Time · `8ef709a` (main, 11 uncommitted change(s))
+
+Commit: Module 5.1 sandbox: ESCO phrase mapping, steps A-C (nothing adopted)  
+Result: **PASS** · total time 401 s
+
+| Suite | Result | Duration | Summary line |
+|---|---|---|---|
+| AIServices pytest | ✅ 573 passed, 0 failed, 1 skipped, 5 deselected | 150.8 s | `573 passed, 1 skipped, 5 deselected in 150.84s (0:02:30)` |
+| AIServices pytest -m slow (real model) | ✅ 2 passed, 0 failed, 2 xfailed, 575 deselected | 60.3 s | `2 passed, 575 deselected, 2 xfailed in 60.27s (0:01:00)` |
+| CoreServices Jest | ✅ 263 passed, 0 failed | 86.6 s | `Tests: 263 passed, 263 total \| Test Suites: 21 passed, 21 total` |
+| API Gateway Jest | ✅ 67 passed, 0 failed | 11.0 s | `Tests: 67 passed, 67 total \| Test Suites: 10 passed, 10 total` |
+| Frontend node --test + Vitest | ✅ 124 passed (36 node + 88 Vitest), 0 failed | 52.4 s | `node --test: pass 36, fail 0 (0.2s) \| Vitest: 88 passed (88) (52.1s)` |
+
+Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).

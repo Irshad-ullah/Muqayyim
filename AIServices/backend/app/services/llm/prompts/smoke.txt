@@ -1,0 +1,3 @@
+# version: 1
+# Connectivity smoke test (the opt-in llm_live tests and the admin status check). No user data.
+Reply with a JSON object {"ok": true, "word": "<one English word for the colour of a clear daytime sky>"}.

@@ -117,6 +117,23 @@ properties with no single SRS id.
 | Lock shows its holder; restore list includes the snapshot's own edit; edit snapshots name the edit; publisher named; profession categories for the edit form | AI `test_taxonomy_jobs.py::test_lock_shows_who_holds_it`, `test_taxonomy_edits.py::test_restore_dialog_lists_every_edit_it_undoes`, `::test_edit_routes`, `test_taxonomy_publish.py` (routes) | integration | pass |
 | Admin UI, browser walkthrough (upload → validate → preview → cancel, override + reset, non-seed skill edit + restore, 409 and 422 cases, 100 MB client check) | 9c Part 8 checklist (TEST_LOG) | manual | 2026-10-16, 16/16 passed |
 
+## LLM integration (12)
+
+| Requirement | Tests | Type | Status |
+|---|---|---|---|
+| SI-3 one shared, provider-agnostic LLM client; disabled fallback; provider from settings | AI `test_llm.py::test_disabled_…`, `::test_build_provider_…`, `::test_the_default_client_in_tests_is_disabled` | unit | pass |
+| Reliability: timeout (not retried), retries on 429 / 5xx with backoff and the provider's delay, clean failures | AI `test_llm.py::test_retries_…`, `::test_no_retry_…`, `::test_timeout_…`, `::test_retries_exhausted`, `::test_a_long_provider_retry_delay_…` | unit | pass |
+| Global rate limiter (80 % of the project's RPM / TPM / RPD, Pacific day) and per-user daily quota; no overshoot under concurrency | AI `test_llm.py::test_per_user_daily_quota`, `::test_global_rpm_…`, `::test_daily_and_token_limits`, `::test_concurrent_calls_…`, `::test_pacific_day`, `::test_seconds_to_pacific_midnight` | integration | pass |
+| Cache of identical requests (per user, 7 days); usage records and summary | AI `test_llm.py::test_text_call_is_recorded_…`, `::test_usage_summary_per_feature` | integration | pass |
+| Structured output: JSON validated, one corrective retry, clean failure | AI `test_llm.py::test_invalid_json_…`, `::test_wrong_shape_then_valid`, `::test_invalid_twice_…` | unit | pass |
+| **security / privacy** — no name, e-mail, phone, address, links or photo in the outgoing request | AI `test_llm.py::test_contact_details_never_leave_the_service` | unit | pass |
+| **security** — prompt injection contained in delimited data blocks | AI `test_llm.py::test_prompt_injection_stays_inside_the_data_section` | unit | pass |
+| **privacy** — consent withdrawal / account deletion deletes the user's cached outputs | AI `test_llm.py::test_consent_withdrawal_deletes_…`, `::test_status_usage_and_user_data_routes` | integration | pass |
+| **privacy** — logs hold no prompts, responses or user ids (PyMongo command logging kept quiet) | AI `test_llm.py::test_logs_hold_no_prompt_response_or_user_id` | unit | pass |
+| Gemini adapter request / response / errors (no network); tests cannot reach the real API | AI `test_llm.py::test_gemini_…`, `::test_tests_cannot_reach_the_real_provider` | unit | pass |
+| Internal routes (status without the key, usage, user-data) | AI `test_llm.py::test_status_usage_and_user_data_routes` | integration | pass |
+| Live provider smoke (opt-in) | AI `test_llm_live.py` (`-m llm_live`) | integration (real API) | not run (opt-in) |
+
 ## Gateway and cross-cutting
 
 | Requirement | Tests | Type | Status |
