@@ -1,0 +1,85 @@
+{
+  "_comment": "Module 5.2 (sandbox): the 10 fictional test CVs in test-cvs/ as profiles, written BEFORE any evaluation run (2026-10-17). skills = the items of each CV's Skills section (DOCX), cleaned mechanically: category labels removed ('Languages:', 'Tools:' ...), lists split on commas and ' / ', qualifiers dropped ('(basic)', '19c', 'basic Azure' -> 'Azure'), 'Amazon Web Services (EC2, S3, IAM, RDS, EKS)' expanded to the listed services, 'Splunk (SIEM)' -> 'Splunk', 'SIEM', 'web accessibility (WCAG)' -> 'web accessibility', 'WCAG'. expected = the CV's expected top-match family, acceptable = expected + 'also acceptable in top 5' (EXPECTED_MATCHES.md), each as exact role titles: acceptable_a for setup A (O*NET + ESCO), acceptable_b for setup B (O*NET + curated roles). The title lists are fixed in ../curated_roles/expectations.md.",
+  "profiles": [
+    {
+      "id": "cv01_frontend", "label": "CV 01 Frontend developer",
+      "skills": ["JavaScript", "TypeScript", "HTML5", "CSS3", "React", "Next.js", "Redux", "Tailwind CSS", "Bootstrap", "Git", "Webpack", "Vite", "Jest", "React Testing Library", "Figma", "npm", "REST APIs", "responsive design", "web accessibility", "WCAG", "performance optimisation"],
+      "expected_a": ["Web Developers", "web developer", "user interface developer"],
+      "expected_b": ["Web Developers", "Frontend Developer", "Full-Stack Developer"],
+      "acceptable_a": ["Web Developers", "web developer", "user interface developer", "Web and Digital Interface Designers", "web designer", "Software Developers", "software developer"],
+      "acceptable_b": ["Web Developers", "Frontend Developer", "Full-Stack Developer", "Web and Digital Interface Designers", "Software Developers"]
+    },
+    {
+      "id": "cv02_backend_java", "label": "CV 02 Backend developer (Java)",
+      "skills": ["Java", "SQL", "Kotlin", "Spring Boot", "Spring Security", "Hibernate", "JPA", "PostgreSQL", "MySQL", "Redis", "Apache Kafka", "Maven", "JUnit", "Mockito", "Docker", "Git", "Jenkins", "Postman", "Microservices architecture", "RESTful API design", "OAuth 2.0", "unit testing"],
+      "expected_a": ["Software Developers", "software developer", "Computer Programmers"],
+      "expected_b": ["Software Developers", "Backend Developer", "Computer Programmers"],
+      "acceptable_a": ["Software Developers", "software developer", "Computer Programmers", "Web Developers", "web developer", "Computer Systems Analysts", "ICT system analyst"],
+      "acceptable_b": ["Software Developers", "Backend Developer", "Computer Programmers", "Web Developers", "Full-Stack Developer", "Computer Systems Analysts"]
+    },
+    {
+      "id": "cv03_data_scientist", "label": "CV 03 Data scientist",
+      "skills": ["Python", "SQL", "R", "scikit-learn", "TensorFlow", "PyTorch", "XGBoost", "natural language processing", "pandas", "NumPy", "Matplotlib", "Seaborn", "Tableau", "Jupyter", "Statistics", "hypothesis testing", "A/B testing", "feature engineering", "data visualization"],
+      "expected_a": ["Data Scientists", "data scientist"],
+      "expected_b": ["Data Scientists"],
+      "acceptable_a": ["Data Scientists", "data scientist", "data analyst", "artificial intelligence engineer"],
+      "acceptable_b": ["Data Scientists", "Data Analyst", "Machine Learning Engineer", "AI Engineer (LLM Applications)"]
+    },
+    {
+      "id": "cv04_devops", "label": "CV 04 DevOps engineer",
+      "skills": ["AWS", "Amazon EC2", "Amazon S3", "AWS IAM", "Amazon RDS", "Amazon EKS", "Azure", "Docker", "Kubernetes", "Helm", "Terraform", "Ansible", "Jenkins", "GitHub Actions", "Prometheus", "Grafana", "ELK Stack", "Linux administration", "Bash", "Python", "Nginx", "Git"],
+      "expected_a": ["cloud DevOps engineer", "cloud engineer"],
+      "expected_b": ["DevOps Engineer", "Cloud Engineer", "Site Reliability Engineer"],
+      "acceptable_a": ["cloud DevOps engineer", "cloud engineer", "Network and Computer Systems Administrators", "ICT system administrator", "cloud architect", "Computer Network Architects", "Computer Systems Engineers/Architects"],
+      "acceptable_b": ["DevOps Engineer", "Cloud Engineer", "Site Reliability Engineer", "Network and Computer Systems Administrators", "Computer Network Architects", "Computer Systems Engineers/Architects"]
+    },
+    {
+      "id": "cv05_android", "label": "CV 05 Android developer",
+      "skills": ["Kotlin", "Java", "Dart", "Android SDK", "Jetpack Compose", "MVVM", "Room", "Retrofit", "Coroutines", "Hilt", "Flutter", "Android Studio", "Firebase", "Git", "Gradle", "Google Play Console", "REST APIs", "push notifications", "offline storage", "unit testing"],
+      "expected_a": ["mobile application developer", "industrial mobile devices software developer"],
+      "expected_b": ["Android Developer", "Cross-Platform Mobile Developer"],
+      "acceptable_a": ["mobile application developer", "industrial mobile devices software developer", "Software Developers", "software developer", "ICT application developer"],
+      "acceptable_b": ["Android Developer", "Cross-Platform Mobile Developer", "Software Developers"]
+    },
+    {
+      "id": "cv06_security", "label": "CV 06 Information security analyst",
+      "skills": ["Vulnerability assessment", "penetration testing", "incident response", "threat analysis", "OWASP Top 10", "Splunk", "SIEM", "Wireshark", "Nmap", "Burp Suite", "Nessus", "Kali Linux", "TCP/IP", "firewalls", "IDS/IPS", "VPN", "ISO/IEC 27001", "NIST Cybersecurity Framework", "Python", "Linux", "security awareness training"],
+      "expected_a": ["Information Security Analysts"],
+      "expected_b": ["Information Security Analysts"],
+      "acceptable_a": ["Information Security Analysts", "Penetration Testers", "ethical hacker", "ICT security administrator", "ICT security technician", "cyber incident responder", "Network and Computer Systems Administrators", "ICT network administrator"],
+      "acceptable_b": ["Information Security Analysts", "Penetration Testers", "Network and Computer Systems Administrators"]
+    },
+    {
+      "id": "cv07_dba", "label": "CV 07 Database administrator",
+      "skills": ["Oracle Database", "Microsoft SQL Server", "PostgreSQL", "MySQL", "MongoDB", "SQL", "PL/SQL", "T-SQL", "shell scripting", "Backup and recovery", "RMAN", "replication", "Always On availability groups", "indexing", "query optimisation", "Linux", "database security", "capacity planning", "data migration"],
+      "expected_a": ["Database Administrators", "database administrator"],
+      "expected_b": ["Database Administrators"],
+      "acceptable_a": ["Database Administrators", "database administrator", "Database Architects", "database designer", "data engineer"],
+      "acceptable_b": ["Database Administrators", "Database Architects", "Data Engineer"]
+    },
+    {
+      "id": "cv08_qa", "label": "CV 08 QA automation engineer",
+      "skills": ["Selenium WebDriver", "Cypress", "TestNG", "JUnit", "Postman", "REST Assured", "Apache JMeter", "Java", "JavaScript", "Python", "SQL", "Test planning", "test case design", "regression testing", "bug tracking", "Agile", "Scrum", "Jira", "Jenkins", "Git", "TestRail"],
+      "expected_a": ["Software Quality Assurance Analysts and Testers", "software tester", "ICT test analyst", "ICT system tester", "ICT integration tester"],
+      "expected_b": ["Software Quality Assurance Analysts and Testers"],
+      "acceptable_a": ["Software Quality Assurance Analysts and Testers", "software tester", "ICT test analyst", "ICT system tester", "ICT integration tester", "Software Developers", "software developer"],
+      "acceptable_b": ["Software Quality Assurance Analysts and Testers", "Software Developers"]
+    },
+    {
+      "id": "cv09_uiux", "label": "CV 09 UI/UX designer",
+      "skills": ["User interface design", "user experience design", "wireframing", "prototyping", "design systems", "interaction design", "User research", "usability testing", "user interviews", "personas", "journey mapping", "Figma", "Adobe XD", "Sketch", "Adobe Photoshop", "Adobe Illustrator", "Miro", "HTML", "CSS", "accessibility", "information architecture"],
+      "expected_a": ["user interface designer", "user experience analyst", "Web and Digital Interface Designers"],
+      "expected_b": ["UI/UX Designer", "Web and Digital Interface Designers"],
+      "acceptable_a": ["user interface designer", "user experience analyst", "Web and Digital Interface Designers", "web designer", "graphic designer", "user interface developer", "Web Developers"],
+      "acceptable_b": ["UI/UX Designer", "Web and Digital Interface Designers", "Frontend Developer", "Web Developers"]
+    },
+    {
+      "id": "cv10_network", "label": "CV 10 Network / systems administrator",
+      "skills": ["Cisco IOS", "routing and switching", "TCP/IP", "VLANs", "OSPF", "BGP", "VPN", "Wi-Fi", "Windows Server", "Active Directory", "Group Policy", "DNS", "DHCP", "VMware vSphere", "FortiGate firewalls", "network monitoring", "access control", "PowerShell", "Zabbix", "SolarWinds", "ticketing systems", "IT support", "hardware troubleshooting", "documentation"],
+      "expected_a": ["Network and Computer Systems Administrators", "ICT network administrator", "ICT system administrator"],
+      "expected_b": ["Network and Computer Systems Administrators"],
+      "acceptable_a": ["Network and Computer Systems Administrators", "ICT network administrator", "ICT system administrator", "ICT network engineer", "Computer Network Architects", "Computer Network Support Specialists", "Computer User Support Specialists", "ICT technician", "Information Security Analysts"],
+      "acceptable_b": ["Network and Computer Systems Administrators", "Computer Network Architects", "Computer Network Support Specialists", "Computer User Support Specialists", "Information Security Analysts"]
+    }
+  ]
+}
