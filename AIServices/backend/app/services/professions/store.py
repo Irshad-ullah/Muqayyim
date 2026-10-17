@@ -5,7 +5,9 @@ Profession database: ai_db.professions (Module 5 FE-2, Module 10 FE-4).
     title, alt_titles[], description, category,
     source ('onet' | 'esco' | 'manual'), source_code, source_version,
     skills: [{ name, key, type: 'essential' | 'optional' | 'technology',
-               hot, in_demand, original_label, element_name? }],
+               hot, in_demand, original_label, element_name?, uri? (ESCO skill URI),
+               ESCO requirement group (Module 5.1, esco_role_map.py): source: 'role_map', label,
+               alternatives: [{name, key}], phrase, phrase_uri }],
     active, inactive_reason, created_at, updated_at }
 
 Role skills are de-duplicated by canonical key, keeping the strongest type:
@@ -56,7 +58,7 @@ def skill_rank(skill: dict) -> int:
 
 
 def make_skill(name: str, skill_type: str, original_label: str, hot: bool = False,
-               in_demand: bool = False, element_name: Optional[str] = None) -> Optional[dict]:
+               in_demand: bool = False, element_name: Optional[str] = None, uri: Optional[str] = None) -> Optional[dict]:
     key, canonical = normalise_skill(name)
     if not key:
         return None
@@ -70,6 +72,8 @@ def make_skill(name: str, skill_type: str, original_label: str, hot: bool = Fals
     }
     if element_name:
         skill["element_name"] = element_name
+    if uri:
+        skill["uri"] = uri
     return skill
 
 
