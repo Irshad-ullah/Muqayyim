@@ -26,7 +26,7 @@ architect, blockchain engineer, data scientist, technical writer, BI analyst (O*
 | S | Stack Overflow Developer Survey 2025, professional developers | technology used by >= 10% |
 | P | Qureos, "Most In-Demand Tech Jobs in Pakistan" | skill listed for that role |
 | C | official certification or curriculum | AZ-400 (Microsoft), Professional ML Engineer v4.0 (Google Cloud), Google UX Design and Google Data Analytics certificates, Apple Develop in Swift, Google SRE book |
-| O | O*NET technology skills of the related occupation | **not yet applied**: computed locally from `software_skills.csv` |
+| O | O*NET technology skills of the related occupation | computed locally from `software_skills.csv`; **applied 2026-10-17** (`eval/curated_roles/add_onet_evidence.py`) |
 
 **Rule:** a requirement is `essential` when it has evidence from >= 2 different source types, otherwise `optional`.
 Skills with no evidence at all were removed (e.g. Git for WordPress/Game Developer, Figma for Product Manager).

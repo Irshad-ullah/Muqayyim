@@ -1,0 +1,104 @@
+role,requirement,evidence_before,evidence_after,importance_before,importance_after,onet_labels
+Frontend Developer,HTML,R S,R S O,essential,essential,Hypertext markup language HTML
+Frontend Developer,CSS,R S,R S O,essential,essential,Cascading style sheets CSS
+Frontend Developer,JavaScript,R S,R S O,essential,essential,JavaScript
+Frontend Developer,TypeScript,R S,R S O,essential,essential,TypeScript
+Frontend Developer,React / Angular,R S,R S O,essential,essential,Google Angular; React
+Frontend Developer,Git,R,R O,optional,essential,Git
+Frontend Developer,Jest,R,R O,optional,essential,Jest
+Frontend Developer,REST APIs,R,R O,optional,essential,RESTful API
+Backend Developer,Python / Java / Node.js / Go,R S,R S O,essential,essential,Go; Node.js; Oracle Java; Python
+Backend Developer,SQL,R S,R S O,essential,essential,Structured query language SQL
+Backend Developer,PostgreSQL / MySQL / MongoDB,R S,R S O,essential,essential,MongoDB; MySQL; PostgreSQL
+Backend Developer,Redis,R S,R S O,essential,essential,Redis
+Backend Developer,REST APIs,R,R O,optional,essential,RESTful API
+Backend Developer,Docker,R S,R S O,essential,essential,Docker
+Backend Developer,Git,R,R O,optional,essential,Git
+Backend Developer,Unit testing,R,R O,optional,essential,Unit testing software
+Backend Developer,Apache Kafka,R,R O,optional,essential,Apache Kafka
+Full-Stack Developer,HTML,R S,R S O,essential,essential,Hypertext markup language HTML
+Full-Stack Developer,CSS,R S,R S O,essential,essential,Cascading style sheets CSS
+Full-Stack Developer,JavaScript,P R S,P R S O,essential,essential,JavaScript
+Full-Stack Developer,React,P R S,P R S O,essential,essential,React
+Full-Stack Developer,Node.js,P R S,P R S O,essential,essential,Node.js
+Full-Stack Developer,PostgreSQL / SQL,P R S,P R S O,essential,essential,PostgreSQL; Structured query language SQL
+Full-Stack Developer,Redis,R S,R S O,essential,essential,Redis
+Full-Stack Developer,REST APIs,R,R O,optional,essential,RESTful API
+Full-Stack Developer,Git,R,R O,optional,essential,Git
+Full-Stack Developer,Linux,R,R O,optional,essential,Linux; UNIX
+Full-Stack Developer,Amazon Web Services (AWS),R S,R S O,essential,essential,Amazon Web Services AWS software
+WordPress Developer,WordPress,R S,R S O,essential,essential,WordPress
+WordPress Developer,PHP,R S,R S O,essential,essential,PHP
+WordPress Developer,HTML,R S,R S O,essential,essential,Hypertext markup language HTML
+WordPress Developer,CSS,R S,R S O,essential,essential,Cascading style sheets CSS
+WordPress Developer,JavaScript,R S,R S O,essential,essential,JavaScript
+WordPress Developer,MySQL,R S,R S O,essential,essential,MySQL
+Android Developer,Kotlin / Java,P R S,P R S O,essential,essential,Kotlin; Oracle Java
+Android Developer,Gradle,R S,R S O,essential,essential,Gradle
+Android Developer,JUnit,R,R O,optional,essential,JUnit
+Android Developer,Git,R,R O,optional,essential,Git
+iOS Developer,Swift,C:APPLE P R,C:APPLE P R O,essential,essential,Swift
+iOS Developer,Xcode,C:APPLE R,C:APPLE R O,essential,essential,Xcode
+iOS Developer,Objective-C,R,R O,optional,essential,Objective C
+iOS Developer,Git,R,R O,optional,essential,Git
+Cross-Platform Mobile Developer,Flutter / React Native,P R,P R O,essential,essential,React Native
+Cross-Platform Mobile Developer,Dart / JavaScript,R S,R S O,essential,essential,JavaScript
+Cross-Platform Mobile Developer,REST APIs,R,R O,optional,essential,RESTful API
+Cross-Platform Mobile Developer,Git,R,R O,optional,essential,Git
+DevOps Engineer,Linux,R,R O,optional,essential,Linux; UNIX
+DevOps Engineer,Python / Bash,P R S,P R S O,essential,essential,Bash; Python
+DevOps Engineer,Git,C:AZ400 R,C:AZ400 R O,essential,essential,Git
+DevOps Engineer,Docker,R S,R S O,essential,essential,Docker
+DevOps Engineer,Ansible,R,R O,optional,essential,Ansible software
+DevOps Engineer,Amazon Web Services (AWS),R S,R S O,essential,essential,Amazon Web Services AWS software
+Cloud Engineer,Amazon Web Services (AWS) / Microsoft Azure / Google Cloud,P R S,P R S O,essential,essential,Amazon Web Services AWS software; Microsoft Azure software
+Cloud Engineer,Amazon EC2,R,R O,optional,essential,Amazon Elastic Compute Cloud EC2
+Cloud Engineer,Amazon S3,R,R O,optional,essential,Amazon Simple Storage Service S3
+Cloud Engineer,Terraform / AWS CloudFormation,R S,R S O,essential,essential,Amazon Web Services AWS CloudFormation; IBM Terraform
+Cloud Engineer,Docker,P R S,P R S O,essential,essential,Docker
+Cloud Engineer,Linux,R,R O,optional,essential,Linux; UNIX
+Cloud Engineer,Python,R S,R S O,essential,essential,Python
+Site Reliability Engineer,Linux,R,R O,optional,essential,Linux; UNIX
+Site Reliability Engineer,Python / Go,R S,R S O,essential,essential,Go; Python
+Site Reliability Engineer,Bash,R S,R S O,essential,essential,Bash
+Site Reliability Engineer,Docker,R S,R S O,essential,essential,Docker
+Site Reliability Engineer,Elastic Stack (ELK),R,R O,optional,essential,Elasticsearch
+DevSecOps Engineer,Docker,R S,R S O,essential,essential,Docker
+DevSecOps Engineer,Kubernetes,R S,R S O,essential,essential,Kubernetes
+DevSecOps Engineer,Nessus,R,R O,optional,essential,Tenable Nessus
+DevSecOps Engineer,Python,R S,R S O,essential,essential,Python
+DevSecOps Engineer,Bash,R S,R S O,essential,essential,Bash
+Data Engineer,Python,R S,R S O,essential,essential,Python
+Data Engineer,SQL,R S,R S O,essential,essential,Structured query language SQL
+Data Engineer,Apache Spark / Databricks,C:PMLE R,C:PMLE R O,essential,essential,Apache Spark
+Data Engineer,Apache Kafka,R,R O,optional,essential,Apache Kafka
+Data Engineer,Google BigQuery / Amazon Redshift / Snowflake,C:PMLE R,C:PMLE R O,essential,essential,Amazon Redshift
+Data Engineer,PostgreSQL,R S,R S O,essential,essential,PostgreSQL
+Data Analyst,SQL,C:GDA P S,C:GDA P S O,essential,essential,Structured query language SQL
+Data Analyst,Microsoft Excel,C:GDA R,C:GDA R O,essential,essential,Microsoft Excel
+Data Analyst,Python / R,C:GDA P R S,C:GDA P R S O,essential,essential,Python; R
+Data Analyst,Power BI / Tableau,C:GDA P R,C:GDA P R O,essential,essential,Microsoft Power BI; Tableau
+Machine Learning Engineer,Python,C:PMLE P R S,C:PMLE P R S O,essential,essential,Python
+Machine Learning Engineer,NumPy,R,R O,optional,essential,NumPy
+Machine Learning Engineer,pandas,R,R O,optional,essential,pandas
+Machine Learning Engineer,scikit-learn,C:PMLE R,C:PMLE R O,essential,essential,Scikit-learn
+Machine Learning Engineer,TensorFlow / PyTorch / Keras,C:PMLE P R,C:PMLE P R O,essential,essential,Keras; PyTorch; TensorFlow
+Machine Learning Engineer,XGBoost,C:PMLE R,C:PMLE R O,essential,essential,XGBoost
+Machine Learning Engineer,Jupyter,C:PMLE,C:PMLE O,optional,essential,Jupyter software
+Machine Learning Engineer,Docker,S,S O,optional,essential,Docker
+MLOps Engineer,Python,C:PMLE R S,C:PMLE R S O,essential,essential,Python
+MLOps Engineer,Docker,R S,R S O,essential,essential,Docker
+MLOps Engineer,Kubernetes,R S,R S O,essential,essential,Kubernetes
+MLOps Engineer,MLflow / Kubeflow,C:PMLE R,C:PMLE R O,essential,essential,Kubeflow; Mlflow
+MLOps Engineer,Apache Airflow,R,R O,optional,essential,Apache Airflow
+MLOps Engineer,Jenkins / GitHub Actions,C:PMLE R,C:PMLE R O,essential,essential,Jenkins CI
+MLOps Engineer,PyTorch / TensorFlow / scikit-learn,C:PMLE R,C:PMLE R O,essential,essential,PyTorch; Scikit-learn; TensorFlow
+MLOps Engineer,Apache Spark,C:PMLE R,C:PMLE R O,essential,essential,Apache Spark; PySpark
+MLOps Engineer,Git,R,R O,optional,essential,Git
+AI Engineer (LLM Applications),Python,P S,P S O,essential,essential,Python
+UI/UX Designer,Figma / Adobe XD / Sketch,C:GUX P R,C:GUX P R O,essential,essential,Adobe XD; Figma
+Product Manager (Software),Jira,R,R O,optional,essential,Atlassian JIRA
+Product Manager (Software),SQL,S,S O,optional,essential,Structured query language SQL
+Game Developer,Unity / Unreal Engine / Godot,R,R O,optional,essential,Unity Technologies Unity; Unreal Technology Unreal Engine
+Game Developer,C# / C++,R S,R S O,essential,essential,C#; C++
+Game Developer,OpenGL / Vulkan / DirectX,R,R O,optional,essential,Microsoft DirectX; OpenGL

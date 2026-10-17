@@ -32,7 +32,8 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "frontend:html"
@@ -40,6 +41,9 @@
           "importance": "essential",
           "any_of": [
             "HTML"
+          ],
+          "from_onet": [
+            "Hypertext markup language HTML"
           ]
         },
         {
@@ -47,7 +51,8 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "frontend:css"
@@ -55,6 +60,9 @@
           "importance": "essential",
           "any_of": [
             "CSS"
+          ],
+          "from_onet": [
+            "Cascading style sheets CSS"
           ]
         },
         {
@@ -62,13 +70,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "frontend:javascript"
           ],
           "importance": "essential",
           "any_of": [
+            "JavaScript"
+          ],
+          "from_onet": [
             "JavaScript"
           ]
         },
@@ -77,13 +89,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "frontend:type-checkers"
           ],
           "importance": "essential",
           "any_of": [
+            "TypeScript"
+          ],
+          "from_onet": [
             "TypeScript"
           ]
         },
@@ -96,13 +112,18 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "frontend:react",
             "frontend:angular"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Google Angular",
+            "React"
+          ]
         },
         {
           "skill": "Next.js",
@@ -168,13 +189,17 @@
           "skill": "Git",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "frontend:git"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Git"
+          ],
+          "from_onet": [
             "Git"
           ]
         },
@@ -182,13 +207,17 @@
           "skill": "Jest",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "frontend:jest"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Jest"
+          ],
+          "from_onet": [
             "Jest"
           ]
         },
@@ -224,14 +253,18 @@
           "skill": "REST APIs",
           "kind": "practice",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "frontend:web-apis"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "REST APIs"
+          ],
+          "from_onet": [
+            "RESTful API"
           ]
         }
       ]
@@ -257,7 +290,8 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "backend:python",
@@ -265,14 +299,21 @@
             "backend:javascript",
             "backend:go"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Go",
+            "Node.js",
+            "Oracle Java",
+            "Python"
+          ]
         },
         {
           "skill": "SQL",
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "backend:relational-databases"
@@ -280,6 +321,9 @@
           "importance": "essential",
           "any_of": [
             "SQL"
+          ],
+          "from_onet": [
+            "Structured query language SQL"
           ]
         },
         {
@@ -292,21 +336,28 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "backend:postgresql",
             "backend:mysql",
             "backend:mongodb"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "MongoDB",
+            "MySQL",
+            "PostgreSQL"
+          ]
         },
         {
           "skill": "Redis",
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "backend:redis"
@@ -314,20 +365,27 @@
           "importance": "essential",
           "any_of": [
             "Redis"
+          ],
+          "from_onet": [
+            "Redis"
           ]
         },
         {
           "skill": "REST APIs",
           "kind": "practice",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "backend:rest"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "REST APIs"
+          ],
+          "from_onet": [
+            "RESTful API"
           ]
         },
         {
@@ -349,7 +407,8 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "backend:lxc"
@@ -357,19 +416,26 @@
           "importance": "essential",
           "any_of": [
             "Docker"
+          ],
+          "from_onet": [
+            "Docker"
           ]
         },
         {
           "skill": "Git",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "backend:git"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Git"
+          ],
+          "from_onet": [
             "Git"
           ]
         },
@@ -377,27 +443,35 @@
           "skill": "Unit testing",
           "kind": "practice",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "backend:unit-testing"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Unit testing"
+          ],
+          "from_onet": [
+            "Unit testing software"
           ]
         },
         {
           "skill": "Apache Kafka",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "backend:kafka"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Apache Kafka"
+          ],
+          "from_onet": [
             "Apache Kafka"
           ]
         },
@@ -432,7 +506,8 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "full-stack:html"
@@ -440,6 +515,9 @@
           "importance": "essential",
           "any_of": [
             "HTML"
+          ],
+          "from_onet": [
+            "Hypertext markup language HTML"
           ]
         },
         {
@@ -447,7 +525,8 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "full-stack:css"
@@ -455,6 +534,9 @@
           "importance": "essential",
           "any_of": [
             "CSS"
+          ],
+          "from_onet": [
+            "Cascading style sheets CSS"
           ]
         },
         {
@@ -463,13 +545,17 @@
           "evidence": [
             "P",
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "full-stack:javascript"
           ],
           "importance": "essential",
           "any_of": [
+            "JavaScript"
+          ],
+          "from_onet": [
             "JavaScript"
           ]
         },
@@ -479,13 +565,17 @@
           "evidence": [
             "P",
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "full-stack:react"
           ],
           "importance": "essential",
           "any_of": [
+            "React"
+          ],
+          "from_onet": [
             "React"
           ]
         },
@@ -495,13 +585,17 @@
           "evidence": [
             "P",
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "full-stack:nodejs"
           ],
           "importance": "essential",
           "any_of": [
+            "Node.js"
+          ],
+          "from_onet": [
             "Node.js"
           ]
         },
@@ -530,19 +624,25 @@
           "evidence": [
             "P",
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "full-stack:postgresql"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "PostgreSQL",
+            "Structured query language SQL"
+          ]
         },
         {
           "skill": "Redis",
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "full-stack:redis"
@@ -550,20 +650,27 @@
           "importance": "essential",
           "any_of": [
             "Redis"
+          ],
+          "from_onet": [
+            "Redis"
           ]
         },
         {
           "skill": "REST APIs",
           "kind": "practice",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "full-stack:restful-apis"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "REST APIs"
+          ],
+          "from_onet": [
+            "RESTful API"
           ]
         },
         {
@@ -599,13 +706,17 @@
           "skill": "Git",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "full-stack:git"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Git"
+          ],
+          "from_onet": [
             "Git"
           ]
         },
@@ -627,14 +738,19 @@
           "skill": "Linux",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "full-stack:linux-basics"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Linux"
+          ],
+          "from_onet": [
+            "Linux",
+            "UNIX"
           ]
         },
         {
@@ -642,7 +758,8 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "full-stack:basic-aws-services"
@@ -650,6 +767,9 @@
           "importance": "essential",
           "any_of": [
             "Amazon Web Services (AWS)"
+          ],
+          "from_onet": [
+            "Amazon Web Services AWS software"
           ]
         }
       ]
@@ -669,13 +789,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "wordpress:what-is-a-cms"
           ],
           "importance": "essential",
           "any_of": [
+            "WordPress"
+          ],
+          "from_onet": [
             "WordPress"
           ]
         },
@@ -684,13 +808,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "wordpress:php"
           ],
           "importance": "essential",
           "any_of": [
+            "PHP"
+          ],
+          "from_onet": [
             "PHP"
           ]
         },
@@ -699,7 +827,8 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "wordpress:html"
@@ -707,6 +836,9 @@
           "importance": "essential",
           "any_of": [
             "HTML"
+          ],
+          "from_onet": [
+            "Hypertext markup language HTML"
           ]
         },
         {
@@ -714,7 +846,8 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "wordpress:css"
@@ -722,6 +855,9 @@
           "importance": "essential",
           "any_of": [
             "CSS"
+          ],
+          "from_onet": [
+            "Cascading style sheets CSS"
           ]
         },
         {
@@ -729,13 +865,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "wordpress:javascript"
           ],
           "importance": "essential",
           "any_of": [
+            "JavaScript"
+          ],
+          "from_onet": [
             "JavaScript"
           ]
         },
@@ -744,13 +884,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "wordpress:sql"
           ],
           "importance": "essential",
           "any_of": [
+            "MySQL"
+          ],
+          "from_onet": [
             "MySQL"
           ]
         },
@@ -874,13 +1018,18 @@
           "evidence": [
             "P",
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "android:kotlin",
             "android:java"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Kotlin",
+            "Oracle Java"
+          ]
         },
         {
           "skill": "Android SDK",
@@ -929,13 +1078,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "android:what-is-and-how-to-use-gradle"
           ],
           "importance": "essential",
           "any_of": [
+            "Gradle"
+          ],
+          "from_onet": [
             "Gradle"
           ]
         },
@@ -1029,13 +1182,17 @@
           "skill": "JUnit",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "android:junit"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "JUnit"
+          ],
+          "from_onet": [
             "JUnit"
           ]
         },
@@ -1057,13 +1214,17 @@
           "skill": "Git",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "android:git"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Git"
+          ],
+          "from_onet": [
             "Git"
           ]
         }
@@ -1085,13 +1246,17 @@
           "evidence": [
             "C:APPLE",
             "P",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "ios:swift-basics"
           ],
           "importance": "essential",
           "any_of": [
+            "Swift"
+          ],
+          "from_onet": [
             "Swift"
           ]
         },
@@ -1117,13 +1282,17 @@
           "kind": "tool",
           "evidence": [
             "C:APPLE",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "ios:xcode"
           ],
           "importance": "essential",
           "any_of": [
+            "Xcode"
+          ],
+          "from_onet": [
             "Xcode"
           ]
         },
@@ -1229,14 +1398,18 @@
           "skill": "Objective-C",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "ios:objective-c"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Objective-C"
+          ],
+          "from_onet": [
+            "Objective C"
           ]
         },
         {
@@ -1257,13 +1430,17 @@
           "skill": "Git",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "ios:git"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Git"
+          ],
+          "from_onet": [
             "Git"
           ]
         }
@@ -1289,13 +1466,17 @@
           "kind": "tool",
           "evidence": [
             "P",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "flutter:widgets",
             "react-native:what-is-react-native"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "React Native"
+          ]
         },
         {
           "skill": "Dart / JavaScript",
@@ -1306,13 +1487,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "flutter:basics-of-dart",
             "react-native:javascript-basics"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "JavaScript"
+          ]
         },
         {
           "skill": "Expo",
@@ -1365,14 +1550,18 @@
           "skill": "REST APIs",
           "kind": "practice",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "flutter:restful-apis"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "REST APIs"
+          ],
+          "from_onet": [
+            "RESTful API"
           ]
         },
         {
@@ -1423,13 +1612,17 @@
           "skill": "Git",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "flutter:git"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Git"
+          ],
+          "from_onet": [
             "Git"
           ]
         }
@@ -1449,14 +1642,19 @@
           "skill": "Linux",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "devops:ubuntu--debian"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Linux"
+          ],
+          "from_onet": [
+            "Linux",
+            "UNIX"
           ]
         },
         {
@@ -1469,26 +1667,35 @@
           "evidence": [
             "P",
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devops:python",
             "devops:bash"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Bash",
+            "Python"
+          ]
         },
         {
           "skill": "Git",
           "kind": "tool",
           "evidence": [
             "C:AZ400",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "devops:git"
           ],
           "importance": "essential",
           "any_of": [
+            "Git"
+          ],
+          "from_onet": [
             "Git"
           ]
         },
@@ -1497,13 +1704,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devops:docker"
           ],
           "importance": "essential",
           "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
             "Docker"
           ]
         },
@@ -1542,14 +1753,18 @@
           "skill": "Ansible",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "devops:ansible"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Ansible"
+          ],
+          "from_onet": [
+            "Ansible software"
           ]
         },
         {
@@ -1577,7 +1792,8 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devops:aws"
@@ -1585,6 +1801,9 @@
           "importance": "essential",
           "any_of": [
             "Amazon Web Services (AWS)"
+          ],
+          "from_onet": [
+            "Amazon Web Services AWS software"
           ]
         },
         {
@@ -1653,41 +1872,54 @@
           "evidence": [
             "P",
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devops:aws",
             "devops:azure",
             "devops:google-cloud"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Amazon Web Services AWS software",
+            "Microsoft Azure software"
+          ]
         },
         {
           "skill": "Amazon EC2",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "aws:ec2"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Amazon EC2"
+          ],
+          "from_onet": [
+            "Amazon Elastic Compute Cloud EC2"
           ]
         },
         {
           "skill": "Amazon S3",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "aws:s3"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Amazon S3"
+          ],
+          "from_onet": [
+            "Amazon Simple Storage Service S3"
           ]
         },
         {
@@ -1742,13 +1974,18 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devops:terraform",
             "devops:cloudformation"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Amazon Web Services AWS CloudFormation",
+            "IBM Terraform"
+          ]
         },
         {
           "skill": "Docker",
@@ -1756,13 +1993,17 @@
           "evidence": [
             "P",
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devops:docker"
           ],
           "importance": "essential",
           "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
             "Docker"
           ]
         },
@@ -1786,14 +2027,19 @@
           "skill": "Linux",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "devops:ubuntu--debian"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Linux"
+          ],
+          "from_onet": [
+            "Linux",
+            "UNIX"
           ]
         },
         {
@@ -1801,13 +2047,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devops:python"
           ],
           "importance": "essential",
           "any_of": [
+            "Python"
+          ],
+          "from_onet": [
             "Python"
           ]
         }
@@ -1827,14 +2077,19 @@
           "skill": "Linux",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "devops:ubuntu--debian"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Linux"
+          ],
+          "from_onet": [
+            "Linux",
+            "UNIX"
           ]
         },
         {
@@ -1846,26 +2101,35 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devops:python",
             "devops:go"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Go",
+            "Python"
+          ]
         },
         {
           "skill": "Bash",
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devops:bash"
           ],
           "importance": "essential",
           "any_of": [
+            "Bash"
+          ],
+          "from_onet": [
             "Bash"
           ]
         },
@@ -1889,13 +2153,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devops:docker"
           ],
           "importance": "essential",
           "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
             "Docker"
           ]
         },
@@ -1945,14 +2213,18 @@
           "skill": "Elastic Stack (ELK)",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "devops:elastic-stack"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Elastic Stack (ELK)"
+          ],
+          "from_onet": [
+            "Elasticsearch"
           ]
         },
         {
@@ -2041,13 +2313,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devsecops:docker"
           ],
           "importance": "essential",
           "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
             "Docker"
           ]
         },
@@ -2056,13 +2332,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devsecops:kubernetes"
           ],
           "importance": "essential",
           "any_of": [
+            "Kubernetes"
+          ],
+          "from_onet": [
             "Kubernetes"
           ]
         },
@@ -2155,14 +2435,18 @@
           "skill": "Nessus",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "devsecops:nessus"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Nessus"
+          ],
+          "from_onet": [
+            "Tenable Nessus"
           ]
         },
         {
@@ -2198,13 +2482,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devsecops:python"
           ],
           "importance": "essential",
           "any_of": [
+            "Python"
+          ],
+          "from_onet": [
             "Python"
           ]
         },
@@ -2213,13 +2501,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "devsecops:bash"
           ],
           "importance": "essential",
           "any_of": [
+            "Bash"
+          ],
+          "from_onet": [
             "Bash"
           ]
         },
@@ -2266,13 +2558,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "data-engineer:python"
           ],
           "importance": "essential",
           "any_of": [
+            "Python"
+          ],
+          "from_onet": [
             "Python"
           ]
         },
@@ -2281,7 +2577,8 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "data-engineer:learn-sql"
@@ -2289,6 +2586,9 @@
           "importance": "essential",
           "any_of": [
             "SQL"
+          ],
+          "from_onet": [
+            "Structured query language SQL"
           ]
         },
         {
@@ -2300,13 +2600,17 @@
           "kind": "tool",
           "evidence": [
             "C:PMLE",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "data-engineer:apache-spark",
             "data-engineer:databricks-delta-lake"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Apache Spark"
+          ]
         },
         {
           "skill": "Apache Airflow",
@@ -2326,13 +2630,17 @@
           "skill": "Apache Kafka",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "data-engineer:apache-kafka"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Apache Kafka"
+          ],
+          "from_onet": [
             "Apache Kafka"
           ]
         },
@@ -2360,27 +2668,35 @@
           "kind": "tool",
           "evidence": [
             "C:PMLE",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "data-engineer:google-bigquery",
             "data-engineer:amazon-redshift",
             "data-engineer:snowflake"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Amazon Redshift"
+          ]
         },
         {
           "skill": "PostgreSQL",
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "data-engineer:postgresql"
           ],
           "importance": "essential",
           "any_of": [
+            "PostgreSQL"
+          ],
+          "from_onet": [
             "PostgreSQL"
           ]
         },
@@ -2461,12 +2777,16 @@
           "evidence": [
             "C:GDA",
             "P",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [],
           "importance": "essential",
           "any_of": [
             "SQL"
+          ],
+          "from_onet": [
+            "Structured query language SQL"
           ]
         },
         {
@@ -2474,7 +2794,8 @@
           "kind": "tool",
           "evidence": [
             "C:GDA",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "data-analyst:analysis--reporting-with-excel",
@@ -2482,6 +2803,9 @@
           ],
           "importance": "essential",
           "any_of": [
+            "Microsoft Excel"
+          ],
+          "from_onet": [
             "Microsoft Excel"
           ]
         },
@@ -2496,13 +2820,18 @@
             "C:GDA",
             "P",
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "data-analyst:learn-a-programming-lang",
             "data-analyst:r"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Python",
+            "R"
+          ]
         },
         {
           "skill": "pandas",
@@ -2529,13 +2858,18 @@
           "evidence": [
             "C:GDA",
             "P",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "data-analyst:power-bi",
             "data-analyst:tableau"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Microsoft Power BI",
+            "Tableau"
+          ]
         },
         {
           "skill": "Matplotlib / Seaborn",
@@ -2632,7 +2966,8 @@
             "C:PMLE",
             "P",
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "machine-learning:python"
@@ -2640,19 +2975,26 @@
           "importance": "essential",
           "any_of": [
             "Python"
+          ],
+          "from_onet": [
+            "Python"
           ]
         },
         {
           "skill": "NumPy",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "machine-learning:numpy"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "NumPy"
+          ],
+          "from_onet": [
             "NumPy"
           ]
         },
@@ -2660,13 +3002,17 @@
           "skill": "pandas",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "machine-learning:pandas"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "pandas"
+          ],
+          "from_onet": [
             "pandas"
           ]
         },
@@ -2675,7 +3021,8 @@
           "kind": "tool",
           "evidence": [
             "C:PMLE",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "machine-learning:scikit-learn"
@@ -2683,6 +3030,9 @@
           "importance": "essential",
           "any_of": [
             "scikit-learn"
+          ],
+          "from_onet": [
+            "Scikit-learn"
           ]
         },
         {
@@ -2696,27 +3046,37 @@
           "evidence": [
             "C:PMLE",
             "P",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "machine-learning:tensorflow",
             "machine-learning:pytorch",
             "machine-learning:keras"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Keras",
+            "PyTorch",
+            "TensorFlow"
+          ]
         },
         {
           "skill": "XGBoost",
           "kind": "tool",
           "evidence": [
             "C:PMLE",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "machine-learning:gradient-boosting-machines"
           ],
           "importance": "essential",
           "any_of": [
+            "XGBoost"
+          ],
+          "from_onet": [
             "XGBoost"
           ]
         },
@@ -2810,23 +3170,31 @@
           "skill": "Jupyter",
           "kind": "tool",
           "evidence": [
-            "C:PMLE"
+            "C:PMLE",
+            "O"
           ],
           "roadmap_topics": [],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Jupyter"
+          ],
+          "from_onet": [
+            "Jupyter software"
           ]
         },
         {
           "skill": "Docker",
           "kind": "tool",
           "evidence": [
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
             "Docker"
           ]
         }
@@ -2848,13 +3216,17 @@
           "evidence": [
             "C:PMLE",
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "mlops:python"
           ],
           "importance": "essential",
           "any_of": [
+            "Python"
+          ],
+          "from_onet": [
             "Python"
           ]
         },
@@ -2863,13 +3235,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "mlops:containerization"
           ],
           "importance": "essential",
           "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
             "Docker"
           ]
         },
@@ -2878,13 +3254,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "mlops:kubernetes"
           ],
           "importance": "essential",
           "any_of": [
+            "Kubernetes"
+          ],
+          "from_onet": [
             "Kubernetes"
           ]
         },
@@ -2897,25 +3277,34 @@
           "kind": "tool",
           "evidence": [
             "C:PMLE",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "mlops:mlflow",
             "mlops:kubeflow"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Kubeflow",
+            "Mlflow"
+          ]
         },
         {
           "skill": "Apache Airflow",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "mlops:airflow"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Apache Airflow"
+          ],
+          "from_onet": [
             "Apache Airflow"
           ]
         },
@@ -2942,13 +3331,17 @@
           "kind": "tool",
           "evidence": [
             "C:PMLE",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "mlops:jenkins",
             "mlops:github-actions"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Jenkins CI"
+          ]
         },
         {
           "skill": "Terraform",
@@ -2989,21 +3382,28 @@
           "kind": "tool",
           "evidence": [
             "C:PMLE",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "mlops:pytorch",
             "mlops:tensorflow",
             "mlops:scikit-learn"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "PyTorch",
+            "Scikit-learn",
+            "TensorFlow"
+          ]
         },
         {
           "skill": "Apache Spark",
           "kind": "tool",
           "evidence": [
             "C:PMLE",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "mlops:spark"
@@ -3011,19 +3411,27 @@
           "importance": "essential",
           "any_of": [
             "Apache Spark"
+          ],
+          "from_onet": [
+            "Apache Spark",
+            "PySpark"
           ]
         },
         {
           "skill": "Git",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "mlops:git"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
+            "Git"
+          ],
+          "from_onet": [
             "Git"
           ]
         }
@@ -3044,11 +3452,15 @@
           "kind": "tool",
           "evidence": [
             "P",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [],
           "importance": "essential",
           "any_of": [
+            "Python"
+          ],
+          "from_onet": [
             "Python"
           ]
         },
@@ -3231,7 +3643,8 @@
           "evidence": [
             "C:GUX",
             "P",
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "ux-design:figma",
@@ -3239,7 +3652,11 @@
             "ux-design:adobe-xd",
             "ux-design:sketch"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "Adobe XD",
+            "Figma"
+          ]
         },
         {
           "skill": "Wireframing",
@@ -3443,14 +3860,18 @@
           "skill": "Jira",
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "product-manager:jira"
           ],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "Jira"
+          ],
+          "from_onet": [
+            "Atlassian JIRA"
           ]
         },
         {
@@ -3544,12 +3965,16 @@
           "skill": "SQL",
           "kind": "tool",
           "evidence": [
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [],
-          "importance": "optional",
+          "importance": "essential",
           "any_of": [
             "SQL"
+          ],
+          "from_onet": [
+            "Structured query language SQL"
           ]
         },
         {
@@ -3602,14 +4027,19 @@
           ],
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "game-developer:unity-3d",
             "game-developer:unreal-engine",
             "game-developer:godot"
           ],
-          "importance": "optional"
+          "importance": "essential",
+          "from_onet": [
+            "Unity Technologies Unity",
+            "Unreal Technology Unreal Engine"
+          ]
         },
         {
           "skill": "C# / C++",
@@ -3620,12 +4050,17 @@
           "kind": "tool",
           "evidence": [
             "R",
-            "S"
+            "S",
+            "O"
           ],
           "roadmap_topics": [
             "game-developer:cc"
           ],
-          "importance": "essential"
+          "importance": "essential",
+          "from_onet": [
+            "C#",
+            "C++"
+          ]
         },
         {
           "skill": "Game physics",
@@ -3695,14 +4130,19 @@
           ],
           "kind": "tool",
           "evidence": [
-            "R"
+            "R",
+            "O"
           ],
           "roadmap_topics": [
             "game-developer:opengl",
             "game-developer:vulkan",
             "game-developer:directx"
           ],
-          "importance": "optional"
+          "importance": "essential",
+          "from_onet": [
+            "Microsoft DirectX",
+            "OpenGL"
+          ]
         },
         {
           "skill": "Collision detection",
@@ -3720,5 +4160,6 @@
         }
       ]
     }
-  ]
+  ],
+  "onet_evidence": "O applied 2026-10-17 by eval/curated_roles/add_onet_evidence.py from data/raw/onet/software_skills.csv (related_onet_code; importer cleaning + skill keys)"
 }

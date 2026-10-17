@@ -1,0 +1,3082 @@
+{
+ "A": {
+  "scored": {
+   "old8": [
+    {
+     "id": "web",
+     "label": "Web developer",
+     "control": false,
+     "first_acceptable_rank": 2,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "web designer",
+      "score": 60.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "web designer",
+       "score": 60.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Web and Digital Interface Designers",
+       "score": 58.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Software Developers",
+       "score": 40.0,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Blockchain Engineers",
+       "score": 40.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "web developer",
+       "score": 38.5,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "backend",
+     "label": "Backend Python developer",
+     "control": false,
+     "first_acceptable_rank": 2,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Blockchain Engineers",
+      "score": 45.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Blockchain Engineers",
+       "score": 45.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Software Developers",
+       "score": 41.7,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Computer Systems Engineers/Architects",
+       "score": 40.9,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Web Developers",
+       "score": 38.3,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 37.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "data",
+     "label": "Data scientist",
+     "control": false,
+     "first_acceptable_rank": 2,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "computer vision engineer",
+      "score": 54.7
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "computer vision engineer",
+       "score": 54.7,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Data Scientists",
+       "score": 50.0,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Health Informatics Specialists",
+       "score": 45.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Data Warehousing Specialists",
+       "score": 45.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "artificial intelligence engineer",
+       "score": 41.9,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "devops",
+     "label": "DevOps engineer",
+     "control": false,
+     "first_acceptable_rank": 3,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Computer Systems Engineers/Architects",
+      "score": 59.1
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Computer Systems Engineers/Architects",
+       "score": 59.1,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Information Security Engineers",
+       "score": 53.8,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "cloud DevOps engineer",
+       "score": 47.9,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "cloud software developer",
+       "score": 47.5,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Computer and Information Research Scientists",
+       "score": 46.6,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "mobile",
+     "label": "Mobile developer",
+     "control": false,
+     "first_acceptable_rank": 3,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Software Quality Assurance Analysts and Testers",
+      "score": 29.2
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 29.2,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Blockchain Engineers",
+       "score": 25.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Software Developers",
+       "score": 23.3,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "Computer Systems Engineers/Architects",
+       "score": 22.7,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "mobile application developer",
+       "score": 22.2,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "uiux",
+     "label": "UI/UX designer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Web and Digital Interface Designers",
+      "score": 58.3
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Web and Digital Interface Designers",
+       "score": 58.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "web designer",
+       "score": 55.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "user interface designer",
+       "score": 53.7,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "user interface developer",
+       "score": 47.1,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "user experience analyst",
+       "score": 41.7,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "qa",
+     "label": "QA tester",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Software Quality Assurance Analysts and Testers",
+      "score": 41.7
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 41.7,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "ICT test analyst",
+       "score": 40.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Computer Systems Analysts",
+       "score": 35.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "ICT integration tester",
+       "score": 31.8,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Blockchain Engineers",
+       "score": 30.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "chef",
+     "label": "Chef (non-IT control)",
+     "control": true,
+     "first_acceptable_rank": null,
+     "top3": false,
+     "top5": false,
+     "expected_rank": null,
+     "best": {
+      "title": "Computer Systems Analysts",
+      "score": 15.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Computer Systems Analysts",
+       "score": 15.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Document Management Specialists",
+       "score": 15.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "ICT help desk agent",
+       "score": 15.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Business Intelligence Analysts",
+       "score": 14.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Health Informatics Specialists",
+       "score": 13.6,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    }
+   ],
+   "new6": [
+    {
+     "id": "cloud",
+     "label": "Cloud engineer",
+     "control": false,
+     "first_acceptable_rank": 5,
+     "top3": false,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Computer Systems Engineers/Architects",
+      "score": 63.6
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Computer Systems Engineers/Architects",
+       "score": 63.6,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Information Security Engineers",
+       "score": 61.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Computer Network Architects",
+       "score": 53.8,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Computer and Information Research Scientists",
+       "score": 48.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "cloud software developer",
+       "score": 47.5,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "android",
+     "label": "Android developer",
+     "control": false,
+     "first_acceptable_rank": 2,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Software Quality Assurance Analysts and Testers",
+      "score": 35.4
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 35.4,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "mobile application developer",
+       "score": 33.3,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Blockchain Engineers",
+       "score": 30.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "industrial mobile devices software developer",
+       "score": 28.9,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 5,
+       "title": "Software Developers",
+       "score": 26.7,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "data_eng",
+     "label": "Data engineer",
+     "control": false,
+     "first_acceptable_rank": 5,
+     "top3": false,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Database Architects",
+      "score": 53.8
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Database Architects",
+       "score": 53.8,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Computer and Information Research Scientists",
+       "score": 46.6,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Database Administrators",
+       "score": 46.6,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "cloud software developer",
+       "score": 45.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "data engineer",
+       "score": 43.5,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "security",
+     "label": "Security analyst",
+     "control": false,
+     "first_acceptable_rank": 4,
+     "top3": false,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Penetration Testers",
+      "score": 50.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Penetration Testers",
+       "score": 50.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Digital Forensics Analysts",
+       "score": 45.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Information Security Engineers",
+       "score": 42.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Information Security Analysts",
+       "score": 38.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 5,
+       "title": "Computer Network Architects",
+       "score": 34.6,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "gamedev",
+     "label": "Game developer",
+     "control": false,
+     "first_acceptable_rank": 2,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "3D animator",
+      "score": 73.3
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "3D animator",
+       "score": 73.3,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Video Game Designers",
+       "score": 60.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "3D modeller",
+       "score": 59.4,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "digital games developer",
+       "score": 44.7,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 5,
+       "title": "embedded systems software developer",
+       "score": 28.1,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "it_support",
+     "label": "IT support",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Computer Network Support Specialists",
+      "score": 75.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Computer Network Support Specialists",
+       "score": 75.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Computer User Support Specialists",
+       "score": 62.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Information Technology Project Managers",
+       "score": 45.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Network and Computer Systems Administrators",
+       "score": 44.1,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Computer Network Architects",
+       "score": 38.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    }
+   ],
+   "testcvs": [
+    {
+     "id": "cv01_frontend",
+     "label": "CV 01 Frontend developer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 4,
+     "best": {
+      "title": "web designer",
+      "score": 75.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "web designer",
+       "score": 75.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Web and Digital Interface Designers",
+       "score": 62.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "user interface designer",
+       "score": 50.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "user interface developer",
+       "score": 50.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 5,
+       "title": "web developer",
+       "score": 42.3,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "cv02_backend_java",
+     "label": "CV 02 Backend developer (Java)",
+     "control": false,
+     "first_acceptable_rank": 3,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 3,
+     "best": {
+      "title": "Software Quality Assurance Analysts and Testers",
+      "score": 47.9
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 47.9,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "ICT test analyst",
+       "score": 45.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Software Developers",
+       "score": 43.3,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "Web Developers",
+       "score": 43.3,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 5,
+       "title": "Database Administrators",
+       "score": 41.4,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "cv03_data_scientist",
+     "label": "CV 03 Data scientist",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 1,
+     "best": {
+      "title": "Data Scientists",
+      "score": 54.8
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Data Scientists",
+       "score": 54.8,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Health Informatics Specialists",
+       "score": 54.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "computer vision engineer",
+       "score": 51.6,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "artificial intelligence engineer",
+       "score": 46.8,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 5,
+       "title": "Data Warehousing Specialists",
+       "score": 45.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "cv04_devops",
+     "label": "CV 04 DevOps engineer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 5,
+     "best": {
+      "title": "Computer Systems Engineers/Architects",
+      "score": 68.2
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Computer Systems Engineers/Architects",
+       "score": 68.2,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Information Security Engineers",
+       "score": 65.4,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Computer and Information Research Scientists",
+       "score": 60.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "cloud software developer",
+       "score": 60.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "cloud DevOps engineer",
+       "score": 56.2,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "cv05_android",
+     "label": "CV 05 Android developer",
+     "control": false,
+     "first_acceptable_rank": 2,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 2,
+     "best": {
+      "title": "Software Quality Assurance Analysts and Testers",
+      "score": 41.7
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 41.7,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "mobile application developer",
+       "score": 36.1,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "industrial mobile devices software developer",
+       "score": 31.6,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "Blockchain Engineers",
+       "score": 30.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "ICT application developer",
+       "score": 29.4,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "cv06_security",
+     "label": "CV 06 Information security analyst",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 3,
+     "best": {
+      "title": "Penetration Testers",
+      "score": 52.4
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Penetration Testers",
+       "score": 52.4,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Digital Forensics Analysts",
+       "score": 50.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Information Security Analysts",
+       "score": 46.2,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "Information Security Engineers",
+       "score": 42.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Computer Network Architects",
+       "score": 38.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "cv07_dba",
+     "label": "CV 07 Database administrator",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 1,
+     "best": {
+      "title": "database administrator",
+      "score": 39.3
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "database administrator",
+       "score": 39.3,
+       "sources": [
+        "ESCO",
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "database developer",
+       "score": 35.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "data warehouse designer",
+       "score": 32.1,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Digital Forensics Analysts",
+       "score": 30.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "data centre operator",
+       "score": 28.6,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "cv08_qa",
+     "label": "CV 08 QA automation engineer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 1,
+     "best": {
+      "title": "Software Quality Assurance Analysts and Testers",
+      "score": 58.3
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 58.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Computer Systems Engineers/Architects",
+       "score": 45.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Blockchain Engineers",
+       "score": 45.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "ICT test analyst",
+       "score": 45.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 5,
+       "title": "software tester",
+       "score": 45.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "cv09_uiux",
+     "label": "CV 09 UI/UX designer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 1,
+     "best": {
+      "title": "Web and Digital Interface Designers",
+      "score": 62.5
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Web and Digital Interface Designers",
+       "score": 62.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "web designer",
+       "score": 55.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "user interface designer",
+       "score": 53.7,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "user interface developer",
+       "score": 50.0,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 5,
+       "title": "user experience analyst",
+       "score": 44.4,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 126
+    },
+    {
+     "id": "cv10_network",
+     "label": "CV 10 Network / systems administrator",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 3,
+     "best": {
+      "title": "Computer Network Support Specialists",
+      "score": 45.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Computer Network Support Specialists",
+       "score": 45.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "ICT technician",
+       "score": 39.1,
+       "sources": [
+        "ESCO"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Network and Computer Systems Administrators",
+       "score": 38.2,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "Computer User Support Specialists",
+       "score": 33.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 5,
+       "title": "Penetration Testers",
+       "score": 31.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 126
+    }
+   ]
+  },
+  "summary": {
+   "old8": {
+    "top3": 7,
+    "top5": 7,
+    "n": 7,
+    "chef_best": {
+     "title": "Computer Systems Analysts",
+     "score": 15.0
+    }
+   },
+   "new6": {
+    "top3": 3,
+    "top5": 6,
+    "n": 6
+   },
+   "testcvs": {
+    "top3": 10,
+    "top5": 10,
+    "n": 10,
+    "expected_top1": 4,
+    "expected_top3": 8
+   }
+  },
+  "counts": {
+   "roles_by_source": {
+    "esco": 100,
+    "onet": 30
+   },
+   "roles_total": 130,
+   "required": {
+    "esco | named (group / any-of)": 846,
+    "esco | named (in skill list)": 132,
+    "esco | vague (ESCO phrase, no named alternative)": 1319,
+    "onet | named (in skill list)": 486,
+    "onet | named tool, not in skill list": 5
+   },
+   "required_vague_prefix_pattern": {
+    "esco": 547
+   }
+  },
+  "background": {
+   "chef_pooled_pct": 3.2,
+   "web_pooled_pct": 12.9,
+   "chef_to_web": 0.248,
+   "criteria": "chef <= 5.0% and chef <= 0.5 x web",
+   "passed": true
+  },
+  "marks": {
+   "old8 top-3 7/7": true,
+   "old8 top-5 7/7": true,
+   "chef best < 20 %": true,
+   "new6 top-5 >= 5/6": true,
+   "testcvs top-3 >= 8/10": true,
+   "testcvs top-5 >= 9/10": true,
+   "background check": true,
+   "0 vague required skills": false
+  }
+ },
+ "B": {
+  "scored": {
+   "old8": [
+    {
+     "id": "web",
+     "label": "Web developer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Frontend Developer",
+      "score": 83.3
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Frontend Developer",
+       "score": 83.3,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Full-Stack Developer",
+       "score": 65.4,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Web and Digital Interface Designers",
+       "score": 62.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "WordPress Developer",
+       "score": 45.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Software Developers",
+       "score": 43.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "backend",
+     "label": "Backend Python developer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Backend Developer",
+      "score": 75.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Backend Developer",
+       "score": 75.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "DevOps Engineer",
+       "score": 65.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Data Engineer",
+       "score": 55.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Full-Stack Developer",
+       "score": 53.8,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Cloud Engineer",
+       "score": 50.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "data",
+     "label": "Data scientist",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Machine Learning Engineer",
+      "score": 80.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Machine Learning Engineer",
+       "score": 80.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Data Analyst",
+       "score": 80.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Data Scientists",
+       "score": 54.8,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "Data Warehousing Specialists",
+       "score": 50.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Health Informatics Specialists",
+       "score": 50.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "devops",
+     "label": "DevOps engineer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "DevOps Engineer",
+      "score": 100.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "DevOps Engineer",
+       "score": 100.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Cloud Engineer",
+       "score": 75.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Site Reliability Engineer",
+       "score": 70.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "MLOps Engineer",
+       "score": 65.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Computer Systems Engineers/Architects",
+       "score": 63.6,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "mobile",
+     "label": "Mobile developer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Cross-Platform Mobile Developer",
+      "score": 60.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Cross-Platform Mobile Developer",
+       "score": 60.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Android Developer",
+       "score": 50.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "iOS Developer",
+       "score": 45.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "Frontend Developer",
+       "score": 33.3,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 29.2,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "uiux",
+     "label": "UI/UX designer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "UI/UX Designer",
+      "score": 65.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "UI/UX Designer",
+       "score": 65.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Web and Digital Interface Designers",
+       "score": 58.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "WordPress Developer",
+       "score": 35.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Video Game Designers",
+       "score": 35.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Frontend Developer",
+       "score": 33.3,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "qa",
+     "label": "QA tester",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Software Quality Assurance Analysts and Testers",
+      "score": 45.8
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 45.8,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Backend Developer",
+       "score": 45.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Computer Systems Analysts",
+       "score": 40.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Data Analyst",
+       "score": 35.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Information Technology Project Managers",
+       "score": 35.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "chef",
+     "label": "Chef (non-IT control)",
+     "control": true,
+     "first_acceptable_rank": null,
+     "top3": false,
+     "top5": false,
+     "expected_rank": null,
+     "best": {
+      "title": "Computer Systems Analysts",
+      "score": 15.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Computer Systems Analysts",
+       "score": 15.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Document Management Specialists",
+       "score": 15.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Product Manager (Software)",
+       "score": 15.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Business Intelligence Analysts",
+       "score": 14.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Health Informatics Specialists",
+       "score": 13.6,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    }
+   ],
+   "new6": [
+    {
+     "id": "cloud",
+     "label": "Cloud engineer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "DevOps Engineer",
+      "score": 85.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "DevOps Engineer",
+       "score": 85.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Cloud Engineer",
+       "score": 80.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Computer Systems Engineers/Architects",
+       "score": 65.9,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Information Security Engineers",
+       "score": 61.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Site Reliability Engineer",
+       "score": 60.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "android",
+     "label": "Android developer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Android Developer",
+      "score": 75.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Android Developer",
+       "score": 75.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Cross-Platform Mobile Developer",
+       "score": 50.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 39.6,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Backend Developer",
+       "score": 35.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Blockchain Engineers",
+       "score": 35.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "data_eng",
+     "label": "Data engineer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Data Engineer",
+      "score": 95.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Data Engineer",
+       "score": 95.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Cloud Engineer",
+       "score": 65.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Database Architects",
+       "score": 57.7,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Backend Developer",
+       "score": 55.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "MLOps Engineer",
+       "score": 55.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "security",
+     "label": "Security analyst",
+     "control": false,
+     "first_acceptable_rank": 4,
+     "top3": false,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Penetration Testers",
+      "score": 57.1
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Penetration Testers",
+       "score": 57.1,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 2,
+       "title": "Digital Forensics Analysts",
+       "score": 55.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Site Reliability Engineer",
+       "score": 55.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Information Security Analysts",
+       "score": 50.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 5,
+       "title": "Information Security Engineers",
+       "score": 50.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "gamedev",
+     "label": "Game developer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Video Game Designers",
+      "score": 70.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Video Game Designers",
+       "score": 70.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Game Developer",
+       "score": 50.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Web and Digital Interface Designers",
+       "score": 37.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Computer Programmers",
+       "score": 34.2,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Blockchain Engineers",
+       "score": 32.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "it_support",
+     "label": "IT support",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": null,
+     "best": {
+      "title": "Computer Network Support Specialists",
+      "score": 75.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Computer Network Support Specialists",
+       "score": 75.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Computer User Support Specialists",
+       "score": 62.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Network and Computer Systems Administrators",
+       "score": 52.9,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Information Technology Project Managers",
+       "score": 50.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Computer Network Architects",
+       "score": 42.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    }
+   ],
+   "testcvs": [
+    {
+     "id": "cv01_frontend",
+     "label": "CV 01 Frontend developer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 1,
+     "best": {
+      "title": "Frontend Developer",
+      "score": 100.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Frontend Developer",
+       "score": 100.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Web and Digital Interface Designers",
+       "score": 70.8,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Full-Stack Developer",
+       "score": 65.4,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "Cross-Platform Mobile Developer",
+       "score": 50.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "WordPress Developer",
+       "score": 45.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "cv02_backend_java",
+     "label": "CV 02 Backend developer (Java)",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 1,
+     "best": {
+      "title": "Backend Developer",
+      "score": 85.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Backend Developer",
+       "score": 85.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Data Engineer",
+       "score": 55.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Android Developer",
+       "score": 55.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "DevOps Engineer",
+       "score": 55.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 50.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "cv03_data_scientist",
+     "label": "CV 03 Data scientist",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 3,
+     "best": {
+      "title": "Machine Learning Engineer",
+      "score": 85.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Machine Learning Engineer",
+       "score": 85.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Data Analyst",
+       "score": 85.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Data Scientists",
+       "score": 59.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "Health Informatics Specialists",
+       "score": 59.1,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Data Warehousing Specialists",
+       "score": 50.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "cv04_devops",
+     "label": "CV 04 DevOps engineer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 1,
+     "best": {
+      "title": "DevOps Engineer",
+      "score": 95.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "DevOps Engineer",
+       "score": 95.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Cloud Engineer",
+       "score": 90.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Site Reliability Engineer",
+       "score": 85.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 4,
+       "title": "Computer Systems Engineers/Architects",
+       "score": 70.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 5,
+       "title": "MLOps Engineer",
+       "score": 70.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "cv05_android",
+     "label": "CV 05 Android developer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 1,
+     "best": {
+      "title": "Android Developer",
+      "score": 85.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Android Developer",
+       "score": 85.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Cross-Platform Mobile Developer",
+       "score": 75.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Backend Developer",
+       "score": 45.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 43.8,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "iOS Developer",
+       "score": 35.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "cv06_security",
+     "label": "CV 06 Information security analyst",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 2,
+     "best": {
+      "title": "Penetration Testers",
+      "score": 59.5
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Penetration Testers",
+       "score": 59.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Information Security Analysts",
+       "score": 57.7,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Digital Forensics Analysts",
+       "score": 55.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Site Reliability Engineer",
+       "score": 55.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Information Security Engineers",
+       "score": 53.8,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "cv07_dba",
+     "label": "CV 07 Database administrator",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 1,
+     "best": {
+      "title": "Database Administrators",
+      "score": 41.4
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Database Administrators",
+       "score": 41.4,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Digital Forensics Analysts",
+       "score": 40.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "DevOps Engineer",
+       "score": 40.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Computer Network Architects",
+       "score": 38.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Network and Computer Systems Administrators",
+       "score": 35.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "cv08_qa",
+     "label": "CV 08 QA automation engineer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 1,
+     "best": {
+      "title": "Software Quality Assurance Analysts and Testers",
+      "score": 62.5
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Software Quality Assurance Analysts and Testers",
+       "score": 62.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Computer Systems Engineers/Architects",
+       "score": 50.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 3,
+       "title": "Backend Developer",
+       "score": 50.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Computer Systems Analysts",
+       "score": 50.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "DevOps Engineer",
+       "score": 50.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "cv09_uiux",
+     "label": "CV 09 UI/UX designer",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 1,
+     "best": {
+      "title": "UI/UX Designer",
+      "score": 80.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "UI/UX Designer",
+       "score": 80.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Web and Digital Interface Designers",
+       "score": 62.5,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Video Game Designers",
+       "score": 40.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "WordPress Developer",
+       "score": 35.0,
+       "sources": [
+        "Curated"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Document Management Specialists",
+       "score": 35.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      }
+     ],
+     "results": 49
+    },
+    {
+     "id": "cv10_network",
+     "label": "CV 10 Network / systems administrator",
+     "control": false,
+     "first_acceptable_rank": 1,
+     "top3": true,
+     "top5": true,
+     "expected_rank": 2,
+     "best": {
+      "title": "Computer Network Support Specialists",
+      "score": 45.0
+     },
+     "top5_list": [
+      {
+       "rank": 1,
+       "title": "Computer Network Support Specialists",
+       "score": 45.0,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 2,
+       "title": "Network and Computer Systems Administrators",
+       "score": 38.2,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      },
+      {
+       "rank": 3,
+       "title": "Penetration Testers",
+       "score": 35.7,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 4,
+       "title": "Information Security Engineers",
+       "score": 34.6,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": false
+      },
+      {
+       "rank": 5,
+       "title": "Computer User Support Specialists",
+       "score": 33.3,
+       "sources": [
+        "O*NET"
+       ],
+       "acceptable": true
+      }
+     ],
+     "results": 49
+    }
+   ]
+  },
+  "summary": {
+   "old8": {
+    "top3": 7,
+    "top5": 7,
+    "n": 7,
+    "chef_best": {
+     "title": "Computer Systems Analysts",
+     "score": 15.0
+    }
+   },
+   "new6": {
+    "top3": 5,
+    "top5": 6,
+    "n": 6
+   },
+   "testcvs": {
+    "top3": 10,
+    "top5": 10,
+    "n": 10,
+    "expected_top1": 7,
+    "expected_top3": 10
+   }
+  },
+  "counts": {
+   "roles_by_source": {
+    "curated": 19,
+    "onet": 30
+   },
+   "roles_total": 49,
+   "required": {
+    "curated | named (group / any-of)": 30,
+    "curated | named (in skill list)": 139,
+    "curated | named tool, not in skill list": 24,
+    "onet | named (in skill list)": 486,
+    "onet | named tool, not in skill list": 5
+   },
+   "required_vague_prefix_pattern": {}
+  },
+  "background": {
+   "chef_pooled_pct": 5.5,
+   "web_pooled_pct": 20.3,
+   "chef_to_web": 0.271,
+   "criteria": "chef <= 5.0% and chef <= 0.5 x web",
+   "passed": false
+  },
+  "built": {
+   "onet": 30,
+   "curated": 19,
+   "collapsed": []
+  },
+  "role_skills": 289,
+  "marks": {
+   "old8 top-3 7/7": true,
+   "old8 top-5 7/7": true,
+   "chef best < 20 %": true,
+   "new6 top-5 >= 5/6": true,
+   "testcvs top-3 >= 8/10": true,
+   "testcvs top-5 >= 9/10": true,
+   "background check": false,
+   "0 vague required skills": true
+  }
+ }
+}

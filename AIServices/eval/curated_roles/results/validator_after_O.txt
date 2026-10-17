@@ -1,0 +1,49 @@
+WARN  backend-developer: 'JSON Web Token (JWT)' not in skill list
+WARN  full-stack-developer: 'JSON Web Token (JWT)' not in skill list
+WARN  full-stack-developer: 'Amazon Web Services (AWS)' not in skill list
+WARN  wordpress-developer: 'WordPress plugin development' not in skill list
+WARN  wordpress-developer: 'WordPress REST API' not in skill list
+WARN  wordpress-developer: 'Gutenberg block editor' not in skill list
+WARN  wordpress-developer: 'WP-CLI' not in skill list
+WARN  wordpress-developer: 'Composer' not in skill list
+WARN  wordpress-developer: 'Search engine optimization (SEO)' not in skill list
+WARN  android-developer: 'Gradle' not in skill list
+WARN  android-developer: 'MVVM architecture' not in skill list
+WARN  android-developer: 'Room' not in skill list
+WARN  android-developer: 'Hilt' not in skill list
+WARN  ios-developer: 'Combine' not in skill list
+WARN  ios-developer: 'Swift concurrency (async/await)' not in skill list
+WARN  ios-developer: 'URLSession' not in skill list
+WARN  ios-developer: 'Swift Package Manager' not in skill list
+WARN  ios-developer: 'MVVM architecture' not in skill list
+WARN  ios-developer: 'TestFlight' not in skill list
+WARN  devops-engineer: 'Amazon Web Services (AWS)' not in skill list
+WARN  cloud-engineer: 'Amazon Web Services (AWS)' not in skill list
+WARN  site-reliability-engineer: 'Elastic Stack (ELK)' not in skill list
+WARN  site-reliability-engineer: 'Service level objectives (SLOs)' not in skill list
+WARN  site-reliability-engineer: 'Networking (TCP/IP, DNS, HTTP)' not in skill list
+WARN  devsecops-engineer: 'Container security' not in skill list
+WARN  devsecops-engineer: 'Container image scanning' not in skill list
+WARN  devsecops-engineer: 'Software supply chain security (SBOM)' not in skill list
+WARN  devsecops-engineer: 'OWASP Top 10' not in skill list
+WARN  devsecops-engineer: 'Identity and access management (IAM)' not in skill list
+WARN  data-engineer: 'Google BigQuery' not in skill list
+WARN  data-engineer: 'Apache Hadoop' not in skill list
+WARN  machine-learning-engineer: 'Jupyter' not in skill list
+WARN  mlops-engineer: 'Kubeflow' not in skill list
+WARN  mlops-engineer: 'DVC' not in skill list
+WARN  ai-engineer: 'Large language models (LLMs)' not in skill list
+WARN  ai-engineer: 'Retrieval-augmented generation (RAG)' not in skill list
+WARN  ai-engineer: 'Google Gemini API' not in skill list
+WARN  ai-engineer: 'LLM evaluation' not in skill list
+WARN  ui-ux-designer: 'User personas' not in skill list
+WARN  product-manager: 'Product requirements documents' not in skill list
+WARN  product-manager: 'Product analytics' not in skill list
+WARN  product-manager: 'Amplitude' not in skill list
+WARN  product-manager: 'Market analysis' not in skill list
+WARN  product-manager: 'Prioritization frameworks (RICE, MoSCoW)' not in skill list
+WARN  game-developer: 'Game physics' not in skill list
+WARN  game-developer: 'Game AI' not in skill list
+WARN  game-developer: 'Linear algebra for games' not in skill list
+WARN  game-developer: 'Shaders (HLSL/GLSL)' not in skill list
+WARN  game-developer: 'Collision detection' not in skill list

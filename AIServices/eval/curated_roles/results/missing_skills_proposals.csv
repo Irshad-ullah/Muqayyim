@@ -1,0 +1,46 @@
+dataset_skill,roles,proposal,target_or_new_name,aliases_to_add,note
+Amazon Web Services (AWS),Cloud Engineer; DevOps Engineer; Full-Stack Developer,add alias,AWS,amazon web services (aws),existing skill; only the parenthetical form is unknown
+Apache Hadoop,Data Engineer,add alias,Hadoop,apache hadoop,existing skill
+Google BigQuery,Data Engineer,add alias,BigQuery,google bigquery,existing skill
+Elastic Stack (ELK),Site Reliability Engineer,add alias,ELK Stack,elastic stack; elastic stack (elk),"existing skill; today ""elk"" is an alias of Elasticsearch — move it to ELK Stack"
+Identity and access management (IAM),DevSecOps Engineer,add alias,Identity and Access Management,identity and access management (iam); iam,existing skill
+JSON Web Token (JWT),Backend Developer; Full-Stack Developer,add alias,JWT,json web token; json web token (jwt); json web tokens,existing skill
+Jupyter,Machine Learning Engineer,add alias,Jupyter Notebook,jupyter; jupyterlab,existing skill
+Search engine optimization (SEO),WordPress Developer,add alias,SEO,search engine optimization; search engine optimisation,existing skill
+OWASP Top 10,DevSecOps Engineer,add alias,OWASP,owasp top 10; owasp top ten,existing skill
+"Networking (TCP/IP, DNS, HTTP)",Site Reliability Engineer,add alias,Networking Fundamentals,"networking (tcp/ip, dns, http)",existing skill
+Large language models (LLMs),AI Engineer (LLM Applications),add alias,Large Language Models,large language models (llms),existing skill (llm / llms already aliases)
+Retrieval-augmented generation (RAG),AI Engineer (LLM Applications),add alias,Retrieval-Augmented Generation,rag; retrieval augmented generation,existing skill
+Room,Android Developer,add alias,Room Database,room; android room; room persistence library,"existing skill; ""room"" alone is ambiguous — exact-spelling rule needed"
+Shaders (HLSL/GLSL),Game Developer,add alias,Shader Programming,shaders; hlsl; glsl,existing skill
+Linear algebra for games,Game Developer,add alias,Linear Algebra,linear algebra for games,existing skill
+User personas,UI/UX Designer,add alias,Personas,user personas,existing skill
+Gradle,Android Developer,add to skill list,Gradle,gradle build tool,build tool (also listed on the Android test CV)
+Hilt,Android Developer,add to skill list,Hilt,dagger hilt; hilt dependency injection,Android dependency injection library
+MVVM architecture,Android Developer; iOS Developer,add to skill list,MVVM,mvvm architecture; model-view-viewmodel,architecture pattern (MVC Architecture exists)
+Combine,iOS Developer,add to skill list,Combine Framework,apple combine; combine (swift),"""combine"" alone is an everyday word — keep the exact-spelling rule"
+URLSession,iOS Developer,add to skill list,URLSession,nsurlsession,iOS networking API
+Swift Package Manager,iOS Developer,add to skill list,Swift Package Manager,spm,
+Swift concurrency (async/await),iOS Developer,add to skill list,Swift Concurrency,swift async/await; swift concurrency (async/await),
+TestFlight,iOS Developer,add to skill list,TestFlight,apple testflight,beta distribution (App Store Connect exists)
+Composer,WordPress Developer,add to skill list,PHP Composer,composer (php),"""composer"" alone is ambiguous"
+Gutenberg block editor,WordPress Developer,add to skill list,Gutenberg,gutenberg block editor; wordpress block editor,
+WordPress plugin development,WordPress Developer,add to skill list,WordPress Plugin Development,wordpress plugins,matches the existing WordPress Theme Development
+WordPress REST API,WordPress Developer,add to skill list,WordPress REST API,wp rest api,
+WP-CLI,WordPress Developer,add to skill list,WP-CLI,wp cli,
+DVC,MLOps Engineer,add to skill list,DVC,data version control,
+Kubeflow,MLOps Engineer,add to skill list,Kubeflow,kubeflow pipelines,
+Google Gemini API,AI Engineer (LLM Applications),add to skill list,Gemini API,google gemini api; gemini,
+LLM evaluation,AI Engineer (LLM Applications),add to skill list,LLM Evaluation,llm evals; evaluating llms,practice; learnable and named in the AI-engineer roadmap
+Container security,DevSecOps Engineer,add to skill list,Container Security,container image scanning; image scanning,"also covers ""Container image scanning"" — two requirements of one role would then share one key (merge them)"
+Container image scanning,DevSecOps Engineer,drop (merge),Container Security,,same skill as Container security in the same role
+Software supply chain security (SBOM),DevSecOps Engineer,add to skill list,Software Supply Chain Security,sbom; software bill of materials,
+Service level objectives (SLOs),Site Reliability Engineer,add to skill list,Service Level Objectives,slo; slos; sli; service level indicators,(Site Reliability Engineering exists as the broader skill)
+Amplitude,Product Manager (Software),add to skill list,Amplitude,amplitude analytics,product analytics tool
+Product analytics,Product Manager (Software),add to skill list,Product Analytics,,practice
+Product requirements documents,Product Manager (Software),add to skill list,Product Requirements Documents,prd; prds,
+"Prioritization frameworks (RICE, MoSCoW)",Product Manager (Software),add to skill list,Prioritization Frameworks,rice; moscow method; prioritisation frameworks,
+Market analysis,Product Manager (Software),add to skill list,Market Research,market analysis,closest named practice
+Game physics,Game Developer,add to skill list,Game Physics,physics engines,
+Collision detection,Game Developer,add alias,Game Physics,collision detection,"part of game physics; would merge with ""Game physics"" in the same role (Game Developer has only 8 requirements: merging leaves 7, below the validator minimum — review)"
+Game AI,Game Developer,add to skill list,Game AI,pathfinding; behaviour trees,
