@@ -58,6 +58,15 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    // LLM features (12): one-time consent to send CV / profile text to the AI provider. Valid only for
+    // the consent version it was given for (constants/aiConsent.js); without it AI features are off.
+    aiConsent: {
+      granted: { type: Boolean, default: false },
+      version: { type: String, default: null },
+      provider: { type: String, default: null },
+      grantedAt: { type: Date, default: null },
+      withdrawnAt: { type: Date, default: null },
+    },
     resetToken: String,
     resetTokenExpiry: Date,
     createdAt: {

@@ -13,7 +13,7 @@ import {
   Code2,
   Award,
 } from 'lucide-react';
-import AiAssistButton from './AiAssistButton.jsx';
+import { CvAssistActions, CvAssistProvider } from './CvAssist.jsx';
 import { EMPTY_ITEMS, SECTION_LABELS, formatRange } from './cvModel.js';
 
 // Module 4 — content editor. Every edit goes through `onChange(nextData)`; the
@@ -184,6 +184,7 @@ export default function CvEditor({ data, onChange }) {
   const pi = data.personal || {};
 
   return (
+    <CvAssistProvider>
     <div className="space-y-3">
       <SectionCard icon={User} title="Personal Information" open={open === 'personal'} onToggle={() => toggle('personal')}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -207,12 +208,7 @@ export default function CvEditor({ data, onChange }) {
           rows={5}
           placeholder="A short overview of your experience and strengths."
           onChange={(v) => set('summary', v)}
-          actions={
-            <>
-              <AiAssistButton label="Generate" />
-              <AiAssistButton label="Improve" />
-            </>
-          }
+          actions={<CvAssistActions target="summary" currentText={data.summary} onApply={(v) => set('summary', v)} />}
         />
       </SectionCard>
 
@@ -281,12 +277,8 @@ export default function CvEditor({ data, onChange }) {
                   maxLength={4000}
                   hint="One bullet per line"
                   onChange={(v) => update({ description: v })}
-                  actions={
-                    <>
-                      <AiAssistButton label="Generate" />
-                      <AiAssistButton label="Improve" />
-                    </>
-                  }
+                  actions={<CvAssistActions target="experience" entry={e} currentText={e.description}
+                    onApply={(v) => update({ description: v })} />}
                 />
               </div>
             </>
@@ -330,12 +322,8 @@ export default function CvEditor({ data, onChange }) {
                   maxLength={3000}
                   hint="Paragraph, or one bullet per line"
                   onChange={(v) => update({ description: v })}
-                  actions={
-                    <>
-                      <AiAssistButton label="Generate" />
-                      <AiAssistButton label="Improve" />
-                    </>
-                  }
+                  actions={<CvAssistActions target="project" entry={p} currentText={p.description}
+                    onApply={(v) => update({ description: v })} />}
                 />
               </div>
             </>
@@ -402,5 +390,6 @@ export default function CvEditor({ data, onChange }) {
         />
       </SectionCard>
     </div>
+    </CvAssistProvider>
   );
 }

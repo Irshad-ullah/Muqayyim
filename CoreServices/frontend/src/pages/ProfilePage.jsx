@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { checkName } from '../validation/profileRules.js';
 import PasswordChecklist from '../components/PasswordChecklist.jsx';
 import SkillEmbeddingsCard from '../components/embeddings/SkillEmbeddingsCard.jsx';
+import AiConsentCard from '../components/ai/AiConsentCard.jsx';
 import { validatePassword } from '../constants/passwordPolicy.js';
 import {
   User,
@@ -352,6 +353,9 @@ export default function ProfilePage() {
                 </div>
               </form>
             </div>
+
+            {/* AI writing help: consent (12) */}
+            <AiConsentCard />
 
             {/* Danger zone */}
             <div className="card p-6 border-red-100">

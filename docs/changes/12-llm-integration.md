@@ -6,8 +6,8 @@ Gemini (free tier), default model `gemini-3.5-flash-lite`.
 
 | Part | Content | Status |
 |---|---|---|
-| 1 | Shared LLM client in AIServices | **done** (this note) |
-| 2 | CV generator: consent, server-built facts, CV assist, truthfulness post-check, review step | next |
+| 1 | Shared LLM client in AIServices | **done** |
+| 2 | CV generator: consent, server-built facts, CV assist, truthfulness post-check, review step | **done** |
 | 3 | Target-role tailoring, admin usage view | later |
 | — | Modules 6–8 (learning paths, quizzes, interviews) use the client when they are built | later |
 
@@ -131,18 +131,101 @@ All normal tests use the fake adapter; a conftest guard makes the Gemini adapter
 API (adapter tests inject an `httpx.MockTransport`, no network). `tests/test_llm_live.py` (marker `llm_live`, excluded
 by default, `pytest -m llm_live`) makes one tiny smoke call with the real key.
 
+## Part 2 — CV generator (Module 4)
+
+**Flow:** CV editor (Generate / Improve on the summary, each experience entry and each project) → `POST /api/ai/cv-assist`
+(Core, JWT) → consent check → facts built on the server → `POST /internal/llm/cv-assist` (AI, internal key + `X-User-Id`)
+→ the shared client with `prompts/cv_assist.txt` (v1) → truthfulness post-check → back to the browser → **review step**
+→ Accept puts the text into the editor; the CV is saved only when the user saves it as before.
+
+**Consent** (`core_db.users.aiConsent`: granted, version, provider, grantedAt, withdrawnAt):
+- The dialog (first AI click, or the Account page) shows in plain language what happens and the exact notice, served by
+  Core so it cannot drift: *"Your CV/profile text is sent to Google Gemini for processing. On the free tier, Google may use
+  this content to improve its products."* It adds that name, e-mail, phone, address, links and photo are never sent and
+  that consent can be withdrawn on the Account page. **Agree** / **Not now**; "Not now" changes nothing and every non-AI
+  CV feature keeps working.
+- Consent counts only for the current notice version (`AI_CONSENT_VERSION`); a changed notice asks again (409
+  `CONSENT_VERSION_CHANGED`). Without consent Core refuses with 403 `AI_CONSENT_REQUIRED` before anything reaches AI.
+- **Withdrawal** (Account page, with a confirmation) turns AI off and asks AIServices to delete the user's cached outputs
+  (`DELETE /internal/llm/user-data`, background with retries; a final failure is logged as `LLM_USER_DATA_DELETE_FAILED`,
+  and the cache expires after 7 days anyway). **Account deletion** (admin) does the same.
+
+**Data minimisation:** Core builds the profile context with `buildCvSource` on the server and sends only what the
+section needs — summary: headline, skills, job titles / employers / dates, degrees / institutions, project names /
+technologies, certification names / issuers; experience: that job's title, employer, dates and the skills; project: its
+name, technologies and the skills — plus the current text of the field. The browser's entry is reduced to allowed fields.
+Never sent: name, e-mail, phone, address / location, links, photo. The user's name goes to AIServices only as `redact`
+terms, which scrub it from free text before the prompt is built; AIServices refuses any unexpected field (422).
+
+**Prompt:** `cv_assist.txt` v1 — a fixed task per section and action (chosen in code), the writing rules (only facts from
+the data; never add employers, titles, dates, degrees, skills, tools, certifications, metrics or numbers; keep numbers
+exactly), the format (summary: one paragraph; experience: 2–5 bullets; project: 1–3 sentences or up to 4 bullets) and
+JSON output `{text, insufficient_data}`. Profile facts and the current text are delimited data blocks.
+
+**Truthfulness post-check** (`app/services/cv_assist/truthfulness.py`) flags, with the reason shown to the user: numbers
+not in the input; known skills / tools (alias table and curated skills) not in the profile — short or everyday-word skills
+(Go, R, Swift, REST, …) only with their exact spelling, a multi-word skill counted as present when all its words are in
+the input in some form; employer / organisation names after "at / for / with / from / joined / by"; other capitalised
+names mid-sentence; degree words; certification wording. Matching is by whole words. It is a safety net: the prompt
+forbids invention and the user reviews every suggestion.
+
+**Review step:** current text and suggestion side by side; flagged items highlighted with the reason (e.g. "employer not
+in your profile", "number not in your input") and listed; **Accept**, **Discard**, **Edit before accepting**. Nothing is
+saved automatically.
+
+**Messages** (the user's text is never changed): per-user quota → "AI daily limit reached, try again tomorrow."; global
+limit → "AI is busy, try again in a minute."; provider down / timeout / disabled / unusable answer → "AI is unavailable.";
+each followed by "Your text was not changed."; not enough profile data → a notice, no suggestion. When AI is switched
+off the buttons are disabled with "AI is unavailable right now". The "Soon" badge is removed (the feature works end to end).
+
+**Routes:** Core `GET /api/ai/status`, `GET|POST|DELETE /api/ai/consent`, `POST /api/ai/cv-assist` (gateway `/api/ai` → Core,
+normal limits); AI `POST /internal/llm/cv-assist`.
+
+### Manual check (2026-10-17, real Gemini, the project's free-tier limits)
+
+Instances with the new code: gateway :8180 → Core :3100 → a capture relay → AI :8100 (real databases; `.env` with
+`LLM_ENABLED=true`, provider limits RPM 15 / TPM 250,000 / RPD 500 → effective 12 / 200,000 / 400). The real profile had
+**no experience entries** (15 projects, empty summary), so the two experience checks and "improve summary" could not run;
+three calls were made, 6 s apart.
+
+| Call | Through the gateway | LLM (usage record) | Tokens in / out | Post-check flags (after the fixes below) |
+|---|---|---|---|---|
+| Summary — generate | 4,253 ms | 3,138 ms, 1 attempt | 1,212 / 88 | none |
+| Project — generate | 5,662 ms | 2,045 ms | 677 / 32 | none (it restated name and technologies only: no description in the data) |
+| Project — improve | 5,830 ms | 2,309 ms | 722 / 60 | "JSON" — skill not in your profile (the model expanded "JWT" to "JSON Web Token") |
+
+- **Privacy, verified on the outgoing data** (the service logs no content): the text sent to Gemini was rebuilt exactly
+  from Core's captured payloads with the same prompt code and scanned for the user's 15 personal values (name and its
+  parts, e-mail, phone, LinkedIn / GitHub / website, project and certificate URLs): **none found**; none in Core's payload
+  outside the `redact` list either. Logs: the AI usage lines and Core's `[CvAssist]` lines hold a user hash, section,
+  status, tokens and time only.
+- Consent was given for the check and withdrawn afterwards (the account's state is "off" again).
+- **Found by the check and fixed:** (1) the post-check flagged "Comsats University Islamabad. Proficient" as an employer:
+  a name ran across the sentence end and the institution *is* in the profile — names now stop at sentence ends; (2)
+  "inventory management" was flagged although the input says "managing inventory" — a multi-word skill now counts as
+  present when all its words are in the input (single words keep the strict rule: Java is not JavaScript). Both cases are
+  regression tests; the three real outputs were re-checked offline with the fixed code (no new calls).
+- **Found by the check (setup artefact, shows the fallback):** the withdrawal's background deletion went through the
+  capture relay, which the script had already stopped, so all retries failed and Core logged
+  `LLM_USER_DATA_DELETE_FAILED`; the three cached entries were then deleted through the same AIServices function (cache
+  empty). Deletion is best-effort with retries, a logged failure and the 7-day expiry as the backstop.
+
 ## Suggested SDS text
 
 | Section | Add or replace |
 |---|---|
 | **SI-3 (LLM interaction)** | "All language-model calls go through one client in AIServices (provider-agnostic; Google Gemini `gemini-3.5-flash-lite` by default). CoreServices and the browser never call the provider and never hold the key. The client enforces timeouts, retries on rate-limit and server errors with backoff, a global rate limiter at 80 % of the provider's per-project limits, a per-user daily quota, caching of identical requests, schema-validated structured output, and records usage (feature, tokens, latency, status) without storing prompts or responses." |
 | **Privacy (LI-6 / SEC-4)** | "AI features require a one-time consent stating that CV/profile text is sent to Google Gemini and, on the free tier, may be used by Google to improve its products. Names, e-mail addresses, phone numbers, addresses, links and photos are never sent to the language model. Withdrawing consent or deleting the account deletes the user's cached AI outputs." |
+| **Module 4 FE-1 / FR6.1 (AI-Powered CV Generator)** | "With the user's consent, the CV editor offers AI writing help (Generate / Improve) for the professional summary, each work-experience entry and each project. Suggestions are produced only from facts in the user's profile; any number, skill, employer, degree, certification or name that the input does not contain is flagged with the reason, and the user accepts, edits or discards each suggestion before it is used. Nothing is saved without the user saving the CV." |
 | **Security (prompt injection)** | "User-supplied text is passed to the model only inside delimited data sections that the system instruction marks as data; instructions inside them are ignored, and model output is always reviewed by the user before it is saved." |
 | **§3.5 (data design)** | Add `ai_db.llm_limits` (rate / quota counters, TTL), `ai_db.llm_cache` (user hash, feature, output, 7-day TTL), `ai_db.llm_usage` (per-call usage, 365-day TTL). |
 | **PER-3** | Note: the LLM timeout is 15 s per attempt; retries after rate-limit or server errors can extend a request. |
 
 ## Files
 
+**Part 2:** AIServices `app/services/cv_assist/{service,truthfulness}.py`, `app/services/llm/prompts/cv_assist.txt`, `app/routes/llm_routes.py`; tests `tests/test_cv_assist.py`. CoreServices `backend/constants/aiConsent.js`, `backend/models/User.js` (aiConsent), `backend/services/aiLlmClient.js`, `backend/controllers/aiController.js`, `backend/routes/aiRoutes.js`, `app.js`, `backend/admin/controllers/adminUserController.js`; tests `tests/aiAssist.test.js`. Frontend `src/services/{aiService,cvAssistService}.js`, `src/components/ai/{AiConsentDialog,AssistReview,AiConsentCard}.jsx`, `src/components/cvgen/{CvAssist,AiAssistButton,CvEditor}.jsx`, `src/pages/ProfilePage.jsx`; tests `cvAssistService.test.js`, `CvAssist.spec.jsx`, `AiConsentCard.spec.jsx`. Gateway `app.js`; tests `tests/aiRoute.test.js`.
+
+**Part 1:**
 - `AIServices/backend/app/services/llm/` — `client.py`, `errors.py`, `limits.py`, `cache.py`, `usage.py`, `privacy.py`,
   `prompts.py`, `prompts/{system_base,smoke}.txt`, `providers/{base,gemini,fake}.py`.
 - `AIServices/backend/app/routes/llm_routes.py`; `app/main.py` (indexes, startup log, router);

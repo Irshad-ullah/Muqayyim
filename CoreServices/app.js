@@ -4,6 +4,7 @@ import authRoutes from './backend/routes/authRoutes.js';
 import profileRoutes from './backend/routes/profileRoutes.js';
 import generatedCvRoutes from './backend/routes/generatedCvRoutes.js';
 import careerMatchRoutes from './backend/routes/careerMatchRoutes.js';
+import aiRoutes from './backend/routes/aiRoutes.js';
 import adminRoutes from './backend/admin/routes/adminRoutes.js';
 import internalRoutes from './backend/routes/internalRoutes.js';
 import { parseTrustProxy } from './backend/utils/trustProxy.js';
@@ -39,6 +40,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/generated-cvs', generatedCvRoutes);
 app.use('/api/career-matches', careerMatchRoutes);
+app.use('/api/ai', aiRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Service-to-service API (X-Internal-Key). Not proxied by the gateway.

@@ -213,6 +213,7 @@ export function createApp(config = loadConfig(), { errorReporter } = {}) {
   app.use('/api/profile', coreProxy);         // Module 3 — Profile Builder
   app.use('/api/generated-cvs', coreProxy);   // Module 4 — CV Generator
   app.use('/api/career-matches', coreProxy);  // Module 5 — Career Matching (Core → AIServices)
+  app.use('/api/ai', coreProxy);              // 12 — AI consent and CV assist (Core → AIServices)
   app.use('/api/cv', aiProxy);                // Module 2 — CV Parsing (AIServices)
   app.use('/api/embeddings', aiProxy);        // Module 2 FE-4/FE-5 — skill embeddings (AIServices)
   app.use('/api/admin', coreProxy);           // Module 10 — Admin Panel
@@ -228,6 +229,7 @@ export function createApp(config = loadConfig(), { errorReporter } = {}) {
         '/api/profile/*': AUTH_SERVICE_URL,
         '/api/generated-cvs/*': AUTH_SERVICE_URL,
         '/api/career-matches/*': AUTH_SERVICE_URL,
+        '/api/ai/*':      AUTH_SERVICE_URL,
         '/api/cv/*':      CV_SERVICE_URL,
         '/api/embeddings/*': CV_SERVICE_URL,
         '/api/admin/*':   AUTH_SERVICE_URL,
@@ -240,7 +242,7 @@ export function createApp(config = loadConfig(), { errorReporter } = {}) {
     res.json({
       message: 'MUQAYYIM API Gateway',
       version: '1.0.0',
-      endpoints: ['/api/auth', '/api/profile', '/api/generated-cvs', '/api/career-matches', '/api/cv', '/api/embeddings', '/api/admin', '/health'],
+      endpoints: ['/api/auth', '/api/profile', '/api/generated-cvs', '/api/career-matches', '/api/ai', '/api/cv', '/api/embeddings', '/api/admin', '/health'],
     });
   });
 

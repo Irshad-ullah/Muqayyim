@@ -60,7 +60,8 @@ GW = API Gateway Jest, FE node = frontend `node --test`, FE Vitest = frontend Vi
 | Module 5 Part 2 (API) | `ef001ec` | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 31 | 70 | automatic |
 | Module 5 Part 3 (Career Matching page) | `4b59b36` | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
 | Module 5 Part 4 (evaluation, doc) | `efd8990` | 541 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
-| 12 Part 1 (shared LLM client) | Part 1 commit | 573 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
+| 12 Part 1 (shared LLM client) | `84f95f5` | 573 + 1 skipped | 2 + 2 xfailed | 263 | 67 | 36 | 88 | automatic |
+| 12 Part 2 (CV assist) | Part 2 commit | 584 + 1 skipped | 2 + 2 xfailed | 281 | 76 | 39 | 102 | automatic |
 
 ¹ From the "Before" column of the 08 change note. ² The 09a2 note records React ↔ Python and Redux ↔ Redis as
 strict xfails in the slow test but gives no run count for this commit.
@@ -821,3 +822,69 @@ RPD 100 → effective 4 / 80,000 / 80; quota 20 per user per day.
   "socket.io" as links — narrowed (personal objects and name variants only; ≥ 10 digits; lower-case domains).
 
 **Manual checks:** none (no key used; the live check comes with Part 2).
+
+## 12 Part 2 — CV generator: consent, CV assist, truthfulness post-check, review (recorded)
+
+**Date:** 2026-10-17 · commit: "12 Part 2" (see `git log`) · note: `docs/changes/12-llm-integration.md` (Part 2)
+
+**Automated tests** (run 2026-10-17 11:13, all PASS): AI **584 passed, 1 skipped** (+11); AI slow 2 + 2 xfailed; Core
+**281** (+18); Gateway **76** (+9); frontend `node --test` **39** (+3), Vitest **102** (+14).
+- AI `tests/test_cv_assist.py` (11) — invented employer / skill / number / degree / certification flagged; input facts
+  not flagged; aliases and exact spelling for ambiguous skills; regressions from the manual check (no name across a
+  sentence end; reworded multi-word skill; Java ≠ JavaScript; JWT → "JSON" flagged); a capitalised name; the suggestion
+  with flag spans; only the needed facts sent, never the name or contact details; instructions inside a CV stay data and
+  an addition the input lacks is flagged; insufficient data; the route (X-User-Id required, contact fields refused with
+  422, entry required) and error mapping (LLM_DISABLED 503, LLM_QUOTA_EXCEEDED 429 + Retry-After).
+- Core `tests/aiAssist.test.js` (18) — consent: 401 without a token; the exact free-tier text; agree stores version and
+  provider; explicit and current-version only (400 / 409); withdrawal turns AI off and deletes the cached outputs in
+  AIServices; account deletion (admin) does too; status without details. CV assist: no consent → 403 with nothing sent;
+  facts from the stored profile and no name / e-mail / phone / location / links / URLs forwarded (the name only as
+  `redact`); entry reduced to allowed fields; unknown section or action → 400; six LLM error codes passed through with
+  the retry hint; AI down or an unexpected AI error → 503 LLM_UNAVAILABLE without internal text; logs without content.
+- Gateway `tests/aiRoute.test.js` (9) — `/api/ai/*` proxied to Core; 1 MB limit; `/internal/llm/*` blocked.
+- Frontend `services/cvAssistService.test.js` (3, node) — the request carries allowed fields only; the agreed limit
+  messages; flag segments. `components/cvgen/CvAssist.spec.jsx` (12) — the consent dialog shows the exact text, "Not now"
+  changes nothing, "Agree" continues; the review step side by side with highlighted flags and reasons; Accept / Discard /
+  Edit; insufficient data; quota / busy / unavailable / timeout messages with the text untouched; disabled when AI is
+  unavailable; Improve needs text. `components/ai/AiConsentCard.spec.jsx` (2) — withdraw with confirmation; agree.
+
+**Manual check (real Gemini, 2026-10-17):** see the note for the full table. Summary — generate 4,253 ms (LLM 3,138 ms,
+1,212 / 88 tokens); project — generate 5,662 ms (2,045 ms, 677 / 32); project — improve 5,830 ms (2,309 ms, 722 / 60).
+The real profile has no experience entries and no summary, so the experience checks and "improve summary" were not run.
+Flags after the fixes: one ("JSON", from the model expanding "JWT"). **Privacy:** none of the user's 15 personal values was
+in the text sent to Gemini (rebuilt exactly from the captured payloads) or in Core's payload outside `redact`; logs hold
+no content. Consent given for the check and withdrawn afterwards. Generated texts are not reproduced here (personal data).
+
+**Problems found by testing / the manual check (fixed before commit):**
+- **Substring matching in the post-check:** "go" counted as present because "Django" contains it — whole-word matching
+  everywhere (found by a unit test).
+- **A name across a sentence end** ("Comsats University Islamabad. Proficient", flagged although the institution is in the
+  profile) — names stop at sentence ends (real output).
+- **Reworded multi-word skill flagged** ("inventory management" ← "managing inventory") — counted as present when all its
+  words are in the input; single words stay strict (real output).
+- **Withdrawal deletion is best-effort:** in the manual check the background deletion failed (the capture relay had
+  been stopped), Core logged `LLM_USER_DATA_DELETE_FAILED`, and the 3 cached entries were deleted through the AIServices
+  function; recorded as a limitation (retries, logged failure, 7-day expiry).
+- Found while writing: the consent handlers lacked error handling — wrapped with `handleServerError`; the button / notice
+  flow was simplified ('dialog' outcome) before testing.
+
+**Manual check (browser walkthrough):** pending — checklist below, to be done by the user.
+
+Browser walkthrough checklist (results to be added here):
+1. Restart Core, gateway and AI (new routes); sign in as a job seeker with a profile. Account page: "AI writing help —
+   Off" with the exact notice.
+2. CV Generator: the Generate / Improve buttons have no "Soon" badge; Improve is disabled on an empty field.
+3. Click Generate on the summary: the consent dialog shows the exact free-tier text, the "never sent" list and
+   "Agree" / "Not now".
+4. Click "Not now": the dialog closes, the summary is unchanged, and editing, preview, PDF download and save still work.
+5. Click Generate again and "Agree": a review window opens with your current text and the suggestion side by side.
+6. If items are highlighted, hover one: the reason shows (e.g. "skill not in your profile"); the list below repeats them.
+7. Click "Edit before accepting", change a word, click Accept: the edited text is in the editor; the CV is not saved
+   until you click Save.
+8. On a project, click Improve, then Discard: the description is unchanged.
+9. Account page: "AI writing help — On"; click "Withdraw consent", confirm: it says Off and that saved AI suggestions are
+   being deleted.
+10. Back in the CV Generator, click Generate: the consent dialog appears again.
+11. Optional (limit message): with `LLM_USER_DAILY_QUOTA=1` in `.env` and AI restarted, the second suggestion shows
+    "AI daily limit reached, try again tomorrow. Your text was not changed."
+12. Optional (outage message): stop the AI service and click Generate: "AI is unavailable. Your text was not changed."

@@ -1,0 +1,18 @@
+# version: 1
+# CV assist (Module 4): reword the user's own facts for one CV section. ${task} is a fixed task
+# description chosen in code (never user text); facts and the current text are delimited data blocks.
+Task: ${task}
+
+Writing rules:
+- Use only facts found in the PROFILE and CURRENT_TEXT data sections. Rephrase, reorder, tighten and improve wording; do not add anything new.
+- Never add employers, job titles, dates, degrees, institutions, skills, tools, technologies, certifications, metrics, numbers or achievements that are not in the data.
+- Keep every number exactly as it appears in the data, and only where the data supports it.
+- Professional, concise, active voice, suitable for an ATS-friendly CV. No first-person "I". No personal contact details.
+- ${format_rule}
+- If the data is not enough to write this section truthfully, set "insufficient_data" to true and "text" to "".
+
+Profile facts:
+${profile}
+
+Current text of the section (may be empty):
+${current}

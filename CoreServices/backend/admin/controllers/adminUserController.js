@@ -5,6 +5,7 @@ import { markAdminEmailsStale } from '../../services/alertService.js';
 import { normalizeEmail, isDuplicateKeyError, emailInUse } from '../../utils/apiErrors.js';
 import { handleServerError } from '../../utils/serverError.js';
 import { deleteUserEmbeddings } from '../../services/skillEmbeddingSync.js';
+import { deleteUserLlmData } from '../../services/aiLlmClient.js';
 
 const SAFE_FIELDS = '-password -resetToken -resetTokenExpiry';
 
@@ -261,6 +262,7 @@ export const deleteUser = async (req, res) => {
       Profile.findOneAndDelete({ userId: req.params.id }),
     ]);
     deleteUserEmbeddings(user._id); // AIServices skill profile; background, retried
+    deleteUserLlmData(user._id); // 12: the user's cached AI outputs; background, retried
 
     return res.json({ success: true, message: 'User deleted successfully' });
   } catch (error) {

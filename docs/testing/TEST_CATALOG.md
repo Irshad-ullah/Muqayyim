@@ -133,6 +133,16 @@ properties with no single SRS id.
 | Gemini adapter request / response / errors (no network); tests cannot reach the real API | AI `test_llm.py::test_gemini_…`, `::test_tests_cannot_reach_the_real_provider` | unit | pass |
 | Internal routes (status without the key, usage, user-data) | AI `test_llm.py::test_status_usage_and_user_data_routes` | integration | pass |
 | Live provider smoke (opt-in) | AI `test_llm_live.py` (`-m llm_live`) | integration (real API) | not run (opt-in) |
+| M4 FE-1 / FR6.1 CV assist (Generate / Improve for summary, experience, project) through Core and AI | AI `test_cv_assist.py`; Core `aiAssist.test.js::CV assist`; GW `aiRoute.test.js` | integration | pass |
+| **privacy** — consent: exact free-tier text, explicit, current version only; no consent → nothing sent | Core `aiAssist.test.js::consent`, `::without consent nothing reaches AIServices`; FE `CvAssist.spec.jsx::consent` | integration + component | pass |
+| **privacy** — withdrawal / account deletion delete cached AI outputs | Core `aiAssist.test.js::withdrawing…`, `::deleting the account…`; FE `AiConsentCard.spec.jsx` | integration + component | pass |
+| **privacy** — only the needed facts sent; never name, e-mail, phone, address, links or photo | Core `aiAssist.test.js::facts come from the stored profile…`, `::the target entry keeps allowed fields only`; AI `test_cv_assist.py::test_only_the_needed_facts…`, `::test_route_requires_identity_and_refuses_contact_fields`; FE `cvAssistService.test.js` | integration + unit | pass |
+| **truthfulness** — invented employer / skill / number / degree / certification / name flagged; real facts not flagged | AI `test_cv_assist.py::test_invented_…`, `::test_facts_from_the_input…`, `::test_aliases…`, `::test_regressions_from_the_real_manual_check`, `::test_a_capitalised_name…` | unit | pass |
+| **security** — instructions inside a CV stay data; a complying addition is flagged | AI `test_cv_assist.py::test_instructions_inside_a_cv…` | integration | pass |
+| Review step: side by side, highlighted flags with reasons, Accept / Discard / Edit, nothing saved automatically | FE `CvAssist.spec.jsx::review step` | component | pass |
+| Limit and outage messages (daily limit / busy / unavailable), text untouched | FE `CvAssist.spec.jsx::limits and outages…`; `cvAssistService.test.js`; Core `aiAssist.test.js` (error pass-through) | component + unit | pass |
+| CV assist, real provider through the gateway (latency, tokens, usage records, no personal data sent) | 12 Part 2 manual check (TEST_LOG) | manual | 2026-10-17: 3 calls OK; no personal data in the outgoing text; 2 post-check false positives found and fixed |
+| Consent and review flow, browser walkthrough | 12 Part 2 checklist (TEST_LOG) | manual | pending — results to be reported by the user |
 
 ## Gateway and cross-cutting
 

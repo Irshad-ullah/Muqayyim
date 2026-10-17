@@ -212,3 +212,18 @@ Result: **PASS** · total time 401 s
 | Frontend node --test + Vitest | ✅ 124 passed (36 node + 88 Vitest), 0 failed | 52.4 s | `node --test: pass 36, fail 0 (0.2s) \| Vitest: 88 passed (88) (52.1s)` |
 
 Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).
+
+## 2026-10-17 11:13 Pakistan Standard Time · `84f95f5` (main, 23 uncommitted change(s))
+
+Commit: 12 Part 1: shared LLM client in AIServices (Gemini + fake, limits, cache, privacy)  
+Result: **PASS** · total time 449 s
+
+| Suite | Result | Duration | Summary line |
+|---|---|---|---|
+| AIServices pytest | ✅ 584 passed, 0 failed, 1 skipped, 5 deselected | 264.6 s | `584 passed, 1 skipped, 5 deselected in 264.63s (0:04:24)` |
+| AIServices pytest -m slow (real model) | ✅ 2 passed, 0 failed, 2 xfailed, 586 deselected | 34.1 s | `2 passed, 586 deselected, 2 xfailed in 34.14s` |
+| CoreServices Jest | ✅ 281 passed, 0 failed | 117.5 s | `Tests: 281 passed, 281 total \| Test Suites: 22 passed, 22 total` |
+| API Gateway Jest | ✅ 76 passed, 0 failed | 4.7 s | `Tests: 76 passed, 76 total \| Test Suites: 11 passed, 11 total` |
+| Frontend node --test + Vitest | ✅ 141 passed (39 node + 102 Vitest), 0 failed | 11.1 s | `node --test: pass 39, fail 0 (0.2s) \| Vitest: 102 passed (102) (10.9s)` |
+
+Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).
