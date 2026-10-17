@@ -161,9 +161,9 @@ def main():
             add_alias(canonical, alias)
     if problems:
         raise SystemExit("\n".join(problems))
-    descriptions_path.write_text(json.dumps(descriptions, indent=2, ensure_ascii=False) + "\n", encoding="utf8")
-    categories_path.write_text(json.dumps(categories, indent=2, ensure_ascii=False) + "\n", encoding="utf8")
-    aliases_path.write_text(json.dumps(aliases, indent=2, ensure_ascii=False) + "\n", encoding="utf8")
+    from app.services.taxonomy import skills_editor  # the admin editor's writer keeps each file's layout
+
+    skills_editor.write(descriptions, aliases, categories)
 
     # Dataset: renames and the Container merge.
     dataset_path = CURATED / "modern_roles_v1.json"
