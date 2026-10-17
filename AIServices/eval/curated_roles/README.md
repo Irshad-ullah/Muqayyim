@@ -20,8 +20,8 @@ sandbox database that was dropped afterwards; `ai_db` was only read. The pass ma
 | Old 8: top-3 7/7, top-5 7/7 | 7/7 · 7/7 PASS | 7/7 · 7/7 PASS |
 | Chef best < 20 % | 15.0 % PASS | 15.0 % PASS |
 | New 6: top-5 ≥ 5/6 | 6/6 PASS (top-3 3/6) | 6/6 PASS (top-3 5/6) |
-| 10 test CVs: top-3 ≥ 8, top-5 ≥ 9 | 10/10 · 10/10 PASS | 10/10 · 10/10 PASS |
-| Test CVs: expected family at #1 / in top 3 (info) | 4 · 8 | **7 · 10** |
+| 10 test CVs (**not blind**): top-3 ≥ 8, top-5 ≥ 9 | 10/10 · 10/10 PASS | 10/10 · 10/10 PASS |
+| Test CVs (**not blind**): expected family at #1 / in top 3 (info) | 4 · 8 | **7 · 10** |
 | Background: chef ≤ 5 % and ≤ 0.5 × web | 3.2 % vs 12.9 % PASS | **5.5 % vs 20.3 % FAIL** (ratio 0.27 passes; the absolute 5 % fails) |
 | 0 vague required skills | **1,319 vague FAIL** | 0 PASS |
 | Active roles | 130 (100 ESCO + 30 O\*NET) | 49 (19 curated + 30 O\*NET) |
@@ -44,5 +44,8 @@ Management → SAS) then weigh more. The chef's best match is still 15.0 % in bo
 ## Limits
 - The curated roles and candidate skills were AI-assisted (`METHOD.md`).
 - The new 6 profiles are not blind.
-- The test-CV acceptable titles were written by the assistant from `EXPECTED_MATCHES.md` and committed before the run.
+- **The 10 test CVs are not blind.** The curated roles were designed after the CVs had been seen. The test-CV
+  acceptable titles were written by the assistant from `EXPECTED_MATCHES.md` and committed before the run.
+- **Background diagnosis:** `results/background_diagnosis.md` (`diagnose_background.py`, `background_report.py`,
+  `background_labels.json`).
 - The samples are small: 7 + 6 + 10 profiles.

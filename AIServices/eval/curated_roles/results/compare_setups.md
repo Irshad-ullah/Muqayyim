@@ -10,8 +10,8 @@ Sandbox run (`compare_setups.py`); pass marks fixed beforehand in `expectations.
 | old8 top-5 7/7 | PASS | PASS |
 | chef best < 20 % | PASS | PASS |
 | new6 top-5 >= 5/6 | PASS | PASS |
-| testcvs top-3 >= 8/10 | PASS | PASS |
-| testcvs top-5 >= 9/10 | PASS | PASS |
+| testcvs top-3 >= 8/10 (not blind) | PASS | PASS |
+| testcvs top-5 >= 9/10 (not blind) | PASS | PASS |
 | background check | PASS | FAIL |
 | 0 vague required skills | FAIL | PASS |
 
@@ -19,9 +19,9 @@ Sandbox run (`compare_setups.py`); pass marks fixed beforehand in `expectations.
 |---|---|---|
 | Old 8: top-3 / top-5 | 7/7 · 7/7 | 7/7 · 7/7 |
 | New 6: top-3 / top-5 | 3/6 · 6/6 | 5/6 · 6/6 |
-| 10 test CVs: top-3 / top-5 | 10/10 · 10/10 | 10/10 · 10/10 |
+| 10 test CVs (not blind): top-3 / top-5 | 10/10 · 10/10 | 10/10 · 10/10 |
 | Chef best | 15.0 % (Computer Systems Analysts) | 15.0 % (Computer Systems Analysts) |
-| Test CVs: expected family at #1 / in top 3 | 4 · 8 | 7 · 10 |
+| Test CVs (not blind): expected family at #1 / in top 3 | 4 · 8 | 7 · 10 |
 | Background (A) | chef 3.2 % vs web 12.9 % | PASS |
 | Background (B) | chef 5.5 % vs web 20.3 % | FAIL |
 
@@ -83,7 +83,7 @@ Sandbox run (`compare_setups.py`); pass marks fixed beforehand in `expectations.
 | IT support | A | 1 | 1. Computer Network Support Specialists [O*NET] 75.0 % ✓; 2. Computer User Support Specialists [O*NET] 62.5 % ✓; 3. Information Technology Project Managers [O*NET] 45.0 %; 4. Network and Computer Systems Administrators [O*NET] 44.1 %; 5. Computer Network Architects [O*NET] 38.5 % |
 | IT support | B | 1 | 1. Computer Network Support Specialists [O*NET] 75.0 % ✓; 2. Computer User Support Specialists [O*NET] 62.5 % ✓; 3. Network and Computer Systems Administrators [O*NET] 52.9 %; 4. Information Technology Project Managers [O*NET] 50.0 %; 5. Computer Network Architects [O*NET] 42.3 % |
 
-### 10 test CVs
+### 10 test CVs — NOT BLIND (the curated roles were designed after the CVs had been seen)
 
 | Profile | Setup | First acceptable | Top 5 |
 |---|---|---|---|
