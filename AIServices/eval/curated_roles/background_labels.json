@@ -1,21 +1,54 @@
 {
   "_comment": "Module 5.2 background diagnosis: hand labels for the (profile skill -> role skill) pairs behind the background check's related credits (assistant's judgement, 2026-10-17). 'real overlap' = a person with the profile skill genuinely has the role skill (the role skill is that same competence or is directly implied by it); every pair not listed here is a 'false match' (semantic credit for an unrelated or merely neighbouring skill, e.g. a different tool of the same family). Borderline calls are noted.",
   "real_overlap": {
-    "Customer Service": ["assist customers", "communicate with customers", "respond to customers' inquiries",
-                         "guarantee customer satisfaction", "provide customer follow-up services", "establish customer rapport",
-                         "identify customer's needs", "maintain relationship with customers", "measure customer feedback"],
-    "Inventory Management": ["Excel", "identify software for warehouse management"],
+    "Customer Service": [
+      "assist customers",
+      "communicate with customers",
+      "respond to customers' inquiries",
+      "guarantee customer satisfaction",
+      "provide customer follow-up services",
+      "establish customer rapport",
+      "identify customer's needs",
+      "maintain relationship with customers",
+      "measure customer feedback"
+    ],
+    "Inventory Management": [
+      "identify software for warehouse management"
+    ],
     "Cooking": [],
-    "React": ["JavaScript", "JavaScript Framework", "implement front-end website design", "Web application",
-              "Web application framework", "software components libraries"],
-    "Python": ["computer programming", "use scripting programming", "use object-oriented programming"],
-    "Figma": ["design user interface", "Prototyping", "software interaction design", "create prototype of user experience solutions",
-              "design prototypes", "translate requirements into visual design", "design application interfaces", "Design Systems",
-              "use specialised design software", "design interaction model", "software UI design patterns", "draw design sketches"],
-    "Docker": ["solution deployment"]
+    "React": [
+      "JavaScript",
+      "JavaScript Framework",
+      "implement front-end website design",
+      "Web application",
+      "Web application framework",
+      "software components libraries"
+    ],
+    "Python": [
+      "computer programming",
+      "use scripting programming",
+      "use object-oriented programming"
+    ],
+    "Figma": [
+      "design user interface",
+      "Prototyping",
+      "software interaction design",
+      "create prototype of user experience solutions",
+      "design prototypes",
+      "translate requirements into visual design",
+      "design application interfaces",
+      "Design Systems",
+      "use specialised design software",
+      "design interaction model",
+      "software UI design patterns",
+      "draw design sketches"
+    ],
+    "Docker": [
+      "solution deployment"
+    ]
   },
   "notes": {
-    "Inventory Management -> Excel": "borderline: the profile does not list Excel; counted as real overlap because inventory work is commonly done in spreadsheets (the example given in the request)",
+    "Inventory Management -> Excel": "false match (decided 2026-10-17 by the project team: the chef profile does not list Excel); earlier counted as real overlap",
     "Inventory Management -> identify software for warehouse management": "real overlap in meaning (warehouse / stock management), although ESCO lists the phrase under data warehouse designer",
     "Customer Service -> measure customer feedback": "borderline; counted as real overlap",
     "Customer Service -> identify customer requirements / collect customer feedback on applications": "false match: ICT requirements and application-feedback phrases, not customer service",

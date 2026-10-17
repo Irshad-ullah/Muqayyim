@@ -6,19 +6,12 @@ Where the background check's related credit comes from, pair by pair (`diagnose_
 
 | Setup | Profile | Rate | Real overlap | False match |
 |---|---|---|---|---|
-| B | chef | 5.5 % (61/1104) | 21 rows = 34 % (1.9 pts) | 40 rows = 66 % (3.6 pts) |
+| B | chef | 5.5 % (61/1104) | 0 rows = 0 % (0.0 pts) | 61 rows = 100 % (5.5 pts) |
 | B | web | 20.3 % (213/1047) | 21 rows = 10 % (2.0 pts) | 192 rows = 90 % (18.3 pts) |
-| A | chef | 3.2 % (222/7001) | 38 rows = 17 % (0.5 pts) | 184 rows = 83 % (2.6 pts) |
+| A | chef | 3.2 % (222/7001) | 18 rows = 8 % (0.3 pts) | 204 rows = 92 % (2.9 pts) |
 | A | web | 12.9 % (894/6927) | 210 rows = 23 % (3.0 pts) | 684 rows = 77 % (9.9 pts) |
 
-**Sensitivity of the labels.**
-- **B — all real overlap is Excel.** All 21 real-overlap rows are *Inventory Management → Excel* (0.782, described), which
-  appears in 21 roles. That label is borderline (the profile does not list Excel). If it is counted as a false match,
-  **100 % of B's chef credit is false match**.
-- **B — Customer Service.** It earns no real overlap in B: its genuine pairs ("assist customers", "respond to customers'
-  inquiries" …) are ESCO phrases, which B does not have.
-- **A — the largest single source** is *Inventory Management → SAS* (0.768), crediting 40 rows; it is a false match.
-- **The chef never matches a role skill exactly** in either setup.
+**Labels.** *Inventory Management → Excel* (0.782; 21 rows in B, 20 in A) is a **false match**, as decided by the project team on 2026-10-17: the chef profile does not list Excel. With that decision **100 % of B's chef credit is false match**. Customer Service earns no real overlap in B, because its genuine pairs are ESCO phrases. The largest single source in A is *Inventory Management → SAS* (40 rows, false match). The chef never matches a role skill exactly.
 
 **Test-CV note (Module 5.2 results).** The 10 test CVs were not written blind to the curated roles: the roles were designed
 after the CVs had been seen (as the project team states; file dates: CVs 18:41, curated dataset files 21:01 on
@@ -36,22 +29,22 @@ after the CVs had been seen (as the project team states; file dates: CVs 18:41, 
 
 61 credited rows of 1104 non-exact rows; exact matches: 0.
 
-- **Real overlap:** 21 rows = **34 %** of the credit (1.9 of the 5.5 points)
-- **False match:** 40 rows = **66 %** (3.6 points)
-- By chef skill: Cooking: 0 real / 6 false; Customer Service: 0 real / 5 false; Inventory Management: 21 real / 29 false
-- By role source: Curated: 10 rows (1 real / 9 false); O*NET: 51 rows (20 real / 31 false)
+- **Real overlap:** 0 rows = **0 %** of the credit (0.0 of the 5.5 points)
+- **False match:** 61 rows = **100 %** (5.5 points)
+- By chef skill: Cooking: 0 real / 6 false; Customer Service: 0 real / 5 false; Inventory Management: 0 real / 50 false
+- By role source: Curated: 10 rows (0 real / 10 false); O*NET: 51 rows (0 real / 51 false)
 
 | Role | Source | Credit type | Role rate (credited / rows) | Pairs (chef skill → role skill, similarity, kind) | Label |
 |---|---|---|---|---|---|
 | Data Analyst | Curated | related 0.5 | 20.0 % (2/10) | Inventory Management → Regression Analysis 0.744 (described) | false match |
-| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | real overlap |
+| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | false match |
 | Health Informatics Specialists | O*NET | related 0.5 | 19.2 % (5/26) | Inventory Management → SQL Server Reporting Services 0.758 (described) | false match |
 | | | related 0.5 |  | Customer Service → Salesforce 0.77 (described) | false match |
-| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | real overlap |
+| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | false match |
 | | | related 0.5 |  | Inventory Management → SAS 0.768 (described) | false match |
 | | | related 0.5 |  | Cooking → Microsoft Word 0.749 (described) | false match |
 | Clinical Data Managers | O*NET | related 0.5 | 19.0 % (4/21) | Inventory Management → Microsoft SQL Server 0.752 (described) | false match |
-| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | real overlap |
+| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | false match |
 | | | related 0.5 |  | Inventory Management → SAS 0.768 (described) | false match |
 | | | related 0.5 |  | Cooking → Microsoft Word 0.749 (described) | false match |
 | Product Manager (Software) | Curated | related 0.5 | 18.2 % (2/11) | Inventory Management → Product analytics 0.737 (mixed) | false match |
@@ -66,43 +59,43 @@ after the CVs had been seen (as the project team states; file dates: CVs 18:41, 
 | | | related 0.5 |  | Inventory Management → PostgreSQL 0.743 (described) | false match |
 | Business Intelligence Analysts | O*NET | related 0.5 | 13.3 % (4/30) | Inventory Management → SAP 0.753 (described) | false match |
 | | | related 0.5 |  | Customer Service → Salesforce 0.77 (described) | false match |
-| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | real overlap |
+| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | false match |
 | | | related 0.5 |  | Inventory Management → SAS 0.768 (described) | false match |
 | Telecommunications Engineering Specialists | O*NET | related 0.5 | 13.0 % (3/23) | Inventory Management → Microsoft SQL Server 0.752 (described) | false match |
-| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | real overlap |
+| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | false match |
 | | | related 0.5 |  | Cooking → Microsoft Word 0.749 (described) | false match |
 | Document Management Specialists | O*NET | related 0.5 | 10.3 % (3/29) | Inventory Management → Microsoft SQL Server 0.752 (described) | false match |
-| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | real overlap |
+| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | false match |
 | | | related 0.5 |  | Cooking → Microsoft Word 0.749 (described) | false match |
 | Computer Network Support Specialists | O*NET | related 0.5 | 10.0 % (3/30) | Inventory Management → Microsoft SQL Server 0.752 (described) | false match |
-| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | real overlap |
+| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | false match |
 | | | related 0.5 |  | Cooking → Microsoft Word 0.749 (described) | false match |
 | Computer Programmers | O*NET | related 0.5 | 10.0 % (3/30) | Inventory Management → Microsoft SQL Server 0.752 (described) | false match |
-| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | real overlap |
+| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | false match |
 | | | related 0.5 |  | Inventory Management → SAS 0.768 (described) | false match |
 | Video Game Designers | O*NET | related 0.5 | 10.0 % (3/30) | Inventory Management → Microsoft SQL Server 0.752 (described) | false match |
-| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | real overlap |
+| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | false match |
 | | | related 0.5 |  | Cooking → Microsoft Word 0.749 (described) | false match |
 | Backend Developer | Curated | related 0.5 | 9.1 % (1/11) | Inventory Management → PostgreSQL 0.743 (described) | false match |
 | Computer Systems Analysts | O*NET | related 0.5 | 6.7 % (2/30) | Inventory Management → SAP 0.753 (described) | false match |
-| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | real overlap |
-| Data Scientists | O*NET | related 0.5 | 6.7 % (2/30) | Inventory Management → Excel 0.782 (described) | real overlap |
+| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | false match |
+| Data Scientists | O*NET | related 0.5 | 6.7 % (2/30) | Inventory Management → Excel 0.782 (described) | false match |
 | | | related 0.5 |  | Inventory Management → SAS 0.768 (described) | false match |
 | Full-Stack Developer | Curated | related 0.5 | 6.7 % (1/15) | Inventory Management → PostgreSQL 0.743 (described) | false match |
 | Information Technology Project Managers | O*NET | related 0.5 | 6.7 % (2/30) | Inventory Management → SAP 0.753 (described) | false match |
-| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | real overlap |
-| Geographic Information Systems Technologists and Technicians | O*NET | related 0.5 | 3.4 % (1/29) | Inventory Management → Excel 0.782 (described) | real overlap |
-| Information Security Analysts | O*NET | related 0.5 | 3.4 % (1/29) | Inventory Management → Excel 0.782 (described) | real overlap |
-| Network and Computer Systems Administrators | O*NET | related 0.5 | 3.4 % (1/29) | Inventory Management → Excel 0.782 (described) | real overlap |
+| | | related 0.5 |  | Inventory Management → Excel 0.782 (described) | false match |
+| Geographic Information Systems Technologists and Technicians | O*NET | related 0.5 | 3.4 % (1/29) | Inventory Management → Excel 0.782 (described) | false match |
+| Information Security Analysts | O*NET | related 0.5 | 3.4 % (1/29) | Inventory Management → Excel 0.782 (described) | false match |
+| Network and Computer Systems Administrators | O*NET | related 0.5 | 3.4 % (1/29) | Inventory Management → Excel 0.782 (described) | false match |
 | Web Administrators | O*NET | related 0.5 | 3.4 % (1/29) | Inventory Management → Microsoft SQL Server 0.752 (described) | false match |
 | Blockchain Engineers | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → PostgreSQL 0.743 (described) | false match |
-| Computer Network Architects | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | real overlap |
-| Computer User Support Specialists | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | real overlap |
-| Data Warehousing Specialists | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | real overlap |
-| Database Architects | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | real overlap |
-| Digital Forensics Analysts | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | real overlap |
+| Computer Network Architects | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | false match |
+| Computer User Support Specialists | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | false match |
+| Data Warehousing Specialists | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | false match |
+| Database Architects | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | false match |
+| Digital Forensics Analysts | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | false match |
 | Software Developers | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → PostgreSQL 0.743 (described) | false match |
-| Software Quality Assurance Analysts and Testers | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | real overlap |
+| Software Quality Assurance Analysts and Testers | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → Excel 0.782 (described) | false match |
 | Web Developers | O*NET | related 0.5 | 3.3 % (1/30) | Inventory Management → PostgreSQL 0.743 (described) | false match |
 
 ### B — web profile (React, Python, Docker, Figma): 20.3 %
@@ -113,10 +106,10 @@ after the CVs had been seen (as the project team states; file dates: CVs 18:41, 
 
 222 credited rows of 7001 non-exact rows; exact matches: 0.
 
-- **Real overlap:** 38 rows = **17 %** of the credit (0.5 of the 3.2 points)
-- **False match:** 184 rows = **83 %** (2.6 points)
-- By chef skill: Cooking: 0 real / 26 false; Customer Service: 17 real / 47 false; Inventory Management: 21 real / 111 false
-- By role source: ESCO: 176 rows (18 real / 158 false); O*NET: 46 rows (20 real / 26 false)
+- **Real overlap:** 18 rows = **8 %** of the credit (0.3 of the 3.2 points)
+- **False match:** 204 rows = **92 %** (2.9 points)
+- By chef skill: Cooking: 0 real / 26 false; Customer Service: 17 real / 47 false; Inventory Management: 1 real / 131 false
+- By role source: ESCO: 176 rows (18 real / 158 false); O*NET: 46 rows (0 real / 46 false)
 
 Production is summarised per pair (rows = roles where it credits):
 
@@ -124,7 +117,7 @@ Production is summarised per pair (rows = roles where it credits):
 |---|---|---|---|---|---|
 | Inventory Management → SAS | 0.768 | described | ESCO | 35 | false match |
 | Inventory Management → Process-based management | 0.735 | mixed | ESCO | 23 | false match |
-| Inventory Management → Excel | 0.782 | described | O*NET | 20 | real overlap |
+| Inventory Management → Excel | 0.782 | described | O*NET | 20 | false match |
 | Customer Service → collect customer feedback on applications | 0.777 | mixed | ESCO | 15 | false match |
 | Customer Service → identify customer requirements | 0.762 | mixed | ESCO | 10 | false match |
 | Inventory Management → Business Intelligence | 0.75 | described | ESCO | 9 | false match |
