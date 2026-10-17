@@ -17,6 +17,9 @@ Usage (repo root):
   AIServices/backend/venv/Scripts/python AIServices/eval/career_matching/run_eval.py [--out DIR] [--profiles FILE]
 --profiles: another profile file in the same format (e.g. profiles_new.json, Module 5.1); a file without a chef
 control or pass mark reports the hit rates only.
+--acceptable-key: the field holding each profile's acceptable titles (default "acceptable"; Module 5.2 uses
+"acceptable_b" — O*NET + curated roles, ESCO retired). Scoring uses the production default mode (related credit off)
+unless --related-credit is given.
 """
 
 import argparse
@@ -87,6 +90,10 @@ def esco_only(result):
     return {m["source"] for m in result["members"]} == {"esco"}
 
 
+ACCEPTABLE_KEY = "acceptable"
+RELATED_CREDIT = False
+
+
 async def evaluate(profiles: dict) -> dict:
     client = AsyncIOMotorClient(settings.MONGODB_URL)
     db = client[settings.AI_DB_NAME]
@@ -108,8 +115,8 @@ async def evaluate(profiles: dict) -> dict:
     for profile in profiles["profiles"]:
         owned = owned_for(profile["skills"])
         undescribed = [v["name"] for v in owned.values() if provider.lookup(v["name"]) is None]
-        results = await service.compute(owned, db)
-        acceptable = set(profile["acceptable"])
+        results = await service.compute(owned, db, RELATED_CREDIT)
+        acceptable = set(profile.get(ACCEPTABLE_KEY) or [])
         first_rank = next((i for i, r in enumerate(results, 1) if titles_of(r) & acceptable), None)
         top10 = results[:10]
         esco_ranks = [i for i, r in enumerate(results, 1) if esco_only(r)]
@@ -125,7 +132,7 @@ async def evaluate(profiles: dict) -> dict:
         out["profiles"].append({
             "id": profile["id"], "label": profile["label"], "control": bool(profile.get("control")),
             "skills": profile["skills"], "normalised": [v["name"] for v in owned.values()], "undescribed_skills": undescribed,
-            "acceptable": profile["acceptable"],
+            "acceptable": profile.get(ACCEPTABLE_KEY) or [],
             "top5": [{"rank": i, "title": r["title"], "score": r["score"], "sources": [s["source"] for s in r["sources"]],
                       "titles": sorted(titles_of(r)), "matched": r["matched"], "related": r["related"], "missing": r["missing"],
                       "required": r["required_count"], "acceptable": bool(titles_of(r) & acceptable)}
@@ -203,6 +210,8 @@ def run_background_check() -> dict:
         data = json.loads(proc.stdout)
         check = data["check"]
         return {"chef": check["chef_pooled_pct"], "web": check["web_pooled_pct"], "ratio": check["chef_to_web"],
+                "metric": check.get("metric"), "criteria": check.get("criteria"),
+                "legacy_related": data.get("legacy_related_check"),
                 "passed": check["passed"], "exit_code": proc.returncode}
     except (ValueError, KeyError):
         return {"passed": False, "error": "could not read the background check output", "exit_code": proc.returncode}
@@ -212,9 +221,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--out", default=str(HERE / "results"), help="output folder (results.json, report.md)")
     parser.add_argument("--profiles", default=str(HERE / "profiles.json"), help="profile file (default profiles.json)")
+    parser.add_argument("--acceptable-key", default="acceptable", help="field with the acceptable titles (Module 5.2: acceptable_b)")
+    parser.add_argument("--related-credit", action="store_true", help="score with the 0.5 related-credit rule (mode on)")
     args = parser.parse_args()
+    global ACCEPTABLE_KEY, RELATED_CREDIT
+    ACCEPTABLE_KEY, RELATED_CREDIT = args.acceptable_key, args.related_credit
     profiles = json.loads(Path(args.profiles).read_text(encoding="utf8"))
     out = asyncio.run(evaluate(profiles))
+    out["acceptable_key"], out["scoring_mode"] = ACCEPTABLE_KEY, ("related" if RELATED_CREDIT else "exact")
     background = run_background_check()
     out["background_check"] = background
     folder = Path(args.out)

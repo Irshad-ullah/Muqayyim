@@ -5,52 +5,213 @@
     {
       "id": "web",
       "label": "Web developer",
-      "skills": ["React", "JavaScript", "TypeScript", "HTML", "CSS", "Node.js", "Git", "REST APIs", "Tailwind CSS", "Webpack"],
-      "acceptable": ["Web Developers", "web developer", "user interface developer", "Web and Digital Interface Designers"]
+      "skills": [
+        "React",
+        "JavaScript",
+        "TypeScript",
+        "HTML",
+        "CSS",
+        "Node.js",
+        "Git",
+        "REST APIs",
+        "Tailwind CSS",
+        "Webpack"
+      ],
+      "acceptable": [
+        "Web Developers",
+        "web developer",
+        "user interface developer",
+        "Web and Digital Interface Designers"
+      ],
+      "acceptable_b": [
+        "Web Developers",
+        "Web and Digital Interface Designers",
+        "Frontend Developer",
+        "Full-Stack Developer"
+      ]
     },
     {
       "id": "backend",
       "label": "Backend Python developer",
-      "skills": ["Python", "Django", "Flask", "PostgreSQL", "SQL", "REST APIs", "Docker", "Git", "Redis", "Celery", "Linux"],
-      "acceptable": ["Software Developers", "software developer", "Computer Programmers", "cloud software developer"]
+      "skills": [
+        "Python",
+        "Django",
+        "Flask",
+        "PostgreSQL",
+        "SQL",
+        "REST APIs",
+        "Docker",
+        "Git",
+        "Redis",
+        "Celery",
+        "Linux"
+      ],
+      "acceptable": [
+        "Software Developers",
+        "software developer",
+        "Computer Programmers",
+        "cloud software developer"
+      ],
+      "acceptable_b": [
+        "Software Developers",
+        "Computer Programmers",
+        "Backend Developer"
+      ]
     },
     {
       "id": "data",
       "label": "Data scientist",
-      "skills": ["Python", "pandas", "NumPy", "scikit-learn", "SQL", "Machine Learning", "Statistics", "Jupyter", "TensorFlow", "Data Visualization", "Tableau"],
-      "acceptable": ["Data Scientists", "data scientist", "data analyst", "artificial intelligence engineer"]
+      "skills": [
+        "Python",
+        "pandas",
+        "NumPy",
+        "scikit-learn",
+        "SQL",
+        "Machine Learning",
+        "Statistics",
+        "Jupyter",
+        "TensorFlow",
+        "Data Visualization",
+        "Tableau"
+      ],
+      "acceptable": [
+        "Data Scientists",
+        "data scientist",
+        "data analyst",
+        "artificial intelligence engineer"
+      ],
+      "acceptable_b": [
+        "Data Scientists",
+        "Data Analyst",
+        "Machine Learning Engineer",
+        "AI Engineer (LLM Applications)"
+      ]
     },
     {
       "id": "devops",
       "label": "DevOps engineer",
-      "skills": ["Docker", "Kubernetes", "Terraform", "AWS", "Linux", "Jenkins", "Ansible", "Bash", "Git", "Prometheus", "CI/CD"],
-      "acceptable": ["cloud DevOps engineer", "cloud engineer", "Network and Computer Systems Administrators", "ICT system administrator"]
+      "skills": [
+        "Docker",
+        "Kubernetes",
+        "Terraform",
+        "AWS",
+        "Linux",
+        "Jenkins",
+        "Ansible",
+        "Bash",
+        "Git",
+        "Prometheus",
+        "CI/CD"
+      ],
+      "acceptable": [
+        "cloud DevOps engineer",
+        "cloud engineer",
+        "Network and Computer Systems Administrators",
+        "ICT system administrator"
+      ],
+      "acceptable_b": [
+        "Network and Computer Systems Administrators",
+        "DevOps Engineer",
+        "Cloud Engineer",
+        "Site Reliability Engineer"
+      ]
     },
     {
       "id": "mobile",
       "label": "Mobile developer",
-      "skills": ["Kotlin", "Swift", "Android", "iOS", "Flutter", "Dart", "Firebase", "Git", "REST APIs", "React Native"],
-      "acceptable": ["mobile application developer", "industrial mobile devices software developer", "Software Developers", "software developer"]
+      "skills": [
+        "Kotlin",
+        "Swift",
+        "Android",
+        "iOS",
+        "Flutter",
+        "Dart",
+        "Firebase",
+        "Git",
+        "REST APIs",
+        "React Native"
+      ],
+      "acceptable": [
+        "mobile application developer",
+        "industrial mobile devices software developer",
+        "Software Developers",
+        "software developer"
+      ],
+      "acceptable_b": [
+        "Software Developers",
+        "Android Developer",
+        "iOS Developer",
+        "Cross-Platform Mobile Developer"
+      ]
     },
     {
       "id": "uiux",
       "label": "UI/UX designer",
-      "skills": ["Figma", "Adobe XD", "Sketch", "User Research", "Wireframing", "Prototyping", "Usability Testing", "HTML", "CSS", "Adobe Photoshop"],
-      "acceptable": ["Web and Digital Interface Designers", "user interface designer", "user experience analyst", "web designer"]
+      "skills": [
+        "Figma",
+        "Adobe XD",
+        "Sketch",
+        "User Research",
+        "Wireframing",
+        "Prototyping",
+        "Usability Testing",
+        "HTML",
+        "CSS",
+        "Adobe Photoshop"
+      ],
+      "acceptable": [
+        "Web and Digital Interface Designers",
+        "user interface designer",
+        "user experience analyst",
+        "web designer"
+      ],
+      "acceptable_b": [
+        "Web and Digital Interface Designers",
+        "UI/UX Designer"
+      ]
     },
     {
       "id": "qa",
       "label": "QA tester",
-      "skills": ["Selenium", "Test Automation", "Manual Testing", "JIRA", "Postman", "Cypress", "Python", "SQL", "API Testing", "Regression Testing"],
-      "acceptable": ["Software Quality Assurance Analysts and Testers", "software tester", "ICT test analyst", "ICT system tester"]
+      "skills": [
+        "Selenium",
+        "Test Automation",
+        "Manual Testing",
+        "JIRA",
+        "Postman",
+        "Cypress",
+        "Python",
+        "SQL",
+        "API Testing",
+        "Regression Testing"
+      ],
+      "acceptable": [
+        "Software Quality Assurance Analysts and Testers",
+        "software tester",
+        "ICT test analyst",
+        "ICT system tester"
+      ],
+      "acceptable_b": [
+        "Software Quality Assurance Analysts and Testers"
+      ]
     },
     {
       "id": "chef",
       "label": "Chef (non-IT control)",
-      "skills": ["Cooking", "Customer Service", "Inventory Management", "Food Safety", "Menu Planning", "Team Leadership", "Budgeting", "Time Management"],
+      "skills": [
+        "Cooking",
+        "Customer Service",
+        "Inventory Management",
+        "Food Safety",
+        "Menu Planning",
+        "Team Leadership",
+        "Budgeting",
+        "Time Management"
+      ],
       "acceptable": [],
       "control": true,
-      "max_score": 20
+      "max_score": 20,
+      "acceptable_b": []
     }
   ],
   "pass_mark": {
@@ -58,5 +219,6 @@
     "top5_hits_min": 7,
     "it_profiles": 7,
     "chef_best_below": 20
-  }
+  },
+  "_comment_acceptable_b": "Module 5.2: acceptable titles for O*NET + curated roles (ESCO retired): the O*NET titles of 'acceptable' + the curated equivalents fixed in eval/curated_roles/expectations.md (commit db6e480) before any run. Used by run_eval.py --acceptable-key acceptable_b."
 }

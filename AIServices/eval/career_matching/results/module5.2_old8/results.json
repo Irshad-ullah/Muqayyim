@@ -1,0 +1,1075 @@
+{
+  "generated_at": "2026-10-17T17:54:13.156228+00:00",
+  "model": "BAAI/bge-small-en-v1.5",
+  "index_state_hash": "0436147f7b0ea87a7fe7e835552c7fa43e1e5d7d8b1d736704bbc148bce32a73",
+  "role_skills": 288,
+  "profiles": [
+    {
+      "id": "web",
+      "label": "Web developer",
+      "control": false,
+      "skills": [
+        "React",
+        "JavaScript",
+        "TypeScript",
+        "HTML",
+        "CSS",
+        "Node.js",
+        "Git",
+        "REST APIs",
+        "Tailwind CSS",
+        "Webpack"
+      ],
+      "normalised": [
+        "React",
+        "JavaScript",
+        "TypeScript",
+        "HTML",
+        "CSS",
+        "Node.js",
+        "Git",
+        "REST APIs",
+        "Tailwind CSS",
+        "Webpack"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Web Developers",
+        "Web and Digital Interface Designers",
+        "Frontend Developer",
+        "Full-Stack Developer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Frontend Developer",
+          "score": 66.7,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Frontend Developer"
+          ],
+          "matched": 8,
+          "related": 0,
+          "missing": 4,
+          "required": 12,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "Full-Stack Developer",
+          "score": 61.5,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Full-Stack Developer"
+          ],
+          "matched": 8,
+          "related": 0,
+          "missing": 5,
+          "required": 13,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Web and Digital Interface Designers",
+          "score": 41.7,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Web and Digital Interface Designers"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 7,
+          "required": 12,
+          "acceptable": true
+        },
+        {
+          "rank": 4,
+          "title": "Blockchain Engineers",
+          "score": 30.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Blockchain Engineers"
+          ],
+          "matched": 6,
+          "related": 0,
+          "missing": 14,
+          "required": 20,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Backend Developer",
+          "score": 30.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Backend Developer"
+          ],
+          "matched": 3,
+          "related": 0,
+          "missing": 7,
+          "required": 10,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 66.7,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Frontend Developer",
+        "score": 66.7
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "backend",
+      "label": "Backend Python developer",
+      "control": false,
+      "skills": [
+        "Python",
+        "Django",
+        "Flask",
+        "PostgreSQL",
+        "SQL",
+        "REST APIs",
+        "Docker",
+        "Git",
+        "Redis",
+        "Celery",
+        "Linux"
+      ],
+      "normalised": [
+        "Python",
+        "Django",
+        "Flask",
+        "PostgreSQL",
+        "SQL",
+        "REST APIs",
+        "Docker",
+        "Git",
+        "Redis",
+        "Celery",
+        "Linux"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Software Developers",
+        "Computer Programmers",
+        "Backend Developer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Backend Developer",
+          "score": 70.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Backend Developer"
+          ],
+          "matched": 7,
+          "related": 0,
+          "missing": 3,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "Data Engineer",
+          "score": 40.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Data Engineer"
+          ],
+          "matched": 4,
+          "related": 0,
+          "missing": 6,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 3,
+          "title": "DevOps Engineer",
+          "score": 40.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "DevOps Engineer"
+          ],
+          "matched": 4,
+          "related": 0,
+          "missing": 6,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "Full-Stack Developer",
+          "score": 38.5,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Full-Stack Developer"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 8,
+          "required": 13,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Blockchain Engineers",
+          "score": 30.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Blockchain Engineers"
+          ],
+          "matched": 6,
+          "related": 0,
+          "missing": 14,
+          "required": 20,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 70.0,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Backend Developer",
+        "score": 70.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "data",
+      "label": "Data scientist",
+      "control": false,
+      "skills": [
+        "Python",
+        "pandas",
+        "NumPy",
+        "scikit-learn",
+        "SQL",
+        "Machine Learning",
+        "Statistics",
+        "Jupyter",
+        "TensorFlow",
+        "Data Visualization",
+        "Tableau"
+      ],
+      "normalised": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "SQL",
+        "Machine Learning",
+        "Statistics",
+        "Jupyter Notebook",
+        "TensorFlow",
+        "Data Visualization",
+        "Tableau"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Data Scientists",
+        "Data Analyst",
+        "Machine Learning Engineer",
+        "AI Engineer (LLM Applications)"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Machine Learning Engineer",
+          "score": 70.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Machine Learning Engineer"
+          ],
+          "matched": 7,
+          "related": 0,
+          "missing": 3,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "Data Analyst",
+          "score": 60.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Data Analyst"
+          ],
+          "matched": 6,
+          "related": 0,
+          "missing": 4,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Data Scientists",
+          "score": 33.3,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Data Scientists"
+          ],
+          "matched": 7,
+          "related": 0,
+          "missing": 14,
+          "required": 21,
+          "acceptable": true
+        },
+        {
+          "rank": 4,
+          "title": "Data Warehousing Specialists",
+          "score": 30.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Data Warehousing Specialists"
+          ],
+          "matched": 3,
+          "related": 0,
+          "missing": 7,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Health Informatics Specialists",
+          "score": 27.3,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Health Informatics Specialists"
+          ],
+          "matched": 3,
+          "related": 0,
+          "missing": 8,
+          "required": 11,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 70.0,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Machine Learning Engineer",
+        "score": 70.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "devops",
+      "label": "DevOps engineer",
+      "control": false,
+      "skills": [
+        "Docker",
+        "Kubernetes",
+        "Terraform",
+        "AWS",
+        "Linux",
+        "Jenkins",
+        "Ansible",
+        "Bash",
+        "Git",
+        "Prometheus",
+        "CI/CD"
+      ],
+      "normalised": [
+        "Docker",
+        "Kubernetes",
+        "Terraform",
+        "AWS",
+        "Linux",
+        "Jenkins",
+        "Ansible",
+        "Bash",
+        "Git",
+        "Prometheus",
+        "CI/CD"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Network and Computer Systems Administrators",
+        "DevOps Engineer",
+        "Cloud Engineer",
+        "Site Reliability Engineer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "DevOps Engineer",
+          "score": 100.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "DevOps Engineer"
+          ],
+          "matched": 10,
+          "related": 0,
+          "missing": 0,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "Site Reliability Engineer",
+          "score": 60.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Site Reliability Engineer"
+          ],
+          "matched": 6,
+          "related": 0,
+          "missing": 4,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Cloud Engineer",
+          "score": 50.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Cloud Engineer"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 5,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 4,
+          "title": "MLOps Engineer",
+          "score": 50.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "MLOps Engineer"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 5,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Computer Systems Engineers/Architects",
+          "score": 40.9,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Systems Engineers/Architects"
+          ],
+          "matched": 9,
+          "related": 0,
+          "missing": 13,
+          "required": 22,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 100.0,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "DevOps Engineer",
+        "score": 100.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "mobile",
+      "label": "Mobile developer",
+      "control": false,
+      "skills": [
+        "Kotlin",
+        "Swift",
+        "Android",
+        "iOS",
+        "Flutter",
+        "Dart",
+        "Firebase",
+        "Git",
+        "REST APIs",
+        "React Native"
+      ],
+      "normalised": [
+        "Kotlin",
+        "Swift",
+        "Android Development",
+        "iOS Development",
+        "Flutter",
+        "Dart",
+        "Firebase",
+        "Git",
+        "REST APIs",
+        "React Native"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Software Developers",
+        "Android Developer",
+        "iOS Developer",
+        "Cross-Platform Mobile Developer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Cross-Platform Mobile Developer",
+          "score": 50.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Cross-Platform Mobile Developer"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 5,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "Android Developer",
+          "score": 30.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Android Developer"
+          ],
+          "matched": 3,
+          "related": 0,
+          "missing": 7,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Backend Developer",
+          "score": 20.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Backend Developer"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 8,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "iOS Developer",
+          "score": 20.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "iOS Developer"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 8,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 5,
+          "title": "Frontend Developer",
+          "score": 16.7,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Frontend Developer"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 10,
+          "required": 12,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 50.0,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Cross-Platform Mobile Developer",
+        "score": 50.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "uiux",
+      "label": "UI/UX designer",
+      "control": false,
+      "skills": [
+        "Figma",
+        "Adobe XD",
+        "Sketch",
+        "User Research",
+        "Wireframing",
+        "Prototyping",
+        "Usability Testing",
+        "HTML",
+        "CSS",
+        "Adobe Photoshop"
+      ],
+      "normalised": [
+        "Figma",
+        "Adobe XD",
+        "Sketch",
+        "User Research",
+        "Wireframing",
+        "Prototyping",
+        "Usability Testing",
+        "HTML",
+        "CSS",
+        "Adobe Photoshop"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Web and Digital Interface Designers",
+        "UI/UX Designer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "UI/UX Designer",
+          "score": 50.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "UI/UX Designer"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 5,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "Web and Digital Interface Designers",
+          "score": 41.7,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Web and Digital Interface Designers"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 7,
+          "required": 12,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "WordPress Developer",
+          "score": 20.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "WordPress Developer"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 8,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "Frontend Developer",
+          "score": 16.7,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Frontend Developer"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 10,
+          "required": 12,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Full-Stack Developer",
+          "score": 15.4,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Full-Stack Developer"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 11,
+          "required": 13,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 50.0,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "UI/UX Designer",
+        "score": 50.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "qa",
+      "label": "QA tester",
+      "control": false,
+      "skills": [
+        "Selenium",
+        "Test Automation",
+        "Manual Testing",
+        "JIRA",
+        "Postman",
+        "Cypress",
+        "Python",
+        "SQL",
+        "API Testing",
+        "Regression Testing"
+      ],
+      "normalised": [
+        "Selenium",
+        "Test Automation",
+        "Manual Testing",
+        "Jira",
+        "Postman",
+        "Cypress",
+        "Python",
+        "SQL",
+        "API Testing",
+        "Regression Testing"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Software Quality Assurance Analysts and Testers"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Computer Systems Analysts",
+          "score": 30.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Systems Analysts"
+          ],
+          "matched": 3,
+          "related": 0,
+          "missing": 7,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 2,
+          "title": "Software Quality Assurance Analysts and Testers",
+          "score": 20.8,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Software Quality Assurance Analysts and Testers"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 19,
+          "required": 24,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Backend Developer",
+          "score": 20.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Backend Developer"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 8,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "Data Analyst",
+          "score": 20.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Data Analyst"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 8,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Data Engineer",
+          "score": 20.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Data Engineer"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 8,
+          "required": 10,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 2,
+      "first_acceptable_score": 20.8,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Computer Systems Analysts",
+        "score": 30.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "chef",
+      "label": "Chef (non-IT control)",
+      "control": true,
+      "skills": [
+        "Cooking",
+        "Customer Service",
+        "Inventory Management",
+        "Food Safety",
+        "Menu Planning",
+        "Team Leadership",
+        "Budgeting",
+        "Time Management"
+      ],
+      "normalised": [
+        "Cooking",
+        "Customer Service",
+        "Inventory Management",
+        "Food Safety",
+        "Menu Planning",
+        "Team Leadership",
+        "Budgeting",
+        "Time Management"
+      ],
+      "undescribed_skills": [
+        "Menu Planning"
+      ],
+      "acceptable": [],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "AI Engineer (LLM Applications)",
+          "score": 0.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "AI Engineer (LLM Applications)"
+          ],
+          "matched": 0,
+          "related": 0,
+          "missing": 10,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 2,
+          "title": "Android Developer",
+          "score": 0.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Android Developer"
+          ],
+          "matched": 0,
+          "related": 0,
+          "missing": 10,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 3,
+          "title": "Backend Developer",
+          "score": 0.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Backend Developer"
+          ],
+          "matched": 0,
+          "related": 0,
+          "missing": 10,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "Blockchain Engineers",
+          "score": 0.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Blockchain Engineers"
+          ],
+          "matched": 0,
+          "related": 0,
+          "missing": 20,
+          "required": 20,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Business Intelligence Analysts",
+          "score": 0.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Business Intelligence Analysts"
+          ],
+          "matched": 0,
+          "related": 0,
+          "missing": 14,
+          "required": 14,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": null,
+      "first_acceptable_score": null,
+      "top3_hit": false,
+      "top5_hit": false,
+      "best": {
+        "title": "AI Engineer (LLM Applications)",
+        "score": 0.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    }
+  ],
+  "summary": {
+    "top3_hits": 7,
+    "top5_hits": 7,
+    "it_profiles": 7,
+    "chef_best": {
+      "title": "AI Engineer (LLM Applications)",
+      "score": 0.0
+    },
+    "pass_mark": {
+      "top3_hits_min": 6,
+      "top5_hits_min": 7,
+      "it_profiles": 7,
+      "chef_best_below": 20
+    },
+    "passed": true
+  },
+  "acceptable_key": "acceptable_b",
+  "scoring_mode": "exact",
+  "background_check": {
+    "chef": 0.0,
+    "web": 0.0,
+    "ratio": null,
+    "metric": "any-of credit beyond an exact key (scoring mode off; Module 5.2)",
+    "criteria": "chef <= 5.0% and chef <= 0.5 x web (ratio not applicable: web 0)",
+    "legacy_related": {
+      "chef_pooled_pct": 5.4,
+      "web_pooled_pct": 18.5,
+      "chef_to_web": 0.292,
+      "criteria": "chef <= 5.0% and chef <= 0.5 x web",
+      "passed": false
+    },
+    "passed": true,
+    "exit_code": 0
+  }
+}

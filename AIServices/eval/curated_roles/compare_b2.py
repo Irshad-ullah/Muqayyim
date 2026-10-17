@@ -59,12 +59,13 @@ def b2_score(profession, owned, related, current):
     return result
 
 
-async def score(db, groups, keep_full=False):
+async def score(db, groups, keep_full=False, related_credit=True):
+    # Since Module 5.2 production compute() has the mode built in (related_credit; hints when off).
     out = {}
     for group, items in groups.items():
         out[group] = []
         for p in items:
-            results = await service.compute(cs.run_eval.owned_for(p["skills"]), db)
+            results = await service.compute(cs.run_eval.owned_for(p["skills"]), db, related_credit)
             if keep_full:
                 CAPTURE[p["id"]] = results
             rank = cs.first_rank(results, p["acceptable"])
@@ -162,11 +163,8 @@ async def main_async():
         vague = sum(n for k, n in counts["required"].items() if k.split(" | ")[1].startswith("vague"))
         diagnosis = await diag.diagnose(sandbox, index.snapshot)
 
-        scoring.score_profession = ORIGINAL
-        b = await score(sandbox, groups)
-        scoring.score_profession = b2_score
-        b2 = await score(sandbox, groups, keep_full=True)
-        scoring.score_profession = ORIGINAL
+        b = await score(sandbox, groups, related_credit=True)
+        b2 = await score(sandbox, groups, keep_full=True, related_credit=False)
 
         bg_b = split(diagnosis, labels_real)
         bg_b2 = await background_b2(sandbox, index.snapshot, labels_real)
@@ -265,7 +263,7 @@ def markdown(report) -> str:
     for key, name in (("web", "Web profile (old 8)"), ("cv05_android", "Android CV (test CV 05)")):
         shown, total = report["hints"][key]
         L.append(f"**{name}** ({total} hints in its top 10):")
-        L += [f"- {h['role']}: *{h['role_skill']}* — close to your {h['via']} (similarity {h['similarity']}, {h['kind']}"
+        L += [f"- {h['role']}: *{h['role_skill']}* — close to your {h.get('via') or h.get('skill')} (similarity {h['similarity']}, {h['kind']}"
               f"{', required' if h['required'] else ', optional'})" for h in shown]
         L.append("")
     L += ["## Top 5 per profile", "", "| Profile | Variant | First acceptable | Top 5 (✓ acceptable) |", "|---|---|---|---|"]

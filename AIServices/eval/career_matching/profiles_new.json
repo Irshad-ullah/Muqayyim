@@ -4,38 +4,159 @@
     {
       "id": "cloud",
       "label": "Cloud engineer",
-      "skills": ["AWS", "Microsoft Azure", "Terraform", "Docker", "Kubernetes", "Linux", "Python", "Bash", "Ansible", "Git"],
-      "acceptable": ["cloud engineer", "cloud DevOps engineer", "cloud architect", "cloud software developer"]
+      "skills": [
+        "AWS",
+        "Microsoft Azure",
+        "Terraform",
+        "Docker",
+        "Kubernetes",
+        "Linux",
+        "Python",
+        "Bash",
+        "Ansible",
+        "Git"
+      ],
+      "acceptable": [
+        "cloud engineer",
+        "cloud DevOps engineer",
+        "cloud architect",
+        "cloud software developer"
+      ],
+      "acceptable_b": [
+        "Cloud Engineer",
+        "DevOps Engineer",
+        "Site Reliability Engineer"
+      ]
     },
     {
       "id": "android",
       "label": "Android developer",
-      "skills": ["Kotlin", "Java", "Android Studio", "Android SDK", "Jetpack Compose", "Firebase", "SQLite", "Retrofit", "Git"],
-      "acceptable": ["mobile application developer", "industrial mobile devices software developer", "Software Developers", "software developer"]
+      "skills": [
+        "Kotlin",
+        "Java",
+        "Android Studio",
+        "Android SDK",
+        "Jetpack Compose",
+        "Firebase",
+        "SQLite",
+        "Retrofit",
+        "Git"
+      ],
+      "acceptable": [
+        "mobile application developer",
+        "industrial mobile devices software developer",
+        "Software Developers",
+        "software developer"
+      ],
+      "acceptable_b": [
+        "Software Developers",
+        "Android Developer",
+        "Cross-Platform Mobile Developer"
+      ]
     },
     {
       "id": "data_eng",
       "label": "Data engineer",
-      "skills": ["Python", "SQL", "Apache Spark", "Apache Airflow", "Apache Kafka", "PostgreSQL", "Snowflake", "dbt", "Hadoop", "Docker", "AWS"],
-      "acceptable": ["data engineer", "Data Warehousing Specialists", "data warehouse designer", "database developer"]
+      "skills": [
+        "Python",
+        "SQL",
+        "Apache Spark",
+        "Apache Airflow",
+        "Apache Kafka",
+        "PostgreSQL",
+        "Snowflake",
+        "dbt",
+        "Hadoop",
+        "Docker",
+        "AWS"
+      ],
+      "acceptable": [
+        "data engineer",
+        "Data Warehousing Specialists",
+        "data warehouse designer",
+        "database developer"
+      ],
+      "acceptable_b": [
+        "Data Warehousing Specialists",
+        "Data Engineer"
+      ]
     },
     {
       "id": "security",
       "label": "Security analyst",
-      "skills": ["Wireshark", "Splunk", "Nmap", "Metasploit", "Burp Suite", "SIEM", "Kali Linux", "Linux", "Python", "Firewalls", "Incident Response"],
-      "acceptable": ["Information Security Analysts", "ICT security administrator", "cyber incident responder", "ICT security technician"]
+      "skills": [
+        "Wireshark",
+        "Splunk",
+        "Nmap",
+        "Metasploit",
+        "Burp Suite",
+        "SIEM",
+        "Kali Linux",
+        "Linux",
+        "Python",
+        "Firewalls",
+        "Incident Response"
+      ],
+      "acceptable": [
+        "Information Security Analysts",
+        "ICT security administrator",
+        "cyber incident responder",
+        "ICT security technician"
+      ],
+      "acceptable_b": [
+        "Information Security Analysts"
+      ]
     },
     {
       "id": "gamedev",
       "label": "Game developer",
-      "skills": ["Unity", "C#", "Unreal Engine", "C++", "Blender", "Godot", "OpenGL", "Git", "Visual Studio"],
-      "acceptable": ["digital games developer", "Video Game Designers", "digital games designer"]
+      "skills": [
+        "Unity",
+        "C#",
+        "Unreal Engine",
+        "C++",
+        "Blender",
+        "Godot",
+        "OpenGL",
+        "Git",
+        "Visual Studio"
+      ],
+      "acceptable": [
+        "digital games developer",
+        "Video Game Designers",
+        "digital games designer"
+      ],
+      "acceptable_b": [
+        "Video Game Designers",
+        "Game Developer"
+      ]
     },
     {
       "id": "it_support",
       "label": "IT support",
-      "skills": ["Windows", "Active Directory", "Microsoft Office", "macOS", "ServiceNow", "ITIL", "TCP/IP", "Hardware Troubleshooting", "Network Troubleshooting", "Computer Networking"],
-      "acceptable": ["Computer User Support Specialists", "ICT help desk agent", "ICT technician", "Computer Network Support Specialists"]
+      "skills": [
+        "Windows",
+        "Active Directory",
+        "Microsoft Office",
+        "macOS",
+        "ServiceNow",
+        "ITIL",
+        "TCP/IP",
+        "Hardware Troubleshooting",
+        "Network Troubleshooting",
+        "Computer Networking"
+      ],
+      "acceptable": [
+        "Computer User Support Specialists",
+        "ICT help desk agent",
+        "ICT technician",
+        "Computer Network Support Specialists"
+      ],
+      "acceptable_b": [
+        "Computer User Support Specialists",
+        "Computer Network Support Specialists"
+      ]
     }
-  ]
+  ],
+  "_comment_acceptable_b": "Module 5.2: acceptable titles for O*NET + curated roles (ESCO retired): the O*NET titles of 'acceptable' + the curated equivalents fixed in eval/curated_roles/expectations.md (commit db6e480) before any run. Used by run_eval.py --acceptable-key acceptable_b."
 }

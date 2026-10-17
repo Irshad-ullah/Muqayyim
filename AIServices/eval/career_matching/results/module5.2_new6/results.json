@@ -1,0 +1,803 @@
+{
+  "generated_at": "2026-10-17T17:54:32.384036+00:00",
+  "model": "BAAI/bge-small-en-v1.5",
+  "index_state_hash": "0436147f7b0ea87a7fe7e835552c7fa43e1e5d7d8b1d736704bbc148bce32a73",
+  "role_skills": 288,
+  "profiles": [
+    {
+      "id": "cloud",
+      "label": "Cloud engineer",
+      "control": false,
+      "skills": [
+        "AWS",
+        "Microsoft Azure",
+        "Terraform",
+        "Docker",
+        "Kubernetes",
+        "Linux",
+        "Python",
+        "Bash",
+        "Ansible",
+        "Git"
+      ],
+      "normalised": [
+        "AWS",
+        "Microsoft Azure",
+        "Terraform",
+        "Docker",
+        "Kubernetes",
+        "Linux",
+        "Python",
+        "Bash",
+        "Ansible",
+        "Git"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Cloud Engineer",
+        "DevOps Engineer",
+        "Site Reliability Engineer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "DevOps Engineer",
+          "score": 80.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "DevOps Engineer"
+          ],
+          "matched": 8,
+          "related": 0,
+          "missing": 2,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "Cloud Engineer",
+          "score": 60.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Cloud Engineer"
+          ],
+          "matched": 6,
+          "related": 0,
+          "missing": 4,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Site Reliability Engineer",
+          "score": 60.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Site Reliability Engineer"
+          ],
+          "matched": 6,
+          "related": 0,
+          "missing": 4,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 4,
+          "title": "Information Security Engineers",
+          "score": 53.8,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Information Security Engineers"
+          ],
+          "matched": 7,
+          "related": 0,
+          "missing": 6,
+          "required": 13,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "MLOps Engineer",
+          "score": 50.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "MLOps Engineer"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 5,
+          "required": 10,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 80.0,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "DevOps Engineer",
+        "score": 80.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "android",
+      "label": "Android developer",
+      "control": false,
+      "skills": [
+        "Kotlin",
+        "Java",
+        "Android Studio",
+        "Android SDK",
+        "Jetpack Compose",
+        "Firebase",
+        "SQLite",
+        "Retrofit",
+        "Git"
+      ],
+      "normalised": [
+        "Kotlin",
+        "Java",
+        "Android Studio",
+        "Android SDK",
+        "Jetpack Compose",
+        "Firebase",
+        "SQLite",
+        "Retrofit",
+        "Git"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Software Developers",
+        "Android Developer",
+        "Cross-Platform Mobile Developer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Android Developer",
+          "score": 60.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Android Developer"
+          ],
+          "matched": 6,
+          "related": 0,
+          "missing": 4,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "Cross-Platform Mobile Developer",
+          "score": 30.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Cross-Platform Mobile Developer"
+          ],
+          "matched": 3,
+          "related": 0,
+          "missing": 7,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Backend Developer",
+          "score": 20.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Backend Developer"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 8,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "Computer Programmers",
+          "score": 10.5,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Programmers"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 17,
+          "required": 19,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Blockchain Engineers",
+          "score": 10.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Blockchain Engineers"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 18,
+          "required": 20,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 60.0,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Android Developer",
+        "score": 60.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "data_eng",
+      "label": "Data engineer",
+      "control": false,
+      "skills": [
+        "Python",
+        "SQL",
+        "Apache Spark",
+        "Apache Airflow",
+        "Apache Kafka",
+        "PostgreSQL",
+        "Snowflake",
+        "dbt",
+        "Hadoop",
+        "Docker",
+        "AWS"
+      ],
+      "normalised": [
+        "Python",
+        "SQL",
+        "Apache Spark",
+        "Airflow",
+        "Kafka",
+        "PostgreSQL",
+        "Snowflake",
+        "dbt",
+        "Hadoop",
+        "Docker",
+        "AWS"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Data Warehousing Specialists",
+        "Data Engineer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Data Engineer",
+          "score": 100.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Data Engineer"
+          ],
+          "matched": 10,
+          "related": 0,
+          "missing": 0,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "Backend Developer",
+          "score": 50.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Backend Developer"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 5,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 3,
+          "title": "Database Architects",
+          "score": 46.2,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Database Architects"
+          ],
+          "matched": 6,
+          "related": 0,
+          "missing": 7,
+          "required": 13,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "MLOps Engineer",
+          "score": 40.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "MLOps Engineer"
+          ],
+          "matched": 4,
+          "related": 0,
+          "missing": 6,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Cloud Engineer",
+          "score": 30.0,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Cloud Engineer"
+          ],
+          "matched": 3,
+          "related": 0,
+          "missing": 7,
+          "required": 10,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 100.0,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Data Engineer",
+        "score": 100.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "security",
+      "label": "Security analyst",
+      "control": false,
+      "skills": [
+        "Wireshark",
+        "Splunk",
+        "Nmap",
+        "Metasploit",
+        "Burp Suite",
+        "SIEM",
+        "Kali Linux",
+        "Linux",
+        "Python",
+        "Firewalls",
+        "Incident Response"
+      ],
+      "normalised": [
+        "Wireshark",
+        "Splunk",
+        "Nmap",
+        "Metasploit",
+        "Burp Suite",
+        "SIEM",
+        "Kali Linux",
+        "Linux",
+        "Python",
+        "Firewalls",
+        "Incident Response"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Information Security Analysts"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Digital Forensics Analysts",
+          "score": 40.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Digital Forensics Analysts"
+          ],
+          "matched": 4,
+          "related": 0,
+          "missing": 6,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 2,
+          "title": "Penetration Testers",
+          "score": 38.1,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Penetration Testers"
+          ],
+          "matched": 8,
+          "related": 0,
+          "missing": 13,
+          "required": 21,
+          "acceptable": false
+        },
+        {
+          "rank": 3,
+          "title": "Information Security Analysts",
+          "score": 30.8,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Information Security Analysts"
+          ],
+          "matched": 4,
+          "related": 0,
+          "missing": 9,
+          "required": 13,
+          "acceptable": true
+        },
+        {
+          "rank": 4,
+          "title": "Information Security Engineers",
+          "score": 30.8,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Information Security Engineers"
+          ],
+          "matched": 4,
+          "related": 0,
+          "missing": 9,
+          "required": 13,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Computer Network Architects",
+          "score": 23.1,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Network Architects"
+          ],
+          "matched": 3,
+          "related": 0,
+          "missing": 10,
+          "required": 13,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 3,
+      "first_acceptable_score": 30.8,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Digital Forensics Analysts",
+        "score": 40.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "gamedev",
+      "label": "Game developer",
+      "control": false,
+      "skills": [
+        "Unity",
+        "C#",
+        "Unreal Engine",
+        "C++",
+        "Blender",
+        "Godot",
+        "OpenGL",
+        "Git",
+        "Visual Studio"
+      ],
+      "normalised": [
+        "Unity",
+        "C#",
+        "Unreal Engine",
+        "C++",
+        "Blender",
+        "Godot",
+        "OpenGL",
+        "Git",
+        "Visual Studio"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Video Game Designers",
+        "Game Developer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Video Game Designers",
+          "score": 40.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Video Game Designers"
+          ],
+          "matched": 4,
+          "related": 0,
+          "missing": 6,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "Game Developer",
+          "score": 37.5,
+          "sources": [
+            "curated"
+          ],
+          "titles": [
+            "Game Developer"
+          ],
+          "matched": 3,
+          "related": 0,
+          "missing": 5,
+          "required": 8,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Computer Programmers",
+          "score": 21.1,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Programmers"
+          ],
+          "matched": 4,
+          "related": 0,
+          "missing": 15,
+          "required": 19,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "Clinical Data Managers",
+          "score": 20.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Clinical Data Managers"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 8,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Blockchain Engineers",
+          "score": 15.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Blockchain Engineers"
+          ],
+          "matched": 3,
+          "related": 0,
+          "missing": 17,
+          "required": 20,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 40.0,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Video Game Designers",
+        "score": 40.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    },
+    {
+      "id": "it_support",
+      "label": "IT support",
+      "control": false,
+      "skills": [
+        "Windows",
+        "Active Directory",
+        "Microsoft Office",
+        "macOS",
+        "ServiceNow",
+        "ITIL",
+        "TCP/IP",
+        "Hardware Troubleshooting",
+        "Network Troubleshooting",
+        "Computer Networking"
+      ],
+      "normalised": [
+        "Windows",
+        "Active Directory",
+        "Microsoft Office",
+        "macOS",
+        "ServiceNow",
+        "ITIL",
+        "TCP/IP",
+        "Hardware Troubleshooting",
+        "Network Troubleshooting",
+        "Computer Networking"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Computer User Support Specialists",
+        "Computer Network Support Specialists"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Computer Network Support Specialists",
+          "score": 50.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Network Support Specialists"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 5,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "Computer User Support Specialists",
+          "score": 41.7,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer User Support Specialists"
+          ],
+          "matched": 5,
+          "related": 0,
+          "missing": 7,
+          "required": 12,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Computer Systems Analysts",
+          "score": 20.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Systems Analysts"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 8,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "Information Technology Project Managers",
+          "score": 20.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Information Technology Project Managers"
+          ],
+          "matched": 2,
+          "related": 0,
+          "missing": 8,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Network and Computer Systems Administrators",
+          "score": 17.6,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Network and Computer Systems Administrators"
+          ],
+          "matched": 3,
+          "related": 0,
+          "missing": 14,
+          "required": 17,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 50.0,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Computer Network Support Specialists",
+        "score": 50.0
+      },
+      "esco_only_share_top10": 0.0,
+      "best_esco_only_rank": null,
+      "related_credits_top5": [],
+      "results_count": 49
+    }
+  ],
+  "summary": {
+    "top3_hits": 6,
+    "top5_hits": 6,
+    "it_profiles": 6,
+    "chef_best": null,
+    "pass_mark": null,
+    "passed": null
+  },
+  "acceptable_key": "acceptable_b",
+  "scoring_mode": "exact",
+  "background_check": {
+    "chef": 0.0,
+    "web": 0.0,
+    "ratio": null,
+    "metric": "any-of credit beyond an exact key (scoring mode off; Module 5.2)",
+    "criteria": "chef <= 5.0% and chef <= 0.5 x web (ratio not applicable: web 0)",
+    "legacy_related": {
+      "chef_pooled_pct": 5.4,
+      "web_pooled_pct": 18.5,
+      "chef_to_web": 0.292,
+      "criteria": "chef <= 5.0% and chef <= 0.5 x web",
+      "passed": false
+    },
+    "passed": true,
+    "exit_code": 0
+  }
+}
