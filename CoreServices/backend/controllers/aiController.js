@@ -77,14 +77,29 @@ export const withdrawConsent = guarded('Failed to withdraw your AI consent', asy
   return res.json({ success: true, data: { ...consentView(user), cachedOutputsDeletion: 'requested' } });
 });
 
+// Education status from the stored dates (truthfulness: an unfinished degree must not read as completed).
+//   completed    the end date is in the past
+//   in_progress  the end date is in the future, or says present / current / expected  (expected_year when known)
+//   unknown      no end date
+export const educationStatus = (entry, now = new Date()) => {
+  const end = str(entry?.endDate, 40).toLowerCase();
+  const year = (end.match(/(19|20)\d{2}/) || [])[0] || '';
+  if (/present|current|ongoing|expected|now/.test(end)) return { status: 'in_progress', expected_year: year };
+  if (!year) return { status: 'unknown', expected_year: '' };
+  const month = Number((end.match(/^\d{4}-(\d{2})/) || [])[1] || 12);
+  const endsAt = new Date(Number(year), month - 1, 28);
+  return endsAt > now ? { status: 'in_progress', expected_year: year } : { status: 'completed', expected_year: '' };
+};
+
 // Only the facts the target needs, from the stored profile (server side).
 const profileContext = (data) => ({
   headline: str(data.personal?.headline, 200),
   skills: (data.skills || []).flatMap((g) => g.items || []).map((s) => str(s, 100)).filter(Boolean).slice(0, 200),
   experience: (data.experience || []).slice(0, 30).map((e) => ({ title: str(e.title, 200), company: str(e.company, 200),
-    startDate: str(e.startDate, 40), endDate: str(e.endDate, 40), current: Boolean(e.current) })),
+    startDate: str(e.startDate, 40), endDate: str(e.endDate, 40), current: Boolean(e.current),
+    status: e.current ? 'current' : 'past' })),
   education: (data.education || []).slice(0, 20).map((e) => ({ degree: str(e.degree, 200), field: str(e.field, 200),
-    institution: str(e.institution, 200) })),
+    institution: str(e.institution, 200), ...educationStatus(e) })),
   projects: (data.projects || []).slice(0, 40).map((p) => ({ name: str(p.name, 200),
     technologies: (p.technologies || []).map((t) => str(t, 100)).filter(Boolean).slice(0, 40) })),
   certifications: (data.certifications || []).slice(0, 40).map((c) => ({ name: str(c.name, 200), issuer: str(c.issuer, 200) })),
@@ -94,7 +109,7 @@ const profileContext = (data) => ({
 const targetEntry = (target, entry = {}) => {
   if (target === 'experience') {
     return { title: str(entry.title, 200), company: str(entry.company, 200), startDate: str(entry.startDate, 40),
-      endDate: str(entry.endDate, 40), current: Boolean(entry.current) };
+      endDate: str(entry.endDate, 40), current: Boolean(entry.current), status: entry.current ? 'current' : 'past' };
   }
   if (target === 'project') {
     const tech = Array.isArray(entry.technologies) ? entry.technologies : [];

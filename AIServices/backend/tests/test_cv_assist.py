@@ -37,6 +37,7 @@ def test_invented_employer_skill_number_degree_and_certification_are_flagged():
         ("Kubernetes", truthfulness.REASON_SKILL), ("Google", truthfulness.REASON_EMPLOYER),
         ("2", truthfulness.REASON_NUMBER), ("MSc", truthfulness.REASON_DEGREE),
         ("AWS", truthfulness.REASON_SKILL), ("Certified", truthfulness.REASON_CERT),
+        ("Holds", truthfulness.REASON_COMPLETION),  # no completed degree in the facts
     }
 
 
@@ -54,8 +55,8 @@ def test_aliases_count_as_the_same_skill_and_ambiguous_words_need_the_exact_spel
 
 def test_regressions_from_the_real_manual_check():
     # 1. A name must not run across a sentence end: the institution is in the profile.
-    facts = {"education": [{"degree": "BS", "field": "Computer Science", "institution": "COMSATS University Islamabad"}],
-             "skills": ["Java", "Dart"]}
+    facts = {"education": [{"degree": "BS", "field": "Computer Science", "institution": "COMSATS University Islamabad",
+                            "status": "completed"}], "skills": ["Java", "Dart"]}
     text = "Computer Science graduate from Comsats University Islamabad. Proficient in Java and Dart."
     assert reasons(text, facts) == set()
     # 2. A multi-word skill reworded from the input is not new ("inventory management" ← "managing inventory").
@@ -66,6 +67,41 @@ def test_regressions_from_the_real_manual_check():
     # 3. An expansion the input does not contain stays flagged (JWT → "JSON Web Token").
     assert ("JSON", truthfulness.REASON_SKILL) in reasons("Implemented JSON Web Token (JWT) authentication.",
                                                           {"current": "Implemented JWT-based authentication."})
+
+
+REAL_SUMMARY = ("Computer Science graduate with a Bachelor's degree from Comsats University Islamabad. Proficient in "
+                "Java, Dart and React. Experienced in developing various web and mobile applications.")
+
+
+def education_facts(status, expected_year=""):
+    return {"education": [{"degree": "Bachelor's", "field": "Computer Science", "institution": "COMSATS University Islamabad",
+                           "status": status, "expected_year": expected_year}], "skills": ["Java", "Dart", "React"]}
+
+
+def test_an_in_progress_degree_described_as_completed_is_flagged():
+    # The real Part 2 output called a student (degree expected 2027) a "graduate".
+    assert reasons(REAL_SUMMARY, education_facts("in_progress", "2027")) == {("graduate", truthfulness.REASON_COMPLETION)}
+    assert reasons(REAL_SUMMARY, education_facts("completed")) == set()
+    assert reasons(REAL_SUMMARY, education_facts("unknown")) == {("graduate", truthfulness.REASON_COMPLETION)}
+    for text in ("Graduated in Computer Science from COMSATS University Islamabad.",
+                 "Holds a Bachelor's in Computer Science.", "COMSATS University Islamabad alumnus."):
+        assert {r for _, r in reasons(text, education_facts("in_progress", "2027"))} == {truthfulness.REASON_COMPLETION}, text
+    # The truthful wording passes.
+    assert reasons("Computer Science student pursuing a Bachelor's at COMSATS University Islamabad (expected 2027), "
+                   "skilled in Java and React.", education_facts("in_progress", "2027")) == set()
+
+
+def test_seniority_and_years_of_experience_need_the_facts():
+    job = {"job": {"title": "Backend Developer", "company": "Acme Labs", "startDate": "2021", "endDate": "2023"},
+           "skills": ["Python"]}
+    assert reasons("Senior backend developer and Python expert with 5+ years of experience.", job) == {
+        ("Senior", truthfulness.REASON_SENIORITY), ("expert", truthfulness.REASON_SENIORITY),
+        ("5+ years", truthfulness.REASON_YEARS)}
+    assert reasons("Backend developer with over 2 years and several years of Python.", job) == {
+        ("over 2 years", truthfulness.REASON_YEARS), ("several years", truthfulness.REASON_YEARS)}
+    # Wording the facts contain is kept: the title says Lead, the input states the years.
+    lead = {"job": {"title": "Lead Developer", "company": "Acme Labs"}, "current": "Led a team of 4 for 3 years."}
+    assert reasons("- Lead developer at Acme Labs, leading a team of 4 for 3 years.", lead) == set()
 
 
 def test_a_capitalised_name_mid_sentence_is_flagged():
@@ -100,7 +136,7 @@ async def test_improve_an_experience_entry_returns_the_suggestion_and_its_flags(
                                                                 ("5", "number not in your input")}
     flag = next(f for f in out["flags"] if f["text"] == "Kubernetes")
     assert out["suggestion"][flag["start"]:flag["end"]] == "Kubernetes"  # spans for highlighting
-    assert out["usage"]["prompt"] == "cv_assist@v1" and out["usage"]["input_tokens"] > 0
+    assert out["usage"]["prompt"] == "cv_assist@v2" and out["usage"]["input_tokens"] > 0
 
 
 async def test_only_the_needed_facts_are_sent_and_never_the_name_or_contact_details(fake):
@@ -113,6 +149,22 @@ async def test_only_the_needed_facts_are_sent_and_never_the_name_or_contact_deta
         assert kept in sent, kept
     assert "<<<DATA profile>>>" in sent and "<<<DATA current_text>>>" in sent
     assert "Write the responsibilities" not in sent and "Improve the wording" in sent  # the fixed task text
+
+
+async def test_education_status_reaches_the_model_and_the_summary_rules_are_v2(fake):
+    context = {"skills": ["Java", "Dart", "React"], "education": [
+        {"degree": "BS", "field": "Computer Science", "institution": "COMSATS University Islamabad",
+         "status": "in_progress", "expected_year": "2027"}],
+        "experience": [{"title": "Intern", "company": "Acme Labs", "current": True, "status": "current"}]}
+    fake.push(json.dumps({"text": "Computer Science graduate skilled in Java."}))
+    out = await assist(AssistRequest.model_validate({"target": "summary", "mode": "generate", "context": context}), "u1")
+    sent = fake.sent_text
+    assert '"status": "in_progress"' in sent and '"expected_year": "2027"' in sent and '"status": "current"' in sent
+    assert "never call them a" in sent.lower() and "6-8 skills most relevant" in sent and "2-3 natural sentences" in sent
+    assert {(f["text"], f["reason"]) for f in out["flags"]} == {("graduate", "no completed degree in your profile")}
+    with pytest.raises(ValueError):  # only the three statuses Core sends
+        AssistRequest.model_validate({"target": "summary", "mode": "generate",
+                                      "context": {"education": [{"degree": "BS", "status": "graduated"}]}})
 
 
 async def test_instructions_inside_a_cv_are_data_and_a_complying_answer_is_flagged(fake):

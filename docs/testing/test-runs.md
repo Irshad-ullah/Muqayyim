@@ -227,3 +227,18 @@ Result: **PASS** · total time 449 s
 | Frontend node --test + Vitest | ✅ 141 passed (39 node + 102 Vitest), 0 failed | 11.1 s | `node --test: pass 39, fail 0 (0.2s) \| Vitest: 102 passed (102) (10.9s)` |
 
 Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).
+
+## 2026-10-17 11:47 Pakistan Standard Time · `d5c50da` (main, 9 uncommitted change(s))
+
+Commit: 12 Part 2: CV assist with consent, server-built facts, truthfulness post-check and review  
+Result: **PASS** · total time 434 s
+
+| Suite | Result | Duration | Summary line |
+|---|---|---|---|
+| AIServices pytest | ✅ 587 passed, 0 failed, 1 skipped, 5 deselected | 242.6 s | `587 passed, 1 skipped, 5 deselected in 242.57s (0:04:02)` |
+| AIServices pytest -m slow (real model) | ✅ 2 passed, 0 failed, 2 xfailed, 589 deselected | 31.2 s | `2 passed, 589 deselected, 2 xfailed in 31.17s` |
+| CoreServices Jest | ✅ 291 passed, 0 failed | 124.2 s | `Tests: 291 passed, 291 total \| Test Suites: 22 passed, 22 total` |
+| API Gateway Jest | ✅ 76 passed, 0 failed | 4.8 s | `Tests: 76 passed, 76 total \| Test Suites: 11 passed, 11 total` |
+| Frontend node --test + Vitest | ✅ 141 passed (39 node + 102 Vitest), 0 failed | 15.4 s | `node --test: pass 39, fail 0 (0.2s) \| Vitest: 102 passed (102) (15.2s)` |
+
+Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).

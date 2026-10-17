@@ -135,7 +135,7 @@ by default, `pytest -m llm_live`) makes one tiny smoke call with the real key.
 
 **Flow:** CV editor (Generate / Improve on the summary, each experience entry and each project) → `POST /api/ai/cv-assist`
 (Core, JWT) → consent check → facts built on the server → `POST /internal/llm/cv-assist` (AI, internal key + `X-User-Id`)
-→ the shared client with `prompts/cv_assist.txt` (v1) → truthfulness post-check → back to the browser → **review step**
+→ the shared client with `prompts/cv_assist.txt` (v2 since the status fix below) → truthfulness post-check → back to the browser → **review step**
 → Accept puts the text into the editor; the CV is saved only when the user saves it as before.
 
 **Consent** (`core_db.users.aiConsent`: granted, version, provider, grantedAt, withdrawnAt):
@@ -147,8 +147,12 @@ by default, `pytest -m llm_live`) makes one tiny smoke call with the real key.
 - Consent counts only for the current notice version (`AI_CONSENT_VERSION`); a changed notice asks again (409
   `CONSENT_VERSION_CHANGED`). Without consent Core refuses with 403 `AI_CONSENT_REQUIRED` before anything reaches AI.
 - **Withdrawal** (Account page, with a confirmation) turns AI off and asks AIServices to delete the user's cached outputs
-  (`DELETE /internal/llm/user-data`, background with retries; a final failure is logged as `LLM_USER_DATA_DELETE_FAILED`,
-  and the cache expires after 7 days anyway). **Account deletion** (admin) does the same.
+  (`DELETE /internal/llm/user-data`, best effort: background with retries; a final failure is logged as
+  `LLM_USER_DATA_DELETE_FAILED` and the user goes on a **retry list**, `core_db.pending_llm_deletions` — user id, attempts,
+  last error code, no content. An hourly job in Core (`startLlmDeleteRetryJob`, started by `server.js`) retries each entry
+  once; success removes it, failure counts the attempt; entries older than 8 days are dropped because the cache entries
+  have expired by then (7-day TTL). A later successful deletion for the same user also clears the entry.)
+  **Account deletion** (admin) does the same.
 
 **Data minimisation:** Core builds the profile context with `buildCvSource` on the server and sends only what the
 section needs — summary: headline, skills, job titles / employers / dates, degrees / institutions, project names /
@@ -210,18 +214,51 @@ three calls were made, 6 s apart.
   `LLM_USER_DATA_DELETE_FAILED`; the three cached entries were then deleted through the same AIServices function (cache
   empty). Deletion is best-effort with retries, a logged failure and the 7-day expiry as the backstop.
 
+### Status-claims fix and summary quality (cv_assist v2, 2026-10-17)
+
+**Problem (found by the user):** the real summary called the user a "Computer Science graduate" although the degree is in
+progress (expected 2027). The facts sent to the model carried no status, and the post-check had no rule for it.
+
+- **Facts:** Core sends each education entry's status, from its end date (`educationStatus` in `aiController.js`):
+  `completed` (end date in the past), `in_progress` with `expected_year` (end date in the future, or "present" /
+  "expected …"), `unknown` (no end date). Each experience entry (and the target entry) carries `status` `current` / `past`
+  from its "current" flag. AIServices accepts only these values.
+- **Prompt v2:** never describe an in-progress degree as completed ("graduate", "graduated", "holds", "degree holder") —
+  use "student" / "pursuing" / "expected <year>"; for an unknown status name the degree without saying it is completed;
+  current job in the present tense, past job in the past tense; keep job titles and seniority exactly as in the data (no
+  "senior", "lead", "principal", "expert", no years of experience the data does not state). Summary: 2–3 natural
+  sentences mentioning only the 6–8 most relevant skills, not the whole list.
+- **Post-check:** completion words when no education entry is `completed` → "no completed degree in your profile" (when the
+  facts carry no status at all, the word itself must be in the input); seniority words not in the input → "seniority not in
+  your profile"; "3+ years", "over 5 years", "several years" not stated in the input → "years of experience not in your
+  input".
+- **Re-check, offline, of the three earlier outputs** (the real profile's degree has no end date stored, in the profile or
+  in the parsed CV, so its status is `unknown`): summary → "graduate" now flagged; project-generate → no flags;
+  project-improve → "JSON" (unchanged).
+- **One real call, v2** (summary — generate, the real profile, 2026-10-17): the user's walkthrough on the dev servers
+  had already made it with the new code (1,439 / 89 tokens, 1 attempt); the check through the alternate-port instances
+  got the same answer from the cache (no further provider call): *"Computer Science student pursuing a Bachelor's at
+  [institution] with hands-on project experience in web and mobile development. Skilled in building full-stack and frontend
+  applications utilizing Java, JavaScript, React, Flutter, Node.js, and SQL. Demonstrated capability in developing diverse
+  software solutions ranging from e-commerce platforms to real-time chat applications."* — **no flags**; 3 sentences, 6
+  skills (of 16); no completion wording. Privacy scan of the outgoing text: none of the 15 personal values. The account's
+  consent was on (the user's walkthrough in progress) and was left as it was.
+- **Deletion retry list:** see *Withdrawal* above.
+
 ## Suggested SDS text
 
 | Section | Add or replace |
 |---|---|
 | **SI-3 (LLM interaction)** | "All language-model calls go through one client in AIServices (provider-agnostic; Google Gemini `gemini-3.5-flash-lite` by default). CoreServices and the browser never call the provider and never hold the key. The client enforces timeouts, retries on rate-limit and server errors with backoff, a global rate limiter at 80 % of the provider's per-project limits, a per-user daily quota, caching of identical requests, schema-validated structured output, and records usage (feature, tokens, latency, status) without storing prompts or responses." |
 | **Privacy (LI-6 / SEC-4)** | "AI features require a one-time consent stating that CV/profile text is sent to Google Gemini and, on the free tier, may be used by Google to improve its products. Names, e-mail addresses, phone numbers, addresses, links and photos are never sent to the language model. Withdrawing consent or deleting the account deletes the user's cached AI outputs." |
-| **Module 4 FE-1 / FR6.1 (AI-Powered CV Generator)** | "With the user's consent, the CV editor offers AI writing help (Generate / Improve) for the professional summary, each work-experience entry and each project. Suggestions are produced only from facts in the user's profile; any number, skill, employer, degree, certification or name that the input does not contain is flagged with the reason, and the user accepts, edits or discards each suggestion before it is used. Nothing is saved without the user saving the CV." |
+| **Module 4 FE-1 / FR6.1 (AI-Powered CV Generator)** | "With the user's consent, the CV editor offers AI writing help (Generate / Improve) for the professional summary, each work-experience entry and each project. Suggestions are produced only from facts in the user's profile, respecting whether each degree is completed or in progress and whether each job is current; any number, skill, employer, degree, certification or name that the input does not contain, a completed-degree claim the profile does not support, and seniority or years of experience the profile does not state are flagged with the reason, and the user accepts, edits or discards each suggestion before it is used. Nothing is saved without the user saving the CV." |
 | **Security (prompt injection)** | "User-supplied text is passed to the model only inside delimited data sections that the system instruction marks as data; instructions inside them are ignored, and model output is always reviewed by the user before it is saved." |
-| **§3.5 (data design)** | Add `ai_db.llm_limits` (rate / quota counters, TTL), `ai_db.llm_cache` (user hash, feature, output, 7-day TTL), `ai_db.llm_usage` (per-call usage, 365-day TTL). |
+| **§3.5 (data design)** | Add `ai_db.llm_limits` (rate / quota counters, TTL), `ai_db.llm_cache` (user hash, feature, output, 7-day TTL), `ai_db.llm_usage` (per-call usage, 365-day TTL), `core_db.pending_llm_deletions` (user id, attempts, last error code: cache deletions to retry hourly). |
 | **PER-3** | Note: the LLM timeout is 15 s per attempt; retries after rate-limit or server errors can extend a request. |
 
 ## Files
+
+**Part 2 fix (v2):** AIServices `cv_assist/{service,truthfulness}.py`, `prompts/cv_assist.txt`, tests `tests/test_cv_assist.py`. CoreServices `backend/controllers/aiController.js` (`educationStatus`), `backend/services/aiLlmClient.js` (retry list, hourly job), `backend/models/PendingLlmDeletion.js`, `server.js`; tests `tests/aiAssist.test.js`.
 
 **Part 2:** AIServices `app/services/cv_assist/{service,truthfulness}.py`, `app/services/llm/prompts/cv_assist.txt`, `app/routes/llm_routes.py`; tests `tests/test_cv_assist.py`. CoreServices `backend/constants/aiConsent.js`, `backend/models/User.js` (aiConsent), `backend/services/aiLlmClient.js`, `backend/controllers/aiController.js`, `backend/routes/aiRoutes.js`, `app.js`, `backend/admin/controllers/adminUserController.js`; tests `tests/aiAssist.test.js`. Frontend `src/services/{aiService,cvAssistService}.js`, `src/components/ai/{AiConsentDialog,AssistReview,AiConsentCard}.jsx`, `src/components/cvgen/{CvAssist,AiAssistButton,CvEditor}.jsx`, `src/pages/ProfilePage.jsx`; tests `cvAssistService.test.js`, `CvAssist.spec.jsx`, `AiConsentCard.spec.jsx`. Gateway `app.js`; tests `tests/aiRoute.test.js`.
 

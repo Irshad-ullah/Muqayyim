@@ -21,15 +21,16 @@ FEATURE = "cv_assist"
 PROMPT = "cv_assist"
 
 TASKS = {
-    ("summary", "generate"): "Write a professional summary of 2-4 sentences for the top of this person's CV.",
-    ("summary", "improve"): "Improve the wording of the current professional summary (2-4 sentences).",
+    ("summary", "generate"): "Write a professional summary of 2-3 sentences for the top of this person's CV.",
+    ("summary", "improve"): "Improve the wording of the current professional summary (2-3 sentences).",
     ("experience", "generate"): "Write the responsibilities and achievements for this one job entry.",
     ("experience", "improve"): "Improve the wording of the responsibilities and achievements for this one job entry.",
     ("project", "generate"): "Write a short description of this one project.",
     ("project", "improve"): "Improve the wording of the description of this one project.",
 }
 FORMAT = {
-    "summary": "Output a single paragraph.",
+    "summary": ("Output one paragraph of 2-3 natural sentences. Mention only the 6-8 skills most relevant to the "
+                "person's experience, projects and headline; do not list every skill."),
     "experience": "Output 2-5 bullet points, one per line, each starting with '- ' and a strong verb.",
     "project": "Output 1-3 sentences or up to 4 bullet points (one per line, starting with '- ').",
 }
@@ -45,12 +46,16 @@ class ExperienceFacts(_Strict):
     startDate: str = Field("", max_length=40)
     endDate: str = Field("", max_length=40)
     current: bool = False
+    status: Literal["current", "past", ""] = ""  # set by Core from `current`
 
 
 class EducationFacts(_Strict):
     degree: str = Field("", max_length=200)
     field: str = Field("", max_length=200)
     institution: str = Field("", max_length=200)
+    # Set by Core from the end date: an in-progress degree must never read as completed.
+    status: Literal["completed", "in_progress", "unknown"] = "unknown"
+    expected_year: str = Field("", max_length=4)
 
 
 class ProjectFacts(_Strict):
@@ -79,6 +84,7 @@ class TargetEntry(_Strict):
     startDate: str = Field("", max_length=40)
     endDate: str = Field("", max_length=40)
     current: bool = False
+    status: Literal["current", "past", ""] = ""
     name: str = Field("", max_length=200)
     technologies: List[str] = Field(default_factory=list, max_length=40)
 
@@ -108,7 +114,7 @@ def _profile(request: AssistRequest) -> dict:
                 "certifications": [x.model_dump() for x in c.certifications]}
     entry = request.entry or TargetEntry()
     if request.target == "experience":
-        return {"job": entry.model_dump(include={"title", "company", "startDate", "endDate", "current"}), "skills": c.skills}
+        return {"job": entry.model_dump(include={"title", "company", "startDate", "endDate", "current", "status"}), "skills": c.skills}
     return {"project": entry.model_dump(include={"name", "technologies"}), "skills": c.skills}
 
 

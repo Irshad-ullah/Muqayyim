@@ -888,3 +888,37 @@ Browser walkthrough checklist (results to be added here):
 11. Optional (limit message): with `LLM_USER_DAILY_QUOTA=1` in `.env` and AI restarted, the second suggestion shows
     "AI daily limit reached, try again tomorrow. Your text was not changed."
 12. Optional (outage message): stop the AI service and click Generate: "AI is unavailable. Your text was not changed."
+
+## 12 Part 2 fix — status claims (cv_assist v2), summary quality, deletion retry list (recorded)
+
+**Date:** 2026-10-17 · commit: "12 Part 2 fix" (see `git log`) · note: `docs/changes/12-llm-integration.md` (Status-claims fix)
+
+**Automated tests** (run 2026-10-17 11:47, all PASS): AI **587 passed, 1 skipped** (+3); AI slow 2 + 2 xfailed; Core
+**291** (+10); Gateway **76**; frontend `node --test` **39**, Vitest **102**.
+- AI `tests/test_cv_assist.py` (+3, 14 total) — `test_an_in_progress_degree_described_as_completed_is_flagged` (the real
+  summary with "graduate": flagged for in-progress and unknown, not for completed; "graduated", "holds", "alumnus" flagged;
+  "student … expected 2027" passes); `test_seniority_and_years_of_experience_need_the_facts` (Senior / expert / "5+ years" /
+  "over 2 years" / "several years" flagged; a "Lead" title and stated years kept);
+  `test_education_status_reaches_the_model_and_the_summary_rules_are_v2` (status and expected year in the outgoing
+  prompt, v2 rules, flag on "graduate", unknown status values refused). Changed: the invented-facts test now also expects
+  "Holds" (no completed degree); regression 1 gives the education status; usage prompt `cv_assist@v2`.
+- Core `tests/aiAssist.test.js` (+10, 28 total) — `educationStatus` for 7 end-date forms; a current job sent as
+  `status: current`; education status in the facts (in progress with expected year / completed); the retry list (a
+  deletion that keeps failing is queued with attempts and an error code only, the retry counts a failure, then deletes and
+  removes the entry; a later successful deletion clears it; entries older than 8 days dropped).
+
+**Manual checks (2026-10-17):**
+- Offline re-check of the three earlier real outputs with the new post-check (the real degree has no end date stored, so
+  status `unknown`): summary → "graduate" flagged ("no completed degree in your profile"); project — generate → none;
+  project — improve → "JSON" (unchanged).
+- One real summary — generate with v2 through gateway :8180 → Core :3100 → relay → AI :8100 (backup first:
+  `~/.muqayyim/taxonomy/manual-backup-2026-10-17-llm2-fix`, ai_db + core_db users). It was served from the cache: the
+  same v2 request had been made minutes earlier by the user's browser walkthrough on the dev servers, which had
+  hot-reloaded the uncommitted code (usage record: 1 attempt, 1,439 / 89 tokens). Output: "Computer Science student
+  pursuing a Bachelor's at [institution] …", 3 sentences, 6 of 16 skills, **no flags**. Privacy scan of the outgoing
+  text: none of the 15 personal values. Consent was already on (walkthrough in progress) and was left unchanged, so the
+  live withdrawal deletion was not repeated; it is covered by the Core tests.
+
+**Problems found by testing:** the status gap itself (found by the user from the real output). While writing: the
+retry list first recorded axios' generic `ERR_BAD_RESPONSE` instead of the HTTP status; it now records the status
+(found by the new test).

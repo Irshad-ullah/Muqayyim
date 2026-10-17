@@ -8,6 +8,7 @@ const { seedAdmin } = await import('./backend/admin/utils/adminSeed.js');
 const { logError } = await import('./backend/services/errorLogger.js');
 const { ensureLogIndexes } = await import('./backend/config/logging.js');
 const { refreshAdminEmails } = await import('./backend/services/alertService.js');
+const { startLlmDeleteRetryJob } = await import('./backend/services/aiLlmClient.js');
 
 // Process-level failures are critical. An uncaught exception leaves the
 // process in an unknown state, so it is logged (best effort, ≤ 2 s) and the
@@ -29,6 +30,7 @@ connectDB().then(async () => {
   await seedAdmin();
   await ensureLogIndexes();
   await refreshAdminEmails();
+  startLlmDeleteRetryJob(); // 12: hourly retry of failed AI cache deletions
 });
 
 // Start server

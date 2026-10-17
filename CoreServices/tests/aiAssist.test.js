@@ -10,11 +10,13 @@ process.env.LLM_DELETE_RETRY_DELAYS_MS = '0,5';
 const { default: app } = await import('../app.js');
 const { default: User } = await import('../backend/models/User.js');
 const { default: Profile } = await import('../backend/models/Profile.js');
-const { flushLlmDeletes } = await import('../backend/services/aiLlmClient.js');
+const { flushLlmDeletes, retryPendingLlmDeletes } = await import('../backend/services/aiLlmClient.js');
+const { default: PendingLlmDeletion } = await import('../backend/models/PendingLlmDeletion.js');
+const { educationStatus } = await import('../backend/controllers/aiController.js');
 const { AI_CONSENT_TEXT, AI_CONSENT_VERSION } = await import('../backend/constants/aiConsent.js');
 
 // ── Fake AIServices /internal/llm + the parsed-CV endpoint the CV source asks for ──
-const ai = { up: true, calls: [], next: null, enabled: true };
+const ai = { up: true, calls: [], next: null, enabled: true, deleteFails: false };
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://x');
   const chunks = [];
@@ -26,6 +28,7 @@ const server = http.createServer((req, res) => {
     const json = (status, body, headers = {}) => { res.writeHead(status, { 'Content-Type': 'application/json', ...headers }); res.end(JSON.stringify(body)); };
     if (url.pathname.startsWith('/internal/cv')) return json(404, { success: false });
     if (url.pathname === '/internal/llm/status') return json(200, { success: true, data: { enabled: ai.enabled, provider: 'fake' } });
+    if (url.pathname === '/internal/llm/user-data' && ai.deleteFails) return json(503, { success: false });
     if (url.pathname === '/internal/llm/user-data') return json(200, { success: true, data: { cache_entries_deleted: 2 } });
     if (ai.next) { const { status, body, headers } = ai.next; ai.next = null; return json(status, body, headers); }
     return json(200, { success: true, data: { suggestion: 'Backend developer skilled in Python.', insufficient_data: false,
@@ -50,7 +53,8 @@ beforeAll(async () => {
       github: 'https://github.com/ayesharaza', website: 'https://ayesha.dev' },
     summary: 'Backend developer.',
     experience: [{ title: 'Backend Developer', company: 'Acme Labs', startDate: '2021-01', endDate: '2023-06', description: 'Built APIs.' }],
-    education: [{ degree: 'BS', field: 'Computer Science', institution: 'COMSATS University' }],
+    education: [{ degree: 'BS', field: 'Computer Science', institution: 'COMSATS University', endDate: '2099-06' },
+      { degree: 'FSc', field: 'Pre-Engineering', institution: 'Model College', endDate: '2020' }],
     skills: { manual: ['Python', 'Django'] },
     projects: { manual: [{ name: 'Muqayyim', description: 'Career platform', url: 'https://muqayyim.example.com', technologies: ['React'] }] },
   });
@@ -64,7 +68,8 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  Object.assign(ai, { up: true, calls: [], next: null, enabled: true });
+  Object.assign(ai, { up: true, calls: [], next: null, enabled: true, deleteFails: false });
+  await PendingLlmDeletion.deleteMany({});
   await User.updateOne({ _id: alice._id }, { $set: { aiConsent: { granted: false } } });
 });
 
@@ -142,7 +147,11 @@ describe('CV assist', () => {
     const [call] = llmCalls('/internal/llm/cv-assist');
     const body = JSON.parse(call.body);
     expect(call.headers['x-user-id']).toBe(String(alice._id));
-    expect(body.context.experience).toEqual([{ title: 'Backend Developer', company: 'Acme Labs', startDate: '2021-01', endDate: '2023-06', current: false }]);
+    expect(body.context.experience).toEqual([{ title: 'Backend Developer', company: 'Acme Labs', startDate: '2021-01', endDate: '2023-06', current: false, status: 'past' }]);
+    // Each education entry says whether it is finished (truthfulness: a student is not a graduate).
+    expect(body.context.education).toEqual([
+      { degree: 'BS', field: 'Computer Science', institution: 'COMSATS University', status: 'in_progress', expected_year: '2099' },
+      { degree: 'FSc', field: 'Pre-Engineering', institution: 'Model College', status: 'completed', expected_year: '' }]);
     expect(body.context.skills).toEqual(expect.arrayContaining(['Python', 'Django']));
     expect(body.context.projects).toEqual([{ name: 'Muqayyim', technologies: ['React'] }]);
     expect(body.redact).toEqual(['Ayesha Raza', 'Ayesha', 'Raza']); // only for scrubbing in AIServices
@@ -158,7 +167,7 @@ describe('CV assist', () => {
     await assist({ target: 'experience', mode: 'improve', currentText: 'Built APIs.',
       entry: { title: 'Backend Developer', company: 'Acme Labs', startDate: '2021', location: 'Islamabad', email: 'x@y.com', description: 'ignored' } });
     const body = JSON.parse(llmCalls('/internal/llm/cv-assist')[0].body);
-    expect(body.entry).toEqual({ title: 'Backend Developer', company: 'Acme Labs', startDate: '2021', endDate: '', current: false });
+    expect(body.entry).toEqual({ title: 'Backend Developer', company: 'Acme Labs', startDate: '2021', endDate: '', current: false, status: 'past' });
     expect(body.current_text).toBe('Built APIs.');
   });
 
@@ -214,5 +223,58 @@ describe('CV assist', () => {
     } finally {
       info.mockRestore();
     }
+  });
+});
+
+describe('education status', () => {
+  const now = new Date('2026-10-17T12:00:00Z');
+  test.each([
+    ['2027-06', 'in_progress', '2027'], ['2027', 'in_progress', '2027'], ['Expected 2027', 'in_progress', '2027'],
+    ['Present', 'in_progress', ''], ['2025-06', 'completed', ''], ['2026-09', 'completed', ''], ['', 'unknown', ''],
+  ])('end date %j → %s', (endDate, status, year) => {
+    expect(educationStatus({ endDate }, now)).toEqual({ status, expected_year: year });
+  });
+
+  test('a current job is sent as current', async () => {
+    await consent();
+    await assist({ target: 'experience', mode: 'generate', entry: { title: 'Intern', company: 'Acme Labs', current: true } });
+    expect(JSON.parse(llmCalls('/internal/llm/cv-assist')[0].body).entry).toMatchObject({ current: true, status: 'current' });
+  });
+});
+
+describe('failed cache deletions: retry list', () => {
+  test('a deletion that keeps failing is queued, retried hourly, and removed once it succeeds', async () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      await consent();
+      ai.deleteFails = true;
+      await as(request(app).delete('/api/ai/consent'));
+      await flushLlmDeletes();
+      const queued = await PendingLlmDeletion.findOne({ userId: String(alice._id) }).lean();
+      expect(queued).toMatchObject({ attempts: 1, lastError: '503' });
+      expect(Object.keys(queued).sort()).toEqual(['_id', 'attempts', 'createdAt', 'lastError', 'lastTriedAt', 'userId']);
+
+      expect(await retryPendingLlmDeletes()).toMatchObject({ retried: 1, deleted: 0, failed: 1 }); // still down
+      expect((await PendingLlmDeletion.findOne({ userId: String(alice._id) }).lean()).attempts).toBe(2);
+
+      ai.deleteFails = false;
+      expect(await retryPendingLlmDeletes()).toMatchObject({ retried: 1, deleted: 1, failed: 0 });
+      expect(await PendingLlmDeletion.countDocuments()).toBe(0);
+      expect(llmCalls('/internal/llm/user-data').at(-1).headers['x-user-id']).toBe(String(alice._id));
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  test('a later successful deletion clears the entry; entries past the cache lifetime are dropped', async () => {
+    await PendingLlmDeletion.create({ userId: String(alice._id), attempts: 3 });
+    await consent();
+    await as(request(app).delete('/api/ai/consent'));
+    await flushLlmDeletes();
+    expect(await PendingLlmDeletion.countDocuments()).toBe(0);
+
+    await PendingLlmDeletion.create({ userId: 'old-user', createdAt: new Date(Date.now() - 9 * 86400000) });
+    expect(await retryPendingLlmDeletes()).toMatchObject({ expired: 1, retried: 0 });
+    expect(await PendingLlmDeletion.countDocuments()).toBe(0);
   });
 });

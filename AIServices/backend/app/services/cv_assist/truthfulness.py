@@ -10,6 +10,11 @@ Flagged, with a reason shown to the user:
   - another capitalised name mid-sentence that the input does not contain     → "name not in your profile"
   - a degree word (Bachelor, MSc, PhD, …) not in the input                    → "degree not in your profile"
   - certification wording ("certified", "certification") not in the input    → "certification not in your profile"
+  - completion words ("graduate", "graduated", "holds", "alumnus") when no
+    education entry has status "completed"                                    → "no completed degree in your profile"
+  - seniority words ("senior", "lead", "principal", "expert", …) not in input → "seniority not in your profile"
+  - years of experience ("3+ years", "over 5 years", "several years") that the
+    input does not state                                                      → "years of experience not in your input"
 
 It is a safety net, not a guarantee: the prompt forbids invention, and the user reviews every suggestion.
 """
@@ -18,7 +23,7 @@ import json
 import re
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Any, Dict, Iterable, List, Set
+from typing import Any, Callable, Dict, Iterable, List, Set
 
 from app.services.embeddings import descriptions as descriptions_module
 from app.services.embeddings import normalise as normalise_module
@@ -29,6 +34,9 @@ REASON_EMPLOYER = "employer not in your profile"
 REASON_NAME = "name not in your profile"
 REASON_DEGREE = "degree not in your profile"
 REASON_CERT = "certification not in your profile"
+REASON_COMPLETION = "no completed degree in your profile"
+REASON_SENIORITY = "seniority not in your profile"
+REASON_YEARS = "years of experience not in your input"
 
 # Skill names that are also everyday words, or very short: they only count with the exact spelling.
 AMBIGUOUS = {"go", "r", "c", "swift", "spring", "express", "rust", "ruby", "excel", "access", "word", "dart", "flask",
@@ -42,6 +50,11 @@ NOT_NAMES = {"i", "ai", "it", "ui", "ux", "api", "apis", "cv", "mvp", "b2b", "b2
 DEGREES = re.compile(r"\b(Bachelor(?:'s)?|Master(?:'s)?|BSc|B\.Sc|BS|BE|BCS|MSc|M\.Sc|MS|MPhil|PhD|Ph\.D|Doctorate|"
                      r"Diploma|MBA|Associate degree)\b")
 CERT = re.compile(r"\b(certified|certification|certificate)\b", re.I)
+COMPLETION = re.compile(r"\b(graduated?|graduates|holds|holder|holding (?:a|an) \w+ degree|alumn(?:us|a|i))\b", re.I)
+SENIORITY = re.compile(r"\b(senior|sr\.|lead|principal|staff engineer|head of|chief|expert|experts|seasoned|veteran)(?!\w)",
+                       re.I)
+YEARS = re.compile(r"\b(?:(?:over|more than|nearly|almost|about) )?(?:\d+\s*\+?|several|many|multiple|extensive) "
+                   r"(?:years?|yrs?)\b", re.I)
 NUMBER = re.compile(r"(?<![\w.])\d+(?:[.,]\d+)*(?:\+|%)?")
 # A capitalised name of one or more words. Words are joined by single spaces only, and a word may
 # contain an inner dot (Node.js) but never end with one — a name never runs across a sentence end
@@ -114,6 +127,33 @@ def _skill_mentions(text: str):
     return found
 
 
+def _education(value: Any) -> List[dict]:
+    """Every education entry in the facts (dicts under an "education" key, at any depth)."""
+    found: List[dict] = []
+    if isinstance(value, dict):
+        for key, v in value.items():
+            if key == "education" and isinstance(v, list):
+                found.extend(e for e in v if isinstance(e, dict))
+            else:
+                found.extend(_education(v))
+    elif isinstance(value, (list, tuple)):
+        for v in value:
+            found.extend(_education(v))
+    return found
+
+
+def _completion_supported(facts: Any, in_source: Callable[[str], bool]) -> Callable[[str], bool]:
+    """Completion words are allowed when an education entry has status "completed". When entries carry a
+    status and none is completed, they never are. Without status information (older callers) the word
+    itself must be in the input."""
+    statuses = [e.get("status") for e in _education(facts) if e.get("status")]
+    if "completed" in statuses:
+        return lambda word: True
+    if statuses:
+        return lambda word: False
+    return in_source
+
+
 def check(suggestion: str, facts: Any) -> List[Flag]:
     """Flags for everything in `suggestion` that `facts` (all input text: profile context, the entry,
     the current text) does not contain."""
@@ -144,6 +184,18 @@ def check(suggestion: str, facts: Any) -> List[Flag]:
             covered.append((start, end))
             flags.append(Flag(suggestion[start:end], reason, start, end))
 
+    completion_ok = _completion_supported(facts, in_source)
+    for m in COMPLETION.finditer(suggestion):
+        if not completion_ok(m.group()):
+            add(m.start(), m.end(), REASON_COMPLETION)
+    for m in SENIORITY.finditer(suggestion):
+        if not in_source(m.group().rstrip(".")):
+            add(m.start(), m.end(), REASON_SENIORITY)
+    for m in YEARS.finditer(suggestion):
+        phrase = re.sub(r"\s+", " ", m.group().lower())
+        core = re.sub(r"^(?:over|more than|nearly|almost|about) ", "", phrase).replace(" +", "+")
+        if not in_source(core) and not in_source(core.replace("+", "")):
+            add(m.start(), m.end(), REASON_YEARS)
     for m in NUMBER.finditer(suggestion):
         if re.sub(r"[+%,]", "", m.group()) not in source_numbers:
             add(m.start(), m.end(), REASON_NUMBER)
