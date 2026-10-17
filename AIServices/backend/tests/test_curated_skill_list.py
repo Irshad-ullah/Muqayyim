@@ -50,7 +50,8 @@ def test_aliases_resolve(alias, canonical):
 
 
 def test_collision_detection_is_its_own_skill_and_the_container_requirements_merged():
-    assert normalise_skill("Collision detection")[1] == "Collision Detection"
+    vocab = vocabulary()
+    assert vocab[normalise_skill("Collision detection")[0]] == "Collision Detection"
     assert normalise_skill("Collision Detection")[0] != normalise_skill("Game Physics")[0]
     data = json.loads(DATASET.read_text(encoding="utf8"))
     devsecops = next(r for r in data["roles"] if r["id"] == "devsecops-engineer")
