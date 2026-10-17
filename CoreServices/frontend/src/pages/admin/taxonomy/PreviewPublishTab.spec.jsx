@@ -48,6 +48,30 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+describe('PreviewPublishTab — ESCO role map (Module 5.1)', () => {
+  test('the preview shows adjusted requirements, unmapped essential phrases and stale entries, and flags a drop', async () => {
+    const roleMap = { live_adjusted: 846, staged_adjusted: 840, dropped: true, essential_not_in_map: 12,
+      essential_reviewed_unmapped: 1314, stale_entries: 6, stale_mapped_entries: 6 };
+    taxonomyService.getJob.mockResolvedValue({ data: job({ status: 'previewed', diff_summary: { ...DIFF, role_map: roleMap }, checks: passedChecks }) });
+    renderTab();
+    const box = await screen.findByTestId('role-map-summary');
+    expect(box.textContent).toContain('ESCO requirements adjusted by the role map: 846 → 840');
+    expect(box.textContent).toContain('fewer than now');
+    expect(box.textContent).toContain('Essential phrases not in the map: 12');
+    expect(box.textContent).toContain('reviewed and left unmapped: 1314');
+    expect(box.textContent).toContain('stale map entries: 6');
+  });
+
+  test('no drop, no warning', async () => {
+    const roleMap = { live_adjusted: 0, staged_adjusted: 846, dropped: false, essential_not_in_map: 0, essential_reviewed_unmapped: 1314, stale_entries: 0 };
+    taxonomyService.getJob.mockResolvedValue({ data: job({ status: 'previewed', diff_summary: { ...DIFF, role_map: roleMap }, checks: passedChecks }) });
+    renderTab();
+    const box = await screen.findByTestId('role-map-summary');
+    expect(box.textContent).toContain('0 → 846');
+    expect(box.textContent).not.toContain('fewer than now');
+  });
+});
+
 describe('PreviewPublishTab — states', () => {
   test('loading, then the job list and the selected job', async () => {
     taxonomyService.getJob.mockResolvedValue({ data: job({ status: 'validated' }) });

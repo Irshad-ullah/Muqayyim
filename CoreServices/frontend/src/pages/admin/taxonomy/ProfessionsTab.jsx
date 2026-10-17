@@ -43,6 +43,37 @@ function Field({ id, label, field, profession, onReset, disabled, children }) {
   );
 }
 
+// Module 5.1: an ESCO requirement group (source "role_map") is one requirement satisfied by any of its named
+// skills; the original ESCO phrase stays visible.
+export const isAdjusted = (skill) => skill?.source === 'role_map' && (skill.alternatives || []).length > 0;
+
+export function Requirements({ skills }) {
+  const list = skills || [];
+  const adjusted = list.filter(isAdjusted).length;
+  if (list.length === 0) return null;
+  return (
+    <details className="text-sm" data-testid="requirements">
+      <summary className="cursor-pointer text-slate-600">
+        Skills ({list.length}{adjusted ? `, ${adjusted} adjusted by the ESCO role map` : ''})
+      </summary>
+      <ul className="mt-2 space-y-1 max-h-72 overflow-y-auto">
+        {list.map((s) => (
+          <li key={s.key || s.name} className="text-xs text-slate-700" data-testid="requirement" data-adjusted={isAdjusted(s) ? 'yes' : 'no'}>
+            <span className="font-medium">{isAdjusted(s) ? s.label : s.name}</span>
+            <span className="text-slate-400"> · {s.type}</span>
+            {isAdjusted(s) && (
+              <span className="block text-slate-500">
+                <span className="text-indigo-700 bg-indigo-50 rounded px-1 mr-1">adjusted</span>
+                any one of: {s.alternatives.map((a) => a.name).join(', ')} · original ESCO phrase: “{s.phrase}”
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
 function EditPanel({ profession, categories, lock, onSaved, onClose }) {
   const id = useId();
   const [form, setForm] = useState({
@@ -112,6 +143,7 @@ function EditPanel({ profession, categories, lock, onSaved, onClose }) {
         <label htmlFor={`${id}-active`}>Active (used in career matching)</label>
         <OverrideTag field="active" profession={profession} onReset={reset} disabled={disabled} />
       </div>
+      <Requirements skills={profession.skills} />
       {profession.source !== 'manual' && (
         <p className="text-xs text-slate-500">
           Changes to an imported profession are kept as admin overrides when the dataset is imported again. Each save takes a snapshot first (see History).

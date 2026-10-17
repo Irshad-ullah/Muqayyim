@@ -32,7 +32,32 @@ const openEditor = async (user, title) => {
   return screen.findByTestId('profession-edit');
 };
 
+const ESCO_DEV = {
+  profession_id: 'esco:dev', source: 'esco', source_code: '2512.4', title: 'mobile application developer', category: 'Development',
+  active: true, updated_at: '2026-10-17T10:00:00Z',
+  skills: [
+    { name: 'computer programming', key: 'computer programming', type: 'essential', source: 'role_map', phrase: 'computer programming',
+      label: 'Kotlin / Swift / Java / … (computer programming)', alternatives: [{ name: 'Kotlin', key: 'kotlin' }, { name: 'Swift', key: 'swift' }, { name: 'Java', key: 'java' }, { name: 'Dart', key: 'dart' }] },
+    { name: 'think analytically', key: 'think analytically', type: 'essential' },
+  ],
+};
+
 describe('ProfessionsTab', () => {
+  test('Module 5.1: an ESCO role shows its adjusted requirements with the original phrase', async () => {
+    const user = userEvent.setup();
+    taxonomyService.listProfessions.mockResolvedValue(list([ESCO_DEV]));
+    render(<ProfessionsTab lock={null} />);
+    const editor = await openEditor(user, 'mobile application developer');
+    const box = within(editor).getByTestId('requirements');
+    expect(box.textContent).toContain('Skills (2, 1 adjusted by the ESCO role map)');
+    const items = within(box).getAllByTestId('requirement');
+    expect(items.map((i) => i.dataset.adjusted)).toEqual(['yes', 'no']);
+    expect(items[0].textContent).toContain('Kotlin / Swift / Java / … (computer programming)');
+    expect(items[0].textContent).toContain('any one of: Kotlin, Swift, Java, Dart');
+    expect(items[0].textContent).toContain('original ESCO phrase: “computer programming”');
+    expect(items[1].textContent).toContain('think analytically');
+  });
+
   test('loading, then the list with override markers', async () => {
     render(<ProfessionsTab lock={null} />);
     expect(screen.getByText('Loading…')).toBeTruthy();

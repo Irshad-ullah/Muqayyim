@@ -218,6 +218,7 @@ function JobDetail({ job, lock, busy, acknowledged, setAcknowledged, onPreview, 
             Active professions: {summary.active_professions?.live} → {summary.active_professions?.staged}
             {summary.kept_admin_overrides ? ` · ${summary.kept_admin_overrides} admin override(s) kept` : ''}
           </p>
+          <RoleMapSummary roleMap={summary.role_map} />
           <ChecksSummary checks={job.checks} />
         </>
       )}
@@ -244,6 +245,26 @@ function JobDetail({ job, lock, busy, acknowledged, setAcknowledged, onPreview, 
         )}
         {job.status === 'previewed' && publish.reason && <span className="text-xs text-slate-500" data-testid="publish-reason">{publish.reason}</span>}
       </div>
+    </div>
+  );
+}
+
+// Module 5.1: the ESCO role map in the preview — requirements adjusted (live → staged), undescribed essential
+// phrases not in the map (e.g. new roles after a re-import) and stale map entries. A drop is flagged: publishing
+// fails its post-check if the live count then differs from the staged one.
+export function RoleMapSummary({ roleMap }) {
+  if (!roleMap) return null;
+  return (
+    <div className="text-xs text-slate-600 space-y-0.5" data-testid="role-map-summary">
+      <p>
+        ESCO requirements adjusted by the role map: {roleMap.live_adjusted} → <strong>{roleMap.staged_adjusted}</strong>
+        {roleMap.dropped && <span className="ml-1 text-amber-800 bg-amber-100 rounded px-1">fewer than now</span>}
+      </p>
+      <p>
+        Essential phrases not in the map: {roleMap.essential_not_in_map}
+        {' · '}reviewed and left unmapped: {roleMap.essential_reviewed_unmapped}
+        {' · '}stale map entries: {roleMap.stale_entries}
+      </p>
     </div>
   );
 }

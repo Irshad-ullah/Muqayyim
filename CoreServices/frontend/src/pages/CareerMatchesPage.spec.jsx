@@ -237,6 +237,27 @@ describe('Career Matching — details', () => {
     expect(within(first).getByTestId('explanation').textContent).toMatch(/To close the gap, learn Kubernetes/);
   });
 
+  test('ESCO requirement groups (Module 5.1) show the named-skill label, the skill that holds them and the alternatives', async () => {
+    const group = { phrase: 'use programming languages', phrase_uri: 'u', alternatives: ['Kotlin', 'Swift', 'Java', 'Dart'] };
+    careerMatchService.getMatch.mockImplementation(async (id) => {
+      const detail = detailFor(id);
+      detail.members[0].required = [
+        { name: 'Kotlin / Swift / Java / … (use programming languages)', key: 'use programming languages', status: 'matched', credit: 1,
+          via: { name: 'Kotlin', source: 'cv', group: true, also: [] }, group },
+        { name: 'Selenium / Cypress (execute software tests)', key: 'execute software tests', status: 'missing', credit: 0,
+          group: { phrase: 'execute software tests', alternatives: ['Selenium', 'Cypress'] } },
+      ];
+      return detail;
+    });
+    renderPage();
+    const details = await screen.findByTestId('career-details');
+    const rows = within(within(details).getAllByTestId('member')[0]).getAllByTestId('skill-row');
+    expect(rows[0].textContent).toContain('Kotlin / Swift / Java / … (use programming languages)');
+    expect(rows[0].textContent).toContain('Held via Kotlin (shows: use programming languages)');
+    expect(rows[1].dataset.status).toBe('missing');
+    expect(rows[1].textContent).toContain('Missing — any one of: Selenium, Cypress');
+  });
+
   test('a single-source ESCO role has the ESCO info tooltip and its attribution', async () => {
     const user = userEvent.setup();
     renderPage();

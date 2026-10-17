@@ -50,8 +50,15 @@ const FROM = { manual: 'your profile', cv: 'your CV', github: 'GitHub' };
 export const fromLabel = (source) => FROM[source] || 'your profile';
 
 // One required / optional skill row → the text shown next to its icon (never colour alone).
+// An ESCO requirement group (Module 5.1) is held through any one of its named skills.
 export const skillNote = (row) => {
+  if (row.status === 'matched' && row.via?.group && row.group) {
+    return `Held via ${row.via.name} (shows: ${row.group.phrase})`;
+  }
   if (row.status === 'matched') return `Held — from ${fromLabel(row.via?.source)}`;
+  if (row.status === 'missing' && row.group?.alternatives?.length) {
+    return `Missing — any one of: ${row.group.alternatives.join(', ')}`;
+  }
   if (row.status === 'related' && row.via) {
     return `Related — via your ${row.via.name} (from ${fromLabel(row.via.source)}), similarity ${Number(row.via.similarity).toFixed(2)}`;
   }
