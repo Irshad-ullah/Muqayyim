@@ -1,0 +1,2906 @@
+{
+ "source": "AIServices/data/raw/onet/software_skills.csv",
+ "category_column": "Element Name",
+ "tool_column": "Workplace Example",
+ "categories": 134,
+ "tools_per_category": {
+  "min": 1,
+  "median": 14.0,
+  "max": 1687,
+  "mean": 66.5
+ },
+ "distinct_tools": 8753,
+ "tools_in_more_than_one_category": 151,
+ "tools_mapped_to_canonical_key": 358,
+ "tools_mapped_share": 0.041,
+ "distinct_canonical_keys_reached": 331,
+ "categories_with_at_least_one_mapped_tool": 74,
+ "categories_with_3_or_more_mapped_tools": 34,
+ "mapped_share_per_category": {
+  "min": 0.0,
+  "median": 0.011,
+  "max": 0.7
+ },
+ "examples": [
+  {
+   "category": "Analytical or scientific software",
+   "element_id": "2.E.9.d",
+   "tools": 1687,
+   "mapped_tools": 18,
+   "mapped_share": 0.011,
+   "canonical_keys": 18,
+   "most_used_tools": [
+    "SAS",
+    "The MathWorks MATLAB",
+    "IBM SPSS Statistics",
+    "Minitab",
+    "StataCorp Stata",
+    "Statistical software",
+    "Wolfram Research Mathematica",
+    "Data visualization software"
+   ],
+   "most_used_mapped": [
+    "SAS",
+    "The MathWorks MATLAB",
+    "IBM SPSS Statistics",
+    "Data visualization software",
+    "Data analysis software",
+    "Google Analytics",
+    "TensorFlow",
+    "Test automation software"
+   ]
+  },
+  {
+   "category": "Data base user interface and query software",
+   "element_id": "2.E.6.f",
+   "tools": 910,
+   "mapped_tools": 30,
+   "mapped_share": 0.033,
+   "canonical_keys": 27,
+   "most_used_tools": [
+    "Microsoft Access",
+    "Database software",
+    "Structured query language SQL",
+    "FileMaker Pro",
+    "Oracle Database",
+    "Microsoft SQL Server",
+    "Amazon Web Services AWS software",
+    "Blackboard software"
+   ],
+   "most_used_mapped": [
+    "Microsoft Access",
+    "Structured query language SQL",
+    "FileMaker Pro",
+    "Oracle Database",
+    "Microsoft SQL Server",
+    "Amazon Web Services AWS software",
+    "Amazon Redshift",
+    "Data entry software"
+   ]
+  },
+  {
+   "category": "Medical software",
+   "element_id": "2.E.9.i",
+   "tools": 671,
+   "mapped_tools": 5,
+   "mapped_share": 0.007,
+   "canonical_keys": 4,
+   "most_used_tools": [
+    "MEDITECH software",
+    "Epic Systems",
+    "eClinicalWorks EHR software",
+    "Medical procedure coding software",
+    "Healthcare common procedure coding system HCPCS",
+    "Medical condition coding software",
+    "Electronic medical record EMR software",
+    "GE Healthcare Centricity EMR"
+   ],
+   "most_used_mapped": [
+    "MEDITECH software",
+    "Epic Systems",
+    "eClinicalWorks EHR software",
+    "Epic Systems software",
+    "Quality control software"
+   ]
+  },
+  {
+   "category": "Financial analysis software",
+   "element_id": "2.E.2.d",
+   "tools": 356,
+   "mapped_tools": 5,
+   "mapped_share": 0.014,
+   "canonical_keys": 5,
+   "most_used_tools": [
+    "Oracle E-Business Suite Financials",
+    "Delphi Technology",
+    "Cost estimating software",
+    "Bloomberg Professional",
+    "CPR Visual Estimator",
+    "Delphi Discovery",
+    "Experian Credinomics",
+    "Microsoft FRx"
+   ],
+   "most_used_mapped": [
+    "Auditing software",
+    "Financial modeling software",
+    "Digital analysis tests and statistics DATAS for SAS",
+    "Financial reporting software",
+    "Real estate application contract transmission REACT software"
+   ]
+  },
+  {
+   "category": "Network security and virtual private network VPN equipment software",
+   "element_id": "2.E.14.c",
+   "tools": 14,
+   "mapped_tools": 2,
+   "mapped_share": 0.143,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Firewall software",
+    "Virtual private networking VPN software",
+    "Network intrusion detection software",
+    "Juniper Networks NetScreen-Security Manager",
+    "Content filter software",
+    "Cryptographic key management software",
+    "Imperva SecureSphere",
+    "IpFilter"
+   ],
+   "most_used_mapped": [
+    "Firewall software",
+    "Virtual private networking VPN software"
+   ]
+  },
+  {
+   "category": "Voice synthesizer and recognition software",
+   "element_id": "2.E.8.g",
+   "tools": 1,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Voice picking software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Billing and invoicing software",
+   "element_id": "2.E.2.f",
+   "tools": 29,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Billing software",
+    "Fifth Walk BillingTracker",
+    "EZClaim medical billing software",
+    "e-MDs Bill",
+    "American Medical Billing Software PMA",
+    "Automated billing software",
+    "BLS Software Invoice!",
+    "BQE Software BillQuick"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Spreadsheet software",
+   "element_id": "2.E.4.i",
+   "tools": 15,
+   "mapped_tools": 2,
+   "mapped_share": 0.133,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Microsoft Excel",
+    "IBM Lotus 1-2-3",
+    "Corel QuattroPro",
+    "Google Sheets",
+    "Apple AppleWorks",
+    "Apple iWork Numbers",
+    "Apple Numbers for Mac",
+    "EZAnalyze"
+   ],
+   "most_used_mapped": [
+    "Microsoft Excel",
+    "Google Sheets"
+   ]
+  },
+  {
+   "category": "Filesystem software",
+   "element_id": "2.E.13.a",
+   "tools": 13,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "File server software",
+    "Computer forensic software",
+    "Samba",
+    "Symantec Norton Utilities",
+    "Apple Xsan",
+    "Desktop partitioning software",
+    "Disk file systems",
+    "Electronic filing software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Aviation ground support software",
+   "element_id": "2.E.9.a",
+   "tools": 3,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "ArduPilot Mission Planner",
+    "Bornemann Associates Flight Plan",
+    "Sabre travel agent software"
+   ],
+   "most_used_mapped": []
+  }
+ ],
+ "per_category": [
+  {
+   "category": "Analytical or scientific software",
+   "element_id": "2.E.9.d",
+   "tools": 1687,
+   "mapped_tools": 18,
+   "mapped_share": 0.011,
+   "canonical_keys": 18,
+   "most_used_tools": [
+    "SAS",
+    "The MathWorks MATLAB",
+    "IBM SPSS Statistics",
+    "Minitab",
+    "StataCorp Stata",
+    "Statistical software",
+    "Wolfram Research Mathematica",
+    "Data visualization software"
+   ],
+   "most_used_mapped": [
+    "SAS",
+    "The MathWorks MATLAB",
+    "IBM SPSS Statistics",
+    "Data visualization software",
+    "Data analysis software",
+    "Google Analytics",
+    "TensorFlow",
+    "Test automation software"
+   ]
+  },
+  {
+   "category": "Data base user interface and query software",
+   "element_id": "2.E.6.f",
+   "tools": 910,
+   "mapped_tools": 30,
+   "mapped_share": 0.033,
+   "canonical_keys": 27,
+   "most_used_tools": [
+    "Microsoft Access",
+    "Database software",
+    "Structured query language SQL",
+    "FileMaker Pro",
+    "Oracle Database",
+    "Microsoft SQL Server",
+    "Amazon Web Services AWS software",
+    "Blackboard software"
+   ],
+   "most_used_mapped": [
+    "Microsoft Access",
+    "Structured query language SQL",
+    "FileMaker Pro",
+    "Oracle Database",
+    "Microsoft SQL Server",
+    "Amazon Web Services AWS software",
+    "Amazon Redshift",
+    "Data entry software"
+   ]
+  },
+  {
+   "category": "Medical software",
+   "element_id": "2.E.9.i",
+   "tools": 671,
+   "mapped_tools": 5,
+   "mapped_share": 0.007,
+   "canonical_keys": 4,
+   "most_used_tools": [
+    "MEDITECH software",
+    "Epic Systems",
+    "eClinicalWorks EHR software",
+    "Medical procedure coding software",
+    "Healthcare common procedure coding system HCPCS",
+    "Medical condition coding software",
+    "Electronic medical record EMR software",
+    "GE Healthcare Centricity EMR"
+   ],
+   "most_used_mapped": [
+    "MEDITECH software",
+    "Epic Systems",
+    "eClinicalWorks EHR software",
+    "Epic Systems software",
+    "Quality control software"
+   ]
+  },
+  {
+   "category": "Financial analysis software",
+   "element_id": "2.E.2.d",
+   "tools": 356,
+   "mapped_tools": 5,
+   "mapped_share": 0.014,
+   "canonical_keys": 5,
+   "most_used_tools": [
+    "Oracle E-Business Suite Financials",
+    "Delphi Technology",
+    "Cost estimating software",
+    "Bloomberg Professional",
+    "CPR Visual Estimator",
+    "Delphi Discovery",
+    "Experian Credinomics",
+    "Microsoft FRx"
+   ],
+   "most_used_mapped": [
+    "Auditing software",
+    "Financial modeling software",
+    "Digital analysis tests and statistics DATAS for SAS",
+    "Financial reporting software",
+    "Real estate application contract transmission REACT software"
+   ]
+  },
+  {
+   "category": "Computer aided design CAD software",
+   "element_id": "2.E.9.c",
+   "tools": 344,
+   "mapped_tools": 7,
+   "mapped_share": 0.02,
+   "canonical_keys": 6,
+   "most_used_tools": [
+    "Autodesk AutoCAD",
+    "Dassault Systemes CATIA",
+    "Dassault Systemes SolidWorks",
+    "Bentley MicroStation",
+    "PTC Creo Parametric",
+    "Autodesk Revit",
+    "Autodesk AutoCAD Civil 3D",
+    "Computer aided design and drafting CADD software"
+   ],
+   "most_used_mapped": [
+    "Autodesk AutoCAD",
+    "Dassault Systemes SolidWorks",
+    "Bentley MicroStation",
+    "Autodesk Revit",
+    "NavisWorks Jetstream",
+    "Autodesk Maya",
+    "Autodesk Navisworks"
+   ]
+  },
+  {
+   "category": "Enterprise resource planning ERP software",
+   "element_id": "2.E.2.b",
+   "tools": 266,
+   "mapped_tools": 2,
+   "mapped_share": 0.008,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "SAP software",
+    "Microsoft Dynamics",
+    "Oracle PeopleSoft",
+    "Oracle JD Edwards EnterpriseOne",
+    "Microsoft Dynamics GP",
+    "Oracle Hyperion",
+    "NetSuite ERP",
+    "SAP Business Objects"
+   ],
+   "most_used_mapped": [
+    "SAP software",
+    "Microsoft Business Intelligence BI"
+   ]
+  },
+  {
+   "category": "Human resources software",
+   "element_id": "2.E.1.c",
+   "tools": 239,
+   "mapped_tools": 1,
+   "mapped_share": 0.004,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Human resource management software HRMS",
+    "Oracle Taleo",
+    "ADP Workforce Now",
+    "Human resource information system (HRIS)",
+    "Oracle HRIS",
+    "Applicant tracking software",
+    "ADP Enterprise HR",
+    "Human resources management system HRMS"
+   ],
+   "most_used_mapped": [
+    "Payroll software"
+   ]
+  },
+  {
+   "category": "Graphics or photo imaging software",
+   "element_id": "2.E.4.b",
+   "tools": 225,
+   "mapped_tools": 16,
+   "mapped_share": 0.071,
+   "canonical_keys": 16,
+   "most_used_tools": [
+    "Adobe Photoshop",
+    "Adobe Illustrator",
+    "Adobe Creative Cloud software",
+    "Graphics software",
+    "SmugMug Flickr",
+    "Corel CorelDraw Graphics Suite",
+    "Trimble SketchUp Pro",
+    "JamBoard"
+   ],
+   "most_used_mapped": [
+    "Adobe Photoshop",
+    "Adobe Illustrator",
+    "Adobe Creative Cloud software",
+    "Canva",
+    "Autodesk Maya",
+    "GNU Image Manipulation Program GIMP",
+    "Adobe After Effects",
+    "Autodesk SketchBook Pro"
+   ]
+  },
+  {
+   "category": "Project management software",
+   "element_id": "2.E.1.e",
+   "tools": 207,
+   "mapped_tools": 5,
+   "mapped_share": 0.024,
+   "canonical_keys": 5,
+   "most_used_tools": [
+    "Microsoft Project",
+    "Oracle Primavera Enterprise Project Portfolio Management",
+    "Atlassian Confluence",
+    "Microsoft Teams",
+    "Google Classroom",
+    "Atlassian JIRA",
+    "Oracle Primavera Systems",
+    "Cost estimating software"
+   ],
+   "most_used_mapped": [
+    "Microsoft Project",
+    "Atlassian Confluence",
+    "Microsoft Teams",
+    "Atlassian JIRA",
+    "Contract management software"
+   ]
+  },
+  {
+   "category": "Document management software",
+   "element_id": "2.E.5.b",
+   "tools": 197,
+   "mapped_tools": 3,
+   "mapped_share": 0.015,
+   "canonical_keys": 3,
+   "most_used_tools": [
+    "Microsoft SharePoint",
+    "Adobe Acrobat",
+    "Microsoft SharePoint Server",
+    "Document management system software",
+    "Adobe Acrobat Reader",
+    "Records management software",
+    "AbacusNext HotDocs",
+    "EMC Documentum"
+   ],
+   "most_used_mapped": [
+    "Microsoft SharePoint",
+    "Adobe Acrobat",
+    "Data warehousing software"
+   ]
+  },
+  {
+   "category": "Development environment software",
+   "element_id": "2.E.7.b",
+   "tools": 189,
+   "mapped_tools": 39,
+   "mapped_share": 0.206,
+   "canonical_keys": 39,
+   "most_used_tools": [
+    "Microsoft Visual Basic",
+    "C",
+    "National Instruments LabVIEW",
+    "Microsoft Azure software",
+    "Microsoft Visual Studio",
+    "Microsoft Visual Basic for Applications VBA",
+    "Microsoft Visual Basic Scripting Edition VBScript",
+    "Ruby"
+   ],
+   "most_used_mapped": [
+    "Microsoft Visual Basic",
+    "C",
+    "Microsoft Azure software",
+    "Microsoft Visual Studio",
+    "Microsoft Visual Basic for Applications VBA",
+    "Ruby",
+    "Eclipse IDE",
+    "Microsoft .NET Framework"
+   ]
+  },
+  {
+   "category": "Materials requirements planning logistics and supply chain software",
+   "element_id": "2.E.1.d",
+   "tools": 171,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Warehouse management system WMS",
+    "Materials requirement planning MRP software",
+    "Fleet management software",
+    "Bill of lading software",
+    "Bill of materials software",
+    "LSA Visual Easy Lean",
+    "3PL Central",
+    "ADi SmartBOL"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Industrial control software",
+   "element_id": "2.E.9.g",
+   "tools": 169,
+   "mapped_tools": 3,
+   "mapped_share": 0.018,
+   "canonical_keys": 3,
+   "most_used_tools": [
+    "Supervisory control and data acquisition SCADA software",
+    "Programmable logic controller PLC software",
+    "Human machine interface HMI software",
+    "AVEVA InTouch HMI",
+    "Distributed control system DCS",
+    "Computerized numerical control CNC software",
+    "Chatbot software",
+    "Statistical process control SPC software"
+   ],
+   "most_used_mapped": [
+    "Supervisory control and data acquisition SCADA software",
+    "Artificial intelligence software",
+    "Quality control software"
+   ]
+  },
+  {
+   "category": "Accounting software",
+   "element_id": "2.E.2.a",
+   "tools": 141,
+   "mapped_tools": 8,
+   "mapped_share": 0.057,
+   "canonical_keys": 8,
+   "most_used_tools": [
+    "Intuit QuickBooks",
+    "Sage 50 Accounting",
+    "Fund accounting software",
+    "Tax software",
+    "Bookkeeping software",
+    "Financial accounting software",
+    "Quicken",
+    "Budgeting software"
+   ],
+   "most_used_mapped": [
+    "Intuit QuickBooks",
+    "Bookkeeping software",
+    "Budgeting software",
+    "Accounts receivable software",
+    "Cost accounting software",
+    "Accounts payable software",
+    "Financial reporting software",
+    "Account management software"
+   ]
+  },
+  {
+   "category": "Customer relationship management CRM software",
+   "element_id": "2.E.6.c",
+   "tools": 140,
+   "mapped_tools": 1,
+   "mapped_share": 0.007,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Salesforce software",
+    "Blackbaud The Raiser's Edge",
+    "Oracle Eloqua",
+    "Microsoft Dynamics",
+    "Salesforce.com Salesforce CRM",
+    "Act!",
+    "Customer information databases",
+    "HEAT Software GoldMine"
+   ],
+   "most_used_mapped": [
+    "Salesforce software"
+   ]
+  },
+  {
+   "category": "Computer based training software",
+   "element_id": "2.E.8.b",
+   "tools": 126,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Learning management system LMS",
+    "Blackboard Learn",
+    "Desire2Learn LMS software",
+    "Course management system software",
+    "Sakai CLE",
+    "Moodle",
+    "Schoology",
+    "Padlet"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Compliance software",
+   "element_id": "2.E.9.e",
+   "tools": 125,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Material safety data sheet MSDS software",
+    "Sparta Systems TrackWise",
+    "Tax compliance property tax management software",
+    "Hazardous materials management HMS software",
+    "Continuous emission management software",
+    "Environmental health and safety documentation software",
+    "Financial compliance software",
+    "Greenhouse gas management software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Computer aided manufacturing CAM software",
+   "element_id": "2.E.9.k",
+   "tools": 123,
+   "mapped_tools": 1,
+   "mapped_share": 0.008,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "1CadCam Unigraphics",
+    "Mastercam computer-aided design and manufacturing software",
+    "CNC Mastercam",
+    "Rapid prototyping software",
+    "Delcam PowerMILL",
+    "Siemens NX",
+    "Vero Software SURFCAM",
+    "DP Technology ESPRIT"
+   ],
+   "most_used_mapped": [
+    "Dassault Systemes SolidWorks"
+   ]
+  },
+  {
+   "category": "Information retrieval or search software",
+   "element_id": "2.E.6.h",
+   "tools": 117,
+   "mapped_tools": 1,
+   "mapped_share": 0.009,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "LexisNexis",
+    "DOC Cop",
+    "iParadigms Turnitin",
+    "Thomson Reuters Westlaw",
+    "Pinterest",
+    "Apache Avro",
+    "CGI-AMS BureauLink Enterprise",
+    "Information systems integration software"
+   ],
+   "most_used_mapped": [
+    "Legal research software"
+   ]
+  },
+  {
+   "category": "Map creation software",
+   "element_id": "2.E.16.e",
+   "tools": 111,
+   "mapped_tools": 2,
+   "mapped_share": 0.018,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Mapping software",
+    "Leica Geosystems ERDAS IMAGINE",
+    "Geomechanical design analysis GDA software",
+    "RockWare ArcMap",
+    "Golden Software Surfer",
+    "Geographic resources analysis support system GRASS",
+    "Bentley Systems InRoads Suite",
+    "MapInfo"
+   ],
+   "most_used_mapped": [
+    "RockWare ArcMap",
+    "ESRI ArcGIS software"
+   ]
+  },
+  {
+   "category": "Point of sale POS software",
+   "element_id": "2.E.9.j",
+   "tools": 104,
+   "mapped_tools": 3,
+   "mapped_share": 0.029,
+   "canonical_keys": 3,
+   "most_used_tools": [
+    "Plexis Software Plexis POS",
+    "Intuit QuickBooks Point of Sale",
+    "The General Store",
+    "Compris software",
+    "MICROS Systems HSI Profits Series",
+    "NCR Advanced Checkout Solution",
+    "NCR NeighborhoodPOS",
+    "RestaurantPlus PRO"
+   ],
+   "most_used_mapped": [
+    "Retail sales software",
+    "Sales software",
+    "Shopify software"
+   ]
+  },
+  {
+   "category": "Music or sound editing software",
+   "element_id": "2.E.3.b",
+   "tools": 102,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Adobe Audition",
+    "Avid Technology Pro Tools",
+    "Audacity",
+    "Audion Laboratories VoxPro",
+    "Avid Pro Tools",
+    "Avid Technology Sibelius",
+    "MakeMusic Finale",
+    "Musical instrument digital interface MIDI software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Word processing software",
+   "element_id": "2.E.4.d",
+   "tools": 92,
+   "mapped_tools": 3,
+   "mapped_share": 0.033,
+   "canonical_keys": 3,
+   "most_used_tools": [
+    "Microsoft Word",
+    "Google Docs",
+    "Collaborative editing software",
+    "Microsoft OneNote",
+    "3M Post-it App",
+    "Evernote",
+    "Apple iWork Pages",
+    "Atlas Construction Business Forms"
+   ],
+   "most_used_mapped": [
+    "Microsoft Word",
+    "Microsoft Outlook",
+    "Transcription software"
+   ]
+  },
+  {
+   "category": "Calendar and scheduling software",
+   "element_id": "2.E.4.h",
+   "tools": 87,
+   "mapped_tools": 1,
+   "mapped_share": 0.011,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Scheduling software",
+    "Work scheduling software",
+    "Appointment scheduling software",
+    "Employee scheduling software",
+    "Calendar software",
+    "Contact management software",
+    "DaySmart Software Appointment-Plus",
+    "SBS International Maestro Suite"
+   ],
+   "most_used_mapped": [
+    "Scheduling software"
+   ]
+  },
+  {
+   "category": "Inventory management software",
+   "element_id": "2.E.1.f",
+   "tools": 83,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Inventory tracking software",
+    "Inventory management systems",
+    "Inventory control software",
+    "Inventory control system software",
+    "Pyxis MedStation software",
+    "Automated inventory software",
+    "Inventory software",
+    "Radio frequency identification RFID software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Data base management system software",
+   "element_id": "2.E.6.d",
+   "tools": 78,
+   "mapped_tools": 19,
+   "mapped_share": 0.244,
+   "canonical_keys": 18,
+   "most_used_tools": [
+    "Teradata Database",
+    "Apache Hadoop",
+    "Apache Pig",
+    "MySQL",
+    "NoSQL",
+    "Relational database management software",
+    "Apache Cassandra",
+    "MongoDB"
+   ],
+   "most_used_mapped": [
+    "Teradata Database",
+    "Apache Hadoop",
+    "MySQL",
+    "NoSQL",
+    "Apache Cassandra",
+    "MongoDB",
+    "Elasticsearch",
+    "Apache Hive"
+   ]
+  },
+  {
+   "category": "Program testing software",
+   "element_id": "2.E.7.f",
+   "tools": 77,
+   "mapped_tools": 18,
+   "mapped_share": 0.234,
+   "canonical_keys": 18,
+   "most_used_tools": [
+    "Selenium",
+    "Hewlett Packard LoadRunner",
+    "JUnit",
+    "Debugging software",
+    "System testing software",
+    "User interface design software",
+    "Defect tracking software",
+    "Rockwell RSLogix"
+   ],
+   "most_used_mapped": [
+    "Selenium",
+    "JUnit",
+    "Debugging software",
+    "Load testing software",
+    "MITRE ATT&CK software",
+    "Regression testing software",
+    "Usability testing software",
+    "Integration testing software"
+   ]
+  },
+  {
+   "category": "Network monitoring software",
+   "element_id": "2.E.11.a",
+   "tools": 75,
+   "mapped_tools": 1,
+   "mapped_share": 0.013,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Wireshark",
+    "Nagios",
+    "Snort",
+    "Network intrusion prevention systems NIPS",
+    "Tcpdump",
+    "Dartware InterMapper",
+    "Ethereal",
+    "IBM QRadar SIEM"
+   ],
+   "most_used_mapped": [
+    "Wireshark"
+   ]
+  },
+  {
+   "category": "Web platform development software",
+   "element_id": "2.E.7.h",
+   "tools": 73,
+   "mapped_tools": 29,
+   "mapped_share": 0.397,
+   "canonical_keys": 29,
+   "most_used_tools": [
+    "JavaScript",
+    "Hypertext markup language HTML",
+    "Microsoft Active Server Pages ASP",
+    "PHP",
+    "Drupal",
+    "Cascading style sheets CSS",
+    "Extensible hypertext markup language XHTML",
+    "Dynamic hypertext markup language DHTML"
+   ],
+   "most_used_mapped": [
+    "JavaScript",
+    "Hypertext markup language HTML",
+    "PHP",
+    "Drupal",
+    "Cascading style sheets CSS",
+    "JavaScript Object Notation JSON",
+    "AJAX",
+    "Node.js"
+   ]
+  },
+  {
+   "category": "Video creation and editing software",
+   "element_id": "2.E.4.c",
+   "tools": 69,
+   "mapped_tools": 6,
+   "mapped_share": 0.087,
+   "canonical_keys": 6,
+   "most_used_tools": [
+    "YouTube",
+    "Apple Final Cut Pro",
+    "Adobe After Effects",
+    "Flipgrid",
+    "Screencastify",
+    "Adobe Premiere Pro",
+    "Loom",
+    "Video editing software"
+   ],
+   "most_used_mapped": [
+    "Apple Final Cut Pro",
+    "Adobe After Effects",
+    "Adobe Premiere Pro",
+    "Video editing software",
+    "DaVinci Resolve",
+    "Animation software"
+   ]
+  },
+  {
+   "category": "Object or component oriented development software",
+   "element_id": "2.E.7.e",
+   "tools": 68,
+   "mapped_tools": 23,
+   "mapped_share": 0.338,
+   "canonical_keys": 23,
+   "most_used_tools": [
+    "Python",
+    "C++",
+    "R",
+    "Oracle Java",
+    "Perl",
+    "C#",
+    "Swift",
+    "jQuery"
+   ],
+   "most_used_mapped": [
+    "Python",
+    "C++",
+    "R",
+    "Oracle Java",
+    "Perl",
+    "C#",
+    "Swift",
+    "jQuery"
+   ]
+  },
+  {
+   "category": "Time accounting software",
+   "element_id": "2.E.2.e",
+   "tools": 67,
+   "mapped_tools": 1,
+   "mapped_share": 0.015,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Payroll software",
+    "Kronos Workforce Timekeeper",
+    "Timekeeping software",
+    "Time and attendance software",
+    "Time reporting software",
+    "Time tracking software",
+    "Electronic Time Clock ETC",
+    "HMS"
+   ],
+   "most_used_mapped": [
+    "Payroll software"
+   ]
+  },
+  {
+   "category": "Web page creation and editing software",
+   "element_id": "2.E.4.g",
+   "tools": 63,
+   "mapped_tools": 4,
+   "mapped_share": 0.063,
+   "canonical_keys": 3,
+   "most_used_tools": [
+    "Facebook",
+    "Adobe Dreamweaver",
+    "LinkedIn",
+    "Social media sites",
+    "WordPress",
+    "Google Sites",
+    "Instagram",
+    "Blogging software"
+   ],
+   "most_used_mapped": [
+    "WordPress",
+    "Blogging software",
+    "Content management systems CMS",
+    "Web content management system CMS software"
+   ]
+  },
+  {
+   "category": "Facilities management software",
+   "element_id": "2.E.9.b",
+   "tools": 55,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Computerized maintenance management system CMMS",
+    "Maintenance management software",
+    "Maintenance record software",
+    "Computerized maintenance management system software CMMS",
+    "Access Software AIRPAX",
+    "Facility energy management software",
+    "M-Tech Hotel Service Optimization System HotSOS",
+    "Maintenance information databases"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Operating system software",
+   "element_id": "2.E.13.c",
+   "tools": 53,
+   "mapped_tools": 16,
+   "mapped_share": 0.302,
+   "canonical_keys": 13,
+   "most_used_tools": [
+    "Microsoft Windows",
+    "Linux",
+    "UNIX",
+    "Apple macOS",
+    "Shell script",
+    "Bash",
+    "Oracle Solaris",
+    "Red Hat Enterprise Linux"
+   ],
+   "most_used_mapped": [
+    "Microsoft Windows",
+    "Linux",
+    "UNIX",
+    "Apple macOS",
+    "Shell script",
+    "Bash",
+    "Red Hat Enterprise Linux",
+    "UNIX Shell"
+   ]
+  },
+  {
+   "category": "Expert system software",
+   "element_id": "2.E.1.i",
+   "tools": 48,
+   "mapped_tools": 1,
+   "mapped_share": 0.021,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Ansible software",
+    "NeuroSolutions for MatLab",
+    "Apache Mahout",
+    "Electronic train management systems ETMS",
+    "Information Resource Products Clinical Coding Expert",
+    "Ivorix Neurostrategy Finance",
+    "Matheny Pattern Forecaster Plus",
+    "Positive train control PTC systems"
+   ],
+   "most_used_mapped": [
+    "Ansible software"
+   ]
+  },
+  {
+   "category": "Data base reporting software",
+   "element_id": "2.E.6.e",
+   "tools": 45,
+   "mapped_tools": 2,
+   "mapped_share": 0.044,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "SAP Crystal Reports",
+    "Microsoft SQL Server Reporting Services SSRS",
+    "SAP BusinessObjects Crystal Reports",
+    "Reporting software",
+    "Oracle Business Intelligence Discoverer",
+    "Oracle Reports",
+    "Oracle SQL Loader",
+    "DataVision"
+   ],
+   "most_used_mapped": [
+    "Microsoft SQL Server Reporting Services SSRS",
+    "SAP Business Intelligence"
+   ]
+  },
+  {
+   "category": "Transaction security and virus protection software",
+   "element_id": "2.E.14.d",
+   "tools": 43,
+   "mapped_tools": 7,
+   "mapped_share": 0.163,
+   "canonical_keys": 7,
+   "most_used_tools": [
+    "NortonLifeLock cybersecurity software",
+    "McAfee",
+    "Encryption software",
+    "Metasploit",
+    "Ping Identity",
+    "Tenable Nessus",
+    "Virus scanning software",
+    "Anti-spyware software"
+   ],
+   "most_used_mapped": [
+    "Encryption software",
+    "Metasploit",
+    "Tenable Nessus",
+    "Portswigger BurP Suite",
+    "Nmap",
+    "Penetration testing software",
+    "Rapid7 Nexpose"
+   ]
+  },
+  {
+   "category": "Presentation software",
+   "element_id": "2.E.4.f",
+   "tools": 39,
+   "mapped_tools": 2,
+   "mapped_share": 0.051,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Microsoft PowerPoint",
+    "Google Slides",
+    "Apple Keynote",
+    "Mentimeter",
+    "Apple iWork Keynote",
+    "Poll Everywhere",
+    "Pear Deck",
+    "Corel Presentation"
+   ],
+   "most_used_mapped": [
+    "Microsoft PowerPoint",
+    "Adobe Persuasion"
+   ]
+  },
+  {
+   "category": "Desktop publishing software",
+   "element_id": "2.E.4.k",
+   "tools": 38,
+   "mapped_tools": 1,
+   "mapped_share": 0.026,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Microsoft Publisher",
+    "Adobe InDesign",
+    "QuarkXPress",
+    "Adobe PageMaker",
+    "Adobe FrameMaker",
+    "Quark enterprise publishing software",
+    "Adobe Distiller",
+    "SoftCafe MenuPro"
+   ],
+   "most_used_mapped": [
+    "Adobe InDesign"
+   ]
+  },
+  {
+   "category": "Geographic information system",
+   "element_id": "2.E.8.h",
+   "tools": 37,
+   "mapped_tools": 6,
+   "mapped_share": 0.162,
+   "canonical_keys": 4,
+   "most_used_tools": [
+    "ESRI ArcGIS software",
+    "Geographic information system GIS software",
+    "Geographic information system GIS systems",
+    "ESRI ArcView",
+    "ESRI ArcInfo",
+    "Esri ArcGIS",
+    "ESRI software",
+    "Google Earth Pro"
+   ],
+   "most_used_mapped": [
+    "ESRI ArcGIS software",
+    "Geographic information system GIS software",
+    "Geographic information system GIS systems",
+    "Esri ArcGIS",
+    "ESRI ArcMap",
+    "QGIS"
+   ]
+  },
+  {
+   "category": "Library software",
+   "element_id": "2.E.9.h",
+   "tools": 37,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Online Computer Library Center (OCLC) databases",
+    "WorldCat",
+    "Dynix Digital Library",
+    "Ex Libris Group Voyager",
+    "Innovative Interfaces Millennium",
+    "National Library of Medicine DOCLINE",
+    "SirsiDynix Symphony",
+    "WebClarity Software BookWhere"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Tax preparation software",
+   "element_id": "2.E.2.c",
+   "tools": 37,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Intuit TurboTax",
+    "ATX Total Tax Office",
+    "CCH ProSystem fx TAX",
+    "Intellitax financial solutions software",
+    "Intuit ProSeries",
+    "Universal Tax Systems TaxWise",
+    "1099 ProsSoftware",
+    "Abacus Tax"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Business intelligence and data analysis software",
+   "element_id": "2.E.6.m",
+   "tools": 32,
+   "mapped_tools": 7,
+   "mapped_share": 0.219,
+   "canonical_keys": 7,
+   "most_used_tools": [
+    "Tableau",
+    "IBM Cognos Impromptu",
+    "Qlik Tech QlikView",
+    "MicroStrategy",
+    "Oracle Business Intelligence Enterprise Edition",
+    "Microsoft Power BI",
+    "Apache Spark",
+    "Alteryx software"
+   ],
+   "most_used_mapped": [
+    "Tableau",
+    "Microsoft Power BI",
+    "Apache Spark",
+    "Alteryx software",
+    "Google Looker Analytics",
+    "Business intelligence software",
+    "Search engine optimization SEO software"
+   ]
+  },
+  {
+   "category": "Enterprise application integration software",
+   "element_id": "2.E.7.c",
+   "tools": 31,
+   "mapped_tools": 7,
+   "mapped_share": 0.226,
+   "canonical_keys": 7,
+   "most_used_tools": [
+    "Extensible markup language XML",
+    "IBM InfoSphere DataStage",
+    "Atlassian Bamboo",
+    "Microsoft SQL Server Integration Services SSIS",
+    "Oracle Fusion Middleware",
+    "Enterprise application integration EAI software",
+    "Jenkins CI",
+    "Electronic data interchange EDI software"
+   ],
+   "most_used_mapped": [
+    "Extensible markup language XML",
+    "IBM InfoSphere DataStage",
+    "Microsoft SQL Server Integration Services SSIS",
+    "Jenkins CI",
+    "Microsoft Teams",
+    "Oracle Data Integrator",
+    "Rapid application development RAD software"
+   ]
+  },
+  {
+   "category": "Billing and invoicing software",
+   "element_id": "2.E.2.f",
+   "tools": 29,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Billing software",
+    "Fifth Walk BillingTracker",
+    "EZClaim medical billing software",
+    "e-MDs Bill",
+    "American Medical Billing Software PMA",
+    "Automated billing software",
+    "BLS Software Invoice!",
+    "BQE Software BillQuick"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Data mining software",
+   "element_id": "2.E.6.g",
+   "tools": 28,
+   "mapped_tools": 2,
+   "mapped_share": 0.071,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Google Analytics",
+    "Snowflake",
+    "Data warehouse software",
+    "Golden Helix HelixTree",
+    "IBM Cognos Business Intelligence",
+    "NCR Teradata Warehouse Miner",
+    "Rapid-I RapidMiner",
+    "SAP NetWeaver BW"
+   ],
+   "most_used_mapped": [
+    "Google Analytics",
+    "Snowflake"
+   ]
+  },
+  {
+   "category": "Metadata management software",
+   "element_id": "2.E.6.i",
+   "tools": 28,
+   "mapped_tools": 5,
+   "mapped_share": 0.179,
+   "canonical_keys": 4,
+   "most_used_tools": [
+    "Quest Erwin Data Modeler",
+    "Informatica software",
+    "Perforce software",
+    "Talend Data Fabric",
+    "Data modeling software",
+    "Pentaho Kettle",
+    "Altova MapForce",
+    "Apatar"
+   ],
+   "most_used_mapped": [
+    "Informatica software",
+    "Data modeling software",
+    "Pentaho Kettle",
+    "Informatica PowerCenter",
+    "Oracle Warehouse Builder"
+   ]
+  },
+  {
+   "category": "Optical character reader OCR or scanning software",
+   "element_id": "2.E.4.j",
+   "tools": 27,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Image scanning software",
+    "Optical character recognition OCR software",
+    "Scanning software",
+    "Multi-line optical character reader OCR software",
+    "Nuance OmniPage Professional",
+    "Scantron imaging software",
+    "Text scanning software",
+    "Computer reading software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Configuration management software",
+   "element_id": "2.E.7.a",
+   "tools": 26,
+   "mapped_tools": 3,
+   "mapped_share": 0.115,
+   "canonical_keys": 3,
+   "most_used_tools": [
+    "Perforce Helix software",
+    "Puppet",
+    "Chef",
+    "IBM Terraform",
+    "Automated installation software",
+    "IBM Rational ClearCase",
+    "Deployment software",
+    "Patch and update management software"
+   ],
+   "most_used_mapped": [
+    "Puppet",
+    "Chef",
+    "IBM Terraform"
+   ]
+  },
+  {
+   "category": "Network security or virtual private network VPN management software",
+   "element_id": "2.E.14.b",
+   "tools": 26,
+   "mapped_tools": 2,
+   "mapped_share": 0.077,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Virtual private networking VPN software",
+    "Intrusion prevention system IPS",
+    "Intrusion detection system IDS",
+    "Network and system vulnerability assessment software",
+    "Security incident management software",
+    "Cisco Systems VPN Client",
+    "CyberArk",
+    "Database security software"
+   ],
+   "most_used_mapped": [
+    "Virtual private networking VPN software",
+    "Risk assessment software"
+   ]
+  },
+  {
+   "category": "Backup or archival software",
+   "element_id": "2.E.15.f",
+   "tools": 25,
+   "mapped_tools": 1,
+   "mapped_share": 0.04,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Veritas NetBackup",
+    "System and data disaster recovery software",
+    "Backup and archival software",
+    "EMC NetWorker",
+    "Acronis Recovery Expert",
+    "BMC Software Recovery Manager RMAN",
+    "Database cloning software",
+    "HP DataProtector"
+   ],
+   "most_used_mapped": [
+    "Disaster recovery software"
+   ]
+  },
+  {
+   "category": "Administration software",
+   "element_id": "2.E.11.c",
+   "tools": 23,
+   "mapped_tools": 1,
+   "mapped_share": 0.043,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Cisco Systems CiscoWorks",
+    "Element management software",
+    "Simple network management protocol SNMP software",
+    "Cisco Systems CiscoWorks LAN Management Solution",
+    "Dynamic host configuration protocol DHCP",
+    "Hewlett-Packard HP Network Node Manager",
+    "Network documentation software",
+    "Network management software"
+   ],
+   "most_used_mapped": [
+    "Dynamic host configuration protocol DHCP"
+   ]
+  },
+  {
+   "category": "Mobile location based services software",
+   "element_id": "2.E.16.h",
+   "tools": 23,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Global positioning system GPS software",
+    "Transportation management system TMS software",
+    "Accellos Real Dispatch",
+    "Commercial vehicle operations CVO software",
+    "Digital Dispatch",
+    "Easy Dispatch",
+    "EventHelix WebTaxi",
+    "GPC Autocab"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Application server software",
+   "element_id": "2.E.10.a",
+   "tools": 22,
+   "mapped_tools": 11,
+   "mapped_share": 0.5,
+   "canonical_keys": 11,
+   "most_used_tools": [
+    "GitHub",
+    "Docker",
+    "Oracle WebLogic Server",
+    "Red Hat WildFly",
+    "Kubernetes",
+    "Red Hat OpenShift",
+    "Spring Boot",
+    "Apache HTTP Server"
+   ],
+   "most_used_mapped": [
+    "GitHub",
+    "Docker",
+    "Oracle WebLogic Server",
+    "Red Hat WildFly",
+    "Kubernetes",
+    "Red Hat OpenShift",
+    "Spring Boot",
+    "Apache HTTP Server"
+   ]
+  },
+  {
+   "category": "Compiler and decompiler software",
+   "element_id": "2.E.7.i",
+   "tools": 22,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Disassembler software",
+    "Command interpreters",
+    "Compilers",
+    "Low-level virtual machine LLVM compilers",
+    "Cadence Encounter RTL Compiler",
+    "Code generator software",
+    "Decompilers",
+    "Greenhills Ada compilers"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Access software",
+   "element_id": "2.E.12.a",
+   "tools": 20,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Citrix cloud computing software",
+    "Access management software",
+    "IBM Tivoli software",
+    "Mac HelpMate",
+    "Avaya Identity Engines",
+    "PuTTY",
+    "2AB iLock Security Services",
+    "Biometric reader software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Desktop communications software",
+   "element_id": "2.E.10.b",
+   "tools": 20,
+   "mapped_tools": 1,
+   "mapped_share": 0.05,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Eko",
+    "Skype",
+    "ParentSquare",
+    "Edmodo",
+    "Tadpoles",
+    "Bloomz",
+    "ClassDojo",
+    "Remote control software"
+   ],
+   "most_used_mapped": [
+    "Secure shell SSH software"
+   ]
+  },
+  {
+   "category": "Electronic mail software",
+   "element_id": "2.E.16.a",
+   "tools": 20,
+   "mapped_tools": 3,
+   "mapped_share": 0.15,
+   "canonical_keys": 3,
+   "most_used_tools": [
+    "Microsoft Outlook",
+    "Email software",
+    "IBM Notes",
+    "Microsoft Exchange",
+    "IBM Lotus Notes",
+    "MicroFocus GroupWise",
+    "Google Gmail",
+    "MailChimp"
+   ],
+   "most_used_mapped": [
+    "Microsoft Outlook",
+    "Microsoft Exchange",
+    "MailChimp"
+   ]
+  },
+  {
+   "category": "Route navigation software",
+   "element_id": "2.E.8.d",
+   "tools": 20,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Route mapping software",
+    "ALK Technologies PC*Miler",
+    "Navzilla",
+    "ALK Technologies FleetSuite",
+    "Automatic routing software",
+    "CoPilot Truck",
+    "FURUNO navigational chart software",
+    "Garmin City Select"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Categorization or classification software",
+   "element_id": "2.E.6.a",
+   "tools": 16,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Diagnostic and procedural coding software",
+    "American Medical Association CodeManager",
+    "GAEA Technologies WinSieve",
+    "3M Encoder",
+    "Computerized indexing systems",
+    "DRG grouping software",
+    "Drug coding software",
+    "Autocoders"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Foreign language software",
+   "element_id": "2.E.8.a",
+   "tools": 16,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "AceTools.biz Ace Translator",
+    "Adapt It",
+    "AmoK Translator",
+    "Ashkon Translation Pad",
+    "Babylon Online Translator",
+    "Computer assisted language learning CALL software",
+    "DocTranslate",
+    "ExcelTrans Translator"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Procurement software",
+   "element_id": "2.E.1.b",
+   "tools": 15,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Purchasing software",
+    "Order management software",
+    "Aestiva Purchase Order",
+    "Oracle Advanced Procurement",
+    "1ST Pricing Window & Door Toolkit",
+    "Automated purchase order software",
+    "Bottomline Technologies Bottomline Sprinter Purchasing Manager",
+    "Brokerage software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Spreadsheet software",
+   "element_id": "2.E.4.i",
+   "tools": 15,
+   "mapped_tools": 2,
+   "mapped_share": 0.133,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Microsoft Excel",
+    "IBM Lotus 1-2-3",
+    "Corel QuattroPro",
+    "Google Sheets",
+    "Apple AppleWorks",
+    "Apple iWork Numbers",
+    "Apple Numbers for Mac",
+    "EZAnalyze"
+   ],
+   "most_used_mapped": [
+    "Microsoft Excel",
+    "Google Sheets"
+   ]
+  },
+  {
+   "category": "Video conferencing software",
+   "element_id": "2.E.16.b",
+   "tools": 15,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Zoom",
+    "Google Meet",
+    "Cisco Webex",
+    "LogMeIn GoToMeeting",
+    "FaceTime",
+    "Web conferencing software",
+    "Videoconferencing software",
+    "Microsoft NetMeeting"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Voice recognition software",
+   "element_id": "2.E.15.d",
+   "tools": 15,
+   "mapped_tools": 1,
+   "mapped_share": 0.067,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Nuance Dragon NaturallySpeaking",
+    "Speech recognition software",
+    "Voice activated software",
+    "Cyber Records MediChart Express",
+    "ScanSoft Naturally Speaking",
+    "Voice dictation software",
+    "goQ WordQ",
+    "Courtroom Data Solutions Techlennium"
+   ],
+   "most_used_mapped": [
+    "Speech recognition software"
+   ]
+  },
+  {
+   "category": "Network security and virtual private network VPN equipment software",
+   "element_id": "2.E.14.c",
+   "tools": 14,
+   "mapped_tools": 2,
+   "mapped_share": 0.143,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Firewall software",
+    "Virtual private networking VPN software",
+    "Network intrusion detection software",
+    "Juniper Networks NetScreen-Security Manager",
+    "Content filter software",
+    "Cryptographic key management software",
+    "Imperva SecureSphere",
+    "IpFilter"
+   ],
+   "most_used_mapped": [
+    "Firewall software",
+    "Virtual private networking VPN software"
+   ]
+  },
+  {
+   "category": "Office suite software",
+   "element_id": "2.E.1.k",
+   "tools": 14,
+   "mapped_tools": 2,
+   "mapped_share": 0.143,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Microsoft Office software",
+    "Corel WordPerfect Office Suite",
+    "Google Workspace software",
+    "Business software applications",
+    "OpenOffice.org",
+    "Apple iWork",
+    "Experian Strategy Management",
+    "LibreOffice"
+   ],
+   "most_used_mapped": [
+    "Microsoft Office software",
+    "Google Workspace software"
+   ]
+  },
+  {
+   "category": "Content workflow software",
+   "element_id": "2.E.5.a",
+   "tools": 13,
+   "mapped_tools": 1,
+   "mapped_share": 0.077,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Atlassian JIRA",
+    "Emerald Software Group Emerald Green Office",
+    "Workflow software",
+    "Equifax Application Engine",
+    "Experian Transact SM",
+    "Sitecore CMS",
+    "Adxstudio, for Microsoft",
+    "I-many Contract Management"
+   ],
+   "most_used_mapped": [
+    "Atlassian JIRA"
+   ]
+  },
+  {
+   "category": "Filesystem software",
+   "element_id": "2.E.13.a",
+   "tools": 13,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "File server software",
+    "Computer forensic software",
+    "Samba",
+    "Symantec Norton Utilities",
+    "Apple Xsan",
+    "Desktop partitioning software",
+    "Disk file systems",
+    "Electronic filing software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Device drivers or system software",
+   "element_id": "2.E.15.c",
+   "tools": 12,
+   "mapped_tools": 1,
+   "mapped_share": 0.083,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Screen reader software",
+    "Screen magnification software",
+    "Microsoft DirectX",
+    "Synapse outSPOKEN",
+    "The vOICe Learning Edition",
+    "Ai Squared ZoomText",
+    "American Printing House for the Blind Learn Keys",
+    "Axistive BigShot Screen Magnifier"
+   ],
+   "most_used_mapped": [
+    "Microsoft DirectX"
+   ]
+  },
+  {
+   "category": "Graphical user interface development software",
+   "element_id": "2.E.7.d",
+   "tools": 12,
+   "mapped_tools": 2,
+   "mapped_share": 0.167,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Salesforce Visualforce",
+    "Figma",
+    "Graphical user interface GUI design software",
+    "Grafana Labs Grafana Cloud",
+    "Graphical user interface GUI builder software",
+    "Adobe RoboHelp",
+    "Altia Design",
+    "TKSoftware RCM software"
+   ],
+   "most_used_mapped": [
+    "Figma",
+    "Grafana Labs Grafana Cloud"
+   ]
+  },
+  {
+   "category": "Helpdesk or call center software",
+   "element_id": "2.E.1.a",
+   "tools": 12,
+   "mapped_tools": 1,
+   "mapped_share": 0.083,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Computer aided dispatch software",
+    "Help desk software",
+    "Acarda Sales Technologies Acarda Outbound",
+    "Automatic call distribution software",
+    "BMC Software Remedy IT Service Management Suite",
+    "Call accounting software",
+    "Call center software",
+    "Call tracking software"
+   ],
+   "most_used_mapped": [
+    "Help desk software"
+   ]
+  },
+  {
+   "category": "Internet browser software",
+   "element_id": "2.E.10.e",
+   "tools": 12,
+   "mapped_tools": 1,
+   "mapped_share": 0.083,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Web browser software",
+    "Microsoft Internet Explorer",
+    "Mozilla Firefox",
+    "Apple Safari",
+    "Microsoft Edge",
+    "Netscape Navigator",
+    "Google Chrome",
+    "SeaMonkey"
+   ],
+   "most_used_mapped": [
+    "Apple Safari"
+   ]
+  },
+  {
+   "category": "Network conferencing software",
+   "element_id": "2.E.16.c",
+   "tools": 12,
+   "mapped_tools": 1,
+   "mapped_share": 0.083,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "LogMeIn GoToWebinar",
+    "Slido interaction software",
+    "Chat software",
+    "Active Data Online WebChat",
+    "Adobe Connect",
+    "Atlassian Confluence",
+    "IBM Lotus SameTime",
+    "Parature eRealtime"
+   ],
+   "most_used_mapped": [
+    "Atlassian Confluence"
+   ]
+  },
+  {
+   "category": "Requirements analysis and system architecture software",
+   "element_id": "2.E.7.g",
+   "tools": 12,
+   "mapped_tools": 1,
+   "mapped_share": 0.083,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Unified modeling language UML",
+    "Requirements management software",
+    "IBM Rational RequisitePro",
+    "Database capacity planning software",
+    "AcmeStudio",
+    "Architecture description language ADL",
+    "Capacity planning software",
+    "IBM Rational DOORS"
+   ],
+   "most_used_mapped": [
+    "Unified modeling language UML"
+   ]
+  },
+  {
+   "category": "Label making software",
+   "element_id": "2.E.1.h",
+   "tools": 11,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Brady Specimen Labeling System",
+    "Label printing software",
+    "Label-making software",
+    "Labeling software",
+    "Specimen labeling system software",
+    "ABOL Manifest Systems",
+    "Barcode labeling software",
+    "Endicia Internet Postage"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Pattern design software",
+   "element_id": "2.E.4.a",
+   "tools": 11,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Diagramming software",
+    "100 Plus Hatch Pattern Library",
+    "Block diagram software",
+    "CaseSoft TimeMap",
+    "MPI Micro Planner X-Pert",
+    "MatchWare MindView",
+    "Mind mapping software",
+    "MindGenius"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Sales and marketing software",
+   "element_id": "2.E.1.l",
+   "tools": 11,
+   "mapped_tools": 3,
+   "mapped_share": 0.273,
+   "canonical_keys": 3,
+   "most_used_tools": [
+    "Google Ads",
+    "Marketo Marketing Automation",
+    "HubSpot software",
+    "Bing Ads",
+    "MightyScout",
+    "Webtrends software",
+    "Google Search Ads 360",
+    "Google Tag Manager"
+   ],
+   "most_used_mapped": [
+    "Google Ads",
+    "HubSpot software",
+    "Search engine marketing SEM software"
+   ]
+  },
+  {
+   "category": "Switch or router software",
+   "element_id": "2.E.12.g",
+   "tools": 11,
+   "mapped_tools": 1,
+   "mapped_share": 0.091,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Border Gateway Protocol BGP",
+    "Cisco Systems Cisco Web Cache Communication Protocol WCCP",
+    "Cisco Systems Gateway Load Balancing Protocol GLBP",
+    "Cisco Systems Hot Standby Router Protocol HSRP",
+    "Enhanced Interior Gateway Routing Protocol EIGRP",
+    "Intermediate System to Intermediate System IS-IS",
+    "Router software",
+    "Switch software"
+   ],
+   "most_used_mapped": [
+    "Border Gateway Protocol BGP"
+   ]
+  },
+  {
+   "category": "Cloud-based data access and sharing software",
+   "element_id": "2.E.16.i",
+   "tools": 10,
+   "mapped_tools": 3,
+   "mapped_share": 0.3,
+   "canonical_keys": 3,
+   "most_used_tools": [
+    "Google Drive",
+    "Slack",
+    "Dropbox",
+    "Software as a service SaaS",
+    "Asana",
+    "Platform as a service PaaS",
+    "Squeegee",
+    "Atlassian Confluence"
+   ],
+   "most_used_mapped": [
+    "Slack",
+    "Asana",
+    "Atlassian Confluence"
+   ]
+  },
+  {
+   "category": "Cloud-based management software",
+   "element_id": "2.E.11.e",
+   "tools": 10,
+   "mapped_tools": 7,
+   "mapped_share": 0.7,
+   "canonical_keys": 7,
+   "most_used_tools": [
+    "Splunk Enterprise",
+    "IBM WebSphere",
+    "Amazon Web Services AWS CloudFormation",
+    "Google Cloud software",
+    "IBM WebSphere MQ",
+    "Oracle Cloud software",
+    "Amazon Web Services AWS SageMaker",
+    "Jitterbit"
+   ],
+   "most_used_mapped": [
+    "Splunk Enterprise",
+    "IBM WebSphere",
+    "Amazon Web Services AWS CloudFormation",
+    "Google Cloud software",
+    "IBM WebSphere MQ",
+    "Amazon Web Services AWS SageMaker",
+    "Microsoft Azure Data Factory"
+   ]
+  },
+  {
+   "category": "Internet protocol IP multimedia subsystem software",
+   "element_id": "2.E.11.d",
+   "tools": 10,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Voice over internet protocol VoIP system software",
+    "File transfer protocol FTP software",
+    "File transfer protocol FTP client software",
+    "Internet Protocol Television Systems",
+    "Multiprotocol Label Switching MPLS",
+    "Open Shortest Path First OSPF",
+    "Open source routing protocols OSPF",
+    "ProjectSend"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Process mapping and design software",
+   "element_id": "2.E.1.p",
+   "tools": 10,
+   "mapped_tools": 2,
+   "mapped_share": 0.2,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Microsoft Visio",
+    "ProModel",
+    "Flow chart software",
+    "InVision software",
+    "Lucidchart",
+    "Visual Paradigm DB Visual ARCHITECT",
+    "Flowcharting software",
+    "LibreOffice Draw"
+   ],
+   "most_used_mapped": [
+    "Microsoft Visio",
+    "InVision software"
+   ]
+  },
+  {
+   "category": "Risk management data and analysis software",
+   "element_id": "2.E.9.o",
+   "tools": 10,
+   "mapped_tools": 2,
+   "mapped_share": 0.2,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "ArcSight Enterprise Threat and Risk Management",
+    "MasterControl software",
+    "Enterprise risk management software ERMS",
+    "MasterControl MD",
+    "MasterControl TotalPharma",
+    "McAfee Enterprise Security Manager",
+    "Risk management software",
+    "Thomson Reuters Risk Management"
+   ],
+   "most_used_mapped": [
+    "Risk management software",
+    "eMASS"
+   ]
+  },
+  {
+   "category": "Transaction server software",
+   "element_id": "2.E.6.l",
+   "tools": 10,
+   "mapped_tools": 2,
+   "mapped_share": 0.2,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Customer information control system CICS",
+    "Microsoft Internet Information Services (IIS)",
+    "Web server software",
+    "IBM Middleware",
+    "Tumbleweed SecureTransport",
+    "Object Management Group Object Request Broker",
+    "Armand Morin MultiTrack Generator",
+    "BEA Tuxedo"
+   ],
+   "most_used_mapped": [
+    "Microsoft Internet Information Services (IIS)",
+    "Microsoft Internet Information Services (IIS) Manager"
+   ]
+  },
+  {
+   "category": "Internet directory services software",
+   "element_id": "2.E.10.d",
+   "tools": 9,
+   "mapped_tools": 3,
+   "mapped_share": 0.333,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Microsoft Active Directory",
+    "Network directory services software",
+    "Active directory software",
+    "Domain name system DNS",
+    "Berkeley Internet Domain Name BIND",
+    "Microsoft DNS Server",
+    "Network addressable storage NAS software",
+    "Novell eDirectory"
+   ],
+   "most_used_mapped": [
+    "Microsoft Active Directory",
+    "Active directory software",
+    "Domain name system DNS"
+   ]
+  },
+  {
+   "category": "Network operating system enhancement software",
+   "element_id": "2.E.11.b",
+   "tools": 9,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Network, server and operating system optimization software",
+    "EMC Smarts Network Protocol Manager",
+    "Infoblox NetMRI",
+    "Management information base MIB software",
+    "OPNET APMXpert",
+    "Operating system process control software",
+    "Silver Peak",
+    "Traffic shapers"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Charting software",
+   "element_id": "2.E.4.e",
+   "tools": 8,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Aeronautical charts",
+    "Montgomery Investment Technology Utility XL",
+    "TickQuest NeoTicker",
+    "AASoftTech Web Organization Chart",
+    "Graphing software",
+    "SmartDraw VP",
+    "Timeline software",
+    "e-MDs Chart"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Data conversion software",
+   "element_id": "2.E.15.a",
+   "tools": 8,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "AlgoLab Raster to Vector Conversion Toolkit",
+    "BOSS Didger",
+    "Cyclone",
+    "GTX RastorCAD",
+    "Portable document file creation software",
+    "Potrace",
+    "Trix TracTrix",
+    "Video file conversion software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Flight control software",
+   "element_id": "2.E.9.f",
+   "tools": 8,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Flight simulation software",
+    "Direct-to-tool software",
+    "En route descent advisor EDA",
+    "Expedite departure path EDP software",
+    "Final approach spacing tool FAST",
+    "Leica AEROPLAN LiDAR",
+    "Multi-center traffic management advisor McTMA",
+    "Traffic management advisor TMA software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Object oriented data base management software",
+   "element_id": "2.E.6.j",
+   "tools": 8,
+   "mapped_tools": 5,
+   "mapped_share": 0.625,
+   "canonical_keys": 5,
+   "most_used_tools": [
+    "PostgreSQL",
+    "Hibernate ORM",
+    "Microsoft Visual FoxPro",
+    "IBM Informix",
+    "Object database management system ODBMS",
+    "Object oriented programming software",
+    "Database management system DBMS",
+    "Transact-SQL"
+   ],
+   "most_used_mapped": [
+    "PostgreSQL",
+    "Hibernate ORM",
+    "IBM Informix",
+    "Object oriented programming software",
+    "Transact-SQL"
+   ]
+  },
+  {
+   "category": "File versioning software",
+   "element_id": "2.E.5.c",
+   "tools": 7,
+   "mapped_tools": 4,
+   "mapped_share": 0.571,
+   "canonical_keys": 4,
+   "most_used_tools": [
+    "Git",
+    "Apache Subversion SVN",
+    "Version control software",
+    "Concurrent Versions Systems",
+    "Continuous integration software",
+    "WinMerge",
+    "Zylab ZyImage"
+   ],
+   "most_used_mapped": [
+    "Git",
+    "Apache Subversion SVN",
+    "Version control software",
+    "Continuous integration software"
+   ]
+  },
+  {
+   "category": "Instant messaging software",
+   "element_id": "2.E.16.d",
+   "tools": 7,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "GroupMe",
+    "Twitter",
+    "Blink",
+    "Snapchat",
+    "Atlassian HipChat",
+    "Instagram",
+    "WhatsApp"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Authentication server software",
+   "element_id": "2.E.14.a",
+   "tools": 6,
+   "mapped_tools": 2,
+   "mapped_share": 0.333,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "Single sign-on SSO",
+    "Password management software",
+    "Diameter",
+    "IBM Tivoli Identity Management TIM",
+    "Microsoft Forefront Identify Manager",
+    "Remote authentication dial-in user service RADIUS software"
+   ],
+   "most_used_mapped": [
+    "Single sign-on SSO",
+    "Password management software"
+   ]
+  },
+  {
+   "category": "Clustering software",
+   "element_id": "2.E.6.b",
+   "tools": 6,
+   "mapped_tools": 1,
+   "mapped_share": 0.167,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "VMware",
+    "Cluster server software",
+    "Oracle Real Application Cluster RAC",
+    "Aster Data nCluster",
+    "Clustermatic",
+    "Parallel systems software"
+   ],
+   "most_used_mapped": [
+    "VMware"
+   ]
+  },
+  {
+   "category": "Enterprise system management software",
+   "element_id": "2.E.17.a",
+   "tools": 6,
+   "mapped_tools": 1,
+   "mapped_share": 0.167,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "IBM Power Systems software",
+    "Splunk Enterprise",
+    "Tanium software",
+    "Kforge",
+    "Microsoft System Center",
+    "Microsoft Systems Management Server"
+   ],
+   "most_used_mapped": [
+    "Splunk Enterprise"
+   ]
+  },
+  {
+   "category": "Multi-media educational software",
+   "element_id": "2.E.8.e",
+   "tools": 6,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Nearpod",
+    "Seesaw",
+    "Kahoot!",
+    "Edpuzzle",
+    "Interactive learning software",
+    "Turning Technologies TurningPoint"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Platform interconnectivity software",
+   "element_id": "2.E.12.m",
+   "tools": 6,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Migration software",
+    "Connectivity software",
+    "IBM iSeries Access",
+    "Microsoft Hyperterminal",
+    "Keysight Intuilink Connectivity Software",
+    "Virtual network computing VNC software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Storage networking software",
+   "element_id": "2.E.12.f",
+   "tools": 6,
+   "mapped_tools": 1,
+   "mapped_share": 0.167,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Amazon Simple Storage Service S3",
+    "Storage area network SAN software",
+    "EMC Symmetrix DMX",
+    "Media storage management software",
+    "Network storage software",
+    "Storage management software"
+   ],
+   "most_used_mapped": [
+    "Amazon Simple Storage Service S3"
+   ]
+  },
+  {
+   "category": "Communications server software",
+   "element_id": "2.E.12.b",
+   "tools": 5,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "IBM Domino",
+    "Emergency notification system software",
+    "Email management software",
+    "MIR3 Intelligent Notification",
+    "ShoreTel"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Action games",
+   "element_id": "2.E.3.a",
+   "tools": 4,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Biometrics video game software",
+    "BrainTrain SmartDriver",
+    "Video game software",
+    "Virtual reality game software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Mobile operator specific application software",
+   "element_id": "2.E.16.f",
+   "tools": 4,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Mobile application software",
+    "Mag+",
+    "Microsoft ActiveSync",
+    "Tablet application software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Network connectivity terminal emulation software",
+   "element_id": "2.E.12.j",
+   "tools": 4,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Terminal emulation software",
+    "Rasmussen Software Anzio",
+    "Telnet programs software",
+    "Zephyr EXTRA! Terminal Emulation"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Spell checkers",
+   "element_id": "2.E.8.c",
+   "tools": 4,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Hand held spell checkers",
+    "Spellex AccuCount",
+    "Spelling and grammar checking software",
+    "Sylvan Software Complete Medical Pharmaceutical Spell Checker"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Aviation ground support software",
+   "element_id": "2.E.9.a",
+   "tools": 3,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "ArduPilot Mission Planner",
+    "Bornemann Associates Flight Plan",
+    "Sabre travel agent software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Cloud-based protection or security software",
+   "element_id": "2.E.14.e",
+   "tools": 3,
+   "mapped_tools": 2,
+   "mapped_share": 0.667,
+   "canonical_keys": 2,
+   "most_used_tools": [
+    "SolarWinds",
+    "Qualys Cloud Platform",
+    "Tenable Nessus"
+   ],
+   "most_used_mapped": [
+    "Qualys Cloud Platform",
+    "Tenable Nessus"
+   ]
+  },
+  {
+   "category": "Contact center software",
+   "element_id": "2.E.12.c",
+   "tools": 3,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Multi-channel contact center software",
+    "Timpani Contact Center",
+    "Timpani Email"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Data compression software",
+   "element_id": "2.E.15.b",
+   "tools": 3,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Arbor Image Draftsman",
+    "Corel WinZip",
+    "File compression software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Dictionary software",
+   "element_id": "2.E.8.f",
+   "tools": 3,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "American Sign Language ASL browser",
+    "Electronic dictionaries",
+    "University of California Thesaurus Linguae Graecae TLG"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Eye tracking software",
+   "element_id": "2.E.15.h",
+   "tools": 3,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Eye Tracking Exercises Enterprises Track with Letters",
+    "HTS Vision CVS2",
+    "HTS Vision HTS2 Computerized Binocular Home Eye Exercise System"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Legal management software",
+   "element_id": "2.E.9.n",
+   "tools": 3,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Courtroom scheduling software",
+    "Collateral Consequences Calculator",
+    "Thomson Reuters WestlawNext Litigator"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Network operation system software",
+   "element_id": "2.E.13.b",
+   "tools": 3,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "IBM z/OS operating systems",
+    "Remote install server software",
+    "SunGard NotiFind"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Portal server software",
+   "element_id": "2.E.6.k",
+   "tools": 3,
+   "mapped_tools": 1,
+   "mapped_share": 0.333,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Apache HTTP Server",
+    "Oracle iPlanet Web Server",
+    "Vignette Portal"
+   ],
+   "most_used_mapped": [
+    "Apache HTTP Server"
+   ]
+  },
+  {
+   "category": "Procedure management software",
+   "element_id": "2.E.1.o",
+   "tools": 3,
+   "mapped_tools": 1,
+   "mapped_share": 0.333,
+   "canonical_keys": 1,
+   "most_used_tools": [
+    "Apache Airflow",
+    "Hexagon Metrology PC-DMIS",
+    "Optical Gaging Products Measure-X"
+   ],
+   "most_used_mapped": [
+    "Apache Airflow"
+   ]
+  },
+  {
+   "category": "WAN switching software and firmware",
+   "element_id": "2.E.12.h",
+   "tools": 3,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Wide area network WAN software",
+    "ATD protocol",
+    "X.25 Protocol"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Bar coding software",
+   "element_id": "2.E.1.g",
+   "tools": 2,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Barcode reader software",
+    "Barcode software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Computer aided design CAD and computer aided manufacturing CAM system",
+   "element_id": "2.E.9.m",
+   "tools": 2,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Vero Software Edgecam",
+    "Computer aided design and computer aided manufacturing CAD/CAM engraving software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Gateway software",
+   "element_id": "2.E.12.k",
+   "tools": 2,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Microsoft Windows Terminal Services Access Manager",
+    "Secure web gateway software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Interactive voice response software",
+   "element_id": "2.E.10.c",
+   "tools": 2,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "CfMC SoundSurvent",
+    "Computerized voice stress analyzer CVSA software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "License management software",
+   "element_id": "2.E.1.j",
+   "tools": 2,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "ConEst Permit Trac",
+    "Permit administration software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Mailing and shipping software",
+   "element_id": "2.E.1.m",
+   "tools": 2,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Postal Explorer",
+    "Shipment processing software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Mobile messaging service software",
+   "element_id": "2.E.16.g",
+   "tools": 2,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Intrado SchoolMessenger",
+    "Unified messaging software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Storage media loading software",
+   "element_id": "2.E.15.e",
+   "tools": 2,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Intel Data Migration Software",
+    "Patient records software for personal digital assistants PDAs"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Audit software",
+   "element_id": "2.E.1.n",
+   "tools": 1,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "PCG Software Virtual Examiner"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Bridge software",
+   "element_id": "2.E.12.l",
+   "tools": 1,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Network bridge software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Computer imaging software",
+   "element_id": "2.E.13.d",
+   "tools": 1,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Symantec Ghost Solution Suite"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Fax software",
+   "element_id": "2.E.12.d",
+   "tools": 1,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Open Text Fax Server, RightFax Edition"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "LAN software",
+   "element_id": "2.E.12.e",
+   "tools": 1,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Local area network LAN software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Manufacturing execution system MES software",
+   "element_id": "2.E.9.l",
+   "tools": 1,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "CA Easytrieve Report Generator"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Software defined networking/ virtualization software",
+   "element_id": "2.E.12.n",
+   "tools": 1,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Cisco Systems WAN Manager"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Text to speech conversion software",
+   "element_id": "2.E.15.g",
+   "tools": 1,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Text to speech software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Voice synthesizer and recognition software",
+   "element_id": "2.E.8.g",
+   "tools": 1,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Voice picking software"
+   ],
+   "most_used_mapped": []
+  },
+  {
+   "category": "Wireless software",
+   "element_id": "2.E.12.i",
+   "tools": 1,
+   "mapped_tools": 0,
+   "mapped_share": 0.0,
+   "canonical_keys": 0,
+   "most_used_tools": [
+    "Mobile wireless network infrastructure software"
+   ],
+   "most_used_mapped": []
+  }
+ ]
+}
