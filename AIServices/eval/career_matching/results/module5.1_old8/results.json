@@ -1,0 +1,3762 @@
+{
+  "generated_at": "2026-10-17T11:43:43.441656+00:00",
+  "model": "BAAI/bge-small-en-v1.5",
+  "index_state_hash": "8bc82169815e28fa5cf65e034b5283e8f29e52d2fcb34d5478d7f925c1c1d9fb",
+  "role_skills": 1282,
+  "profiles": [
+    {
+      "id": "web",
+      "label": "Web developer",
+      "control": false,
+      "skills": [
+        "React",
+        "JavaScript",
+        "TypeScript",
+        "HTML",
+        "CSS",
+        "Node.js",
+        "Git",
+        "REST APIs",
+        "Tailwind CSS",
+        "Webpack"
+      ],
+      "normalised": [
+        "React",
+        "JavaScript",
+        "TypeScript",
+        "HTML",
+        "CSS",
+        "Node.js",
+        "Git",
+        "REST APIs",
+        "Tailwind CSS",
+        "Webpack"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Web Developers",
+        "web developer",
+        "user interface developer",
+        "Web and Digital Interface Designers"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "web designer",
+          "score": 60.0,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "web designer"
+          ],
+          "matched": 5,
+          "related": 2,
+          "missing": 3,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 2,
+          "title": "Web and Digital Interface Designers",
+          "score": 58.3,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Web and Digital Interface Designers"
+          ],
+          "matched": 5,
+          "related": 4,
+          "missing": 3,
+          "required": 12,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Software Developers",
+          "score": 40.0,
+          "sources": [
+            "esco",
+            "onet"
+          ],
+          "titles": [
+            "Software Developers",
+            "software developer"
+          ],
+          "matched": 8,
+          "related": 8,
+          "missing": 14,
+          "required": 30,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "Blockchain Engineers",
+          "score": 40.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Blockchain Engineers"
+          ],
+          "matched": 6,
+          "related": 4,
+          "missing": 10,
+          "required": 20,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "web developer",
+          "score": 38.5,
+          "sources": [
+            "esco",
+            "onet"
+          ],
+          "titles": [
+            "Web Developers",
+            "web developer"
+          ],
+          "matched": 9,
+          "related": 2,
+          "missing": 15,
+          "required": 26,
+          "acceptable": true
+        }
+      ],
+      "first_acceptable_rank": 2,
+      "first_acceptable_score": 58.3,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "web designer",
+        "score": 60.0
+      },
+      "esco_only_share_top10": 0.3,
+      "best_esco_only_rank": 1,
+      "related_credits_top5": [
+        {
+          "rank": 1,
+          "career": "web designer",
+          "source": "esco",
+          "role_skill": "Content Management Systems",
+          "via": "HTML",
+          "similarity": 0.8014,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "web designer",
+          "source": "esco",
+          "role_skill": "compose description for web elements",
+          "via": "HTML",
+          "similarity": 0.7944,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Web and Digital Interface Designers",
+          "source": "onet",
+          "role_skill": "Jira",
+          "via": "Git",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Web and Digital Interface Designers",
+          "source": "onet",
+          "role_skill": "Figma",
+          "via": "React",
+          "similarity": 0.8077,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Web and Digital Interface Designers",
+          "source": "onet",
+          "role_skill": "Angular",
+          "via": "React",
+          "similarity": 0.8483,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Web and Digital Interface Designers",
+          "source": "onet",
+          "role_skill": "Adobe XD",
+          "via": "React",
+          "similarity": 0.8257,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "esco",
+          "role_skill": "utilise computer-aided software engineering tools",
+          "via": "React",
+          "similarity": 0.7351,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Jira",
+          "via": "Git",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "C#",
+          "via": "TypeScript",
+          "similarity": 0.7851,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Docker",
+          "via": "Webpack",
+          "similarity": 0.7508,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "GitHub",
+          "via": "Git",
+          "similarity": 0.8407,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Angular",
+          "via": "React",
+          "similarity": 0.8483,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "JavaScript",
+          "similarity": 0.8235,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Python",
+          "via": "JavaScript",
+          "similarity": 0.8512,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Spring Boot",
+          "via": "REST APIs",
+          "similarity": 0.7913,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "C#",
+          "via": "TypeScript",
+          "similarity": 0.7851,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Docker",
+          "via": "Webpack",
+          "similarity": 0.7508,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "JavaScript",
+          "similarity": 0.8235,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Python",
+          "via": "JavaScript",
+          "similarity": 0.8512,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "esco",
+          "role_skill": "Confluence / SharePoint / Notion / … (web based collaborative platforms)",
+          "via": "React",
+          "similarity": 0.7546,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "esco",
+          "role_skill": "Joomla",
+          "via": "HTML",
+          "similarity": 0.8262,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "onet",
+          "role_skill": "Jira",
+          "via": "Git",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "onet",
+          "role_skill": "C#",
+          "via": "TypeScript",
+          "similarity": 0.7851,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "onet",
+          "role_skill": "Docker",
+          "via": "Webpack",
+          "similarity": 0.7508,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "onet",
+          "role_skill": "GitHub",
+          "via": "Git",
+          "similarity": 0.8407,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "onet",
+          "role_skill": "Angular",
+          "via": "React",
+          "similarity": 0.8483,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "onet",
+          "role_skill": "JSON",
+          "via": "REST APIs",
+          "similarity": 0.826,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "onet",
+          "role_skill": "jQuery",
+          "via": "JavaScript",
+          "similarity": 0.8389,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "JavaScript",
+          "similarity": 0.8235,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "onet",
+          "role_skill": "PHP",
+          "via": "JavaScript",
+          "similarity": 0.8311,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "onet",
+          "role_skill": "Python",
+          "via": "JavaScript",
+          "similarity": 0.8512,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "web developer",
+          "source": "onet",
+          "role_skill": "Spring Boot",
+          "via": "REST APIs",
+          "similarity": 0.7913,
+          "kind": "described",
+          "known_doubtful": false
+        }
+      ],
+      "results_count": 126
+    },
+    {
+      "id": "backend",
+      "label": "Backend Python developer",
+      "control": false,
+      "skills": [
+        "Python",
+        "Django",
+        "Flask",
+        "PostgreSQL",
+        "SQL",
+        "REST APIs",
+        "Docker",
+        "Git",
+        "Redis",
+        "Celery",
+        "Linux"
+      ],
+      "normalised": [
+        "Python",
+        "Django",
+        "Flask",
+        "PostgreSQL",
+        "SQL",
+        "REST APIs",
+        "Docker",
+        "Git",
+        "Redis",
+        "Celery",
+        "Linux"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Software Developers",
+        "software developer",
+        "Computer Programmers",
+        "cloud software developer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Blockchain Engineers",
+          "score": 45.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Blockchain Engineers"
+          ],
+          "matched": 6,
+          "related": 6,
+          "missing": 8,
+          "required": 20,
+          "acceptable": false
+        },
+        {
+          "rank": 2,
+          "title": "Software Developers",
+          "score": 41.7,
+          "sources": [
+            "esco",
+            "onet"
+          ],
+          "titles": [
+            "Software Developers",
+            "software developer"
+          ],
+          "matched": 7,
+          "related": 11,
+          "missing": 12,
+          "required": 30,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Computer Systems Engineers/Architects",
+          "score": 40.9,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Systems Engineers/Architects"
+          ],
+          "matched": 5,
+          "related": 8,
+          "missing": 9,
+          "required": 22,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "Web Developers",
+          "score": 38.3,
+          "sources": [
+            "esco",
+            "onet"
+          ],
+          "titles": [
+            "Web Developers",
+            "web developer"
+          ],
+          "matched": 5,
+          "related": 13,
+          "missing": 12,
+          "required": 30,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Software Quality Assurance Analysts and Testers",
+          "score": 37.5,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Software Quality Assurance Analysts and Testers"
+          ],
+          "matched": 5,
+          "related": 8,
+          "missing": 11,
+          "required": 24,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 2,
+      "first_acceptable_score": 41.7,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Blockchain Engineers",
+        "score": 45.0
+      },
+      "esco_only_share_top10": 0.2,
+      "best_esco_only_rank": 6,
+      "related_credits_top5": [
+        {
+          "rank": 1,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Go",
+          "via": "Linux",
+          "similarity": 0.8478,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "Flask",
+          "similarity": 0.8661,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Kubernetes",
+          "via": "Docker",
+          "similarity": 0.8719,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Node.js",
+          "via": "Flask",
+          "similarity": 0.8234,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "Python",
+          "similarity": 0.8066,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "React",
+          "via": "Flask",
+          "similarity": 0.8593,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "esco",
+          "role_skill": "develop automated migration methods",
+          "via": "Python",
+          "similarity": 0.7369,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "esco",
+          "role_skill": "utilise computer-aided software engineering tools",
+          "via": "Python",
+          "similarity": 0.7458,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Jira",
+          "via": "Git",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "GitHub",
+          "via": "Git",
+          "similarity": 0.8407,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Go",
+          "via": "Linux",
+          "similarity": 0.8478,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Angular",
+          "via": "Flask",
+          "similarity": 0.8554,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "Flask",
+          "similarity": 0.8661,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Kubernetes",
+          "via": "Docker",
+          "similarity": 0.8719,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Node.js",
+          "via": "Flask",
+          "similarity": 0.8234,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "NoSQL",
+          "via": "SQL",
+          "similarity": 0.8764,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "Python",
+          "similarity": 0.8066,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "React",
+          "via": "Flask",
+          "similarity": 0.8593,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Spring Boot",
+          "via": "Docker",
+          "similarity": 0.7932,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Ansible",
+          "via": "Linux",
+          "similarity": 0.8205,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Jira",
+          "via": "Git",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Bash",
+          "via": "Linux",
+          "similarity": 0.8206,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "GitHub",
+          "via": "Git",
+          "similarity": 0.8407,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Go",
+          "via": "Linux",
+          "similarity": 0.8478,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "Flask",
+          "similarity": 0.8661,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Kubernetes",
+          "via": "Docker",
+          "similarity": 0.8719,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "Python",
+          "similarity": 0.8066,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "esco",
+          "role_skill": "Confluence / SharePoint / Notion / … (web based collaborative platforms)",
+          "via": "Flask",
+          "similarity": 0.7499,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "esco",
+          "role_skill": "Joomla",
+          "via": "Django",
+          "similarity": 0.7973,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "esco",
+          "role_skill": "HTML / CSS / JavaScript / … (implement front-end website design)",
+          "via": "Django",
+          "similarity": 0.7534,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "Jira",
+          "via": "Git",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "GitHub",
+          "via": "Git",
+          "similarity": 0.8407,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "Go",
+          "via": "Linux",
+          "similarity": 0.8478,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "Angular",
+          "via": "Flask",
+          "similarity": 0.8554,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "Flask",
+          "similarity": 0.8661,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "JSON",
+          "via": "Flask",
+          "similarity": 0.8462,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "Kubernetes",
+          "via": "Docker",
+          "similarity": 0.8719,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "MySQL",
+          "via": "PostgreSQL",
+          "similarity": 0.9597,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "Node.js",
+          "via": "Flask",
+          "similarity": 0.8234,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "NoSQL",
+          "via": "SQL",
+          "similarity": 0.8764,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "Python",
+          "similarity": 0.8066,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "React",
+          "via": "Flask",
+          "similarity": 0.8593,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Web Developers",
+          "source": "onet",
+          "role_skill": "Spring Boot",
+          "via": "Docker",
+          "similarity": 0.7932,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Jira",
+          "via": "Git",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "GitHub",
+          "via": "Git",
+          "similarity": 0.8407,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "Flask",
+          "similarity": 0.8661,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "Python",
+          "similarity": 0.8066,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Selenium",
+          "via": "Flask",
+          "similarity": 0.8297,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Azure DevOps",
+          "via": "Docker",
+          "similarity": 0.8076,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Postman",
+          "via": "REST APIs",
+          "similarity": 0.8957,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "REST Assured",
+          "via": "REST APIs",
+          "similarity": 0.8831,
+          "kind": "described",
+          "known_doubtful": false
+        }
+      ],
+      "results_count": 126
+    },
+    {
+      "id": "data",
+      "label": "Data scientist",
+      "control": false,
+      "skills": [
+        "Python",
+        "pandas",
+        "NumPy",
+        "scikit-learn",
+        "SQL",
+        "Machine Learning",
+        "Statistics",
+        "Jupyter",
+        "TensorFlow",
+        "Data Visualization",
+        "Tableau"
+      ],
+      "normalised": [
+        "Python",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "SQL",
+        "Machine Learning",
+        "Statistics",
+        "Jupyter",
+        "TensorFlow",
+        "Data Visualization",
+        "Tableau"
+      ],
+      "undescribed_skills": [
+        "Jupyter"
+      ],
+      "acceptable": [
+        "Data Scientists",
+        "data scientist",
+        "data analyst",
+        "artificial intelligence engineer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "computer vision engineer",
+          "score": 54.7,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "computer vision engineer"
+          ],
+          "matched": 14,
+          "related": 7,
+          "missing": 11,
+          "required": 32,
+          "acceptable": false
+        },
+        {
+          "rank": 2,
+          "title": "Data Scientists",
+          "score": 50.0,
+          "sources": [
+            "esco",
+            "onet"
+          ],
+          "titles": [
+            "Data Scientists",
+            "data scientist"
+          ],
+          "matched": 7,
+          "related": 7,
+          "missing": 7,
+          "required": 21,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Health Informatics Specialists",
+          "score": 45.5,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Health Informatics Specialists"
+          ],
+          "matched": 3,
+          "related": 4,
+          "missing": 4,
+          "required": 11,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "Data Warehousing Specialists",
+          "score": 45.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Data Warehousing Specialists"
+          ],
+          "matched": 3,
+          "related": 3,
+          "missing": 4,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "artificial intelligence engineer",
+          "score": 41.9,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "artificial intelligence engineer"
+          ],
+          "matched": 7,
+          "related": 12,
+          "missing": 12,
+          "required": 31,
+          "acceptable": true
+        }
+      ],
+      "first_acceptable_rank": 2,
+      "first_acceptable_score": 50.0,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "computer vision engineer",
+        "score": 54.7
+      },
+      "esco_only_share_top10": 0.5,
+      "best_esco_only_rank": 1,
+      "related_credits_top5": [
+        {
+          "rank": 1,
+          "career": "computer vision engineer",
+          "source": "esco",
+          "role_skill": "MATLAB (computer simulation)",
+          "via": "NumPy",
+          "similarity": 0.7372,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "computer vision engineer",
+          "source": "esco",
+          "role_skill": "Computer Vision / OpenCV / Convolutional Neural Networks / … (image recognition)",
+          "via": "Scikit-learn",
+          "similarity": 0.7442,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "computer vision engineer",
+          "source": "esco",
+          "role_skill": "Data Engineering",
+          "via": "Pandas",
+          "similarity": 0.786,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "computer vision engineer",
+          "source": "esco",
+          "role_skill": "OpenCV / Computer Vision (digital image processing)",
+          "via": "NumPy",
+          "similarity": 0.7624,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "computer vision engineer",
+          "source": "esco",
+          "role_skill": "Data Science",
+          "via": "Machine Learning",
+          "similarity": 0.8286,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "computer vision engineer",
+          "source": "esco",
+          "role_skill": "utilise computer-aided software engineering tools",
+          "via": "Python",
+          "similarity": 0.7458,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "computer vision engineer",
+          "source": "esco",
+          "role_skill": "report analysis results",
+          "via": "Statistics",
+          "similarity": 0.7521,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "MATLAB / Statistical Modeling (mathematical modelling)",
+          "via": "Statistics",
+          "similarity": 0.7501,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "Data Mining",
+          "via": "Scikit-learn",
+          "similarity": 0.8856,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "Data Engineering",
+          "via": "Pandas",
+          "similarity": 0.786,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "Statistical Modeling / R / SAS / … (statistical modeling techniques)",
+          "via": "Statistics",
+          "similarity": 0.818,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "Natural Language Processing / spaCy / NLTK (information extraction)",
+          "via": "Machine Learning",
+          "similarity": 0.7464,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "SPARQL (resource description framework query language)",
+          "via": "SQL",
+          "similarity": 0.8164,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "Data Science",
+          "via": "Machine Learning",
+          "similarity": 0.8286,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "empirical analysis",
+          "via": "Statistics",
+          "similarity": 0.766,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "Data Modeling (data models)",
+          "via": "Machine Learning",
+          "similarity": 0.7573,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "manage findable accessible interoperable and reusable data",
+          "via": "SQL",
+          "similarity": 0.7617,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "Data Modeling / Database Normalization / MySQL Workbench (design database scheme)",
+          "via": "SQL",
+          "similarity": 0.795,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "esco",
+          "role_skill": "report analysis results",
+          "via": "Statistics",
+          "similarity": 0.7521,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "onet",
+          "role_skill": "Excel",
+          "via": "Pandas",
+          "similarity": 0.8424,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "onet",
+          "role_skill": "Power BI",
+          "via": "Tableau",
+          "similarity": 0.9182,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "onet",
+          "role_skill": "PyTorch",
+          "via": "TensorFlow",
+          "similarity": 0.9023,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "onet",
+          "role_skill": "R",
+          "via": "Pandas",
+          "similarity": 0.8669,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "onet",
+          "role_skill": "SAS",
+          "via": "Scikit-learn",
+          "similarity": 0.8074,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "onet",
+          "role_skill": "Snowflake",
+          "via": "SQL",
+          "similarity": 0.8574,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Data Scientists",
+          "source": "onet",
+          "role_skill": "MATLAB",
+          "via": "NumPy",
+          "similarity": 0.8737,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Health Informatics Specialists",
+          "source": "onet",
+          "role_skill": "Excel",
+          "via": "Pandas",
+          "similarity": 0.8424,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Health Informatics Specialists",
+          "source": "onet",
+          "role_skill": "Power BI",
+          "via": "Tableau",
+          "similarity": 0.9182,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Health Informatics Specialists",
+          "source": "onet",
+          "role_skill": "R",
+          "via": "Pandas",
+          "similarity": 0.8669,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Health Informatics Specialists",
+          "source": "onet",
+          "role_skill": "SAS",
+          "via": "Scikit-learn",
+          "similarity": 0.8074,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Data Warehousing Specialists",
+          "source": "onet",
+          "role_skill": "Microsoft Access",
+          "via": "SQL",
+          "similarity": 0.8373,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Data Warehousing Specialists",
+          "source": "onet",
+          "role_skill": "Excel",
+          "via": "Pandas",
+          "similarity": 0.8424,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Data Warehousing Specialists",
+          "source": "onet",
+          "role_skill": "Power BI",
+          "via": "Tableau",
+          "similarity": 0.9182,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "digital data processing",
+          "via": "NumPy",
+          "similarity": 0.7562,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "MATLAB (computer simulation)",
+          "via": "NumPy",
+          "similarity": 0.7372,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "Data Mining",
+          "via": "Scikit-learn",
+          "similarity": 0.8856,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "Algorithms",
+          "via": "NumPy",
+          "similarity": 0.855,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "Natural Language Processing / spaCy / NLTK (information extraction)",
+          "via": "Machine Learning",
+          "similarity": 0.7464,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "Algorithms / Data Structures and Algorithms (task algorithmisation)",
+          "via": "NumPy",
+          "similarity": 0.7302,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "SPARQL (resource description framework query language)",
+          "via": "SQL",
+          "similarity": 0.8164,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "unstructured data",
+          "via": "Pandas",
+          "similarity": 0.7645,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "Data Science",
+          "via": "Machine Learning",
+          "similarity": 0.8286,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "Data Modeling (data models)",
+          "via": "Machine Learning",
+          "similarity": 0.7573,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "Big Data / Apache Spark / Hadoop / … (analyse big data)",
+          "via": "Pandas",
+          "similarity": 0.7871,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "artificial intelligence engineer",
+          "source": "esco",
+          "role_skill": "R (develop statistical software)",
+          "via": "Pandas",
+          "similarity": 0.7351,
+          "kind": "mixed",
+          "known_doubtful": false
+        }
+      ],
+      "results_count": 126
+    },
+    {
+      "id": "devops",
+      "label": "DevOps engineer",
+      "control": false,
+      "skills": [
+        "Docker",
+        "Kubernetes",
+        "Terraform",
+        "AWS",
+        "Linux",
+        "Jenkins",
+        "Ansible",
+        "Bash",
+        "Git",
+        "Prometheus",
+        "CI/CD"
+      ],
+      "normalised": [
+        "Docker",
+        "Kubernetes",
+        "Terraform",
+        "AWS",
+        "Linux",
+        "Jenkins",
+        "Ansible",
+        "Bash",
+        "Git",
+        "Prometheus",
+        "CI/CD"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "cloud DevOps engineer",
+        "cloud engineer",
+        "Network and Computer Systems Administrators",
+        "ICT system administrator"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Computer Systems Engineers/Architects",
+          "score": 59.1,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Systems Engineers/Architects"
+          ],
+          "matched": 9,
+          "related": 8,
+          "missing": 5,
+          "required": 22,
+          "acceptable": false
+        },
+        {
+          "rank": 2,
+          "title": "Information Security Engineers",
+          "score": 53.8,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Information Security Engineers"
+          ],
+          "matched": 5,
+          "related": 4,
+          "missing": 4,
+          "required": 13,
+          "acceptable": false
+        },
+        {
+          "rank": 3,
+          "title": "cloud DevOps engineer",
+          "score": 47.9,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "cloud DevOps engineer"
+          ],
+          "matched": 6,
+          "related": 11,
+          "missing": 7,
+          "required": 24,
+          "acceptable": true
+        },
+        {
+          "rank": 4,
+          "title": "cloud software developer",
+          "score": 47.5,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "cloud software developer"
+          ],
+          "matched": 5,
+          "related": 9,
+          "missing": 6,
+          "required": 20,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Computer and Information Research Scientists",
+          "score": 46.6,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer and Information Research Scientists"
+          ],
+          "matched": 10,
+          "related": 7,
+          "missing": 12,
+          "required": 29,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 3,
+      "first_acceptable_score": 47.9,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Computer Systems Engineers/Architects",
+        "score": 59.1
+      },
+      "esco_only_share_top10": 0.3,
+      "best_esco_only_rank": 3,
+      "related_credits_top5": [
+        {
+          "rank": 1,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "AWS CloudFormation",
+          "via": "Terraform",
+          "similarity": 0.8483,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Jira",
+          "via": "Git",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "GitHub",
+          "via": "Git",
+          "similarity": 0.8407,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Go",
+          "via": "Linux",
+          "similarity": 0.8478,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "Bash",
+          "similarity": 0.7877,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Microsoft Azure",
+          "via": "AWS",
+          "similarity": 0.9043,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "PowerShell",
+          "via": "Bash",
+          "similarity": 0.904,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Python",
+          "via": "Bash",
+          "similarity": 0.8074,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Information Security Engineers",
+          "source": "onet",
+          "role_skill": "Microsoft Azure",
+          "via": "AWS",
+          "similarity": 0.9043,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Information Security Engineers",
+          "source": "onet",
+          "role_skill": "PowerShell",
+          "via": "Bash",
+          "similarity": 0.904,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Information Security Engineers",
+          "source": "onet",
+          "role_skill": "Python",
+          "via": "Bash",
+          "similarity": 0.8074,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Information Security Engineers",
+          "source": "onet",
+          "role_skill": "Splunk",
+          "via": "Prometheus",
+          "similarity": 0.7698,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "cloud DevOps engineer",
+          "source": "esco",
+          "role_skill": "AWS IAM / Identity and Access Management (cloud security and compliance)",
+          "via": "AWS",
+          "similarity": 0.7891,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "cloud DevOps engineer",
+          "source": "esco",
+          "role_skill": "JavaScript",
+          "via": "Bash",
+          "similarity": 0.7877,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "cloud DevOps engineer",
+          "source": "esco",
+          "role_skill": "Visual Studio Code / IntelliJ IDEA / Visual Studio / … (integrated development environment software)",
+          "via": "CI/CD",
+          "similarity": 0.7535,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "cloud DevOps engineer",
+          "source": "esco",
+          "role_skill": "DevOps",
+          "via": "CI/CD",
+          "similarity": 0.8501,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "cloud DevOps engineer",
+          "source": "esco",
+          "role_skill": "plan migration to cloud",
+          "via": "Terraform",
+          "similarity": 0.7462,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "cloud DevOps engineer",
+          "source": "esco",
+          "role_skill": "design cloud architecture",
+          "via": "Terraform",
+          "similarity": 0.7785,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "cloud DevOps engineer",
+          "source": "esco",
+          "role_skill": "do cloud refactoring",
+          "via": "Terraform",
+          "similarity": 0.7538,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "cloud DevOps engineer",
+          "source": "esco",
+          "role_skill": "Amazon VPC (design cloud networks)",
+          "via": "Terraform",
+          "similarity": 0.784,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "cloud DevOps engineer",
+          "source": "esco",
+          "role_skill": "Amazon RDS / DynamoDB / Cloud SQL / … (design database in the cloud)",
+          "via": "AWS",
+          "similarity": 0.7842,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "cloud DevOps engineer",
+          "source": "esco",
+          "role_skill": "AWS IAM / Identity and Access Management / HashiCorp Vault (implement cloud security and compliance)",
+          "via": "AWS",
+          "similarity": 0.7765,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "cloud DevOps engineer",
+          "source": "esco",
+          "role_skill": "Amazon S3 / Amazon RDS / DynamoDB (manage cloud data and storage)",
+          "via": "AWS",
+          "similarity": 0.7791,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "cloud software developer",
+          "source": "esco",
+          "role_skill": "AWS IAM / Identity and Access Management (cloud security and compliance)",
+          "via": "AWS",
+          "similarity": 0.7891,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "cloud software developer",
+          "source": "esco",
+          "role_skill": "Truffle / Hardhat / Web3.js / … (decentralized application frameworks)",
+          "via": "Kubernetes",
+          "similarity": 0.7731,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "cloud software developer",
+          "source": "esco",
+          "role_skill": "JavaScript",
+          "via": "Bash",
+          "similarity": 0.7877,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "cloud software developer",
+          "source": "esco",
+          "role_skill": "Visual Studio Code / IntelliJ IDEA / Visual Studio / … (integrated development environment software)",
+          "via": "CI/CD",
+          "similarity": 0.7535,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "cloud software developer",
+          "source": "esco",
+          "role_skill": "design cloud architecture",
+          "via": "Terraform",
+          "similarity": 0.7785,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "cloud software developer",
+          "source": "esco",
+          "role_skill": "Amazon VPC (design cloud networks)",
+          "via": "Terraform",
+          "similarity": 0.784,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "cloud software developer",
+          "source": "esco",
+          "role_skill": "Amazon RDS / DynamoDB / Cloud SQL / … (design database in the cloud)",
+          "via": "AWS",
+          "similarity": 0.7842,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "cloud software developer",
+          "source": "esco",
+          "role_skill": "AWS IAM / Identity and Access Management / HashiCorp Vault (implement cloud security and compliance)",
+          "via": "AWS",
+          "similarity": 0.7765,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "cloud software developer",
+          "source": "esco",
+          "role_skill": "Amazon S3 / Amazon RDS / DynamoDB (manage cloud data and storage)",
+          "via": "AWS",
+          "similarity": 0.7791,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Computer and Information Research Scientists",
+          "source": "onet",
+          "role_skill": "C",
+          "via": "Bash",
+          "similarity": 0.7988,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Computer and Information Research Scientists",
+          "source": "onet",
+          "role_skill": "GitHub",
+          "via": "Git",
+          "similarity": 0.8407,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Computer and Information Research Scientists",
+          "source": "onet",
+          "role_skill": "Go",
+          "via": "Linux",
+          "similarity": 0.8478,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Computer and Information Research Scientists",
+          "source": "onet",
+          "role_skill": "Grafana",
+          "via": "Prometheus",
+          "similarity": 0.8246,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Computer and Information Research Scientists",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "Bash",
+          "similarity": 0.7877,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Computer and Information Research Scientists",
+          "source": "onet",
+          "role_skill": "Microsoft Azure",
+          "via": "AWS",
+          "similarity": 0.9043,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Computer and Information Research Scientists",
+          "source": "onet",
+          "role_skill": "Python",
+          "via": "Bash",
+          "similarity": 0.8074,
+          "kind": "described",
+          "known_doubtful": false
+        }
+      ],
+      "results_count": 126
+    },
+    {
+      "id": "mobile",
+      "label": "Mobile developer",
+      "control": false,
+      "skills": [
+        "Kotlin",
+        "Swift",
+        "Android",
+        "iOS",
+        "Flutter",
+        "Dart",
+        "Firebase",
+        "Git",
+        "REST APIs",
+        "React Native"
+      ],
+      "normalised": [
+        "Kotlin",
+        "Swift",
+        "Android Development",
+        "iOS Development",
+        "Flutter",
+        "Dart",
+        "Firebase",
+        "Git",
+        "REST APIs",
+        "React Native"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "mobile application developer",
+        "industrial mobile devices software developer",
+        "Software Developers",
+        "software developer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Software Quality Assurance Analysts and Testers",
+          "score": 29.2,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Software Quality Assurance Analysts and Testers"
+          ],
+          "matched": 2,
+          "related": 10,
+          "missing": 12,
+          "required": 24,
+          "acceptable": false
+        },
+        {
+          "rank": 2,
+          "title": "Blockchain Engineers",
+          "score": 25.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Blockchain Engineers"
+          ],
+          "matched": 2,
+          "related": 6,
+          "missing": 12,
+          "required": 20,
+          "acceptable": false
+        },
+        {
+          "rank": 3,
+          "title": "Software Developers",
+          "score": 23.3,
+          "sources": [
+            "esco",
+            "onet"
+          ],
+          "titles": [
+            "Software Developers",
+            "software developer"
+          ],
+          "matched": 2,
+          "related": 10,
+          "missing": 18,
+          "required": 30,
+          "acceptable": true
+        },
+        {
+          "rank": 4,
+          "title": "Computer Systems Engineers/Architects",
+          "score": 22.7,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Systems Engineers/Architects"
+          ],
+          "matched": 1,
+          "related": 8,
+          "missing": 13,
+          "required": 22,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "mobile application developer",
+          "score": 22.2,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "mobile application developer"
+          ],
+          "matched": 4,
+          "related": 0,
+          "missing": 14,
+          "required": 18,
+          "acceptable": true
+        }
+      ],
+      "first_acceptable_rank": 3,
+      "first_acceptable_score": 23.3,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Software Quality Assurance Analysts and Testers",
+        "score": 29.2
+      },
+      "esco_only_share_top10": 0.2,
+      "best_esco_only_rank": 5,
+      "related_credits_top5": [
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "AWS",
+          "via": "Firebase",
+          "similarity": 0.7475,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Jira",
+          "via": "Git",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "GitHub",
+          "via": "Git",
+          "similarity": 0.8407,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "React Native",
+          "similarity": 0.823,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Microsoft Azure",
+          "via": "Firebase",
+          "similarity": 0.7349,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "Kotlin",
+          "similarity": 0.8848,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Appium",
+          "via": "Android Development",
+          "similarity": 0.8292,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Azure DevOps",
+          "via": "Git",
+          "similarity": 0.8027,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Postman",
+          "via": "REST APIs",
+          "similarity": 0.8957,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "REST Assured",
+          "via": "REST APIs",
+          "similarity": 0.8831,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "AWS",
+          "via": "Firebase",
+          "similarity": 0.7475,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Go",
+          "via": "Dart",
+          "similarity": 0.839,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "React Native",
+          "similarity": 0.823,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Microsoft Azure",
+          "via": "Firebase",
+          "similarity": 0.7349,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "Kotlin",
+          "similarity": 0.8848,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "React",
+          "via": "React Native",
+          "similarity": 0.8738,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "AWS",
+          "via": "Firebase",
+          "similarity": 0.7475,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Jira",
+          "via": "Git",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "GitHub",
+          "via": "Git",
+          "similarity": 0.8407,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Go",
+          "via": "Dart",
+          "similarity": 0.839,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Angular",
+          "via": "Dart",
+          "similarity": 0.8366,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "React Native",
+          "similarity": 0.823,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Microsoft Azure",
+          "via": "Firebase",
+          "similarity": 0.7349,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "Kotlin",
+          "similarity": 0.8848,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "React",
+          "via": "React Native",
+          "similarity": 0.8738,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Software Developers",
+          "source": "onet",
+          "role_skill": "Spring Boot",
+          "via": "Kotlin",
+          "similarity": 0.7935,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "AWS",
+          "via": "Firebase",
+          "similarity": 0.7475,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Ansible",
+          "via": "Git",
+          "similarity": 0.7563,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Jira",
+          "via": "Git",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "GitHub",
+          "via": "Git",
+          "similarity": 0.8407,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Go",
+          "via": "Dart",
+          "similarity": 0.839,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "React Native",
+          "similarity": 0.823,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Microsoft Azure",
+          "via": "Firebase",
+          "similarity": 0.7349,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Computer Systems Engineers/Architects",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "Kotlin",
+          "similarity": 0.8848,
+          "kind": "described",
+          "known_doubtful": false
+        }
+      ],
+      "results_count": 126
+    },
+    {
+      "id": "uiux",
+      "label": "UI/UX designer",
+      "control": false,
+      "skills": [
+        "Figma",
+        "Adobe XD",
+        "Sketch",
+        "User Research",
+        "Wireframing",
+        "Prototyping",
+        "Usability Testing",
+        "HTML",
+        "CSS",
+        "Adobe Photoshop"
+      ],
+      "normalised": [
+        "Figma",
+        "Adobe XD",
+        "Sketch",
+        "User Research",
+        "Wireframing",
+        "Prototyping",
+        "Usability Testing",
+        "HTML",
+        "CSS",
+        "Adobe Photoshop"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Web and Digital Interface Designers",
+        "user interface designer",
+        "user experience analyst",
+        "web designer"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Web and Digital Interface Designers",
+          "score": 58.3,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Web and Digital Interface Designers"
+          ],
+          "matched": 5,
+          "related": 4,
+          "missing": 3,
+          "required": 12,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "web designer",
+          "score": 55.0,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "web designer"
+          ],
+          "matched": 3,
+          "related": 5,
+          "missing": 2,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "user interface designer",
+          "score": 53.7,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "user interface designer"
+          ],
+          "matched": 11,
+          "related": 7,
+          "missing": 9,
+          "required": 27,
+          "acceptable": true
+        },
+        {
+          "rank": 4,
+          "title": "user interface developer",
+          "score": 47.1,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "user interface developer"
+          ],
+          "matched": 6,
+          "related": 4,
+          "missing": 7,
+          "required": 17,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "user experience analyst",
+          "score": 41.7,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "user experience analyst"
+          ],
+          "matched": 7,
+          "related": 1,
+          "missing": 10,
+          "required": 18,
+          "acceptable": true
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 58.3,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Web and Digital Interface Designers",
+        "score": 58.3
+      },
+      "esco_only_share_top10": 0.8,
+      "best_esco_only_rank": 2,
+      "related_credits_top5": [
+        {
+          "rank": 1,
+          "career": "Web and Digital Interface Designers",
+          "source": "onet",
+          "role_skill": "Adobe Creative Cloud",
+          "via": "Adobe Photoshop",
+          "similarity": 0.8893,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Web and Digital Interface Designers",
+          "source": "onet",
+          "role_skill": "Adobe Illustrator",
+          "via": "Adobe Photoshop",
+          "similarity": 0.8884,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Web and Digital Interface Designers",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "HTML",
+          "similarity": 0.7889,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Web and Digital Interface Designers",
+          "source": "onet",
+          "role_skill": "React",
+          "via": "Adobe XD",
+          "similarity": 0.8257,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "web designer",
+          "source": "esco",
+          "role_skill": "JavaScript",
+          "via": "HTML",
+          "similarity": 0.7889,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "web designer",
+          "source": "esco",
+          "role_skill": "Content Management Systems",
+          "via": "HTML",
+          "similarity": 0.8014,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "web designer",
+          "source": "esco",
+          "role_skill": "JavaScript / TypeScript / PHP / … (web programming)",
+          "via": "HTML",
+          "similarity": 0.7881,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "web designer",
+          "source": "esco",
+          "role_skill": "collaborate with designers",
+          "via": "Figma",
+          "similarity": 0.7912,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "web designer",
+          "source": "esco",
+          "role_skill": "compose description for web elements",
+          "via": "HTML",
+          "similarity": 0.7944,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "user interface designer",
+          "source": "esco",
+          "role_skill": "software UI design patterns",
+          "via": "Sketch",
+          "similarity": 0.7783,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "user interface designer",
+          "source": "esco",
+          "role_skill": "JavaScript / TypeScript / PHP / … (web programming)",
+          "via": "HTML",
+          "similarity": 0.7881,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "user interface designer",
+          "source": "esco",
+          "role_skill": "Human-Computer Interaction",
+          "via": "User Research",
+          "similarity": 0.8247,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "user interface designer",
+          "source": "esco",
+          "role_skill": "design process",
+          "via": "Prototyping",
+          "similarity": 0.7382,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "user interface designer",
+          "source": "esco",
+          "role_skill": "Requirements Gathering (interact with users to gather requirements)",
+          "via": "Usability Testing",
+          "similarity": 0.762,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "user interface designer",
+          "source": "esco",
+          "role_skill": "Accessibility Testing / Web Accessibility (test system accessibility for users with special needs)",
+          "via": "Usability Testing",
+          "similarity": 0.7538,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "user interface designer",
+          "source": "esco",
+          "role_skill": "draw design sketches",
+          "via": "Prototyping",
+          "similarity": 0.7385,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "user interface developer",
+          "source": "esco",
+          "role_skill": "software UI design patterns",
+          "via": "Sketch",
+          "similarity": 0.7783,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "user interface developer",
+          "source": "esco",
+          "role_skill": "JavaScript / TypeScript / PHP / … (web programming)",
+          "via": "HTML",
+          "similarity": 0.7881,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "user interface developer",
+          "source": "esco",
+          "role_skill": "develop software prototype",
+          "via": "Prototyping",
+          "similarity": 0.7962,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "user interface developer",
+          "source": "esco",
+          "role_skill": "draw design sketches",
+          "via": "Prototyping",
+          "similarity": 0.7385,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "user experience analyst",
+          "source": "esco",
+          "role_skill": "Human-Computer Interaction",
+          "via": "User Research",
+          "similarity": 0.8247,
+          "kind": "described",
+          "known_doubtful": false
+        }
+      ],
+      "results_count": 126
+    },
+    {
+      "id": "qa",
+      "label": "QA tester",
+      "control": false,
+      "skills": [
+        "Selenium",
+        "Test Automation",
+        "Manual Testing",
+        "JIRA",
+        "Postman",
+        "Cypress",
+        "Python",
+        "SQL",
+        "API Testing",
+        "Regression Testing"
+      ],
+      "normalised": [
+        "Selenium",
+        "Test Automation",
+        "Manual Testing",
+        "Jira",
+        "Postman",
+        "Cypress",
+        "Python",
+        "SQL",
+        "API Testing",
+        "Regression Testing"
+      ],
+      "undescribed_skills": [],
+      "acceptable": [
+        "Software Quality Assurance Analysts and Testers",
+        "software tester",
+        "ICT test analyst",
+        "ICT system tester"
+      ],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Software Quality Assurance Analysts and Testers",
+          "score": 41.7,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Software Quality Assurance Analysts and Testers"
+          ],
+          "matched": 5,
+          "related": 10,
+          "missing": 9,
+          "required": 24,
+          "acceptable": true
+        },
+        {
+          "rank": 2,
+          "title": "ICT test analyst",
+          "score": 40.0,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "ICT test analyst"
+          ],
+          "matched": 2,
+          "related": 4,
+          "missing": 4,
+          "required": 10,
+          "acceptable": true
+        },
+        {
+          "rank": 3,
+          "title": "Computer Systems Analysts",
+          "score": 35.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Systems Analysts"
+          ],
+          "matched": 3,
+          "related": 1,
+          "missing": 6,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "ICT integration tester",
+          "score": 31.8,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "ICT integration tester"
+          ],
+          "matched": 2,
+          "related": 3,
+          "missing": 6,
+          "required": 11,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Blockchain Engineers",
+          "score": 30.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Blockchain Engineers"
+          ],
+          "matched": 2,
+          "related": 8,
+          "missing": 10,
+          "required": 20,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": 1,
+      "first_acceptable_score": 41.7,
+      "top3_hit": true,
+      "top5_hit": true,
+      "best": {
+        "title": "Software Quality Assurance Analysts and Testers",
+        "score": 41.7
+      },
+      "esco_only_share_top10": 0.5,
+      "best_esco_only_rank": 2,
+      "related_credits_top5": [
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Git",
+          "via": "Jira",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "Python",
+          "similarity": 0.8512,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "Python",
+          "similarity": 0.8066,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "JMeter",
+          "via": "API Testing",
+          "similarity": 0.8576,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Appium",
+          "via": "Selenium",
+          "similarity": 0.8338,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Azure DevOps",
+          "via": "Jira",
+          "similarity": 0.8081,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "Playwright",
+          "via": "Selenium",
+          "similarity": 0.9006,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "REST Assured",
+          "via": "Postman",
+          "similarity": 0.902,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "REST APIs",
+          "via": "Postman",
+          "similarity": 0.8957,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Software Quality Assurance Analysts and Testers",
+          "source": "onet",
+          "role_skill": "TestNG",
+          "via": "Cypress",
+          "similarity": 0.8453,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "ICT test analyst",
+          "source": "esco",
+          "role_skill": "Unit Testing / Integration Testing / Acceptance Testing / … (levels of software testing)",
+          "via": "Manual Testing",
+          "similarity": 0.7797,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "ICT test analyst",
+          "source": "esco",
+          "role_skill": "ISTQB (plan software testing)",
+          "via": "Test Automation",
+          "similarity": 0.7702,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "ICT test analyst",
+          "source": "esco",
+          "role_skill": "TestRail (provide software testing documentation)",
+          "via": "Test Automation",
+          "similarity": 0.8024,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "ICT test analyst",
+          "source": "esco",
+          "role_skill": "Agile project management",
+          "via": "Jira",
+          "similarity": 0.8348,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "Computer Systems Analysts",
+          "source": "onet",
+          "role_skill": "ServiceNow",
+          "via": "Jira",
+          "similarity": 0.7791,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "ICT integration tester",
+          "source": "esco",
+          "role_skill": "Unit Testing / Integration Testing / Acceptance Testing / … (levels of software testing)",
+          "via": "Manual Testing",
+          "similarity": 0.7797,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "ICT integration tester",
+          "source": "esco",
+          "role_skill": "TestRail (provide software testing documentation)",
+          "via": "Test Automation",
+          "similarity": 0.8024,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "ICT integration tester",
+          "source": "esco",
+          "role_skill": "ISTQB (manage system testing)",
+          "via": "Test Automation",
+          "similarity": 0.7926,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Git",
+          "via": "Jira",
+          "similarity": 0.8017,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Go",
+          "via": "Python",
+          "similarity": 0.8098,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "JavaScript",
+          "via": "Python",
+          "similarity": 0.8512,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Node.js",
+          "via": "Cypress",
+          "similarity": 0.8022,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "Java",
+          "via": "Python",
+          "similarity": 0.8066,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "PostgreSQL",
+          "via": "SQL",
+          "similarity": 0.929,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "React",
+          "via": "Selenium",
+          "similarity": 0.832,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Blockchain Engineers",
+          "source": "onet",
+          "role_skill": "REST APIs",
+          "via": "Postman",
+          "similarity": 0.8957,
+          "kind": "described",
+          "known_doubtful": false
+        }
+      ],
+      "results_count": 126
+    },
+    {
+      "id": "chef",
+      "label": "Chef (non-IT control)",
+      "control": true,
+      "skills": [
+        "Cooking",
+        "Customer Service",
+        "Inventory Management",
+        "Food Safety",
+        "Menu Planning",
+        "Team Leadership",
+        "Budgeting",
+        "Time Management"
+      ],
+      "normalised": [
+        "Cooking",
+        "Customer Service",
+        "Inventory Management",
+        "Food Safety",
+        "Menu Planning",
+        "Team Leadership",
+        "Budgeting",
+        "Time Management"
+      ],
+      "undescribed_skills": [
+        "Menu Planning"
+      ],
+      "acceptable": [],
+      "top5": [
+        {
+          "rank": 1,
+          "title": "Computer Systems Analysts",
+          "score": 15.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Computer Systems Analysts"
+          ],
+          "matched": 0,
+          "related": 3,
+          "missing": 7,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 2,
+          "title": "Document Management Specialists",
+          "score": 15.0,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Document Management Specialists"
+          ],
+          "matched": 0,
+          "related": 3,
+          "missing": 7,
+          "required": 10,
+          "acceptable": false
+        },
+        {
+          "rank": 3,
+          "title": "ICT help desk agent",
+          "score": 15.0,
+          "sources": [
+            "esco"
+          ],
+          "titles": [
+            "ICT help desk agent"
+          ],
+          "matched": 0,
+          "related": 6,
+          "missing": 14,
+          "required": 20,
+          "acceptable": false
+        },
+        {
+          "rank": 4,
+          "title": "Business Intelligence Analysts",
+          "score": 14.3,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Business Intelligence Analysts"
+          ],
+          "matched": 0,
+          "related": 4,
+          "missing": 10,
+          "required": 14,
+          "acceptable": false
+        },
+        {
+          "rank": 5,
+          "title": "Health Informatics Specialists",
+          "score": 13.6,
+          "sources": [
+            "onet"
+          ],
+          "titles": [
+            "Health Informatics Specialists"
+          ],
+          "matched": 0,
+          "related": 3,
+          "missing": 8,
+          "required": 11,
+          "acceptable": false
+        }
+      ],
+      "first_acceptable_rank": null,
+      "first_acceptable_score": null,
+      "top3_hit": false,
+      "top5_hit": false,
+      "best": {
+        "title": "Computer Systems Analysts",
+        "score": 15.0
+      },
+      "esco_only_share_top10": 0.4,
+      "best_esco_only_rank": 3,
+      "related_credits_top5": [
+        {
+          "rank": 1,
+          "career": "Computer Systems Analysts",
+          "source": "onet",
+          "role_skill": "Excel",
+          "via": "Inventory Management",
+          "similarity": 0.7817,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Computer Systems Analysts",
+          "source": "onet",
+          "role_skill": "SharePoint",
+          "via": "Team Leadership",
+          "similarity": 0.7341,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 1,
+          "career": "Computer Systems Analysts",
+          "source": "onet",
+          "role_skill": "SAP",
+          "via": "Inventory Management",
+          "similarity": 0.7525,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Document Management Specialists",
+          "source": "onet",
+          "role_skill": "Excel",
+          "via": "Inventory Management",
+          "similarity": 0.7817,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Document Management Specialists",
+          "source": "onet",
+          "role_skill": "SharePoint",
+          "via": "Team Leadership",
+          "similarity": 0.7341,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 2,
+          "career": "Document Management Specialists",
+          "source": "onet",
+          "role_skill": "Microsoft Word",
+          "via": "Cooking",
+          "similarity": 0.7486,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "ICT help desk agent",
+          "source": "esco",
+          "role_skill": "guarantee customer satisfaction",
+          "via": "Customer Service",
+          "similarity": 0.7648,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "ICT help desk agent",
+          "source": "esco",
+          "role_skill": "communicate with customers",
+          "via": "Customer Service",
+          "similarity": 0.8221,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "ICT help desk agent",
+          "source": "esco",
+          "role_skill": "manage schedule of tasks",
+          "via": "Time Management",
+          "similarity": 0.7781,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "ICT help desk agent",
+          "source": "esco",
+          "role_skill": "assist customers",
+          "via": "Customer Service",
+          "similarity": 0.8283,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "ICT help desk agent",
+          "source": "esco",
+          "role_skill": "identify customer's needs",
+          "via": "Customer Service",
+          "similarity": 0.7943,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 3,
+          "career": "ICT help desk agent",
+          "source": "esco",
+          "role_skill": "provide customer follow-up services",
+          "via": "Customer Service",
+          "similarity": 0.7882,
+          "kind": "mixed",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Business Intelligence Analysts",
+          "source": "onet",
+          "role_skill": "Excel",
+          "via": "Inventory Management",
+          "similarity": 0.7817,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Business Intelligence Analysts",
+          "source": "onet",
+          "role_skill": "Salesforce",
+          "via": "Customer Service",
+          "similarity": 0.7703,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Business Intelligence Analysts",
+          "source": "onet",
+          "role_skill": "SAP",
+          "via": "Inventory Management",
+          "similarity": 0.7525,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 4,
+          "career": "Business Intelligence Analysts",
+          "source": "onet",
+          "role_skill": "SAS",
+          "via": "Inventory Management",
+          "similarity": 0.7684,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Health Informatics Specialists",
+          "source": "onet",
+          "role_skill": "Excel",
+          "via": "Inventory Management",
+          "similarity": 0.7817,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Health Informatics Specialists",
+          "source": "onet",
+          "role_skill": "Microsoft Word",
+          "via": "Cooking",
+          "similarity": 0.7486,
+          "kind": "described",
+          "known_doubtful": false
+        },
+        {
+          "rank": 5,
+          "career": "Health Informatics Specialists",
+          "source": "onet",
+          "role_skill": "SAS",
+          "via": "Inventory Management",
+          "similarity": 0.7684,
+          "kind": "described",
+          "known_doubtful": false
+        }
+      ],
+      "results_count": 126
+    }
+  ],
+  "summary": {
+    "top3_hits": 7,
+    "top5_hits": 7,
+    "it_profiles": 7,
+    "chef_best": {
+      "title": "Computer Systems Analysts",
+      "score": 15.0
+    },
+    "pass_mark": {
+      "top3_hits_min": 6,
+      "top5_hits_min": 7,
+      "it_profiles": 7,
+      "chef_best_below": 20
+    },
+    "passed": true
+  },
+  "background_check": {
+    "chef": 3.2,
+    "web": 12.9,
+    "ratio": 0.248,
+    "passed": true,
+    "exit_code": 0
+  }
+}

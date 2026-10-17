@@ -14,7 +14,9 @@ ESCO bias (share of ESCO-only roles in each top 10, best ESCO-only rank); every 
 the top 5 with its similarity, flagging known doubtful pairs; and the pass mark from profiles.json.
 
 Usage (repo root):
-  AIServices/backend/venv/Scripts/python AIServices/eval/career_matching/run_eval.py [--out DIR]
+  AIServices/backend/venv/Scripts/python AIServices/eval/career_matching/run_eval.py [--out DIR] [--profiles FILE]
+--profiles: another profile file in the same format (e.g. profiles_new.json, Module 5.1); a file without a chef
+control or pass mark reports the hit rates only.
 """
 
 import argparse
@@ -141,16 +143,16 @@ async def evaluate(profiles: dict) -> dict:
     client.close()
 
     it = [p for p in out["profiles"] if not p["control"]]
-    chef = next(p for p in out["profiles"] if p["control"])
-    mark = profiles["pass_mark"]
+    chef = next((p for p in out["profiles"] if p["control"]), None)
+    mark = profiles.get("pass_mark")
     out["summary"] = {
         "top3_hits": sum(p["top3_hit"] for p in it), "top5_hits": sum(p["top5_hit"] for p in it), "it_profiles": len(it),
-        "chef_best": chef["best"],
+        "chef_best": chef["best"] if chef else None,
         "pass_mark": mark,
     }
     s = out["summary"]
-    s["passed"] = (s["top3_hits"] >= mark["top3_hits_min"] and s["top5_hits"] >= mark["top5_hits_min"]
-                   and chef["best"]["score"] < mark["chef_best_below"])
+    s["passed"] = (bool(mark and chef) and s["top3_hits"] >= mark["top3_hits_min"] and s["top5_hits"] >= mark["top5_hits_min"]
+                   and chef["best"]["score"] < mark["chef_best_below"]) if mark and chef else None
     return out
 
 
@@ -161,12 +163,13 @@ def report(out: dict, background: dict) -> str:
              f"index state `{(out['index_state_hash'] or '')[:12]}` · read-only run (no cache writes).", "",
              "Expectations (`profiles.json`) were committed before this run.", "",
              "## Result", "",
-             f"- Top-3 hit rate: **{s['top3_hits']} / {s['it_profiles']}** (pass mark ≥ {s['pass_mark']['top3_hits_min']})",
-             f"- Top-5 hit rate: **{s['top5_hits']} / {s['it_profiles']}** (pass mark ≥ {s['pass_mark']['top5_hits_min']})",
-             f"- Chef control: best **{s['chef_best']['score']} %** ({s['chef_best']['title']}) (pass mark < {s['pass_mark']['chef_best_below']} %)",
+             f"- Top-3 hit rate: **{s['top3_hits']} / {s['it_profiles']}**" + (f" (pass mark ≥ {s['pass_mark']['top3_hits_min']})" if s["pass_mark"] else ""),
+             f"- Top-5 hit rate: **{s['top5_hits']} / {s['it_profiles']}**" + (f" (pass mark ≥ {s['pass_mark']['top5_hits_min']})" if s["pass_mark"] else ""),
+             (f"- Chef control: best **{s['chef_best']['score']} %** ({s['chef_best']['title']}) (pass mark < {s['pass_mark']['chef_best_below']} %)"
+              if s["chef_best"] else "- Chef control: not in this profile file"),
              f"- Background credit check: chef {background.get('chef')} % vs web {background.get('web')} % — "
              f"{'PASS' if background.get('passed') else 'FAIL'}",
-             f"- **Pass mark {'met' if s['passed'] else 'NOT met'}.**", "",
+             f"- **Pass mark {'met' if s['passed'] else 'NOT met'}.**" if s["passed"] is not None else "- No pass mark for this profile file.", "",
              "## Per profile", ""]
     for p in out["profiles"]:
         lines += [f"### {p['label']}", "",
@@ -208,8 +211,9 @@ def run_background_check() -> dict:
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--out", default=str(HERE / "results"), help="output folder (results.json, report.md)")
+    parser.add_argument("--profiles", default=str(HERE / "profiles.json"), help="profile file (default profiles.json)")
     args = parser.parse_args()
-    profiles = json.loads((HERE / "profiles.json").read_text(encoding="utf8"))
+    profiles = json.loads(Path(args.profiles).read_text(encoding="utf8"))
     out = asyncio.run(evaluate(profiles))
     background = run_background_check()
     out["background_check"] = background
@@ -218,8 +222,11 @@ def main():
     (folder / "results.json").write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf8")
     (folder / "report.md").write_text(report(out, background), encoding="utf8")
     s = out["summary"]
-    print(f"top-3 {s['top3_hits']}/{s['it_profiles']} · top-5 {s['top5_hits']}/{s['it_profiles']} · chef {s['chef_best']['score']}% "
-          f"· background {'PASS' if background.get('passed') else 'FAIL'} · pass mark {'MET' if s['passed'] else 'NOT MET'}")
+    sys.stdout.reconfigure(encoding="utf-8")
+    chef = f"{s['chef_best']['score']}%" if s["chef_best"] else "n/a"
+    mark = "n/a" if s["passed"] is None else ("MET" if s["passed"] else "NOT MET")
+    print(f"top-3 {s['top3_hits']}/{s['it_profiles']} · top-5 {s['top5_hits']}/{s['it_profiles']} · chef {chef} "
+          f"· background {'PASS' if background.get('passed') else 'FAIL'} · pass mark {mark}")
 
 
 if __name__ == "__main__":

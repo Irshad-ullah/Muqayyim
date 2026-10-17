@@ -929,3 +929,69 @@ retry list first recorded axios' generic `ERR_BAD_RESPONSE` instead of the HTTP 
 **Follow-up check (2026-10-17, tester: a project team member):** after the education entry was given an end date
 (2027-06, so Core sends `in_progress` with `expected_year` 2027), the generated summary described the degree as in
 progress and mentioned the expected graduation year — the status fix works as intended. Exact output not recorded.
+
+## Module 5.1 — role-aware ESCO phrase mapping, adopted through the import pipeline (recorded)
+
+**Date:** 2026-10-17 · commits: "Module 5.1: …" (see `git log`) · note: `docs/changes/11-career-matching.md` (Module 5.1)
+
+**Method, recorded honestly:**
+- **Mapping.** AI-assisted (the assistant), role-aware and conservative. 846 of 2,160 (ESCO role, essential phrase)
+  pairs are mapped, with 3.0 skills each on average.
+- **Spot check.** A project team member checked 40 random mapped entries and found all **40 correct** (Wilson 95 % lower
+  bound ≈ 91 %).
+- **Not blind.** The 6 new profiles were written by the same assistant just before the mapping.
+- **Small sample.**
+- **Trade-off.** Three profiles moved from #1 to #2 (web developer, data scientist, game developer); they are still
+  top-3 hits.
+
+**Automated tests** (run 2026-10-17 16:46, all PASS):
+- AI **598 passed, 1 skipped** (+11);
+- AI slow 2 + 2 xfailed;
+- Core **291**;
+- Gateway **76**;
+- frontend `node --test` **40** (+1), Vitest **106** (+4).
+
+New test files and tests:
+- AI `tests/test_esco_role_map.py` (11):
+  - the transform: a mapped phrase becomes one group with a label, alternatives, phrase, URI and `source`; unmapped
+    phrases are unchanged; no split; every ESCO skill keeps its URI; preview stats;
+  - any-of credit 1.0, with the phrase itself still matched, the related fallback 0.5, and the required count and
+    explanation;
+  - the top-up counts a group once;
+  - the validator: every rule;
+  - an invalid map fails the import;
+  - the real map is valid (build check via `scripts/check_esco_role_map.py`);
+  - URI drift after a re-import: preview counts, drop flag, stale entries, and the validator error;
+  - publishing applies the map and never edits it;
+  - an unexpected drop fails the post-check and rolls back;
+  - snapshot / restore include the map;
+  - the cache key follows the map hash.
+- FE `careerRules.test.js` (+1): group notes.
+- FE `CareerMatchesPage.spec.jsx` (+1): label, "Held via Kotlin (shows: …)", missing alternatives.
+- FE `ProfessionsTab.spec.jsx` (+1): adjusted requirements with the original phrase.
+- FE `PreviewPublishTab.spec.jsx` (+2): role-map counts, with and without a drop.
+
+**Manual steps on the real data (2026-10-17):**
+- **Backup first.** `~/.muqayyim/taxonomy/manual-backup-2026-10-17-m51-adopt`: mongodump of ai_db plus copies of the
+  data and index files.
+- **Map conversion.** The sandbox map was converted to the URI-keyed `app/data/esco_role_phrase_skill_map.json`
+  (`eval/esco_phrase_mapping/convert_to_uri_map.py`): 2,160 pairs became 2,160 URI entries, 846 of them mapped. The
+  validator returned OK against the raw ESCO data.
+- **ESCO re-import** through the normal pipeline (`scripts/import_esco.py`, actor "module-5.1-adoption"):
+  - status published; snapshot `20261017T114216-52907671` taken before the swap;
+  - diff: 0 added / removed / changed; active professions 130 → 130; 100 ESCO documents updated (groups and skill URIs);
+  - role map: live 0 → staged 846, 1,314 reviewed and left unmapped, 0 not in the map, 0 stale;
+  - post-publish: groups 846 = 846 expected, state hash OK, background chef 3.2 % vs web 12.9 % PASS.
+- **Official evaluation** (`eval/career_matching/run_eval.py`, production code on the re-imported data):
+  - old 8 (official): top-3 **7/7**, top-5 **7/7**, chef **15.0 %**, background PASS (Module 5: 6/7, 6/7, 15.0 %);
+  - new 6 (not blind): top-3 3/6, top-5 **6/6**;
+  - all 14 profiles are identical to the sandbox run: first-acceptable rank and score, top 5, ESCO-only share.
+  - Results are in `results/module5.1_old8/` and `results/module5.1_new6/`; the Module 5 results are kept.
+
+**Problems found by testing (fixed before commit):**
+- `read_map`'s default argument captured the map path at import, so the redirected test map was ignored and the
+  preview applied no groups. Found by the publish tests; the path is now read at call time.
+- The missing-group explanation read "Kotlin, Java and Python and 1 more". Found by a unit test; it now reads
+  "one of Kotlin, Java, Python or Swift".
+- `run_eval.py` with relative `--out` / `--profiles` paths wrote under `AIServices/backend/` (the script changes
+  directory). The stray folder was deleted and the run repeated with absolute paths.

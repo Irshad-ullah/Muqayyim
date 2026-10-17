@@ -64,7 +64,7 @@ properties with no single SRS id.
 | Credit rule (same key 1.0; described ≥ 0.73 + mutual 0.5; mixed ≥ 0.73 0.5) | documented in the frozen configuration; pair kinds tested in `test_professions.py::search_related` | unit | pass (rule itself not yet used by matching) |
 | Background credit rate (unrelated profile credited ≤ 5 % and ≤ 0.5 × related) | AI `test_background_credit_rate.py` (slow); `AIServices/eval/background_credit_rate.py` | evaluation (real data) | 2026-10-15: chef 3.0 % vs web 12.2 % — pass |
 | Role-skill description coverage | `AIServices/eval/role_skill_coverage.py` | evaluation (real data) | 2026-10-15: distinct 20.2 %, occurrences 38.2 % |
-| Module 5 career matching: 8 sanity profiles (expectations committed first), top-3 / top-5 hit rate, chef control | `AIServices/eval/career_matching/run_eval.py`, `profiles.json`, `results/report.md` | evaluation (real data) | 2026-10-16: top-3 6/7 (pass), top-5 6/7 (fail), chef 15.0 % (pass) — pass mark not fully met; **accepted by team decision** (all three alternatives the same or worse) |
+| Module 5 career matching: 8 sanity profiles (expectations committed first), top-3 / top-5 hit rate, chef control | `AIServices/eval/career_matching/run_eval.py`, `profiles.json`, `results/report.md` | evaluation (real data) | 2026-10-16: top-3 6/7 (pass), top-5 6/7 (fail), chef 15.0 % (pass) — pass mark not fully met; **accepted by team decision** (all three alternatives the same or worse); superseded by Module 5.1 below (2026-10-17: 7/7, 7/7, 15.0 %) |
 | Module 5 ESCO-bias options (a) knowledge skills only, (b) phrases → tools, (c) full mixed credit ≥ 0.80 / 0.85 — measured, none adopted | `AIServices/eval/career_matching/options.py`, `results/options.json` | evaluation (real data) | 2026-10-16: none reaches top-5 7/7; (c) 0.80 lifts the chef to 20.0 % |
 | FR7.2 only IT / related roles: ISCO 3521 excluded (ESCO re-import through the 9c pipeline) | 9c CLI dry run + publish on real data | manual | 2026-10-16: exactly 13 removed, 130 active, background check passed |
 | FR7.1 the user's latest skills: merged profile skills, only when embeddings are done; re-normalised through today's aliases | AI `test_matching.py::test_user_skills_are_normalised_through_todays_aliases`, `::test_pending_embeddings_and_missing_profiles` | integration | pass |
@@ -89,6 +89,25 @@ properties with no single SRS id.
 | Accessibility: keyboard list navigation, labelled controls, no nested buttons, status not by colour alone | FE `CareerMatchesPage.spec.jsx` (keyboard, ESCO row, skill rows) | component | pass |
 | Career Matching page, browser walkthrough | Module 5 Part 3 checklist (TEST_LOG) | manual | 2026-10-16: steps 1–12 passed; optional step 13 not run |
 | Deactivation reason: "not in dataset" vs "excluded by role filter" | AI `test_professions.py::test_publish_deactivates_…`, `::test_a_profession_no_longer_in_the_dataset_…`, `::test_isco_filter_reason_corrects_…` | integration | pass |
+
+### Module 5.1 — role-aware ESCO phrase mapping (adopted 2026-10-17)
+
+| Requirement | Tests | Type | Status |
+|---|---|---|---|
+| Map validator (build check): skills in the skill list, ≤ 8 per pair, no duplicates, occupation / skill URIs and relation in the active ESCO data | AI `test_esco_role_map.py::test_the_validator_reports_every_rule`, `::test_the_real_map_is_valid_build_check` (runs `scripts/check_esco_role_map.py`), `::test_an_invalid_map_fails_the_import` | unit + data check | pass (real map: 2,160 entries, 846 mapped, valid) |
+| Import transform: a mapped phrase becomes ONE requirement group (label, alternatives, phrase, URI, type, source role_map); unmapped phrases unchanged; no split | AI `test_esco_role_map.py::test_a_mapped_phrase_becomes_one_group_and_unmapped_phrases_stay` | unit | pass |
+| Any-of credit (1.0 via any alternative); phrase itself still matched; related fallback 0.5 unchanged; required count unchanged; explanation names the skill and the phrase | AI `test_esco_role_map.py::test_any_one_alternative_satisfies_the_group` | unit | pass |
+| Top-up to 10 counts a group as one requirement | AI `test_esco_role_map.py::test_the_top_up_counts_a_group_as_one_requirement` | unit | pass |
+| URI drift after a re-import: preview shows adjusted live → staged, drop flag, essential pairs not in the map, stale entries; validator reports the drifted URI | AI `test_esco_role_map.py::test_uri_drift_after_a_reimport` | integration | pass |
+| Publishing applies the map and never edits it; post-check figure | AI `test_esco_role_map.py::test_publishing_applies_the_map_and_never_edits_it` | integration | pass |
+| Post-check fails (rolled back) when the adjusted count drops unexpectedly | AI `test_esco_role_map.py::test_an_unexpected_drop_fails_the_post_check_and_rolls_back` | integration | pass |
+| Snapshot / restore include the map (restored and reloaded; post-restore count checked) | AI `test_esco_role_map.py::test_snapshot_and_restore_include_the_map` | integration | pass |
+| Career-match cache key includes the map hash (old results refresh) | AI `test_esco_role_map.py::test_the_career_match_cache_key_follows_the_map` | unit | pass |
+| UI: named-skill label; "Held via Kotlin (shows: …)"; missing group lists alternatives | FE `careerRules.test.js` (groups); `CareerMatchesPage.spec.jsx` (ESCO requirement groups) | unit + component | pass |
+| Admin: adjusted requirements with the original phrase; preview role-map counts and drop flag | FE `ProfessionsTab.spec.jsx` (Module 5.1); `PreviewPublishTab.spec.jsx` (ESCO role map) | component | pass |
+| ESCO re-import through the normal pipeline (snapshot first, same 130 roles) | Module 5.1 manual step (TEST_LOG) | manual (real data) | 2026-10-17: published, 846 adjusted, post-check 846 = 846, background PASS |
+| Official evaluation: old 8 (official) and new 6 (not blind), plus background check | `eval/career_matching/run_eval.py` (`--profiles`), `results/module5.1_{old8,new6}/` | evaluation (real data) | 2026-10-17: old top-3 7/7, top-5 7/7, chef 15.0 %; new top-5 6/6; background 3.2 % vs 12.9 % PASS; all 14 profiles identical to the sandbox |
+| Mapping precision (user spot check of 40 random mapped entries) | `eval/esco_phrase_mapping/spot_check.csv` | manual | 40 / 40 (Wilson 95 % lower bound ≈ 91 %) |
 
 ## Module 10 — admin
 

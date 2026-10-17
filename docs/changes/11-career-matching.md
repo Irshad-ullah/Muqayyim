@@ -160,7 +160,7 @@ None of them lifts an acceptable DevOps role into the top 5.
 
 1. **No O\*NET DevOps (or mobile) occupation.** DevOps profiles are matched to neighbouring O\*NET roles (systems
    engineers / architects, network administrators) and to ESCO roles only.
-2. **ESCO DevOps and mobile role lists are generic phrases without tools.** ESCO *cloud DevOps engineer* is required
+2. **ESCO DevOps and mobile role lists are generic phrases without tools** (addressed by Module 5.1 below). ESCO *cloud DevOps engineer* is required
    mostly to "design cloud architecture", "deploy cloud resource" and similar phrases (at most 0.5 each); ESCO *mobile
    application developer* lists generic programming phrases and no mobile tools (5.6 % for a mobile profile). More
    generally about 95 % of ESCO essential skills are label-only phrases, so ESCO roles score lower than comparable O\*NET
@@ -185,6 +185,121 @@ None of them lifts an acceptable DevOps role into the top 5.
   different tools and languages; and for mapping ESCO ability phrases to the tools that demonstrate them (sandboxed
   experiment: Module 5.1, `AIServices/eval/esco_phrase_mapping/`).
 - **Re-evaluation with real users** (their own profiles and their judgement of the top results).
+
+## Module 5.1 — role-aware ESCO phrase mapping (adopted 2026-10-17)
+
+**Problem (limitation 2 above).** ESCO roles require ability phrases ("computer programming", "deploy cloud resource")
+that users never list as such. Without a curated description, such a phrase could earn at most a related credit (0.5).
+
+**Method.** The method is AI-assisted, role-aware and conservative.
+- **Scope.** Every pair of an active ESCO role and one of its essential phrases without a curated description: 2,160
+  pairs over 100 roles.
+- **The mapping.** The assistant (Claude) listed 0–8 skills from the existing skill list whose use *clearly
+  demonstrates* the ability in that role. It worked from the phrase, the role title and the skill list only, and opened
+  no evaluation profile file.
+  - **Role-aware.** For example, "computer programming" maps to Kotlin / Swift / Java / Dart for mobile roles and to
+    Python / C++ for computer vision.
+  - **Left empty:** generic, soft, legal, managerial, artistic and knowledge-only phrases, and anything doubtful.
+- **Result.** 846 pairs (39 %) are mapped, with 3.0 skills on average.
+- **Spot check.** The user checked 40 random mapped entries and found all **40 correct**. At 95 % confidence the
+  precision is at least about 91 % (Wilson interval).
+- **Before adoption.** Earlier sandbox variants were set aside: phrase → single skill via a reranker, and phrase →
+  O\*NET category. The sandbox history is in `AIServices/eval/esco_phrase_mapping/`.
+
+**How it is applied: a transform in the ESCO import. The raw files are never edited.**
+- **The map.** `AIServices/backend/app/data/esco_role_phrase_skill_map.json` is keyed by ESCO occupation URI + skill
+  URI, with readable labels alongside. An empty list records a reviewed pair that stays unmapped.
+- **The validator.** `AIServices/scripts/check_esco_role_map.py` fails the build on any error:
+  - a skill that is not in the skill list;
+  - more than 8 skills for one pair;
+  - a duplicate pair;
+  - an occupation or skill URI, or their relation, that is not in the active ESCO data (the raw dataset as the import
+    selects it, or with `--db` the live professions).
+
+  It runs in the AIServices test suite (`tests/test_esco_role_map.py`), so it is part of `scripts/run_all_tests`.
+- **The import.** `parse_esco` (used by both the CLI and the admin upload pipeline) turns each mapped phrase into
+  **one requirement group**:
+  - a display label, e.g. "Kotlin / Swift / Java / … (computer programming)";
+  - the alternatives, any one of which satisfies the group (credit 1.0);
+  - the original phrase, its URI, its essential/optional type and `source: "role_map"`.
+
+  The phrase keeps its name and key. So the required count, the top-up to 10 (a group counts once), the role-skill
+  index and the related-credit fallback are exactly as before, and a phrase is never split into several requirements.
+  Unmapped phrases keep the frozen rule (0.73 mixed / mutual-NN). O\*NET roles are untouched. Every ESCO skill now also
+  stores its URI.
+- **Scoring order** (`scoring.assess_group`):
+  1. the phrase itself → matched;
+  2. else any alternative the user holds → matched via that skill;
+  3. else related / missing as before.
+
+  The algorithm version is 2. The map's hash is part of the career-match cache key, so old results refresh.
+- **Pipeline.**
+  - The import preview shows the adjusted requirements live → staged (with a warning when fewer would be adjusted),
+    the undescribed essential pairs not in the map (e.g. new roles after a re-import) and stale map entries (URI drift).
+  - Publishing never edits the map.
+  - Snapshots include the map file, and a restore puts it back and reloads it.
+  - The post-checks fail, and the publish or restore is rolled back, when the live group count differs from the
+    preview's staged count (publish) or the snapshot's count (restore).
+- **UI.**
+  - The career details show the label. A held group reads "Held via Kotlin (shows: computer programming)"; a missing
+    group lists its alternatives.
+  - The admin Professions tab lists each role's skills, marking adjusted ones with their alternatives and the original
+    phrase.
+  - The preview shows the role-map counts.
+- **Re-import (2026-10-17).** The ESCO import was re-run on the current files through the normal pipeline (CLI, actor
+  "module-5.1-adoption"). Snapshot `20261017T114216-52907671` was taken before the swap.
+  - The same 130 active roles: no professions added, removed or changed.
+  - 846 requirements adjusted; 1,314 reviewed and left unmapped; 0 not in the map; 0 stale.
+  - Post-checks: group count 846 = 846 expected, state hash OK, background check PASS.
+
+**Official evaluation (production code on the re-imported data; `eval/career_matching/results/module5.1_{old8,new6}/`).**
+
+| Set | Top-3 | Top-5 | Chef best | Background check |
+|---|---|---|---|---|
+| Old 8 (official; Module 5 profiles) | **7/7** (Module 5: 6/7) | **7/7** (6/7) | **15.0 %** (unchanged) | chef 3.2 % vs web 12.9 % — PASS |
+| New 6 (cloud, Android, data engineer, security, game, IT support) — *not blind* | 3/6 (3/6) | **6/6** (4/6) | — | — |
+
+- **Sandbox reproduced exactly.** All 14 profiles match the sandbox run: first-acceptable ranks and scores, the top 5
+  and the ESCO-only share.
+- **DevOps** moves from rank 6 to **3** (cloud DevOps engineer 47.9 %). **Mobile** stays at rank 3, and mobile
+  application developer enters the top 5.
+- **Background.** Across all ESCO roles, the map credits the chef nothing (0 of 2,297 required rows) and the web profile
+  1.7 %.
+- **The median ESCO-only share in the top 10 rises:** old 20 % → 30 %, new 5 % → 25 %.
+- **Most influential mappings:**
+  - old set: web designer (markup, front-end design, wireframes), UX research phrases, and mobile application developer
+    / computer programming;
+  - new set: ICT application developer / computer programming, and cloud software developer / deploy cloud resource.
+
+**Honest limits.**
+- **Small sample.** There are 7 + 6 IT profiles.
+- **The new 6 are not blind.** The same assistant wrote them just before the mapping.
+- **The spot check covers 40 of 846 entries.**
+- **Three profiles moved from #1 to #2,** each because an ESCO role rose above the acceptable one; they are still top-3
+  hits:
+  - web developer: ESCO web designer;
+  - data scientist: computer vision engineer;
+  - game developer: 3D animator.
+- **Adding skills to the skill list** does not extend the map. New ESCO roles or phrases appear in the preview as "not
+  in the map" until someone reviews them.
+- **The frozen embedding configuration is untouched.**
+
+**Suggested SDS text.**
+- **Module 5 FE-3, add:** "For ESCO careers, an essential or optional ability phrase that a curated role-aware map links
+  to named skills is one requirement satisfied by any one of those skills (credit 1.0); otherwise the rule above
+  applies."
+- **§3.5, add:** `app/data/esco_role_phrase_skill_map.json`; role skills may carry `uri`, and requirement groups carry
+  `source`, `label`, `alternatives`, `phrase` and `phrase_uri`.
+
+**Files.**
+- AIServices:
+  - `app/services/professions/{esco_role_map,esco,store}.py`, `app/services/matching/{scoring,service}.py`,
+    `app/services/taxonomy/{pipeline,publishing,snapshots}.py`;
+  - `app/data/esco_role_phrase_skill_map.json`, `scripts/check_esco_role_map.py`;
+  - tests: `tests/test_esco_role_map.py`;
+  - `eval/esco_phrase_mapping/convert_to_uri_map.py`, `eval/career_matching/run_eval.py` (`--profiles`).
+- Frontend: `src/pages/careers/careerRules.js`, `src/pages/admin/taxonomy/{ProfessionsTab,PreviewPublishTab}.jsx`;
+  specs alongside.
 
 ## Suggested SDS text
 
