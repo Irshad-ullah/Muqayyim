@@ -11,6 +11,7 @@ import {
   SOURCE_NAMES,
   categoriesOf,
   categoryOptions,
+  countsText,
   errorView,
   formatScore,
   sourceOptions,
@@ -34,7 +35,7 @@ function StateBox({ icon: Icon = AlertTriangle, title, children, testId }) {
   );
 }
 
-function ResultItem({ result, selected, onSelect, buttonRef }) {
+function ResultItem({ result, selected, onSelect, buttonRef, scoringMode }) {
   return (
     <li>
       <button
@@ -61,7 +62,7 @@ function ResultItem({ result, selected, onSelect, buttonRef }) {
           )}
           <span>{categoriesOf(result).join(' / ')}</span>
           <span aria-hidden="true">·</span>
-          <span>{result.matched} held, {result.related} related, {result.missing} missing</span>
+          <span>{countsText(result, scoringMode)}</span>
         </div>
       </button>
     </li>
@@ -226,7 +227,7 @@ export default function CareerMatchesPage() {
                   </h2>
                   <ul onKeyDown={onListKey} aria-label="Career matches" data-testid="career-list">
                     {shown.map((r) => (
-                      <ResultItem key={r.profession_id} result={r} selected={r.profession_id === activeId} onSelect={select}
+                      <ResultItem key={r.profession_id} result={r} scoringMode={data.scoring_mode} selected={r.profession_id === activeId} onSelect={select}
                         buttonRef={(el) => { buttons.current[r.profession_id] = el; }} />
                     ))}
                   </ul>
@@ -237,7 +238,7 @@ export default function CareerMatchesPage() {
                       </p>
                       <ul onKeyDown={onListKey} aria-label="Closest other careers" data-testid="extra-list">
                         {extra.map((r) => (
-                          <ResultItem key={r.profession_id} result={r} selected={r.profession_id === activeId} onSelect={select}
+                          <ResultItem key={r.profession_id} result={r} scoringMode={data.scoring_mode} selected={r.profession_id === activeId} onSelect={select}
                             buttonRef={(el) => { buttons.current[r.profession_id] = el; }} />
                         ))}
                       </ul>

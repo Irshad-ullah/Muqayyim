@@ -42,6 +42,29 @@ const ESCO_DEV = {
   ],
 };
 
+const CURATED_ANDROID = {
+  profession_id: 'curated:android-developer', source: 'curated', title: 'Android Developer', category: 'Development', active: true,
+  updated_at: '2026-10-17T12:00:00Z',
+  skills: [
+    { name: 'Kotlin', key: 'kotlin', type: 'essential' },
+    { name: 'Android Studio', key: 'android studio', type: 'essential', source: 'any_of', label: 'Android Studio / IntelliJ IDEA',
+      phrase: 'Android Studio / IntelliJ IDEA', alternatives: [{ name: 'Android Studio', key: 'android studio' }, { name: 'IntelliJ IDEA', key: 'intellij idea' }] },
+  ],
+};
+
+describe('ProfessionsTab — curated roles (Module 5.2)', () => {
+  test('a curated any-of requirement shows its label and alternatives', async () => {
+    const user = userEvent.setup();
+    taxonomyService.listProfessions.mockResolvedValue(list([CURATED_ANDROID]));
+    render(<ProfessionsTab lock={null} />);
+    const editor = await openEditor(user, 'Android Developer');
+    const items = within(within(editor).getByTestId('requirements')).getAllByTestId('requirement');
+    expect(items[1].textContent).toContain('Android Studio / IntelliJ IDEA');
+    expect(within(items[1]).getByTestId('any-of').textContent).toBe('any one of: Android Studio, IntelliJ IDEA');
+    expect(screen.getByRole('option', { name: 'Curated' })).toBeTruthy();
+  });
+});
+
 describe('ProfessionsTab', () => {
   test('Module 5.1: an ESCO role shows its adjusted requirements with the original phrase', async () => {
     const user = userEvent.setup();

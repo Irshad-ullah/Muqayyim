@@ -6,6 +6,7 @@ export const ATTRIBUTION = {
   onet:
     'O*NET 31.0 Database, U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under CC BY 4.0, modified',
   esco: 'ESCO v1.2.1 © European Union',
+  curated: 'Muqayyim curated modern IT roles (AI-assisted; evidence per requirement, see METHOD.md)',
 };
 
 export const btn = {

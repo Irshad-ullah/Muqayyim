@@ -32,6 +32,43 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
+const RETIRED = {
+  ...SOURCES,
+  esco: { ...SOURCES.esco, active: 0, retired: true, upload_enabled: false,
+    retired_message: 'ESCO is retired: its roles were replaced by the curated modern roles v1 (Module 5.2). To re-enable ESCO, restore the snapshot taken before the retirement (History tab → Restore).',
+    retirement: { job_id: 'jr', snapshot_id: '20261017T120000-abcd1234' } },
+  curated: { versions: ['curated v1.0.0'], professions: 19, active: 19, last_updated: '2026-10-17T12:00:00Z', last_published_job: null,
+    attribution: 'Muqayyim curated modern IT roles', upload_enabled: true },
+};
+
+describe('DataSourcesTab — Module 5.2 (curated roles, ESCO retired)', () => {
+  test('ESCO shows as retired with the explanation and its upload is disabled; the curated source is listed', async () => {
+    taxonomyService.getSources.mockResolvedValue({ data: RETIRED });
+    render(<DataSourcesTab lock={null} onUploaded={vi.fn()} />);
+    const esco = await screen.findByTestId('source-esco');
+    expect(within(esco).getByTestId('retired-badge').textContent).toBe('Retired');
+    expect(within(esco).getByTestId('retired-note').textContent).toContain('restore the snapshot taken before the retirement');
+    expect(within(esco).getByTestId('retired-note').textContent).toContain('20261017T120000-abcd1234');
+    expect(within(screen.getByTestId('source-curated')).getByText('19 (19 active)')).toBeTruthy();
+    const option = screen.getByRole('option', { name: 'ESCO (retired)' });
+    expect(option.disabled).toBe(true);
+  });
+
+  test('the curated upload takes one .json file with the dataset version', async () => {
+    const user = userEvent.setup({ applyAccept: false }); // let the wrong file through to see the check
+    taxonomyService.getSources.mockResolvedValue({ data: RETIRED });
+    render(<DataSourcesTab lock={null} onUploaded={vi.fn()} />);
+    await screen.findByTestId('source-curated');
+    await user.selectOptions(screen.getByLabelText('Source'), 'curated');
+    expect(screen.getByTestId('source-hint').textContent).toContain('modern_roles_v1.json');
+    expect(screen.getByLabelText('Dataset version').value).toBe('1.0.0');
+    expect(screen.getByLabelText('Files').getAttribute('accept')).toBe('.json');
+    await user.upload(screen.getByLabelText('Files'), csv('occupation_data.csv'));
+    expect(screen.getByText('Choose the one curated dataset file (.json).')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Upload and validate' }).disabled).toBe(true);
+  });
+});
+
 describe('DataSourcesTab', () => {
   test('loading, then what is loaded per source, with the attribution', async () => {
     render(<DataSourcesTab lock={null} onUploaded={vi.fn()} />);

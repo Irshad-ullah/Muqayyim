@@ -258,6 +258,35 @@ describe('Career Matching — details', () => {
     expect(rows[1].textContent).toContain('Missing — any one of: Selenium, Cypress');
   });
 
+  test('Module 5.2 exact mode: a missing skill shows "related to your …" as a suggestion, never as credit', async () => {
+    careerMatchService.getMatches.mockResolvedValue(ready({ scoring_mode: 'exact' }));
+    careerMatchService.getMatch.mockImplementation(async (id) => {
+      const detail = detailFor(id);
+      detail.scoring_mode = 'exact';
+      detail.members[0] = { ...detail.members[0], matched: 1, related: 0, missing: 2,
+        required: [
+          { name: 'React', key: 'react', status: 'matched', credit: 1, via: { name: 'React', source: 'cv' } },
+          { name: 'Vue.js', key: 'vue.js', status: 'missing', credit: 0, related_hint: { skill: 'React', similarity: 0.9, kind: 'described' } },
+          { name: 'Kubernetes', key: 'kubernetes', status: 'missing', credit: 0 },
+        ],
+        explanation: ['Web developer needs 3 key skills; your match is 33%: 1 matched and 2 missing.'] };
+      return detail;
+    });
+    renderPage();
+    const details = await screen.findByTestId('career-details');
+    const first = within(details).getAllByTestId('member')[0];
+    const rows = within(first).getAllByTestId('skill-row');
+    expect(rows.map((r) => r.dataset.status)).toEqual(['matched', 'missing', 'missing', 'matched']);
+    expect(rows[1].textContent).toContain('Missing');
+    expect(within(rows[1]).getByTestId('related-hint').textContent).toContain('Related to your React');
+    expect(within(rows[1]).getByTestId('related-hint').textContent).toContain('not counted in the match');
+    expect(within(rows[0]).queryByTestId('related-hint')).toBeNull();
+    expect(within(rows[2]).queryByTestId('related-hint')).toBeNull();
+    expect(first.textContent).toContain('Required skills (1 held, 2 missing)');
+    expect(within(first).getByTestId('explanation').textContent).not.toMatch(/related/i);
+    expect(screen.getAllByTestId('career-row')[0].textContent).not.toMatch(/related/); // list rows too
+  });
+
   test('a single-source ESCO role has the ESCO info tooltip and its attribution', async () => {
     const user = userEvent.setup();
     renderPage();

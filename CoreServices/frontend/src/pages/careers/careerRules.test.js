@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { errorView, matchesFilters, skillNote, visibleResults } from './careerRules.js';
+import { countsText, errorView, matchesFilters, relatedHint, skillNote, visibleResults } from './careerRules.js';
 
 const r = (id, score, extra = {}) => ({
   profession_id: id, title: id, score, matched: 0, category: 'Development', source: 'onet',
@@ -62,4 +62,15 @@ test('ESCO requirement groups (Module 5.1): held via one named skill, missing li
   // Holding the phrase itself, or a related credit, reads as before.
   assert.equal(skillNote({ status: 'matched', via: { source: 'manual' }, group }), 'Held — from your profile');
   assert.match(skillNote({ status: 'related', via: { name: 'Dart', source: 'cv', similarity: 0.8 }, group }), /^Related — via your Dart/);
+});
+
+test('Module 5.2: related hints are suggestions on missing skills only; counts drop "related" in exact mode', () => {
+  const hinted = { status: 'missing', related_hint: { skill: 'React', similarity: 0.9 } };
+  assert.equal(relatedHint(hinted), 'Related to your React');
+  assert.equal(skillNote(hinted), 'Missing'); // the status itself never changes
+  assert.equal(relatedHint({ status: 'matched', related_hint: { skill: 'React' } }), null);
+  assert.equal(relatedHint({ status: 'missing' }), null);
+  const r = { matched: 2, related: 0, missing: 3 };
+  assert.equal(countsText(r, 'exact'), '2 held, 3 missing');
+  assert.equal(countsText({ ...r, related: 1 }, 'related'), '2 held, 1 related, 3 missing');
 });

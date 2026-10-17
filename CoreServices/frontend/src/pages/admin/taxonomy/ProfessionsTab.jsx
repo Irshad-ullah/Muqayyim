@@ -46,6 +46,8 @@ function Field({ id, label, field, profession, onReset, disabled, children }) {
 // Module 5.1: an ESCO requirement group (source "role_map") is one requirement satisfied by any of its named
 // skills; the original ESCO phrase stays visible.
 export const isAdjusted = (skill) => skill?.source === 'role_map' && (skill.alternatives || []).length > 0;
+// Module 5.2: a curated requirement with alternatives (source "any_of") — held by any one of them.
+export const isAnyOf = (skill) => skill?.source === 'any_of' && (skill.alternatives || []).length > 0;
 
 export function Requirements({ skills }) {
   const list = skills || [];
@@ -59,8 +61,11 @@ export function Requirements({ skills }) {
       <ul className="mt-2 space-y-1 max-h-72 overflow-y-auto">
         {list.map((s) => (
           <li key={s.key || s.name} className="text-xs text-slate-700" data-testid="requirement" data-adjusted={isAdjusted(s) ? 'yes' : 'no'}>
-            <span className="font-medium">{isAdjusted(s) ? s.label : s.name}</span>
+            <span className="font-medium">{isAdjusted(s) || isAnyOf(s) ? s.label : s.name}</span>
             <span className="text-slate-400"> · {s.type}</span>
+            {isAnyOf(s) && (
+              <span className="block text-slate-500" data-testid="any-of">any one of: {s.alternatives.map((a) => a.name).join(', ')}</span>
+            )}
             {isAdjusted(s) && (
               <span className="block text-slate-500">
                 <span className="text-indigo-700 bg-indigo-50 rounded px-1 mr-1">adjusted</span>
@@ -214,6 +219,7 @@ export default function ProfessionsTab({ lock }) {
             <select className={`${input} mt-1`} value={filters.source} onChange={(e) => setFilter('source', e.target.value)}>
               <option value="">All</option>
               <option value="onet">O*NET</option>
+              <option value="curated">Curated</option>
               <option value="esco">ESCO</option>
               <option value="manual">Manual</option>
             </select>

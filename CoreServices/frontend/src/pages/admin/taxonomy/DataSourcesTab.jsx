@@ -5,24 +5,39 @@ import { taxonomyService } from '../../../services/taxonomyService.js';
 import { ATTRIBUTION, ErrorBox, Loading, btn, card, input } from './components.jsx';
 import { checkUploadFiles, formatBytes, formatTime, taxonomyError } from './taxonomyRules.js';
 
-// Data sources: what is loaded now, and the upload of a new O*NET or ESCO release.
+// Data sources: what is loaded now, and the upload of a new O*NET, curated-roles or ESCO release.
+// Module 5.2: ESCO is retired (replaced by the curated modern roles); while retired its upload is disabled with the
+// explanation, and re-enabling it means restoring the snapshot taken before the retirement (History tab).
 
 export const SOURCE_HINTS = {
   onet:
     'Download each table as CSV from onetcenter.org/database.html: occupation_data.csv, job_titles.csv, software_skills.csv',
   esco:
     'Upload the ESCO classification CSV ZIP (English), or the required CSVs: occupations_en.csv, skills_en.csv, occupationSkillRelations_en.csv (digitalSkillsCollection_en.csv is optional)',
+  curated:
+    'Upload the curated dataset file modern_roles_v1.json; the version must match the file. Every skill must be in the skill list',
 };
-const DEFAULT_VERSION = { onet: 'O*NET 31.0', esco: 'ESCO v1.2.1' };
+const DEFAULT_VERSION = { onet: 'O*NET 31.0', esco: 'ESCO v1.2.1', curated: '1.0.0' };
+const NAMES = { onet: 'O*NET', esco: 'ESCO', curated: 'Curated modern roles' };
+const ACCEPT = { onet: '.zip,.csv', esco: '.zip,.csv', curated: '.json' };
 
 function SourceCard({ name, info }) {
   return (
     <div className={`${card} p-5`} data-testid={`source-${name}`}>
       <div className="flex items-center gap-2 mb-3">
         <Database className="w-4 h-4 text-indigo-600" />
-        <h3 className="font-semibold text-slate-800">{name === 'onet' ? 'O*NET' : 'ESCO'}</h3>
+        <h3 className="font-semibold text-slate-800">{NAMES[name]}</h3>
         <span className="text-xs text-slate-400">{info.versions?.length ? info.versions.join(', ') : 'not loaded'}</span>
+        {info.retired && (
+          <span className="text-xs font-semibold text-amber-800 bg-amber-100 rounded px-1.5 py-0.5" data-testid="retired-badge">Retired</span>
+        )}
       </div>
+      {info.retired && (
+        <p className="mb-3 text-xs text-amber-800" data-testid="retired-note">
+          {info.retired_message}
+          {info.retirement?.snapshot_id && <> Snapshot to restore: <code>{info.retirement.snapshot_id}</code>.</>}
+        </p>
+      )}
       <dl className="grid grid-cols-2 gap-y-1 text-sm">
         <dt className="text-slate-500">Professions</dt>
         <dd className="text-slate-800">
@@ -75,12 +90,13 @@ export default function DataSourcesTab({ lock, onUploaded }) {
     load();
   }, [load]);
 
-  const fileProblem = files.length ? checkUploadFiles(files) : null;
+  const fileProblem = files.length ? checkUploadFiles(files, source) : null;
+  const retired = Boolean(sources?.[source]?.retired);
   const uploading = progress !== null;
 
   const submit = async (e) => {
     e.preventDefault();
-    const problem = checkUploadFiles(files);
+    const problem = checkUploadFiles(files, source);
     if (problem) {
       setError({ title: 'Check the files', message: problem, details: [] });
       return;
@@ -109,6 +125,7 @@ export default function DataSourcesTab({ lock, onUploaded }) {
       ) : (
         <div className="grid md:grid-cols-2 gap-4">
           <SourceCard name="onet" info={sources.onet} />
+          {sources.curated && <SourceCard name="curated" info={sources.curated} />}
           <SourceCard name="esco" info={sources.esco} />
           {sources.manual?.professions > 0 && (
             <p className="text-sm text-slate-500 md:col-span-2">
@@ -136,7 +153,10 @@ export default function DataSourcesTab({ lock, onUploaded }) {
               }}
             >
               <option value="onet">O*NET</option>
-              <option value="esco">ESCO</option>
+              <option value="curated">Curated modern roles</option>
+              <option value="esco" disabled={Boolean(sources?.esco?.retired)}>
+                {sources?.esco?.retired ? 'ESCO (retired)' : 'ESCO'}
+              </option>
             </select>
           </label>
           <label className="text-sm text-slate-600">
@@ -148,7 +168,7 @@ export default function DataSourcesTab({ lock, onUploaded }) {
             <input
               type="file"
               multiple
-              accept=".zip,.csv"
+              accept={ACCEPT[source]}
               aria-label="Files"
               disabled={uploading}
               className="mt-1 block w-full text-sm text-slate-600"
@@ -165,6 +185,7 @@ export default function DataSourcesTab({ lock, onUploaded }) {
           </p>
         )}
         {fileProblem && <p className="text-sm text-red-700">{fileProblem}</p>}
+        {retired && <p className="text-sm text-amber-800" data-testid="upload-retired">{sources[source].retired_message}</p>}
         {uploading && (
           <div className="h-2 bg-slate-100 rounded-full overflow-hidden" role="progressbar" aria-valuenow={Math.round(progress * 100)} aria-valuemin={0} aria-valuemax={100}>
             <div className="h-full bg-indigo-600 transition-all" style={{ width: `${Math.round(progress * 100)}%` }} />
@@ -173,7 +194,7 @@ export default function DataSourcesTab({ lock, onUploaded }) {
         <button
           type="submit"
           className={btn.primary}
-          disabled={uploading || Boolean(lock) || !files.length || Boolean(fileProblem) || !version.trim()}
+          disabled={uploading || Boolean(lock) || retired || !files.length || Boolean(fileProblem) || !version.trim()}
         >
           {uploading ? `Uploading… ${Math.round(progress * 100)}%` : 'Upload and validate'}
         </button>
@@ -181,6 +202,7 @@ export default function DataSourcesTab({ lock, onUploaded }) {
 
       <div className="text-xs text-slate-500 space-y-1" data-testid="attribution">
         <p>{ATTRIBUTION.onet}</p>
+        <p>{ATTRIBUTION.curated}</p>
         <p>{ATTRIBUTION.esco}</p>
       </div>
     </div>

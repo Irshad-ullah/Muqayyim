@@ -24,7 +24,7 @@ export const STATUS_LABELS = {
   restored: 'Restored',
 };
 
-export const SOURCE_LABELS = { onet: 'O*NET', esco: 'ESCO', manual: 'Manual' };
+export const SOURCE_LABELS = { onet: 'O*NET', esco: 'ESCO', curated: 'Curated', manual: 'Manual' };
 
 // "job:<id>" / "edit:<what>" / "restore:<id>" / "recovery:…" / "cli:<id>" → words for the lock banner.
 export const lockLabel = (lock) => {
@@ -164,11 +164,15 @@ export const formatBytes = (bytes) => {
 };
 
 // Client-side check before an upload starts (the server checks again).
-export const checkUploadFiles = (files) => {
+export const checkUploadFiles = (files, source = 'onet') => {
   const list = Array.from(files || []);
-  if (list.length === 0) return 'Choose one ZIP file or the CSV files.';
-  const bad = list.filter((f) => !/\.(zip|csv)$/i.test(f.name));
-  if (bad.length) return `Only .zip and .csv files are accepted (${bad.map((f) => f.name).join(', ')}).`;
+  if (source === 'curated') { // Module 5.2: one JSON dataset file
+    if (list.length !== 1 || !/\.json$/i.test(list[0].name)) return 'Choose the one curated dataset file (.json).';
+  } else {
+    if (list.length === 0) return 'Choose one ZIP file or the CSV files.';
+    const bad = list.filter((f) => !/\.(zip|csv)$/i.test(f.name));
+    if (bad.length) return `Only .zip and .csv files are accepted (${bad.map((f) => f.name).join(', ')}).`;
+  }
   const total = list.reduce((sum, f) => sum + (f.size || 0), 0);
   if (total > MAX_UPLOAD_MB * 1024 * 1024) {
     return `The files add up to ${formatBytes(total)}; the limit is ${MAX_UPLOAD_MB} MB. Upload the ESCO ZIP, or only the required CSV files.`;

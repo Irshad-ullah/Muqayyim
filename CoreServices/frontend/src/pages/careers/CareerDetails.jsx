@@ -1,6 +1,6 @@
 import React, { useId, useState } from 'react';
-import { CheckCircle2, CircleDashed, GraduationCap, Info, XCircle } from 'lucide-react';
-import { ESCO_NOTE, SOURCE_NAMES, formatScore, skillNote } from './careerRules.js';
+import { CheckCircle2, CircleDashed, GraduationCap, Info, Lightbulb, XCircle } from 'lucide-react';
+import { ESCO_NOTE, SOURCE_NAMES, countsText, formatScore, relatedHint, skillNote } from './careerRules.js';
 
 // Details of one career (FR7.4–FR7.7): required skills marked held / related / missing (icon +
 // text, never colour alone), optional skills, the explanation, the sources with attribution, and
@@ -48,20 +48,29 @@ export function EscoInfo() {
 
 // The status is always in words ("Held — from your CV", "Related — via your …", "Missing"),
 // next to an icon; colour only repeats it.
+// A related hint (Module 5.2, related credit off) is a suggestion for a MISSING skill of this career only: it is
+// shown under the status, in a separate style, and never changes the status or the match %.
 function SkillRow({ row }) {
   const Icon = ICONS[row.status];
+  const hint = relatedHint(row);
   return (
     <li className="flex items-start gap-2 py-1.5" data-testid="skill-row" data-status={row.status}>
       <Icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${TONES[row.status]}`} aria-hidden="true" />
       <div className="min-w-0">
         <span className="text-sm text-slate-800">{row.name}</span>
         <p className={`text-xs ${TONES[row.status]}`}>{skillNote(row)}</p>
+        {hint && (
+          <p className="mt-0.5 text-xs italic text-sky-700 flex items-center gap-1" data-testid="related-hint">
+            <Lightbulb className="w-3 h-3" aria-hidden="true" />
+            <span><span className="sr-only">Suggestion: </span>{hint} — a good next step; not counted in the match</span>
+          </p>
+        )}
       </div>
     </li>
   );
 }
 
-function MemberSection({ member, merged }) {
+function MemberSection({ member, merged, scoringMode }) {
   const optionalId = useId();
   return (
     <section className="space-y-4" aria-label={`${SOURCE_NAMES[member.source] || member.source} details`} data-testid="member">
@@ -83,7 +92,7 @@ function MemberSection({ member, merged }) {
 
       <div>
         <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-          Required skills ({member.matched} held, {member.related} related, {member.missing} missing)
+          Required skills ({countsText(member, scoringMode)})
         </h4>
         <ul className="divide-y divide-slate-100" aria-label="Required skills">
           {member.required.map((row) => <SkillRow key={row.key} row={row} />)}
@@ -138,7 +147,7 @@ export default function CareerDetails({ detail }) {
       {detail.members.map((member, i) => (
         <React.Fragment key={member.profession_id}>
           {i > 0 && <hr className="border-slate-200" />}
-          <MemberSection member={member} merged={merged} />
+          <MemberSection member={member} merged={merged} scoringMode={detail.scoring_mode} />
         </React.Fragment>
       ))}
     </article>

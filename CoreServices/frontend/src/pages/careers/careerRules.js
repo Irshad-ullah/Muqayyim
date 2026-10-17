@@ -10,7 +10,7 @@ export const SORTS = {
   title: { label: 'Title (A–Z)', compare: (a, b) => a.title.localeCompare(b.title) || b.score - a.score },
 };
 
-export const SOURCE_NAMES = { onet: 'O*NET', esco: 'ESCO', manual: 'Manual' };
+export const SOURCE_NAMES = { onet: 'O*NET', esco: 'ESCO', curated: 'Curated', manual: 'Manual' };
 
 export const sourcesOf = (result) => (result.sources?.length ? result.sources.map((s) => s.source) : [result.source]);
 export const categoriesOf = (result) => (result.categories?.length ? result.categories : [result.category || 'Other']);
@@ -64,6 +64,14 @@ export const skillNote = (row) => {
   }
   return 'Missing';
 };
+
+// Module 5.2: with related credit off, a missing skill can carry a related hint — a suggestion only, never credit.
+export const relatedHint = (row) => (row.status === 'missing' && row.related_hint?.skill
+  ? `Related to your ${row.related_hint.skill}` : null);
+
+// "x held, y related, z missing" — the related count only exists when related credit is on.
+export const countsText = ({ matched, related, missing }, scoringMode) => (scoringMode === 'exact'
+  ? `${matched} held, ${missing} missing` : `${matched} held, ${related} related, ${missing} missing`);
 
 export const ESCO_NOTE = 'ESCO lists broader competences, so scores for ESCO roles tend to be lower than for O*NET roles.';
 
