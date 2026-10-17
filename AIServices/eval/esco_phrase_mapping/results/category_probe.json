@@ -1,0 +1,630 @@
+{
+ "A_first_run (question | category: tools)": {
+  "auc": 0.625,
+  "positive_min_median": [
+   0.979,
+   0.999
+  ],
+  "negative_median_max": [
+   0.999,
+   1.0
+  ],
+  "scores": [
+   [
+    "execute software tests",
+    "Program testing software",
+    1,
+    0.9997
+   ],
+   [
+    "database management systems",
+    "Data base management system software",
+    1,
+    0.9993
+   ],
+   [
+    "create digital images",
+    "Graphics or photo imaging software",
+    1,
+    0.9991
+   ],
+   [
+    "deploy cloud resource",
+    "Cloud-based management software",
+    1,
+    0.9992
+   ],
+   [
+    "perform project management",
+    "Project management software",
+    1,
+    0.9979
+   ],
+   [
+    "design graphics",
+    "Graphics or photo imaging software",
+    1,
+    0.9991
+   ],
+   [
+    "tools for software configuration management",
+    "Configuration management software",
+    1,
+    0.9995
+   ],
+   [
+    "apply statistical analysis techniques",
+    "Analytical or scientific software",
+    1,
+    0.9999
+   ],
+   [
+    "use scripting programming",
+    "Object or component oriented development software",
+    1,
+    0.9997
+   ],
+   [
+    "implement front-end website design",
+    "Web platform development software",
+    1,
+    0.9998
+   ],
+   [
+    "mobile operating systems",
+    "Operating system software",
+    1,
+    0.9791
+   ],
+   [
+    "edit digital moving images",
+    "Video creation and editing software",
+    1,
+    0.9974
+   ],
+   [
+    "execute software tests",
+    "Accounting software",
+    0,
+    0.9986
+   ],
+   [
+    "database management systems",
+    "Video creation and editing software",
+    0,
+    0.9989
+   ],
+   [
+    "create digital images",
+    "Data base management system software",
+    0,
+    0.9947
+   ],
+   [
+    "deploy cloud resource",
+    "Computer aided design CAD software",
+    0,
+    0.989
+   ],
+   [
+    "perform project management",
+    "Operating system software",
+    0,
+    0.9979
+   ],
+   [
+    "design graphics",
+    "Program testing software",
+    0,
+    0.9994
+   ],
+   [
+    "comply with legal regulations",
+    "Development environment software",
+    0,
+    0.9998
+   ],
+   [
+    "intellectual property law",
+    "Web platform development software",
+    0,
+    0.9999
+   ],
+   [
+    "collaborate with designers",
+    "Data base management system software",
+    0,
+    0.9965
+   ],
+   [
+    "ICT network cable limitations",
+    "Graphics or photo imaging software",
+    0,
+    0.9961
+   ],
+   [
+    "analyse a script",
+    "Program testing software",
+    0,
+    0.9994
+   ],
+   [
+    "ensure legal gaming",
+    "Object or component oriented development software",
+    0,
+    0.9992
+   ]
+  ]
+ },
+ "B (question about 'this software' | category (e.g. tools))": {
+  "auc": 0.951,
+  "positive_min_median": [
+   0.006,
+   0.192
+  ],
+  "negative_median_max": [
+   0.005,
+   0.081
+  ],
+  "scores": [
+   [
+    "execute software tests",
+    "Program testing software",
+    1,
+    0.1903
+   ],
+   [
+    "database management systems",
+    "Data base management system software",
+    1,
+    0.7991
+   ],
+   [
+    "create digital images",
+    "Graphics or photo imaging software",
+    1,
+    0.4389
+   ],
+   [
+    "deploy cloud resource",
+    "Cloud-based management software",
+    1,
+    0.0058
+   ],
+   [
+    "perform project management",
+    "Project management software",
+    1,
+    0.1928
+   ],
+   [
+    "design graphics",
+    "Graphics or photo imaging software",
+    1,
+    0.2935
+   ],
+   [
+    "tools for software configuration management",
+    "Configuration management software",
+    1,
+    0.6925
+   ],
+   [
+    "apply statistical analysis techniques",
+    "Analytical or scientific software",
+    1,
+    0.1105
+   ],
+   [
+    "use scripting programming",
+    "Object or component oriented development software",
+    1,
+    0.019
+   ],
+   [
+    "implement front-end website design",
+    "Web platform development software",
+    1,
+    0.5136
+   ],
+   [
+    "mobile operating systems",
+    "Operating system software",
+    1,
+    0.0421
+   ],
+   [
+    "edit digital moving images",
+    "Video creation and editing software",
+    1,
+    0.0521
+   ],
+   [
+    "execute software tests",
+    "Accounting software",
+    0,
+    0.0049
+   ],
+   [
+    "database management systems",
+    "Video creation and editing software",
+    0,
+    0.0068
+   ],
+   [
+    "create digital images",
+    "Data base management system software",
+    0,
+    0.0057
+   ],
+   [
+    "deploy cloud resource",
+    "Computer aided design CAD software",
+    0,
+    0.0016
+   ],
+   [
+    "perform project management",
+    "Operating system software",
+    0,
+    0.0805
+   ],
+   [
+    "design graphics",
+    "Program testing software",
+    0,
+    0.0048
+   ],
+   [
+    "comply with legal regulations",
+    "Development environment software",
+    0,
+    0.0027
+   ],
+   [
+    "intellectual property law",
+    "Web platform development software",
+    0,
+    0.0091
+   ],
+   [
+    "collaborate with designers",
+    "Data base management system software",
+    0,
+    0.001
+   ],
+   [
+    "ICT network cable limitations",
+    "Graphics or photo imaging software",
+    0,
+    0.0017
+   ],
+   [
+    "analyse a script",
+    "Program testing software",
+    0,
+    0.0106
+   ],
+   [
+    "ensure legal gaming",
+    "Object or component oriented development software",
+    0,
+    0.0022
+   ]
+  ]
+ },
+ "C (ability | using category (e.g. tools))": {
+  "auc": 0.993,
+  "positive_min_median": [
+   0.001,
+   0.015
+  ],
+  "negative_median_max": [
+   0.0,
+   0.001
+  ],
+  "scores": [
+   [
+    "execute software tests",
+    "Program testing software",
+    1,
+    0.0585
+   ],
+   [
+    "database management systems",
+    "Data base management system software",
+    1,
+    0.2722
+   ],
+   [
+    "create digital images",
+    "Graphics or photo imaging software",
+    1,
+    0.0209
+   ],
+   [
+    "deploy cloud resource",
+    "Cloud-based management software",
+    1,
+    0.0011
+   ],
+   [
+    "perform project management",
+    "Project management software",
+    1,
+    0.0198
+   ],
+   [
+    "design graphics",
+    "Graphics or photo imaging software",
+    1,
+    0.0163
+   ],
+   [
+    "tools for software configuration management",
+    "Configuration management software",
+    1,
+    0.3048
+   ],
+   [
+    "apply statistical analysis techniques",
+    "Analytical or scientific software",
+    1,
+    0.0053
+   ],
+   [
+    "use scripting programming",
+    "Object or component oriented development software",
+    1,
+    0.0047
+   ],
+   [
+    "implement front-end website design",
+    "Web platform development software",
+    1,
+    0.0093
+   ],
+   [
+    "mobile operating systems",
+    "Operating system software",
+    1,
+    0.012
+   ],
+   [
+    "edit digital moving images",
+    "Video creation and editing software",
+    1,
+    0.0129
+   ],
+   [
+    "execute software tests",
+    "Accounting software",
+    0,
+    0.0007
+   ],
+   [
+    "database management systems",
+    "Video creation and editing software",
+    0,
+    0.0
+   ],
+   [
+    "create digital images",
+    "Data base management system software",
+    0,
+    0.0002
+   ],
+   [
+    "deploy cloud resource",
+    "Computer aided design CAD software",
+    0,
+    0.0
+   ],
+   [
+    "perform project management",
+    "Operating system software",
+    0,
+    0.0007
+   ],
+   [
+    "design graphics",
+    "Program testing software",
+    0,
+    0.0005
+   ],
+   [
+    "comply with legal regulations",
+    "Development environment software",
+    0,
+    0.0
+   ],
+   [
+    "intellectual property law",
+    "Web platform development software",
+    0,
+    0.0
+   ],
+   [
+    "collaborate with designers",
+    "Data base management system software",
+    0,
+    0.0
+   ],
+   [
+    "ICT network cable limitations",
+    "Graphics or photo imaging software",
+    0,
+    0.0
+   ],
+   [
+    "analyse a script",
+    "Program testing software",
+    0,
+    0.0013
+   ],
+   [
+    "ensure legal gaming",
+    "Object or component oriented development software",
+    0,
+    0.0
+   ]
+  ]
+ },
+ "D (full question | empty passage)": {
+  "auc": 0.667,
+  "positive_min_median": [
+   0.001,
+   0.002
+  ],
+  "negative_median_max": [
+   0.001,
+   0.004
+  ],
+  "scores": [
+   [
+    "execute software tests",
+    "Program testing software",
+    1,
+    0.0013
+   ],
+   [
+    "database management systems",
+    "Data base management system software",
+    1,
+    0.0021
+   ],
+   [
+    "create digital images",
+    "Graphics or photo imaging software",
+    1,
+    0.0028
+   ],
+   [
+    "deploy cloud resource",
+    "Cloud-based management software",
+    1,
+    0.0013
+   ],
+   [
+    "perform project management",
+    "Project management software",
+    1,
+    0.0026
+   ],
+   [
+    "design graphics",
+    "Graphics or photo imaging software",
+    1,
+    0.003
+   ],
+   [
+    "tools for software configuration management",
+    "Configuration management software",
+    1,
+    0.0007
+   ],
+   [
+    "apply statistical analysis techniques",
+    "Analytical or scientific software",
+    1,
+    0.0012
+   ],
+   [
+    "use scripting programming",
+    "Object or component oriented development software",
+    1,
+    0.0026
+   ],
+   [
+    "implement front-end website design",
+    "Web platform development software",
+    1,
+    0.0026
+   ],
+   [
+    "mobile operating systems",
+    "Operating system software",
+    1,
+    0.0006
+   ],
+   [
+    "edit digital moving images",
+    "Video creation and editing software",
+    1,
+    0.0018
+   ],
+   [
+    "execute software tests",
+    "Accounting software",
+    0,
+    0.004
+   ],
+   [
+    "database management systems",
+    "Video creation and editing software",
+    0,
+    0.0015
+   ],
+   [
+    "create digital images",
+    "Data base management system software",
+    0,
+    0.0006
+   ],
+   [
+    "deploy cloud resource",
+    "Computer aided design CAD software",
+    0,
+    0.0023
+   ],
+   [
+    "perform project management",
+    "Operating system software",
+    0,
+    0.0012
+   ],
+   [
+    "design graphics",
+    "Program testing software",
+    0,
+    0.0004
+   ],
+   [
+    "comply with legal regulations",
+    "Development environment software",
+    0,
+    0.0008
+   ],
+   [
+    "intellectual property law",
+    "Web platform development software",
+    0,
+    0.0025
+   ],
+   [
+    "collaborate with designers",
+    "Data base management system software",
+    0,
+    0.0016
+   ],
+   [
+    "ICT network cable limitations",
+    "Graphics or photo imaging software",
+    0,
+    0.0015
+   ],
+   [
+    "analyse a script",
+    "Program testing software",
+    0,
+    0.0005
+   ],
+   [
+    "ensure legal gaming",
+    "Object or component oriented development software",
+    0,
+    0.0008
+   ]
+  ]
+ }
+}

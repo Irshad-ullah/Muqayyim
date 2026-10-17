@@ -1,0 +1,67 @@
+{
+  "model": "BAAI/bge-reranker-base",
+  "device": "cpu",
+  "torch_threads": 4,
+  "top_k": 10,
+  "batch": 32,
+  "phrases": 749,
+  "categories": 134,
+  "categories_with_a_mapped_tool": 74,
+  "pairs": 7490,
+  "pairs_with_a_mapped_tool": 4920,
+  "seconds": {
+    "bi_encoder_and_candidates": 15.9,
+    "reranker_load": 7.5,
+    "reranker_scoring_c": 462.0,
+    "reranker_scoring_b": 845.3,
+    "total": 1330.7
+  },
+  "pairs_per_second": 16.2,
+  "ram_peak_mb": 2130,
+  "logit_percentiles_c_1_10_50_90_99": [
+    -10.2,
+    -9.79,
+    -7.71,
+    -5.72,
+    -3.08
+  ],
+  "logit_percentiles_b_1_10_50_90_99": [
+    -7.71,
+    -6.45,
+    -4.86,
+    -3.11,
+    -1.13
+  ],
+  "spearman_c_vs_b": 0.614,
+  "logit_distribution_c": {
+    ">= -4": 174,
+    ">= -2": 32,
+    ">= 0": 1,
+    ">= 2": 0,
+    ">= 4": 0
+  },
+  "phrases_with_a_candidate_c": {
+    ">= -4": 114,
+    ">= -2": 29,
+    ">= 0": 1,
+    ">= 2": 0,
+    ">= 4": 0
+  },
+  "phrases_with_a_usable_candidate_c": {
+    ">= -4": 85,
+    ">= -2": 20,
+    ">= 0": 1,
+    ">= 2": 0,
+    ">= 4": 0
+  },
+  "layout_c": [
+    "the ability '{phrase}'",
+    "using {category} (e.g. {tool1}, {tool2}, {tool3})"
+  ],
+  "layout_b": [
+    "Does the ability '{phrase}' correspond to using this software?",
+    "{category} (e.g. {tool1}, {tool2}, {tool3})"
+  ],
+  "first_run_saturated": "question | '{category}: tools' -> all 7,490 pairs >= 0.9 (logit p1 4.09, median 7.55)",
+  "category_text_for_bi_encoder": "{category}: e.g. {tool1}, {tool2}, {tool3}"
+}
