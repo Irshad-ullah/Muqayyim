@@ -168,7 +168,7 @@ async def matching_db(db, index, stub, monkeypatch):  # noqa: F811
 
 
 async def test_scores_every_profession_with_the_credit_rule(matching_db):
-    result = await service.get_matches("u1", matching_db)
+    result = await service.get_matches("u1", matching_db, related_credit=True)
     assert [r["profession_id"] for r in result["results"]] == ["manual:web", "manual:sheets"]
     web = result["results"][0]
     # React 1 + Python 1 + Vue.js 0.5 (0.90 to React) + Django 0.5 (0.80 to Python) + Excel 0 → 3 / 5
@@ -195,18 +195,18 @@ async def test_search_related_is_asked_for_every_role_skill(matching_db, monkeyp
 
 
 async def test_the_cache_is_used_and_invalidated(matching_db, stub):
-    first = await service.get_matches("u1", matching_db)
+    first = await service.get_matches("u1", matching_db, related_credit=True)
     assert first["cached"] is False
-    assert (await service.get_matches("u1", matching_db))["cached"] is True
+    assert (await service.get_matches("u1", matching_db, related_credit=True))["cached"] is True
     # a profession edit (any write to the live professions) → recomputed
     await matching_db[PROFESSIONS].update_one({"profession_id": "manual:sheets"},
                                               {"$set": {"title": "Sheets clerk", "updated_at": datetime.now(timezone.utc)}})
-    again = await service.get_matches("u1", matching_db)
+    again = await service.get_matches("u1", matching_db, related_credit=True)
     assert again["cached"] is False and any(r["title"] == "Sheets clerk" for r in again["results"])
     # the user's skills change → recomputed
     await upsert_user_skills("u1", [{"name": "React", "source": "cv"}, {"name": "Python", "source": "manual"},
                                     {"name": "Excel", "source": "github"}], embedder=stub, db=matching_db)
-    changed = await service.get_matches("u1", matching_db)
+    changed = await service.get_matches("u1", matching_db, related_credit=True)
     by_id = {r["profession_id"]: r["score"] for r in changed["results"]}
     assert changed["cached"] is False and by_id == {"manual:sheets": 100.0, "manual:web": 80.0}
     assert await matching_db[service.CAREER_MATCHES].count_documents({"user_id": "u1"}) == 1
@@ -235,18 +235,18 @@ async def test_pending_embeddings_and_missing_profiles(matching_db):
 
 async def test_low_match_note_and_details(matching_db, stub):
     await upsert_user_skills("u2", [{"name": "Excel", "source": "cv"}], embedder=stub, db=matching_db)
-    result = await service.get_matches("u2", matching_db)
+    result = await service.get_matches("u2", matching_db, related_credit=True)
     assert result["results"][0]["profession_id"] == "manual:sheets" and result["low_match"] is False
     await upsert_user_skills("u3", [{"name": "Cooking", "source": "manual"}], embedder=stub, db=matching_db)
-    low = await service.get_matches("u3", matching_db)
+    low = await service.get_matches("u3", matching_db, related_credit=True)
     assert low["low_match"] is True and len(low["results"]) == 2  # every profession is still listed
-    detail = await service.get_match_detail("u1", "manual:web", matching_db)
+    detail = await service.get_match_detail("u1", "manual:web", matching_db, related_credit=True)
     member = detail["members"][0]
     assert detail["rank"] == 1 and member["explanation"][0].startswith("Web developer needs 5 key skills")
     assert {r["name"]: r["status"] for r in member["required"]} == {
         "React": "matched", "Vue.js": "related", "Python": "matched", "Django": "related", "Excel": "missing"}
     with pytest.raises(service.ProfessionNotFound):
-        await service.get_match_detail("u1", "manual:nope", matching_db)
+        await service.get_match_detail("u1", "manual:nope", matching_db, related_credit=True)
 
 
 async def test_credits_agree_with_a_brute_force_reading_of_the_rule(db, index, monkeypatch):  # noqa: F811
@@ -326,11 +326,12 @@ def as_user(user_id):
 async def test_list_and_detail_routes(client, caplog):
     caplog.set_level("INFO")
     async with client as c:
-        listed = await c.get(BASE, headers=as_user("u1"))
+        related = {**as_user("u1"), "X-Related-Credit": "true"}  # Module 5.2: the 0.5 rule is opt-in
+        listed = await c.get(BASE, headers=related)
         assert listed.status_code == 200
         data = listed.json()["data"]
         assert data["state"] == "ready" and data["results"][0]["profession_id"] == "manual:web"
-        detail = await c.get(f"{BASE}/manual:web", headers=as_user("u1"))
+        detail = await c.get(f"{BASE}/manual:web", headers=related)
         assert detail.status_code == 200 and detail.json()["data"]["members"][0]["score"] == 60.0
         assert (await c.get(BASE, headers={"X-User-Id": "u1"})).status_code == 401  # internal key required
         assert (await c.get(BASE, headers=KEY)).json()["code"] == "INVALID_USER_ID"  # X-User-Id required

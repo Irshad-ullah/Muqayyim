@@ -19,6 +19,13 @@ listed alternatives each satisfy it — the phrase itself (same key) → matched
 user holds → matched (1.0, via that skill); else the rule above for the phrase (related / missing).
 The group is shown by its label ("Kotlin / Swift / Java / … (computer programming)").
 
+Scoring mode (Module 5.2; systemconfigs matching.related_credit, default false):
+  off (default)  credit 1.0 for an exact key, an alias (same key) or an any-of alternative; 0 otherwise. The related
+                 pairs above are still computed (same FAISS index, same 0.73 / mutual-NN rule) and attached as
+                 `related_hint` to that role's MISSING rows only (and listed as the role's `related_hints`), as
+                 display only, never credit.
+  on             the 0.5 related credit applies unchanged.
+
 Match % = Σ credits over the REQUIRED role skills ÷ their number × 100. Required: O*NET
 in-demand, ESCO essential, topped up to MIN_REQUIRED in stored order (O*NET: in-demand →
 hot; ESCO: essential → optional). The other role skills are shown as optional, not counted.
@@ -33,13 +40,14 @@ MATCHED, RELATED, MISSING = "matched", "related", "missing"
 MATCHED_CREDIT, RELATED_CREDIT = 1.0, 0.5
 MIN_REQUIRED = 10
 LOW_MATCH_PERCENT = 20.0  # display only: the "low match" note when even the best result is below it
-ALGORITHM_VERSION = "2"  # part of the cache key; bump when the scoring rules change (2: ESCO requirement groups)
+ALGORITHM_VERSION = "3"  # part of the cache key; bump when the scoring rules change (2: ESCO groups; 3: scoring mode)
 
 SOURCE_LABELS = {"manual": "your profile", "cv": "your CV", "github": "GitHub"}
 ATTRIBUTION = {
     "onet": "O*NET 31.0 Database, U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), "
             "used under CC BY 4.0, modified",
     "esco": "ESCO v1.2.1 © European Union",
+    "curated": "Muqayyim curated modern IT roles v1 (AI-assisted, with evidence per requirement)",
 }
 
 
@@ -156,6 +164,23 @@ def score_profession(profession: dict, owned: Dict[str, dict], related: Dict[str
     }
 
 
+def attach_related_hints(result: dict, related: Dict[str, dict], owned: Dict[str, dict]) -> dict:
+    """Scoring mode off: each MISSING row of this role that production would have credited as related gets
+    `related_hint` {skill, source, similarity, kind}; the role lists them as `related_hints`. Never credit."""
+    hints = []
+    for part in ("required", "optional"):
+        for row in result[part]:
+            pair = related.get(row["key"])
+            if row["status"] != MISSING or not pair:
+                continue
+            user = owned.get(pair["user_key"], {"name": pair["user_key"]})
+            row["related_hint"] = {"skill": user["name"], "source": user.get("source"),
+                                   "similarity": round(float(pair["similarity"]), 3), "kind": pair["kind"]}
+            hints.append({"role_skill": row["name"], "required": part == "required", **row["related_hint"]})
+    result["related_hints"] = hints
+    return result
+
+
 # ── duplicates across sources ─────────────────────────────────────────────────
 def normalise_title(title: Optional[str]) -> str:
     """Lowercase, punctuation to spaces, a plural -s dropped from words longer than 3 letters
@@ -216,14 +241,16 @@ def _from(source: Optional[str]) -> str:
     return SOURCE_LABELS.get(source or "", "your profile")
 
 
-def explain(result: dict) -> List[str]:
-    """Sentences explaining one result, built only from its breakdown and the user's skill sources."""
+def explain(result: dict, related_credit: bool = True) -> List[str]:
+    """Sentences explaining one result, built only from its breakdown and the user's skill sources.
+    With related credit off (Module 5.2) the text never mentions related credit."""
     required = result["required"]
     matched = [r for r in required if r["status"] == MATCHED]
     related = [r for r in required if r["status"] == RELATED]
     missing = [r for r in required if r["status"] == MISSING]
-    lines = [f"{result['title']} needs {result['required_count']} key skills; your match is {result['score']:.0f}%: "
-             f"{len(matched)} matched, {len(related)} related and {len(missing)} missing."]
+    counts = (f"{len(matched)} matched, {len(related)} related and {len(missing)} missing" if related_credit
+              else f"{len(matched)} matched and {len(missing)} missing")
+    lines = [f"{result['title']} needs {result['required_count']} key skills; your match is {result['score']:.0f}%: {counts}."]
     if matched:
         by_source: Dict[str, List[str]] = {}
         for r in matched:

@@ -25,6 +25,13 @@ see the change doc):
   chef pooled rate ≤ 5 %   and   chef pooled rate ≤ 0.5 × web pooled rate
 Exit code 0 on PASS, 1 on FAIL.
 
+Scoring mode (Module 5.2; systemconfigs matching.related_credit, default false). With related credit OFF the
+score gives no 0.5 credit, so the check judges the credit the score does give beyond an exact key: rows credited
+through an any-of alternative ÷ non-exact rows (the B2 definition fixed in eval/curated_roles/expectations_b2.md
+before it was first run). Same criteria; when the web rate is also 0 the ratio is not applicable and the absolute
+criterion decides. The related-credit rate is still computed and reported as `legacy_related_check` (it is what the
+display-only related hints would add). --related-credit judges the old rule (mode on).
+
 Usage (AIServices venv, repo root; needs the model and the imported professions):
   AIServices/backend/venv/Scripts/python AIServices/eval/background_credit_rate.py [--sweep] [--json out.json]
 Read-only: users are not stored; the index is loaded from disk (or rebuilt from MongoDB).
@@ -142,7 +149,7 @@ class CheckUnavailable(Exception):
 
 
 async def run(sweep: bool = False, db=None, collection: Optional[str] = None, index_dir: Optional[Path] = None,
-              model_wait_seconds: Optional[float] = None) -> dict:
+              model_wait_seconds: Optional[float] = None, related_credit: bool = False) -> dict:
     """
     db None (CLI): own connection to ai_db, the live professions and the saved index;
     the model is loaded here if needed.
@@ -190,37 +197,78 @@ async def run(sweep: bool = False, db=None, collection: Optional[str] = None, in
         if threshold is None or get_related_threshold(kind="mixed") != threshold:
             raise CheckUnavailable("The related threshold is not valid for the active setup")
         source = collection or PROFESSIONS
-        professions = [p async for p in db[source].find(active_filter(), {"title": 1, "skills": 1})]
+        professions = [p async for p in db[source].find(active_filter(), {"title": 1, "skills": 1, "source": 1})]
         provider = get_description_provider()
         result = {"threshold": threshold, "mutual_k": settings.MUTUAL_NN_K, "professions": len(professions),
-                  "role_skills": index.snapshot.meta["count"], "profiles": {}}
+                  "role_skills": index.snapshot.meta["count"], "profiles": {},
+                  "scoring_mode": "related" if related_credit else "exact"}
         for name, skills in PROFILES.items():
             rates = profile_rates(skills, embedder, index.snapshot, professions, provider, threshold, settings.MUTUAL_NN_K)
             if not sweep:
                 rates.pop("sweep_undescribed_share_pct")
+            rates.update(alternative_rates(skills, index.snapshot, professions))
             result["profiles"][name] = rates
     finally:
         database_module.database = previous
         if client is not None:
             client.close()
 
-    chef, web = result["profiles"]["chef"]["pooled_related_pct"], result["profiles"]["web"]["pooled_related_pct"]
-    result["check"] = {
-        "chef_pooled_pct": chef, "web_pooled_pct": web,
-        "chef_to_web": round(chef / web, 3) if web else None,
-        "criteria": f"chef <= {MAX_CHEF_RATE}% and chef <= {MAX_CHEF_TO_WEB} x web",
-        "passed": chef <= MAX_CHEF_RATE and web > 0 and chef <= MAX_CHEF_TO_WEB * web,
-    }
+    legacy = verdict(result["profiles"]["chef"]["pooled_related_pct"], result["profiles"]["web"]["pooled_related_pct"],
+                     ratio_may_be_na=False)
+    result["legacy_related_check"] = legacy
+    if related_credit:
+        result["check"] = {**legacy, "metric": "related-credit rate (scoring mode on)"}
+    else:
+        result["check"] = {**verdict(result["profiles"]["chef"]["alternative_credit_pct"],
+                                     result["profiles"]["web"]["alternative_credit_pct"], ratio_may_be_na=True),
+                           "metric": "any-of credit beyond an exact key (scoring mode off; Module 5.2)"}
     return result
+
+
+def verdict(chef: float, web: float, ratio_may_be_na: bool) -> dict:
+    ratio_na = ratio_may_be_na and web == 0
+    passed = chef <= MAX_CHEF_RATE and (True if ratio_na else (web > 0 and chef <= MAX_CHEF_TO_WEB * web))
+    return {"chef_pooled_pct": chef, "web_pooled_pct": web, "chef_to_web": round(chef / web, 3) if web else None,
+            "criteria": f"chef <= {MAX_CHEF_RATE}% and chef <= {MAX_CHEF_TO_WEB} x web"
+                        + (" (ratio not applicable: web 0)" if ratio_na else ""),
+            "passed": passed}
+
+
+def alternative_rates(names, snapshot, professions) -> dict:
+    """Mode off (Module 5.2): rows credited only through an any-of alternative (the profile holds an alternative but
+    not the stored key) ÷ non-exact rows; plus the share of all rows the score credits (exact + alternative)."""
+    from app.services.embeddings.normalise import normalise_skill
+    from app.services.professions.esco_role_map import alternative_keys, is_group
+    from app.services.professions.role_skills import current_skill
+
+    owned = {normalise_skill(n)[0] for n in names}
+    position = set(snapshot.keys)
+    rows = credited = exact = 0
+    for prof in professions:
+        seen = {}
+        for skill in prof.get("skills") or []:
+            key = current_skill(skill)[0]
+            if key in position:
+                seen.setdefault(key, skill)
+        for key, skill in seen.items():
+            if key in owned:
+                exact += 1
+                continue
+            rows += 1
+            if is_group(skill) and owned & set(alternative_keys(skill)):
+                credited += 1
+    return {"alternative_credit_pct": round(100 * credited / rows, 1) if rows else 0.0, "alternative_credited_rows": credited,
+            "all_credited_share_pct": round(100 * (credited + exact) / (rows + exact), 1) if rows + exact else 0.0}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--sweep", action="store_true", help="also report mixed credit share at 0.61-0.73")
     parser.add_argument("--json", help="write the full result to this file")
+    parser.add_argument("--related-credit", action="store_true", help="judge the 0.5 related-credit rule (scoring mode on)")
     args = parser.parse_args()
     try:
-        result = asyncio.run(run(args.sweep))
+        result = asyncio.run(run(args.sweep, related_credit=args.related_credit))
     except CheckUnavailable as exc:
         raise SystemExit(str(exc))
     if args.json:

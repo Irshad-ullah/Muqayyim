@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import axios from 'axios';
 import { logError } from '../services/errorLogger.js';
+import { relatedCreditEnabled } from '../services/matchingConfig.js';
 
 // ─── Career matching (Module 5, FR7.1–FR7.10) ────────────────────────────────
 // GET /api/career-matches               the signed-in user's ranked matches
@@ -14,11 +15,12 @@ import { logError } from '../services/errorLogger.js';
 // PROFESSION_NOT_FOUND; AI unreachable → 503 MATCHING_UNAVAILABLE; AI too slow → 504
 // MATCHING_TIMEOUT. Messages are safe (FR7.10).
 // Logs: a hash of the user id, the status, timings and the result count — never skills.
+// Scoring mode (Module 5.2): systemconfigs matching.related_credit (default false) goes to AI as X-Related-Credit.
 
 const PREFIX = '/internal/matching/matches';
 const aiBase = () => process.env.AI_SERVICE_URL || 'http://localhost:8000';
 const timeoutMs = () => Number(process.env.MATCHING_TIMEOUT_MS) || 30000;
-const PROFESSION_ID = /^(onet|esco|manual):[A-Za-z0-9._-]{1,100}$/;
+const PROFESSION_ID = /^(onet|esco|curated|manual):[A-Za-z0-9._-]{1,100}$/;
 const PASS_THROUGH = new Set(['EMBEDDINGS_PENDING', 'MODEL_LOADING', 'INDEX_BUILDING', 'NO_PROFESSIONS',
   'PROFESSION_NOT_FOUND', 'MATCHING_UNAVAILABLE']);
 
@@ -41,11 +43,13 @@ const callAi = async (req, res, path, label) => {
   const started = Date.now();
   const ref = userRef(req.user.userId);
   try {
+    const relatedCredit = await relatedCreditEnabled();
     const response = await client.get(`${aiBase()}${path}`, {
       timeout: timeoutMs(),
       headers: {
         'X-Internal-Key': process.env.INTERNAL_API_KEY || '',
         'X-User-Id': String(req.user.userId),
+        'X-Related-Credit': relatedCredit ? 'true' : 'false',
         ...(req.requestId ? { 'X-Request-Id': req.requestId } : {}),
       },
       validateStatus: () => true,

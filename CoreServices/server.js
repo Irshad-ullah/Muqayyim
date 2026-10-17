@@ -12,6 +12,7 @@ const { refreshAdminEmails } =
   await import("./backend/services/alertService.js");
 const { startLlmDeleteRetryJob } =
   await import("./backend/services/aiLlmClient.js");
+const { ensureMatchingConfig } = await import("./backend/services/matchingConfig.js");
 
 // Process-level failures are critical. An uncaught exception leaves the
 // process in an unknown state, so it is logged (best effort, ≤ 2 s) and the
@@ -44,6 +45,7 @@ connectDB().then(async () => {
   await ensureLogIndexes();
   await refreshAdminEmails();
   startLlmDeleteRetryJob(); // 12: hourly retry of failed AI cache deletions
+  await ensureMatchingConfig(); // 5.2: matching.related_credit, default false
 });
 
 // Start server

@@ -8,6 +8,8 @@ import './authMocks.js';
 const { default: app } = await import('../app.js');
 const { default: User } = await import('../backend/models/User.js');
 const { userRef } = await import('../backend/controllers/careerMatchController.js');
+const { default: SystemConfig } = await import('../backend/admin/models/SystemConfig.js');
+const { ensureMatchingConfig, RELATED_CREDIT_KEY } = await import('../backend/services/matchingConfig.js');
 
 // ── Fake AIServices /internal/matching ───────────────────────────────────────
 const ai = { up: true, calls: [], next: null, hang: false };
@@ -138,5 +140,27 @@ describe('logging', () => {
     } finally {
       info.mockRestore();
     }
+  });
+});
+
+describe('scoring mode (Module 5.2: systemconfigs matching.related_credit)', () => {
+
+  afterEach(async () => { await SystemConfig.deleteMany({ key: RELATED_CREDIT_KEY }); });
+
+  test('without the key, AI is asked for the default: no related credit', async () => {
+    await as(request(app).get('/api/career-matches'), alice);
+    expect(ai.calls[0].headers['x-related-credit']).toBe('false');
+  });
+
+  test('the startup seed creates the key as false and never overwrites an admin change', async () => {
+    await ensureMatchingConfig();
+    const seeded = await SystemConfig.findOne({ key: RELATED_CREDIT_KEY }).lean();
+    expect(seeded).toMatchObject({ value: false, dataType: 'boolean', category: 'matching' });
+    await SystemConfig.updateOne({ key: RELATED_CREDIT_KEY }, { $set: { value: true } });
+    await ensureMatchingConfig();
+    expect((await SystemConfig.findOne({ key: RELATED_CREDIT_KEY }).lean()).value).toBe(true);
+    await as(request(app).get('/api/career-matches/curated:android-developer'), alice);
+    expect(ai.calls[0].path).toBe('/internal/matching/matches/curated:android-developer'); // curated ids accepted
+    expect(ai.calls[0].headers['x-related-credit']).toBe('true');
   });
 });

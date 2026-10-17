@@ -10,7 +10,12 @@ skill, so no profession is missed), and get_related_threshold through search_rel
 
 Cache key: algorithm version + the user's re-normalised skills + the index state hash + the
 live professions fingerprint (any profession write, incl. admin overrides) + the alias and
-description files' signatures + the ESCO role map's hash (Module 5.1). A different key → recompute.
+description files' signatures + the ESCO role map's hash (Module 5.1) + the scoring mode and the
+published curated dataset's hash (Module 5.2). A different key → recompute.
+
+Scoring mode (Module 5.2): `related_credit` comes from Core's systemconfigs key matching.related_credit
+(default false), sent as the X-Related-Credit header. Off: exact / alias / any-of credit only, related
+pairs as display-only hints on each role's missing rows (scoring.attach_related_hints). On: the 0.5 rule.
 """
 
 import hashlib
@@ -98,8 +103,13 @@ def _file_signature(path) -> str:
         return "missing"
 
 
-async def cache_key(owned: Dict[str, dict], db) -> str:
+def scoring_mode(related_credit: bool) -> str:
+    return "related" if related_credit else "exact"
+
+
+async def cache_key(owned: Dict[str, dict], db, related_credit: bool = False) -> str:
     from app.services.taxonomy.pipeline import live_fingerprint
+    from app.services.taxonomy.snapshots import curated_dataset_hash
 
     snapshot = get_role_index().snapshot
     parts = {
@@ -110,12 +120,15 @@ async def cache_key(owned: Dict[str, dict], db) -> str:
         "aliases": _file_signature(normalise_module.ALIASES_FILE),
         "descriptions": _file_signature(descriptions_module.CURATED_FILE),
         "role_map": esco_role_map.map_hash(),
+        "scoring_mode": scoring_mode(related_credit),
+        "curated_dataset": curated_dataset_hash(),
     }
     return hashlib.sha256(json.dumps(parts, sort_keys=True).encode()).hexdigest()
 
 
-async def compute(owned: Dict[str, dict], db) -> List[dict]:
-    """Every active profession scored, duplicates merged, ranked (full breakdowns)."""
+async def compute(owned: Dict[str, dict], db, related_credit: bool = False) -> List[dict]:
+    """Every active profession scored, duplicates merged, ranked (full breakdowns). related_credit False (default):
+    no 0.5 credit; the related pairs become each role's display-only hints."""
     index = get_role_index()
     keys, names, matrix = await user_vectors(owned, db)
     snapshot = index.snapshot
@@ -132,20 +145,25 @@ async def compute(owned: Dict[str, dict], db) -> List[dict]:
 
     related = scoring.related_credits(pairs, described, role_described)
     professions = [p async for p in db[PROFESSIONS].find(active_filter(), PROJECTION).sort("profession_id", 1)]
-    scored = [scoring.score_profession(p, owned, related, current_skill) for p in professions]
+    if related_credit:
+        scored = [scoring.score_profession(p, owned, related, current_skill) for p in professions]
+    else:
+        scored = [scoring.attach_related_hints(scoring.score_profession(p, owned, {}, current_skill), related, owned)
+                  for p in professions]
     return scoring.rank(scoring.merge_duplicates(scored))
 
 
-async def get_matches(user_id: str, db=None) -> dict:
+async def get_matches(user_id: str, db=None, related_credit: bool = False) -> dict:
     """The ranked list (FR7.3, all professions; the UI shows at least 3), from the cache when valid."""
     db = db if db is not None else get_database()
     owned = await user_skills(user_id, db)
-    key = await cache_key(owned, db)
+    key = await cache_key(owned, db, related_credit)
     cached = await db[CAREER_MATCHES].find_one({"user_id": user_id, "cache_key": key}, {"_id": 0})
     if cached:
         return {**_public(cached), "cached": True}
-    results = await compute(owned, db)
+    results = await compute(owned, db, related_credit)
     doc = {
+        "scoring_mode": scoring_mode(related_credit),
         "user_id": user_id,
         "cache_key": key,
         "computed_at": datetime.now(timezone.utc),
@@ -160,15 +178,17 @@ async def get_matches(user_id: str, db=None) -> dict:
     return {**_public(doc), "cached": False}
 
 
-async def get_match_detail(user_id: str, profession_id: str, db=None) -> dict:
-    """One (merged) result with every source's breakdown, explanation and gaps (FR7.4–FR7.7)."""
+async def get_match_detail(user_id: str, profession_id: str, db=None, related_credit: bool = False) -> dict:
+    """One (merged) result with every source's breakdown, explanation and gaps (FR7.4–FR7.7). Hints (mode off)
+    belong to each member's own missing rows only; there is no cross-role hint list."""
     db = db if db is not None else get_database()
     owned = await user_skills(user_id, db)
-    results = await compute(owned, db)
+    results = await compute(owned, db, related_credit)
     for position, result in enumerate(results, start=1):
         if any(m["profession_id"] == profession_id for m in result["members"]):
-            members = [{**m, "explanation": scoring.explain(m)} for m in result["members"]]
-            return {**scoring.summary(result), "rank": position, "of": len(results), "members": members}
+            members = [{**m, "explanation": scoring.explain(m, related_credit)} for m in result["members"]]
+            return {**scoring.summary(result), "rank": position, "of": len(results), "members": members,
+                    "scoring_mode": scoring_mode(related_credit)}
     raise ProfessionNotFound(profession_id)
 
 
@@ -183,4 +203,4 @@ def _public(doc: dict) -> dict:
         computed = (computed if computed.tzinfo else computed.replace(tzinfo=timezone.utc)).isoformat()
     return {"computed_at": computed, "skill_count": doc["skill_count"], "best_score": doc["best_score"],
             "low_match": doc["low_match"], "results": doc["results"], "gaps": doc["gaps"],
-            "low_match_percent": scoring.LOW_MATCH_PERCENT}
+            "low_match_percent": scoring.LOW_MATCH_PERCENT, "scoring_mode": doc.get("scoring_mode", "related")}

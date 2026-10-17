@@ -11,6 +11,9 @@ Errors (safe messages, no internal details — FR7.10):
   503 EMBEDDINGS_PENDING / MODEL_LOADING / INDEX_BUILDING / NO_PROFESSIONS (Retry-After),
   503 MATCHING_UNAVAILABLE (database or configuration), 404 PROFESSION_NOT_FOUND, 400 INVALID_*.
 Logs: a hash of the user id, timings and the result count only — never skills.
+
+Scoring mode (Module 5.2): X-Related-Credit: true|false, set by CoreServices from its systemconfigs key
+matching.related_credit (default false). Anything but "true" means off (exact / alias / any-of credit only).
 """
 
 import hashlib
@@ -34,7 +37,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/internal/matching", tags=["Internal"], dependencies=[Depends(require_internal_key)])
 
 USER_ID = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
-PROFESSION_ID = re.compile(r"^(onet|esco|manual):[A-Za-z0-9._-]{1,100}$")
+PROFESSION_ID = re.compile(r"^(onet|esco|curated|manual):[A-Za-z0-9._-]{1,100}$")
 
 RETRY = {"EMBEDDINGS_PENDING": 10, "MODEL_LOADING": 15, "INDEX_BUILDING": 10, "NO_PROFESSIONS": 60}
 MESSAGES = {
@@ -71,12 +74,17 @@ def unavailable(exc: Exception) -> JSONResponse:
     return error(503, "MATCHING_UNAVAILABLE")  # ThresholdUnavailable: a configuration problem, not shown
 
 
+def related_credit_on(value: Optional[str]) -> bool:
+    return (value or "").strip().lower() == "true"
+
+
 def bad_user() -> JSONResponse:
     return error(400, "INVALID_USER_ID", "X-User-Id (the signed-in user, set by CoreServices) is required")
 
 
 @router.get("/matches")
-async def list_matches(user_id: Optional[str] = Header(default=None, alias="X-User-Id")):
+async def list_matches(user_id: Optional[str] = Header(default=None, alias="X-User-Id"),
+                       related_credit: Optional[str] = Header(default=None, alias="X-Related-Credit")):
     if not user_id or not USER_ID.match(user_id):
         return bad_user()
     db = get_database()
@@ -84,7 +92,7 @@ async def list_matches(user_id: Optional[str] = Header(default=None, alias="X-Us
         return error(503, "MATCHING_UNAVAILABLE")
     started = time.perf_counter()
     try:
-        data = await service.get_matches(user_id, db)
+        data = await service.get_matches(user_id, db, related_credit_on(related_credit))
     except service.NoSkills:
         return {"success": True, "data": {"state": "no_skills", "results": [], "skill_count": 0, "gaps": []}}
     except (EmbeddingsPending, IndexUnavailable, ThresholdUnavailable) as exc:
@@ -95,7 +103,8 @@ async def list_matches(user_id: Optional[str] = Header(default=None, alias="X-Us
 
 
 @router.get("/matches/{profession_id}")
-async def match_detail(profession_id: str, user_id: Optional[str] = Header(default=None, alias="X-User-Id")):
+async def match_detail(profession_id: str, user_id: Optional[str] = Header(default=None, alias="X-User-Id"),
+                       related_credit: Optional[str] = Header(default=None, alias="X-Related-Credit")):
     if not user_id or not USER_ID.match(user_id):
         return bad_user()
     if not PROFESSION_ID.match(profession_id):
@@ -105,7 +114,7 @@ async def match_detail(profession_id: str, user_id: Optional[str] = Header(defau
         return error(503, "MATCHING_UNAVAILABLE")
     started = time.perf_counter()
     try:
-        data = await service.get_match_detail(user_id, profession_id, db)
+        data = await service.get_match_detail(user_id, profession_id, db, related_credit_on(related_credit))
     except service.ProfessionNotFound:
         return error(404, "PROFESSION_NOT_FOUND")  # unknown or inactive
     except service.NoSkills:
