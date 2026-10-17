@@ -49,3 +49,31 @@ Management → SAS) then weigh more. The chef's best match is still 15.0 % in bo
 - **Background diagnosis:** `results/background_diagnosis.md` (`diagnose_background.py`, `background_report.py`,
   `background_labels.json`).
 - The samples are small: 7 + 6 + 10 profiles.
+
+## Variant B2: no related credit (2026-10-17; `compare_b2.py` → `results/b2_compare.md`, marks in `expectations_b2.md`)
+
+B2 uses the same data as B. Credit is 1.0 for an exact or alias key or an any-of alternative only. The related pairs
+(same FAISS index, 0.73 / mutual-NN) are returned as display-only `related_hints`. *Inventory Management → Excel* is
+relabelled a false match (team decision), so B's chef background credit is 100 % false match.
+
+| | B | B2 |
+|---|---|---|
+| Old 8 top-3 · top-5 | 7/7 · 7/7 | 7/7 · 7/7 |
+| New 6 top-3 · top-5 (not blind) | 5/6 · 6/6 | 6/6 · 6/6 |
+| Test CVs top-3 · top-5 (**not blind**) | 10/10 · 10/10 | 10/10 · 10/10 |
+| Chef best | 15.0 % | **0.0 %** |
+| Background | chef 5.5 % vs web 20.3 % **FAIL** (0 real / 61 false) | chef 0 % vs web 0 % **PASS** (ratio n/a) |
+| Java backend CV: roles ≥ 50 % · ≥ 40 % · median | 6 · 13 · 20.6 % | 1 · 2 · 10.0 % |
+
+- **All marks pass in B2.**
+- **The B2 background check is close to automatic.** With no related credit, a profile is credited beyond an exact key
+  only by holding an any-of alternative. Neither background profile does (web rate 0 too, so the ratio is n/a). The
+  telling figures are that the chef's best match is 0 % and that it holds 0 credited rows in total.
+- **The related-hint rate equals B's rate** (chef 5.5 %, web 20.3 %), but it is display only.
+- **Rank changes.** The first acceptable rank changed for 3 of 24 profiles: QA tester 1 → 2, security analyst 4 → 3,
+  CV 06 1 → 2. 58 of 120 top-5 positions hold a different role, mostly reshuffles below the acceptable roles.
+- **O\*NET scores drop much more than curated ones.** O\*NET role lists name tools that profiles often hold only as
+  neighbours (they used to earn 0.5). Example: QA tester → Software Quality Assurance Analysts and Testers, 45.8 % →
+  20.8 %.
+- **The "55 % problem" goes.** For the Java backend CV, Data Engineer / Android Developer / DevOps Engineer fall from
+  55 % to 40 / 30 / 30 %, while Backend Developer stays at 80 %.
