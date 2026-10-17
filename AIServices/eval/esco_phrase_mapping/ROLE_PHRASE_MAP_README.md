@@ -81,3 +81,42 @@ Add a word in `notes` for a 0.
 3. The spot-check precision.
 
 Nothing is adopted.
+
+## Evaluation (2026-10-17, `evaluate_role_map.py` → `results/role_map_eval.{md,json}`)
+
+The rule is applied by wrapping `scoring.score_profession` in the evaluation process only. Production code, data and
+caches are untouched, and the baseline is production scoring in the same run. The baseline reproduces Module 5's
+accepted result: old set top-5 6/7, chef 15.0 %.
+
+- **Spot-check precision: 40 / 40 = 100 %** (Wilson 95 % interval 91–100 %). There are no 0-rows, so the variant
+  "without 0-rows" does not apply.
+- **Blind profiles:** none were supplied (the request still had the template placeholder), so there is no blind set.
+- **Background:**
+  - The production check is chef 3.2 % vs web 12.9 %: PASS. The mapping does not change related credit.
+  - The mapping analogue counts required ESCO rows credited by the map across all ESCO roles: chef 0 / 2,297 = 0 %,
+    web 38 / 2,294 = 1.7 %.
+
+| Set | Top-3: baseline → mapping | Top-5: baseline → mapping | Median ESCO-only share in top 10 | Chef best |
+|---|---|---|---|---|
+| Old 8 (clean test) | 6/7 → **7/7** | 6/7 → **7/7** | 20 % → 30 % | 15.0 % → 15.0 % |
+| New 6 (not blind) | 3/6 → 3/6 | 4/6 → **6/6** | 5 % → 25 % | — |
+
+- **DevOps** (old set): first acceptable rank 6 → **3** (cloud DevOps engineer 47.9 %).
+- **Mobile** (old set): 3 → 3 (Software Developers). The mobile application developer role moves into rank 5.
+- **Android** (new set): 3 → **2**.
+- **New set:** cloud engineer 10 → 5 and data engineer 15 → 5.
+- **Trade-off (old set):** three profiles that had an acceptable role at rank 1 now have one at rank 2, so top-3 still
+  holds. An ESCO role rose just above it each time:
+  - web developer: ESCO web designer 60.0 %;
+  - data scientist: computer vision engineer 54.7 %;
+  - game developer (new set): 3D animator 73.3 %.
+- **Most-changed roles (old set):**
+  - web developer: 9.6 → 32.7 % mean;
+  - database administrator: 6.0 → 19.6 %;
+  - web designer: 17.9 → 24.3 %.
+- **Most influential mappings:**
+  - old set: web designer / markup + front-end design + wireframe; usability and UX research for the UI/UX profile;
+    mobile application developer / computer programming;
+  - new set: ICT application developer / computer programming; cloud software developer / deploy cloud resource.
+
+Nothing is adopted. The full per-profile tables are in `results/role_map_eval.md`.
