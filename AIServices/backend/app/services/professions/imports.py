@@ -75,12 +75,19 @@ class ImportReport:
 
 
 def default_data_dir(source: str) -> Path:
+    if source == "curated":  # the curated dataset is not raw data (Module 5.2)
+        return (BACKEND_DIR / ".." / "data" / "curated").resolve()
     base = Path(settings.PROFESSION_DATA_DIR)
     base = base if base.is_absolute() else (BACKEND_DIR / base).resolve()
     return base / source
 
 
 def default_version(source: str) -> str:
+    if source == "curated":  # the dataset's own version field
+        from app.services.professions.curated import load
+
+        doc, _ = load(default_data_dir("curated"))
+        return str((doc or {}).get("version") or "")
     return settings.ONET_VERSION if source == "onet" else settings.ESCO_VERSION
 
 

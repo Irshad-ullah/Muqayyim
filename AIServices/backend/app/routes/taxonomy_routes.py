@@ -3,7 +3,8 @@ Internal admin taxonomy routes (09c, Module 10 FE-4 / FR12.5), called by
 CoreServices' /api/admin/taxonomy pass-through. Mounted at /internal (never proxied
 by the gateway); X-Internal-Key required.
 
-  GET  /internal/admin/taxonomy/sources         loaded O*NET / ESCO versions, counts, attribution, lock
+  GET  /internal/admin/taxonomy/sources         loaded O*NET / ESCO / curated versions, counts, attribution, lock;
+                                                ESCO's retired state (Module 5.2) and the snapshot that re-enables it
   POST /internal/admin/taxonomy/jobs            upload (multipart: source, dataset_version,
                                                 files = one ZIP or the CSV files) → 202, validates in background
   GET  /internal/admin/taxonomy/jobs            list import jobs (page, limit, status, source)
@@ -419,6 +420,7 @@ ATTRIBUTION = {
     "onet": "O*NET 31.0 Database, U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), "
             "used under CC BY 4.0, modified",
     "esco": "ESCO v1.2.1 © European Union",
+    "curated": "Muqayyim curated modern IT roles (AI-assisted; evidence per requirement, see data/curated/METHOD.md)",
 }
 
 
@@ -430,8 +432,10 @@ async def sources():
         return no_db()
     from app.services.professions.store import ESCO_SKILLS, PROFESSIONS
 
+    from app.services.taxonomy.retirement import retired_message, retirement_snapshot, source_retired
+
     data = {}
-    for source in ("onet", "esco"):
+    for source in ("onet", "esco", "curated"):
         latest = await db[jobs.JOBS].find_one({"source": source, "status": jobs.PUBLISHED}, sort=[("updated_at", -1)])
         updated = await db[PROFESSIONS].find_one({"source": source}, {"updated_at": 1}, sort=[("updated_at", -1)])
         data[source] = {
@@ -444,6 +448,13 @@ async def sources():
             "attribution": ATTRIBUTION[source],
         }
     data["esco"]["esco_skills"] = await db[ESCO_SKILLS].count_documents({})
+    retired = await source_retired("esco", db)
+    data["esco"]["retired"] = retired
+    data["esco"]["upload_enabled"] = not retired
+    if retired:
+        data["esco"]["retired_message"] = retired_message("esco")
+        data["esco"]["retirement"] = await retirement_snapshot("esco", db)
+    data["curated"]["upload_enabled"] = True
     data["manual"] = {"professions": await db[PROFESSIONS].count_documents({"source": "manual"}),
                       "active": await db[PROFESSIONS].count_documents({"source": "manual", "active": True})}
     return {"success": True, "data": data, "lock": await current_lock()}

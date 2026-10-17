@@ -58,7 +58,7 @@ class Settings(BaseSettings):
 
     # Profession database (ESCO + O*NET) and the FAISS role-skill index (Module 5/10).
     # Comma-separated lists. PROFESSION_SOURCES selects which sources are active in the index.
-    PROFESSION_SOURCES: str = os.getenv("PROFESSION_SOURCES", "onet,esco,manual")
+    PROFESSION_SOURCES: str = os.getenv("PROFESSION_SOURCES", "onet,esco,curated,manual")
     PROFESSION_DATA_DIR: str = os.getenv("PROFESSION_DATA_DIR", "../data/raw")
     ONET_SOC_PREFIXES: str = os.getenv("ONET_SOC_PREFIXES", "15-12,15-2051")
     ONET_SOC_EXCLUDE: str = os.getenv("ONET_SOC_EXCLUDE", "15-1299.00")

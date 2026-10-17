@@ -1,0 +1,227 @@
+{
+  "dataset": "muqayyim-curated-modern-roles",
+  "version": "1.0.0",
+  "status": "test fixture",
+  "roles": [
+    {
+      "id": "frontend-developer",
+      "title": "Frontend Developer",
+      "family": "Web",
+      "description": "Builds web user interfaces.",
+      "related_onet_code": "15-1254.00",
+      "required_skills": [
+        {
+          "skill": "HTML",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "HTML"
+          ]
+        },
+        {
+          "skill": "CSS",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "CSS"
+          ]
+        },
+        {
+          "skill": "JavaScript",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "JavaScript"
+          ]
+        },
+        {
+          "skill": "TypeScript",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "TypeScript"
+          ]
+        },
+        {
+          "skill": "React / Angular",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "React",
+            "Angular"
+          ]
+        },
+        {
+          "skill": "Git",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [],
+          "importance": "optional",
+          "any_of": [
+            "Git"
+          ]
+        },
+        {
+          "skill": "Jest",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [],
+          "importance": "optional",
+          "any_of": [
+            "Jest"
+          ]
+        },
+        {
+          "skill": "Figma",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [],
+          "importance": "optional",
+          "any_of": [
+            "Figma"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data-engineer",
+      "title": "Data Engineer",
+      "family": "Data and AI",
+      "description": "Builds data pipelines.",
+      "related_onet_code": "15-1243.01",
+      "required_skills": [
+        {
+          "skill": "Python",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "Python"
+          ]
+        },
+        {
+          "skill": "SQL",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "SQL"
+          ]
+        },
+        {
+          "skill": "Apache Spark",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "P"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "Apache Spark"
+          ]
+        },
+        {
+          "skill": "Apache Airflow",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [],
+          "importance": "optional",
+          "any_of": [
+            "Apache Airflow"
+          ]
+        },
+        {
+          "skill": "Apache Kafka",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [],
+          "importance": "optional",
+          "any_of": [
+            "Apache Kafka"
+          ]
+        },
+        {
+          "skill": "Docker",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [],
+          "importance": "optional",
+          "any_of": [
+            "Docker"
+          ]
+        },
+        {
+          "skill": "AWS / Azure",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [],
+          "importance": "optional",
+          "any_of": [
+            "AWS",
+            "Microsoft Azure"
+          ]
+        },
+        {
+          "skill": "PostgreSQL",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [],
+          "importance": "optional",
+          "any_of": [
+            "PostgreSQL"
+          ]
+        }
+      ]
+    }
+  ]
+}

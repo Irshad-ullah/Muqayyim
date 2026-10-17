@@ -70,7 +70,7 @@ def sha(path: Path) -> str:
 
 
 def file_hashes(data: Path) -> dict:
-    return {name: sha(data / name) for name in snapshots.DATA_FILES}
+    return {name: sha(data / name) for name in snapshots.DATA_FILES if (data / name).is_file()}
 
 
 async def edit_snapshots(db) -> int:

@@ -119,6 +119,8 @@ async def _publish(job: dict, lock: TaxonomyLock, actor: str, db) -> None:
             raise PublishCheckFailed("The taxonomy lock was lost; nothing was published")
         await jobs.set_progress(job_id, "Swapping the new data in", db=db)
         await snapshots.swap_in(db, pipeline.staging_names(job_id))
+        if job["source"] == "curated" and job.get("kind", "import") == "import":
+            await asyncio.to_thread(snapshots.store_curated_dataset, job.get("staging_dir"))
         await jobs.set_progress(job_id, "Rebuilding the role-skill index", db=db)
         index = get_role_index()
         await index.rebuild(db)

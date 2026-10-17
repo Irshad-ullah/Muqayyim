@@ -34,7 +34,7 @@ async def create_job_from_directory(source: str, data_dir: Optional[str] = None,
     """Upload the expected files of `data_dir` as individual parts → the job (validation started)."""
     directory = Path(data_dir) if data_dir else default_data_dir(source)
     version = version or default_version(source)
-    files = [LocalFile(p) for p in sorted(directory.glob("*.csv")) if uploads.expected_name(source, p.name)]
+    files = [LocalFile(p) for p in sorted(directory.iterdir()) if p.is_file() and uploads.expected_name(source, p.name)]
     try:
         return await uploads.create_upload_job(source, version, actor, [(f.handle.name, f) for f in files], db=db)
     finally:

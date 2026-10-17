@@ -1,9 +1,9 @@
 """
 Profession database: ai_db.professions (Module 5 FE-2, Module 10 FE-4).
 
-  { profession_id ("onet:15-1254.00" | "esco:<uuid>" | "manual:<id>"),
+  { profession_id ("onet:15-1254.00" | "esco:<uuid>" | "curated:<id>" | "manual:<id>"),
     title, alt_titles[], description, category,
-    source ('onet' | 'esco' | 'manual'), source_code, source_version,
+    source ('onet' | 'esco' | 'curated' | 'manual'), source_code, source_version,
     skills: [{ name, key, type: 'essential' | 'optional' | 'technology',
                hot, in_demand, original_label, element_name?, uri? (ESCO skill URI),
                ESCO requirement group (Module 5.1, esco_role_map.py): source: 'role_map', label,
@@ -28,7 +28,7 @@ from app.services.embeddings.normalise import normalise_skill
 
 PROFESSIONS = "professions"
 ESCO_SKILLS = "esco_skills"
-SOURCES = ("onet", "esco", "manual")
+SOURCES = ("onet", "esco", "curated", "manual")
 SKILL_TYPES = ("essential", "optional", "technology")
 MIN_SKILLS = 5
 

@@ -35,6 +35,7 @@ from pymongo import ASCENDING, MongoClient
 from app.config.database import get_database
 from app.config.settings import settings
 from app.services.embeddings.descriptions import get_description_provider
+from app.services.professions.curated import parse_curated
 from app.services.professions.esco import parse_esco
 from app.services.professions.esco_role_map import count_groups
 from app.services.professions.imports import upsert_esco_skills
@@ -106,7 +107,21 @@ async def copy_collection(db, source: str, target: str) -> None:
 
 # ── stage ─────────────────────────────────────────────────────────────────────
 def parse(source: str, directory: Path, version: str) -> dict:
+    if source == "curated":
+        return parse_curated(directory, version)
     return parse_onet(directory, version) if source == "onet" else parse_esco(directory, version)
+
+
+async def stage_retirement_job(db, job_id: str, source: str) -> dict:
+    """A retirement job (Module 5.2): the staged copy with every profession of the source retired."""
+    from app.services.taxonomy.retirement import stage_retirement
+
+    names = staging_names(job_id)
+    await ensure_profession_indexes(db)
+    await copy_collection(db, PROFESSIONS, names["professions"])
+    await copy_collection(db, ESCO_SKILLS, names["esco_skills"])
+    retired = await stage_retirement(db, names["professions"], source)
+    return {"docs": [], "stats": {"retired": retired}, "written": {"retired": retired}}
 
 
 async def stage(db, job_id: str, source: str, directory: Path, version_number: str, label: str) -> dict:
@@ -277,9 +292,14 @@ async def run_checks(db, collection: str, esco_collection: str, index_dir: Optio
                                   model_wait_seconds=MODEL_WAIT_SECONDS)
         result["background"] = {
             "check": bg["check"],
-            "rates": {name: {k: p[k] for k in ("pooled_related_pct", "median_profession_related_pct", "related_by_kind")}
+            "rates": {name: {k: p.get(k) for k in ("pooled_related_pct", "median_profession_related_pct", "related_by_kind",
+                                                   "alternative_credit_pct", "all_credited_share_pct")}
                       for name, p in bg["profiles"].items()},
             "role_skills": bg["role_skills"],
+            # Module 5.2: the check judges the default scoring mode (related credit off); the related-credit
+            # rate is kept for reference (what the display-only hints would add if the mode were switched on).
+            "scoring_mode": bg.get("scoring_mode"),
+            "legacy_related_check": bg.get("legacy_related_check"),
         }
         result["background_warning"] = not bg["check"]["passed"]
     except (credit.CheckUnavailable, asyncio.TimeoutError) as exc:
@@ -321,9 +341,12 @@ async def _preview(job: dict, db) -> None:
     directory = Path(job["staging_dir"])
     from app.services.taxonomy.uploads import version_label
 
-    label, number = version_label(job["source"], job["dataset_version"])
     base = await live_fingerprint(db)
-    parsed = await stage(db, job_id, job["source"], directory, number, label)
+    if job.get("kind") == "retire":
+        parsed = await stage_retirement_job(db, job_id, job["source"])
+    else:
+        label, number = version_label(job["source"], job["dataset_version"])
+        parsed = await stage(db, job_id, job["source"], directory, number, label)
     await jobs.set_progress(job_id, "Comparing with the live data", db=db)
     summary = await diff(db, job_id, job["source"], parsed["docs"], parsed.get("stats"))
     summary["import_stats"] = _jsonable(parsed["stats"])

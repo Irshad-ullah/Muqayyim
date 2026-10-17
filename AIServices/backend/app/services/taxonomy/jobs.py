@@ -1,7 +1,8 @@
 """
 Taxonomy import jobs (09c, Module 10 FE-4 / FR12.5): ai_db.import_jobs.
 
-  { job_id, source ('onet' | 'esco'), dataset_version ("O*NET 31.0", "ESCO v1.2.1"),
+  { job_id, source ('onet' | 'esco' | 'curated'), kind ('import' | 'retire'),
+    dataset_version ("O*NET 31.0", "ESCO v1.2.1", "curated v1.0.0"),
     status, created_by (admin user id, or "cli"), created_at, updated_at,
     file_summary, validation_errors, diff_summary, checks, snapshot_id,
     post_publish_checks, background_acknowledged, progress {step, message},
@@ -32,7 +33,8 @@ from app.config.database import get_database
 logger = logging.getLogger(__name__)
 
 JOBS = "import_jobs"
-SOURCES = ("onet", "esco")
+SOURCES = ("onet", "esco", "curated")
+KINDS = ("import", "retire")
 
 UPLOADED, VALIDATING, VALIDATED = "uploaded", "validating", "validated"
 PREVIEWING, PREVIEWED = "previewing", "previewed"
@@ -101,13 +103,14 @@ def public(job: Optional[dict]) -> Optional[dict]:
 
 
 async def create_job(source: str, dataset_version: str, created_by: str, file_summary: Optional[dict] = None,
-                     db=None, job_id: Optional[str] = None) -> dict:
+                     db=None, job_id: Optional[str] = None, kind: str = "import") -> dict:
     if source not in SOURCES:
         raise ValueError(f"source must be one of {SOURCES}")
     now = _now()
     job = {
         "job_id": job_id or uuid.uuid4().hex,
         "source": source,
+        "kind": kind if kind in KINDS else "import",
         "dataset_version": dataset_version,
         "status": UPLOADED,
         "created_by": created_by,

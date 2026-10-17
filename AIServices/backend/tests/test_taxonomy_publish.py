@@ -33,7 +33,8 @@ async def db(real_db, tmp_path, monkeypatch):  # noqa: F811
     data = tmp_path / "data"
     data.mkdir()
     for name in snapshots.DATA_FILES:
-        shutil.copy2(REAL_DATA / name, data / name)
+        if (REAL_DATA / name).is_file():  # curated_roles.json exists only after a curated publish (Module 5.2)
+            shutil.copy2(REAL_DATA / name, data / name)
     monkeypatch.setattr(snapshots, "DATA_DIR", data)
     index = RoleSkillIndex(tmp_path / "index")
     use_role_index(index)

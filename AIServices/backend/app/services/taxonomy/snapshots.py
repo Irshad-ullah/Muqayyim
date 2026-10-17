@@ -42,7 +42,10 @@ from app.services.professions.store import ESCO_SKILLS, PROFESSIONS, ensure_prof
 SNAPSHOTS = "taxonomy_snapshots"
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 DATA_FILES = ("skill_descriptions.json", "skill_aliases.json", "skill_categories.json",
-              "onet_name_map.json", "esco_name_map.json", "esco_role_phrase_skill_map.json")
+              "onet_name_map.json", "esco_name_map.json", "esco_role_phrase_skill_map.json", "curated_roles.json")
+# The published curated dataset (Module 5.2): written by a curated publish, absent before the first one. A restore of
+# a snapshot taken before it existed removes it again, so the file always matches the restored professions.
+OPTIONAL_DATA_FILES = ("curated_roles.json",)
 POOLS = {"publish": ("publish", "pre-restore"), "edit": ("edit",)}
 JSON_OPTIONS = json_util.CANONICAL_JSON_OPTIONS
 
@@ -300,6 +303,23 @@ def reload_taxonomy_files() -> None:
     use_description_provider(None)
 
 
+def store_curated_dataset(staging_dir: Optional[str]) -> bool:
+    """After a curated publish: the staged dataset becomes app/data/curated_roles.json (atomic replace)."""
+    from app.services.professions.curated import FILE_NAME, find_file
+
+    src = find_file(Path(staging_dir)) if staging_dir else None
+    if src is None:
+        return False
+    _replace_file(src, data_dir() / FILE_NAME)
+    return True
+
+
+def curated_dataset_hash() -> str:
+    """sha256 of the published curated dataset (part of the career-match cache key); "none" before the first publish."""
+    path = data_dir() / "curated_roles.json"
+    return _sha256(path) if path.is_file() else "none"
+
+
 async def swap_in(db, staged: Dict[str, str]) -> None:
     """renameCollection staged → live (dropTarget), professions first. Each rename is atomic;
     the pair is not — a crash in between is recovered from the job's snapshot."""
@@ -341,6 +361,8 @@ async def restore_files(db, record: dict) -> dict:
         src = path / "data" / name
         if src.is_file():
             await asyncio.to_thread(_replace_file, src, data_dir() / name)
+        elif name in OPTIONAL_DATA_FILES and (data_dir() / name).is_file():
+            (data_dir() / name).unlink()
     reload_taxonomy_files()
     index = get_role_index()
     restored_index = (path / "index" / INDEX_FILE).is_file() and (path / "index" / META_FILE).is_file()

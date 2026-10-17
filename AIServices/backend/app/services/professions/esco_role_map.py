@@ -143,7 +143,9 @@ def apply_to_skill(skill: Optional[dict], occupation_uri: str, skill_uri: str, p
 
 
 def is_group(skill: dict) -> bool:
-    return skill.get("source") == SOURCE and bool(skill.get("alternatives"))
+    """A requirement group: an ESCO role-map group (source "role_map", Module 5.1) or a curated any-of requirement
+    (source "any_of", Module 5.2) — any stored skill with alternatives."""
+    return bool(skill.get("alternatives"))
 
 
 def alternative_keys(skill: dict) -> List[str]:
@@ -187,4 +189,4 @@ def coverage(pairs: Iterable[Tuple[Pair, str, bool]], entries: Dict[Pair, dict])
 def count_groups(professions: Iterable[dict]) -> int:
     """Requirement groups in the given (active ESCO) professions — the post-check figure."""
     return sum(1 for p in professions if p.get("active") and p.get("source") == "esco"
-               for s in p.get("skills") or [] if is_group(s))
+               for s in p.get("skills") or [] if s.get("source") == SOURCE and is_group(s))

@@ -14,7 +14,8 @@ Scope: ONLY the files the role-skill data uses are accepted, extracted and store
 skipped and only counted (no names kept):
   onet  occupation_data.csv, job_titles.csv, software_skills.csv
   esco  occupations_en.csv, skills_en.csv, occupationSkillRelations_en.csv,
-        digitalSkillsCollection_en.csv (optional)
+        digitalSkillsCollection_en.csv (optional) — refused while ESCO is retired (Module 5.2)
+  curated  one JSON dataset file (modern_roles_v1.json), staged as curated_roles.json (Module 5.2)
 
 ZIP safety (the whole archive is rejected):
   * absolute paths, drive letters, ".." segments, backslash tricks (zip-slip)
@@ -41,6 +42,7 @@ from typing import Dict, List, Optional, Tuple
 
 from app.config.database import get_database
 from app.config.settings import settings
+from app.services.professions import curated as curated_module
 from app.services.professions import esco as esco_module
 from app.services.professions import onet as onet_module
 from app.services.professions.csv_io import check_files, scan_rows
@@ -100,6 +102,8 @@ def expected_name(source: str, filename: str) -> Optional[str]:
     lower = name.lower()
     if source == "onet":
         return name.lower() if lower in ONET_FILES else None
+    if source == "curated":
+        return curated_module.FILE_NAME if lower.endswith(".json") else None
     for base in ESCO_BASES:
         if lower in (f"{base.lower()}_en.csv", f"{base.lower()}.csv"):
             return f"{base}_en.csv"
@@ -109,6 +113,11 @@ def expected_name(source: str, filename: str) -> Optional[str]:
 def version_label(source: str, value: str) -> Tuple[str, str]:
     """('O*NET 31.0', '31.0') / ('ESCO v1.2.1', '1.2.1') from what the admin typed."""
     text = " ".join((value or "").split())
+    if source == "curated":
+        try:
+            return curated_module.version_label(text)
+        except ValueError as exc:
+            raise UploadRejected([str(exc)])
     if source == "onet":
         m = re.fullmatch(r"(?:O\*NET\s*)?(\d{1,3}(?:\.\d{1,3})?)", text, re.IGNORECASE)
         if not m:
@@ -261,8 +270,9 @@ REQUIRED_FILES = {
     "onet": ["occupation_data.csv", "job_titles.csv", "software_skills.csv"],
     "esco": ["occupations_en.csv", "skills_en.csv", "occupationSkillRelations_en.csv"],
 }
-OPTIONAL_FILES = {"onet": [], "esco": ["digitalSkillsCollection_en.csv"]}
-SOURCE_NAMES = {"onet": "O*NET", "esco": "ESCO"}
+OPTIONAL_FILES = {"onet": [], "esco": ["digitalSkillsCollection_en.csv"], "curated": []}
+SOURCE_NAMES = {"onet": "O*NET", "esco": "ESCO", "curated": "Curated roles"}
+REQUIRED_FILES["curated"] = ["one curated dataset JSON file (modern_roles_v1.json)"]
 
 
 def staged_name(source: str, base: str) -> str:
@@ -280,6 +290,8 @@ def missing_files_message(source: str, missing: List[str]) -> str:
 def validate_directory(source: str, directory: Path) -> Tuple[Dict[str, dict], List[str]]:
     """Required files and columns, UTF-8 and row counts — the same rules the importers use.
     → ({file name: {bytes, rows}}, [errors])."""
+    if source == "curated":
+        return curated_module.validate_directory(Path(directory))
     spec, suffixes, optional = file_spec(source)
     found, raw_errors = check_files(directory, spec, suffixes, optional)
     # One message naming exactly the missing files (no paths, no name variants).
@@ -305,6 +317,10 @@ async def run_validation(job_id: str, db=None) -> None:
     job = await jobs.transition(job_id, jobs.VALIDATING, note="Checking files and columns", db=db)
     directory = Path(job["staging_dir"])
     files, errors = await asyncio.to_thread(validate_directory, job["source"], directory)
+    if job["source"] == "curated" and not errors:
+        found = next((f.get("dataset_version") for f in files.values() if isinstance(f, dict) and f.get("dataset_version")), "")
+        if f"curated v{found}" != job["dataset_version"]:
+            errors = [f"the dataset file says version {found!r}, but the upload was labelled {job['dataset_version']!r}"]
     summary = {**(job.get("file_summary") or {}), "validated_files": files}
     if errors:
         remove_staging(job.get("staging_dir"))
@@ -325,6 +341,10 @@ async def create_upload_job(source: str, dataset_version: str, created_by: str,
     """
     if source not in jobs.SOURCES:
         raise UploadRejected([f"source must be one of {', '.join(jobs.SOURCES)}"])
+    from app.services.taxonomy.retirement import retired_message, source_retired
+
+    if await source_retired(source, db):
+        raise UploadRejected([retired_message(source)], status=409, code="SOURCE_RETIRED")
     label, _ = version_label(source, dataset_version)
     dest = new_staging_dir()
     job = await jobs.create_job(source, label, created_by, db=db)
