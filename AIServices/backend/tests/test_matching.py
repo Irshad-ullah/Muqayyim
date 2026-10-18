@@ -148,7 +148,7 @@ def test_explanation_is_template_based_and_names_the_sources():
     lines = scoring.explain(result)
     assert lines == scoring.explain(result)  # deterministic
     assert lines[0] == "web developer needs 3 key skills; your match is 50%: 1 matched, 1 related and 1 missing."
-    assert lines[1] == "You already have React (from your CV)."
+    assert lines[1] == "You already have React (from your uploaded CV)."
     assert "Vue.js (close to your React, similarity 0.90)" in lines[2]
     assert lines[3] == "To close the gap, learn Excel."
     assert "ESCO lists broader competences" in lines[-1]

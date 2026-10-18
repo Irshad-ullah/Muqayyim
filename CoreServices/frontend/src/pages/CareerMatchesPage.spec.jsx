@@ -231,8 +231,8 @@ describe('Career Matching — details', () => {
     const first = within(details).getAllByTestId('member')[0];
     const rows = within(first).getAllByTestId('skill-row');
     expect(rows.map((r) => r.dataset.status)).toEqual(['matched', 'related', 'missing', 'matched']);
-    expect(rows[0].textContent).toContain('Held — from your CV');
-    expect(rows[1].textContent).toContain('Related — via your React (from your CV), similarity 0.90');
+    expect(rows[0].textContent).toContain('Held — found in your uploaded CV');
+    expect(rows[1].textContent).toContain('Related — via your React (from your uploaded CV), similarity 0.90');
     expect(rows[2].textContent).toContain('Missing');
     expect(within(first).getByTestId('explanation').textContent).toMatch(/To close the gap, learn Kubernetes/);
   });
@@ -253,7 +253,7 @@ describe('Career Matching — details', () => {
     const details = await screen.findByTestId('career-details');
     const rows = within(within(details).getAllByTestId('member')[0]).getAllByTestId('skill-row');
     expect(rows[0].textContent).toContain('Kotlin / Swift / Java / … (use programming languages)');
-    expect(rows[0].textContent).toContain('Held via Kotlin (shows: use programming languages)');
+    expect(rows[0].textContent).toContain('Held via Kotlin, found in your uploaded CV (covers: use programming languages)');
     expect(rows[1].dataset.status).toBe('missing');
     expect(rows[1].textContent).toContain('Missing — any one of: Selenium, Cypress');
   });

@@ -10,7 +10,9 @@ export const SORTS = {
   title: { label: 'Title (A–Z)', compare: (a, b) => a.title.localeCompare(b.title) || b.score - a.score },
 };
 
-export const SOURCE_NAMES = { onet: 'O*NET', esco: 'ESCO', curated: 'Curated', manual: 'Manual' };
+// Curated modern roles are shown as "Industry" roles (their evidence: role roadmaps, the Stack Overflow survey,
+// certifications and O*NET technology skills); the admin pages keep the exact source name.
+export const SOURCE_NAMES = { onet: 'O*NET', esco: 'ESCO', curated: 'Industry', manual: 'Manual' };
 
 export const sourcesOf = (result) => (result.sources?.length ? result.sources.map((s) => s.source) : [result.source]);
 export const categoriesOf = (result) => (result.categories?.length ? result.categories : [result.category || 'Other']);
@@ -46,16 +48,19 @@ export const STATUS_VIEW = {
   missing: { label: 'Missing', symbol: '✗' },
 };
 
-const FROM = { manual: 'your profile', cv: 'your CV', github: 'GitHub' };
+const FROM = { manual: 'your profile', cv: 'your uploaded CV', github: 'your GitHub repositories' };
 export const fromLabel = (source) => FROM[source] || 'your profile';
+// Where a held skill was found, in words ("found in your uploaded CV").
+const FOUND = { manual: 'listed in your profile', cv: 'found in your uploaded CV', github: 'found in your GitHub repositories' };
+export const foundLabel = (source) => FOUND[source] || 'listed in your profile';
 
 // One required / optional skill row → the text shown next to its icon (never colour alone).
 // An ESCO requirement group (Module 5.1) is held through any one of its named skills.
 export const skillNote = (row) => {
   if (row.status === 'matched' && row.via?.group && row.group) {
-    return `Held via ${row.via.name} (shows: ${row.group.phrase})`;
+    return `Held via ${row.via.name}, ${foundLabel(row.via.source)} (covers: ${row.group.phrase})`;
   }
-  if (row.status === 'matched') return `Held — from ${fromLabel(row.via?.source)}`;
+  if (row.status === 'matched') return `Held — ${foundLabel(row.via?.source)}`;
   if (row.status === 'missing' && row.group?.alternatives?.length) {
     return `Missing — any one of: ${row.group.alternatives.join(', ')}`;
   }

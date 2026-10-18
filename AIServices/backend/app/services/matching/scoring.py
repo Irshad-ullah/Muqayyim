@@ -42,12 +42,12 @@ MIN_REQUIRED = 10
 LOW_MATCH_PERCENT = 20.0  # display only: the "low match" note when even the best result is below it
 ALGORITHM_VERSION = "3"  # part of the cache key; bump when the scoring rules change (2: ESCO groups; 3: scoring mode)
 
-SOURCE_LABELS = {"manual": "your profile", "cv": "your CV", "github": "GitHub"}
+SOURCE_LABELS = {"manual": "your profile", "cv": "your uploaded CV", "github": "your GitHub repositories"}
 ATTRIBUTION = {
     "onet": "O*NET 31.0 Database, U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), "
             "used under CC BY 4.0, modified",
     "esco": "ESCO v1.2.1 © European Union",
-    "curated": "Muqayyim curated modern IT roles v1 (AI-assisted, with evidence per requirement)",
+    "curated": "Industry role profile: skills backed by role roadmaps (roadmap.sh), the Stack Overflow Developer Survey 2025, official certification outlines and O*NET technology skills",
 }
 
 
@@ -255,7 +255,7 @@ def explain(result: dict, related_credit: bool = True) -> List[str]:
         by_source: Dict[str, List[str]] = {}
         for r in matched:
             # A group held through one of its alternatives names the skill and the ability it shows.
-            shown = f"{r['via']['name']} (shows: {r['group']['phrase']})" if r["via"].get("group") else r["name"]
+            shown = f"{r['via']['name']} (covers: {r['group']['phrase']})" if r["via"].get("group") else r["name"]
             by_source.setdefault(_from(r["via"].get("source")), []).append(shown)
         parts = [f"{_join(names)} (from {label})" for label, names in by_source.items()]
         lines.append("You already have " + "; ".join(parts) + ".")

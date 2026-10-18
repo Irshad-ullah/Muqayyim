@@ -113,7 +113,7 @@ def test_any_one_alternative_satisfies_the_group(tmp_path):
         # The required count is exactly the plain one: a group is one requirement.
         assert result["required_count"] == scoring.score_profession(plain, owned(*holding), {}, current_skill)["required_count"]
     explained = " ".join(scoring.explain(scoring.score_profession(mapped, owned("Kotlin"), {}, current_skill)))
-    assert "Kotlin (shows: use programming languages)" in explained
+    assert "Kotlin (covers: use programming languages)" in explained
 
     missing = scoring.score_profession(mapped, owned("Excel"), {}, current_skill)
     row = next(r for r in missing["required"] if r["key"] == phrase_key)

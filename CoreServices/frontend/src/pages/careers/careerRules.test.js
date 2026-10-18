@@ -48,19 +48,19 @@ test('every error code has its own safe view; only EMBEDDINGS_PENDING polls', ()
 });
 
 test('skill notes say the status in words and name the user skill behind a related credit', () => {
-  assert.equal(skillNote({ status: 'matched', via: { source: 'cv' } }), 'Held — from your CV');
+  assert.equal(skillNote({ status: 'matched', via: { source: 'cv' } }), 'Held — found in your uploaded CV');
   assert.equal(skillNote({ status: 'related', via: { name: 'Express', source: 'github', similarity: 0.812 } }),
-    'Related — via your Express (from GitHub), similarity 0.81');
+    'Related — via your Express (from your GitHub repositories), similarity 0.81');
   assert.equal(skillNote({ status: 'missing' }), 'Missing');
 });
 
 test('ESCO requirement groups (Module 5.1): held via one named skill, missing lists the alternatives', () => {
   const group = { phrase: 'use programming languages', alternatives: ['Kotlin', 'Swift', 'Java'] };
   assert.equal(skillNote({ status: 'matched', via: { name: 'Kotlin', source: 'cv', group: true }, group }),
-    'Held via Kotlin (shows: use programming languages)');
+    'Held via Kotlin, found in your uploaded CV (covers: use programming languages)');
   assert.equal(skillNote({ status: 'missing', group }), 'Missing — any one of: Kotlin, Swift, Java');
   // Holding the phrase itself, or a related credit, reads as before.
-  assert.equal(skillNote({ status: 'matched', via: { source: 'manual' }, group }), 'Held — from your profile');
+  assert.equal(skillNote({ status: 'matched', via: { source: 'manual' }, group }), 'Held — listed in your profile');
   assert.match(skillNote({ status: 'related', via: { name: 'Dart', source: 'cv', similarity: 0.8 }, group }), /^Related — via your Dart/);
 });
 
