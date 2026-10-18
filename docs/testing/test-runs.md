@@ -257,3 +257,18 @@ Result: **PASS** · total time 229 s
 | Frontend node --test + Vitest | ✅ 146 passed (40 node + 106 Vitest), 0 failed | 17.0 s | `node --test: pass 40, fail 0 (0.2s) \| Vitest: 106 passed (106) (16.8s)` |
 
 Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).
+
+## 2026-10-17 22:58 Pakistan Standard Time · `679def1` (main, 10 uncommitted change(s)) — INTERRUPTED. Not counted
+
+Commit: Module 5.2: UI for hints, curated source and retired ESCO  
+Result: **INTERRUPTED. Not counted** (the laptop slept during the run: the AI suite hit the 60-minute timeout; the timings are inflated by the sleep) · recorded result FAIL · total time 38916 s
+
+| Suite | Result | Duration | Summary line |
+|---|---|---|---|
+| AIServices pytest | ❌ 0 passed, 0 failed | 38366 s (wall) | `` |
+| AIServices pytest -m slow (real model) | ❌ 1 passed, 1 failed, 2 xfailed, 635 deselected | 149.3 s | `1 failed, 1 passed, 635 deselected, 2 xfailed in 149.26s (0:02:29)` |
+| CoreServices Jest | ✅ 293 passed, 0 failed | 191.4 s | `Tests: 293 passed, 293 total \| Test Suites: 22 passed, 22 total` |
+| API Gateway Jest | ✅ 76 passed, 0 failed | 17.3 s | `Tests: 76 passed, 76 total \| Test Suites: 11 passed, 11 total` |
+| Frontend node --test + Vitest | ✅ 151 passed (41 node + 110 Vitest), 0 failed | 119.6 s | `node --test: pass 41, fail 0 (0.3s) \| Vitest: 110 passed (110) (119.2s)` |
+
+Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).
