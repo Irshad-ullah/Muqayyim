@@ -28,6 +28,7 @@ const SOURCES = [
   ['manual', 'manual'],
   ['cv', 'cv'],
   ['extracted', 'github'],
+  ['learning', 'learning'], // Module 6: completed learning-path modules (not verified)
 ];
 
 export const mergedSkills = (profile) => {

@@ -50,3 +50,20 @@ test.each(['/internal/llm/status', '/internal/llm/cv-assist', '/internal/llm/use
   expect(res.status).toBe(404);
   expect([...hits.core, ...hits.ai]).toEqual([]);
 });
+
+// Module 6: /api/learning-paths goes to Core, which calls AIServices /internal/learning/* and /internal/llm/learning-*.
+test.each([['get', '/api/learning-paths'], ['post', '/api/learning-paths'], ['get', '/api/learning-paths/abc'],
+  ['patch', '/api/learning-paths/abc/modules/react'], ['delete', '/api/learning-paths/abc']])(
+  '%s %s is proxied to Core with the token', async (method, path) => {
+    const res = await request(app)[method](path).set('Authorization', 'Bearer t').send({});
+    expect(res.status).toBe(200);
+    expect(hits.core.at(-1)).toEqual({ url: path, auth: 'Bearer t' });
+    expect(hits.ai).toEqual([]);
+  });
+
+test('/internal/learning/* is not reachable through the gateway', async () => {
+  const res = await request(app).post('/internal/learning/structure').send({});
+  expect(res.status).toBe(404);
+  expect(hits.core).toEqual([]);
+  expect(hits.ai).toEqual([]);
+});

@@ -85,7 +85,7 @@ describe('consent', () => {
   test('the consent state carries the exact free-tier text; agreeing stores it on the user', async () => {
     const before = await as(request(app).get('/api/ai/consent'));
     expect(before.body.data).toMatchObject({ granted: false, text: AI_CONSENT_TEXT, currentVersion: AI_CONSENT_VERSION, provider: 'Google Gemini' });
-    expect(before.body.data.text).toBe('Your CV/profile text is sent to Google Gemini for processing. On the free tier, Google may use this content to improve its products.');
+    expect(before.body.data.text).toBe('Your CV/profile text, and your skills and learning preferences, to build learning paths, are sent to Google Gemini for processing. On the free tier, Google may use this content to improve its products.');
     const given = await consent();
     expect(given.status).toBe(200);
     expect(given.body.data.granted).toBe(true);

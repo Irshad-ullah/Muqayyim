@@ -164,6 +164,8 @@ async def get_matches(user_id: str, db=None, related_credit: bool = False) -> di
     results = await compute(owned, db, related_credit)
     doc = {
         "scoring_mode": scoring_mode(related_credit),
+        # Module 6: skills added by completing learning-path modules count in the match %, shown as unverified.
+        "unverified_skill_count": sum(1 for v in owned.values() if v.get("source") == "learning"),
         "user_id": user_id,
         "cache_key": key,
         "computed_at": datetime.now(timezone.utc),
@@ -203,4 +205,5 @@ def _public(doc: dict) -> dict:
         computed = (computed if computed.tzinfo else computed.replace(tzinfo=timezone.utc)).isoformat()
     return {"computed_at": computed, "skill_count": doc["skill_count"], "best_score": doc["best_score"],
             "low_match": doc["low_match"], "results": doc["results"], "gaps": doc["gaps"],
-            "low_match_percent": scoring.LOW_MATCH_PERCENT, "scoring_mode": doc.get("scoring_mode", "related")}
+            "low_match_percent": scoring.LOW_MATCH_PERCENT, "scoring_mode": doc.get("scoring_mode", "related"),
+            "unverified_skill_count": doc.get("unverified_skill_count", 0)}

@@ -34,7 +34,7 @@ from app.services.embeddings.vector_store import USER_SKILL_PROFILES, get_skill_
 
 logger = logging.getLogger(__name__)
 
-SOURCE_ORDER = ["manual", "cv", "github"]
+SOURCE_ORDER = ["manual", "cv", "github", "learning"]  # learning: a completed learning-path module (Module 6, not verified)
 DONE, PENDING, FAILED = "done", "pending", "failed"
 
 _locks: Dict[str, asyncio.Lock] = {}

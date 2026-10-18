@@ -26,9 +26,9 @@ const UNAVAILABLE = { success: false, code: 'LLM_UNAVAILABLE', message: 'AI assi
 
 const userRef = (id) => crypto.createHash('sha256').update(String(id)).digest('hex').slice(0, 12);
 const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
-const hasConsent = (user) => Boolean(user?.aiConsent?.granted && user.aiConsent.version === AI_CONSENT_VERSION);
+export const hasConsent = (user) => Boolean(user?.aiConsent?.granted && user.aiConsent.version === AI_CONSENT_VERSION);
 
-const consentView = (user) => ({
+export const consentView = (user) => ({
   granted: hasConsent(user),
   version: user?.aiConsent?.version || null,
   currentVersion: AI_CONSENT_VERSION,

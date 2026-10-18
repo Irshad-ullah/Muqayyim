@@ -47,7 +47,7 @@ async def get_latest_cv_internal(user_id: str):
 
 class _SkillIn(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
-    source: Literal["manual", "cv", "github"] = "manual"  # display only
+    source: Literal["manual", "cv", "github", "learning"] = "manual"  # display only (learning: Module 6, not verified)
 
 
 class _UserSkillsIn(BaseModel):

@@ -4,6 +4,7 @@ import authRoutes from './backend/routes/authRoutes.js';
 import profileRoutes from './backend/routes/profileRoutes.js';
 import generatedCvRoutes from './backend/routes/generatedCvRoutes.js';
 import careerMatchRoutes from './backend/routes/careerMatchRoutes.js';
+import learningPathRoutes from './backend/routes/learningPathRoutes.js';
 import aiRoutes from './backend/routes/aiRoutes.js';
 import adminRoutes from './backend/admin/routes/adminRoutes.js';
 import internalRoutes from './backend/routes/internalRoutes.js';
@@ -40,6 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/generated-cvs', generatedCvRoutes);
 app.use('/api/career-matches', careerMatchRoutes);
+app.use('/api/learning-paths', learningPathRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/admin', adminRoutes);
 

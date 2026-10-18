@@ -144,3 +144,19 @@ async def test_route(client):
                              headers=KEY)).json()["code"] == "INVALID_USER_ID"
         assert (await c.post("/internal/learning/structure", json={"profession_id": "manual:web", "extra": 1},
                              headers={**KEY, "X-User-Id": "u1"})).status_code == 422
+
+
+# ── learning skills (completed modules) count in the match and are reported as unverified ─────────────────────────
+async def test_learning_skills_count_and_are_reported_as_unverified(matching_db, stub):
+    from app.services.embeddings.user_profiles import upsert_user_skills
+    from app.services.matching import service
+
+    await upsert_user_skills("u9", [{"name": "React", "source": "cv"}, {"name": "Excel", "source": "learning"}],
+                             embedder=stub, db=matching_db)
+    listed = await service.get_matches("u9", matching_db)
+    web = next(r for r in listed["results"] if r["profession_id"] == "manual:web")
+    assert web["matched"] == 2 and listed["unverified_skill_count"] == 1  # Excel counts, and is flagged unverified
+    detail = await service.get_match_detail("u9", "manual:sheets", matching_db)
+    row = detail["members"][0]["required"][0]
+    assert row["status"] == "matched" and row["via"]["source"] == "learning"
+    assert "your learning path (not verified)" in " ".join(detail["members"][0]["explanation"])

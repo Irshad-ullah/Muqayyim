@@ -42,7 +42,8 @@ MIN_REQUIRED = 10
 LOW_MATCH_PERCENT = 20.0  # display only: the "low match" note when even the best result is below it
 ALGORITHM_VERSION = "3"  # part of the cache key; bump when the scoring rules change (2: ESCO groups; 3: scoring mode)
 
-SOURCE_LABELS = {"manual": "your profile", "cv": "your uploaded CV", "github": "your GitHub repositories"}
+SOURCE_LABELS = {"manual": "your profile", "cv": "your uploaded CV", "github": "your GitHub repositories",
+                 "learning": "your learning path (not verified)"}
 ATTRIBUTION = {
     "onet": "O*NET 31.0 Database, U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), "
             "used under CC BY 4.0, modified",

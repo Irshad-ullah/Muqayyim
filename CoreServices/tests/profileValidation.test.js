@@ -200,7 +200,7 @@ describe('FR5.5 skills', () => {
   test('trimmed, de-duplicated across sources case-insensitively, first spelling kept', async () => {
     const res = await put({ skills: { manual: ['  React ', 'node.js'], cv: ['REACT', 'Python', ''], extracted: ['python', 'Docker'] } });
     expect(res.status).toBe(200);
-    expect(res.body.profile.skills).toEqual({ manual: ['React', 'node.js'], cv: ['Python'], extracted: ['Docker'] });
+    expect(res.body.profile.skills).toEqual({ manual: ['React', 'node.js'], cv: ['Python'], extracted: ['Docker'], learning: [] }); // learning: Module 6
   });
 
   test('over 50 characters → 400 on the exact entry', async () => {

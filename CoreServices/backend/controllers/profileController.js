@@ -31,6 +31,11 @@ export const upsertProfile = async (req, res) => {
 
     // Skill embeddings (FR-B9): compare the merged skill set before and after.
     const before = await Profile.findOne({ userId: req.user.userId }).select('skills').lean();
+    // The skills section sets only the user-editable lists, so skills.learning (Module 6) is never wiped by a save.
+    if (update.skills) {
+      for (const [list, values] of Object.entries(update.skills)) update[`skills.${list}`] = values;
+      delete update.skills;
+    }
     const profile = await Profile.findOneAndUpdate(
       { userId: req.user.userId },
       { $set: update },

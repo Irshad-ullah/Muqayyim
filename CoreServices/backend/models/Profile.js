@@ -52,6 +52,8 @@ const profileSchema = new mongoose.Schema(
       manual: stringList(),
       cv: stringList(),
       extracted: stringList(),
+      // Module 6: skills of completed learning-path modules (not verified; written only by the learning-path API).
+      learning: stringList(),
     },
     certifications: [
       {
