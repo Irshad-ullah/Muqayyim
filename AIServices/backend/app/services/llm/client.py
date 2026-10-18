@@ -13,6 +13,11 @@ up to LLM_MAX_RETRIES retries with exponential backoff + jitter on 429 / 5xx onl
 provider's retry delay) → for JSON: parse + validate with the pydantic schema, one corrective
 retry, then LLMInvalidOutput → usage record → cache. Every failure is an LLMError with a safe
 message; nothing else escapes. Logs: feature, a 12-character user hash, status, tokens, latency.
+
+Rejected JSON answers are logged and recorded (usage reject_reason) by the NAMES of the failed checks only, never
+their content: "not_json", a named check raised by the schema as a PydanticCustomError (NAMED_CHECKS), or "schema"
+for any other shape problem. A schema can take a validation context (generate_json(validation_context=…)), e.g. the
+modules an answer must cover.
 """
 
 import asyncio
@@ -23,7 +28,7 @@ import re
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Any, Callable, Optional, Type
+from typing import Any, Callable, List, Optional, Type
 
 from pydantic import BaseModel, ValidationError
 
@@ -39,6 +44,7 @@ from app.services.llm.providers.base import LLMRequest, Provider
 logger = logging.getLogger(__name__)
 MAX_BACKOFF_S = 8.0
 MAX_RETRY_WAIT_S = 20.0  # a provider asking to wait longer is reported as rate limited instead
+NAMED_CHECKS = frozenset({"url_found", "hours_out_of_range", "module_set_mismatch"})
 
 
 @dataclass
@@ -59,9 +65,16 @@ def _strip_fences(text: str) -> str:
     return match.group(1) if match else text.strip()
 
 
-def parse_json(text: str, schema: Type[BaseModel]) -> BaseModel:
+def parse_json(text: str, schema: Type[BaseModel], context: Optional[dict] = None) -> BaseModel:
     """Raises ValueError (not JSON) or ValidationError (wrong shape)."""
-    return schema.model_validate(json.loads(_strip_fences(text)))
+    return schema.model_validate(json.loads(_strip_fences(text)), context=context)
+
+
+def reject_reasons(exc: Exception) -> List[str]:
+    """The names of the failed checks (never the content)."""
+    if not isinstance(exc, ValidationError):
+        return ["not_json"]
+    return sorted({e["type"] if e["type"] in NAMED_CHECKS else "schema" for e in exc.errors()})
 
 
 def build_provider() -> Optional[Provider]:
@@ -110,17 +123,19 @@ class LLMClient:
 
     async def generate_json(self, feature: str, prompt_name: str, schema: Type[BaseModel], *, user_id: Optional[str],
                             values: Optional[dict] = None, max_output_tokens: Optional[int] = None,
-                            temperature: float = 0.2) -> LLMResult:
-        return await self._run(feature, prompt_name, user_id, values or {}, schema, max_output_tokens, temperature)
+                            temperature: float = 0.2, validation_context: Optional[dict] = None) -> LLMResult:
+        return await self._run(feature, prompt_name, user_id, values or {}, schema, max_output_tokens, temperature,
+                               validation_context)
 
     # ── internals ─────────────────────────────────────────────────────────────
-    async def _record(self, feature, user, prompt_ref, status, attempts=0, input_tokens=0, output_tokens=0, latency_ms=0):
+    async def _record(self, feature, user, prompt_ref, status, attempts=0, input_tokens=0, output_tokens=0, latency_ms=0,
+                      reject_reason=None):
         provider = getattr(self.provider, "name", settings.LLM_PROVIDER)
         model = getattr(self.provider, "model", settings.LLM_MODEL)
         try:
             await usage.record(self.db, feature=feature, user=user, provider=provider, model=model, prompt_ref=prompt_ref,
                                status=status, attempts=attempts, input_tokens=input_tokens, output_tokens=output_tokens,
-                               latency_ms=latency_ms)
+                               latency_ms=latency_ms, reject_reason=reject_reason)
         except Exception:  # noqa: BLE001 — usage bookkeeping never breaks a feature
             logger.warning("llm usage record failed feature=%s", feature)
         logger.info("llm feature=%s user=%s status=%s attempts=%d in=%d out=%d ms=%d", feature, user[:12], status,
@@ -156,7 +171,8 @@ class LLMClient:
     def _estimate(request: LLMRequest) -> int:
         return (len(request.system) + len(request.prompt)) // 4 + request.max_output_tokens
 
-    async def _run(self, feature, prompt_name, user_id, values, schema, max_output_tokens, temperature) -> LLMResult:
+    async def _run(self, feature, prompt_name, user_id, values, schema, max_output_tokens, temperature,
+                   context=None) -> LLMResult:
         template = load(prompt_name)
         user = cache.user_ref(user_id)
         if not self.enabled:
@@ -171,13 +187,19 @@ class LLMClient:
         key = cache.cache_key(user, feature, template.ref, model, system, prompt, "json" if schema else "text")
         hit = await cache.get(self.db, key)
         if hit is not None:
-            data = parse_json(hit, schema) if schema is not None else None
+            data = parse_json(hit, schema, context) if schema is not None else None
             await self._record(feature, user, template.ref, "cached")
             return LLMResult(text=hit, data=data, cached=True, model=model, prompt_ref=template.ref)
 
         request = LLMRequest(system=system, prompt=prompt, json_output=schema is not None, temperature=temperature,
                              max_output_tokens=max_output_tokens or settings.LLM_MAX_OUTPUT_TOKENS)
-        state = {"attempts": 0, "taken": []}
+        state = {"attempts": 0, "taken": [], "rejected": []}
+
+        def rejected(exc: Exception) -> None:
+            names = reject_reasons(exc)
+            state["rejected"] = sorted(set(state["rejected"]) | set(names))
+            logger.warning("llm output rejected feature=%s user=%s attempt=%d checks=%s", feature, user[:12],
+                           state["attempts"], ",".join(names))
         started = time.perf_counter()
         tokens_in = tokens_out = 0
         try:
@@ -188,8 +210,9 @@ class LLMClient:
             text, data = response.text, None
             if schema is not None:
                 try:
-                    data = parse_json(text, schema)
+                    data = parse_json(text, schema, context)
                 except (ValueError, ValidationError) as exc:
+                    rejected(exc)
                     problem = "not valid JSON" if not isinstance(exc, ValidationError) else \
                         f"JSON that does not match the schema ({exc.error_count()} problem(s))"
                     retry = LLMRequest(system=system, json_output=True, temperature=temperature,
@@ -200,20 +223,22 @@ class LLMClient:
                     tokens_out += response.output_tokens
                     text = response.text
                     try:
-                        data = parse_json(text, schema)
-                    except (ValueError, ValidationError):
+                        data = parse_json(text, schema, context)
+                    except (ValueError, ValidationError) as again:
+                        rejected(again)
                         raise LLMInvalidOutput()
         except LLMError as exc:
             status = {"LLM_RATE_LIMITED": "rate_limited", "LLM_QUOTA_EXCEEDED": "quota_exceeded", "LLM_TIMEOUT": "timeout",
                       "LLM_INVALID_OUTPUT": "invalid_output"}.get(exc.code, "unavailable")
             await self._record(feature, user, template.ref, status, state["attempts"], tokens_in, tokens_out,
-                               round((time.perf_counter() - started) * 1000))
+                               round((time.perf_counter() - started) * 1000), state["rejected"] or None)
             raise
         latency = round((time.perf_counter() - started) * 1000)
         if state["taken"]:
             await limits.adjust_tokens(self.db, state["taken"][0], tokens_in + tokens_out)
         await cache.put(self.db, key, user, feature, text)
-        await self._record(feature, user, template.ref, "ok", state["attempts"], tokens_in, tokens_out, latency)
+        await self._record(feature, user, template.ref, "ok", state["attempts"], tokens_in, tokens_out, latency,
+                           state["rejected"] or None)
         return LLMResult(text=text, data=data, input_tokens=tokens_in, output_tokens=tokens_out, latency_ms=latency,
                          attempts=state["attempts"], model=response.model or model, prompt_ref=template.ref)
 

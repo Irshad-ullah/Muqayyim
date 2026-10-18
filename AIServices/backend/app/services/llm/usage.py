@@ -2,12 +2,13 @@
 Per-call LLM usage records (12): ai_db.llm_usage, for the admin dashboard and cost visibility.
 One document per feature call: feature, user reference (hash), provider, model, prompt version,
 status (ok / cached / disabled / rate_limited / quota_exceeded / timeout / unavailable /
-invalid_output), provider attempts, input / output tokens and latency. Prompts and responses are
-NEVER stored here (they can contain personal data). Kept for 365 days.
+invalid_output), provider attempts, input / output tokens and latency, and reject_reason: the names
+of the validation checks a JSON answer failed (e.g. ["url_found"]; on an ok call, those of the answer the corrective
+retry replaced). Prompts and responses are NEVER stored here (they can contain personal data). Kept for 365 days.
 """
 
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import List, Optional
 
 USAGE = "llm_usage"
 RETENTION_DAYS = 365
@@ -19,12 +20,16 @@ async def ensure_usage_indexes(db) -> None:
 
 
 async def record(db, *, feature: str, user: str, provider: str, model: str, prompt_ref: str, status: str,
-                 attempts: int = 0, input_tokens: int = 0, output_tokens: int = 0, latency_ms: int = 0) -> None:
-    await db[USAGE].insert_one({
+                 attempts: int = 0, input_tokens: int = 0, output_tokens: int = 0, latency_ms: int = 0,
+                 reject_reason: Optional[List[str]] = None) -> None:
+    doc = {
         "feature": feature, "user_ref": user, "provider": provider, "model": model, "prompt": prompt_ref,
         "status": status, "attempts": attempts, "input_tokens": input_tokens, "output_tokens": output_tokens,
         "latency_ms": latency_ms, "at": datetime.now(timezone.utc),
-    })
+    }
+    if reject_reason:
+        doc["reject_reason"] = reject_reason
+    await db[USAGE].insert_one(doc)
 
 
 async def summary(db, days: int = 7, now: Optional[datetime] = None) -> list:

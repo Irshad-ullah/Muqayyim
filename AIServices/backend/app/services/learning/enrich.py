@@ -6,12 +6,13 @@ Sent to the model: the role title, the ordered module skills, the user's skill N
 only / include paid). Nothing else (no profile text, no contact details). Resources are in English only. The cache key
 contains the prompt text, so it includes the cost preference.
 
-Validation (an invalid answer gets the client's one corrective retry, then LLMInvalidOutput — Core then keeps the path
-without enrichment):
-  in the schema   no URL / web address / domain anywhere; platform only from PLATFORMS; hours 2–80 per module,
-                  hours_min <= hours_max, Σ hours_max <= 400; 3–6 sub-topics; 2–4 recommendations
-  afterwards      the module set must equal the path's (same skills, nothing added or dropped) → else invalid output;
-                  free-only preference: paid recommendations are dropped (a module keeps at least one)
+Validation, all in the schema (an invalid answer gets the client's one corrective retry, then LLMInvalidOutput — Core
+then keeps the path without enrichment). Named checks, logged and recorded by name only (llm_usage.reject_reason):
+  url_found             a URL / web address / domain anywhere
+  hours_out_of_range    hours outside 2–80 per module, hours_min > hours_max, or Σ hours_max > 400
+  module_set_mismatch   the modules differ from the path's (added, dropped, renamed or repeated; validation context)
+  schema                anything else (platform not in PLATFORMS, 3–6 sub-topics, 2–4 recommendations, …)
+Afterwards: free-only preference: paid recommendations are dropped (a module keeps at least one).
 Links are built only here: "Find on {platform}" search URLs from the title and the instructor. Labels: every
 recommendation "AI recommendation" (paid: "AI recommendation, check before buying"); hours "estimated". Prerequisite
 pairs go through structure.validate_prerequisites / apply_prerequisites.
@@ -21,7 +22,8 @@ import re
 from typing import List, Literal, Optional
 from urllib.parse import quote_plus
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator, model_validator
+from pydantic_core import PydanticCustomError
 
 from app.services.embeddings.normalise import normalise_skill
 from app.services.learning import structure
@@ -46,8 +48,12 @@ LABEL_FREE, LABEL_PAID, HOURS_LABEL = "AI recommendation", "AI recommendation, c
 
 def _no_url(value: str) -> str:
     if isinstance(value, str) and URL.search(value):
-        raise ValueError("URLs, web addresses and domain names are not allowed")
+        raise PydanticCustomError("url_found", "URLs, web addresses and domain names are not allowed")
     return value
+
+
+def _hours_error(message: str) -> PydanticCustomError:
+    return PydanticCustomError("hours_out_of_range", message)
 
 
 class _Strict(BaseModel):
@@ -72,8 +78,8 @@ class ModuleEnrichment(_Strict):
     why: str = Field(..., min_length=10, max_length=400)
     subtopics: List[str] = Field(..., min_length=3, max_length=6)
     project: str = Field(..., min_length=10, max_length=400)
-    hours_min: int = Field(..., ge=MIN_HOURS, le=MAX_HOURS)
-    hours_max: int = Field(..., ge=MIN_HOURS, le=MAX_HOURS)
+    hours_min: int = Field(..., json_schema_extra={"minimum": MIN_HOURS, "maximum": MAX_HOURS})
+    hours_max: int = Field(..., json_schema_extra={"minimum": MIN_HOURS, "maximum": MAX_HOURS})
     recommendations: List[Recommendation] = Field(..., min_length=2, max_length=4)
 
     @field_validator("why", "project", "skill")
@@ -90,10 +96,17 @@ class ModuleEnrichment(_Strict):
                 raise ValueError("a sub-topic must be 2-120 characters")
         return value
 
+    @field_validator("hours_min", "hours_max")
+    @classmethod
+    def _hours_range(cls, value: int) -> int:
+        if not MIN_HOURS <= value <= MAX_HOURS:
+            raise _hours_error(f"hours must be between {MIN_HOURS} and {MAX_HOURS}")
+        return value
+
     @model_validator(mode="after")
     def _hours_order(self):
         if self.hours_min > self.hours_max:
-            raise ValueError("hours_min must not exceed hours_max")
+            raise _hours_error("hours_min must not exceed hours_max")
         return self
 
 
@@ -102,9 +115,14 @@ class PathEnrichment(_Strict):
     prerequisites: List[List[str]] = Field(default_factory=list, max_length=30)
 
     @model_validator(mode="after")
-    def _total(self):
+    def _modules_and_total(self, info: ValidationInfo):
+        expected = (info.context or {}).get("module_keys")
+        if expected is not None:  # the module set must equal the path's: nothing added, renamed, dropped or repeated
+            keys = [normalise_skill(m.skill)[0] for m in self.modules]
+            if len(set(keys)) != len(keys) or sorted(keys) != sorted(expected):
+                raise PydanticCustomError("module_set_mismatch", "cover exactly the modules in MODULES, once each")
         if sum(m.hours_max for m in self.modules) > MAX_TOTAL_HOURS:
-            raise ValueError(f"total hours_max must not exceed {MAX_TOTAL_HOURS}")
+            raise _hours_error(f"total hours_max must not exceed {MAX_TOTAL_HOURS}")
         for pair in self.prerequisites:
             if len(pair) != 2:
                 raise ValueError("a prerequisite is a pair [before, after]")
@@ -169,16 +187,9 @@ async def enrich(request: EnrichRequest, user_id: str) -> dict:
         "known": data_block("known_skills", sorted(set(request.user_skills))),
     }
     result = await get_llm_client().generate_json(FEATURE, "learning_path", PathEnrichment, user_id=user_id, values=values,
-                                                  max_output_tokens=4096)
+                                                  max_output_tokens=4096, validation_context={"module_keys": module_keys})
     output: PathEnrichment = result.data
-    by_key = {}
-    for m in output.modules:
-        key = normalise_skill(m.skill)[0]
-        if key in by_key:
-            raise LLMInvalidOutput()
-        by_key[key] = m
-    if sorted(by_key) != sorted(module_keys):
-        raise LLMInvalidOutput()  # the module set must equal the path's: nothing added, renamed or dropped
+    by_key = {normalise_skill(m.skill)[0]: m for m in output.modules}  # equal to the path's set (validated)
     accepted, rejected = structure.validate_prerequisites(output.prerequisites, module_keys)
     ordered = structure.apply_prerequisites([{"key": k} for k in module_keys], accepted)
     modules = []

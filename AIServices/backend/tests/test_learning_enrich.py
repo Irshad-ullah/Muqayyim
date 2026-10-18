@@ -81,23 +81,53 @@ async def test_only_role_modules_skill_names_and_preferences_are_sent(fake):
     assert "<<<DATA modules>>>" in sent and "<<<DATA known_skills>>>" in sent and "<<<DATA role>>>" in sent
 
 
-@pytest.mark.parametrize("bad", [
-    answer([module("JavaScript", why="Read https://react.dev first."), module("React")]),                    # URL in text
-    answer([module("JavaScript", recs=[rec(title="Visit www.example.com"), rec()]), module("React")]),      # URL in a title
-    answer([module("JavaScript", recs=[rec(instructor="freecodecamp.org"), rec()]), module("React")]),      # a domain
-    answer([module("JavaScript", hours=(1, 20)), module("React")]),                                         # below 2 h
-    answer([module("JavaScript", hours=(10, 90)), module("React")]),                                        # above 80 h
-    answer([module("JavaScript", hours=(30, 80))] * 1 + [module(s, hours=(30, 80)) for s in ("React", "a", "b", "c", "d")]),
-    answer([module("JavaScript", recs=[rec(platform="Pluralsight"), rec()]), module("React")]),             # not allowed
-    answer([module("JavaScript")]),                                                                         # a module dropped
-    answer([module("JavaScript"), module("React"), module("Docker")]),                                      # a module added
-    answer([module("JavaScript"), module("Vue.js")]),                                                       # renamed
+@pytest.mark.parametrize("bad, reason", [
+    (answer([module("JavaScript", why="Read https://react.dev first."), module("React")]), "url_found"),    # URL in text
+    (answer([module("JavaScript", recs=[rec(title="Visit www.example.com"), rec()]), module("React")]), "url_found"),
+    (answer([module("JavaScript", recs=[rec(instructor="freecodecamp.org"), rec()]), module("React")]), "url_found"),
+    (answer([module("JavaScript", hours=(1, 20)), module("React")]), "hours_out_of_range"),                 # below 2 h
+    (answer([module("JavaScript", hours=(10, 90)), module("React")]), "hours_out_of_range"),                # above 80 h
+    (answer([module("JavaScript", hours=(20, 10)), module("React")]), "hours_out_of_range"),                # min > max
+    (answer([module(s, hours=(30, 80)) for s in ("JavaScript", "React", "a", "b", "c", "d")]), "module_set_mismatch"),
+    (answer([module("JavaScript", recs=[rec(platform="Pluralsight"), rec()]), module("React")]), "schema"),  # not allowed
+    (answer([module("JavaScript")]), "module_set_mismatch"),                                                 # dropped
+    (answer([module("JavaScript"), module("React"), module("Docker")]), "module_set_mismatch"),              # added
+    (answer([module("JavaScript"), module("Vue.js")]), "module_set_mismatch"),                               # renamed
+    (answer([module("JavaScript"), module("JavaScript")]), "module_set_mismatch"),                           # repeated
+    ("Here is your path!", "not_json"),
 ])
-async def test_invalid_outputs_never_reach_a_path(fake, bad):
+async def test_invalid_outputs_never_reach_a_path(fake, real_db, caplog, bad, reason):  # noqa: F811
     fake.push(bad)
     fake.push(bad)  # the corrective retry gets the same answer
-    with pytest.raises(LLMInvalidOutput):
+    with caplog.at_level("WARNING", logger="app.services.llm.client"), pytest.raises(LLMInvalidOutput):
         await enrich.enrich(request(), "u1")
+    record = await real_db["llm_usage"].find_one({"feature": "learning_path", "status": "invalid_output"}, sort=[("_id", -1)])
+    assert reason in record["reject_reason"] and record["attempts"] == 2
+    logged = [r.getMessage() for r in caplog.records if "rejected" in r.getMessage()]
+    assert len(logged) == 2 and all(f"checks=" in m and reason in m for m in logged)
+    for content in ("react.dev", "example.com", "Pluralsight", "Docker", "Here is your path"):  # names only, no content
+        assert not any(content in m for m in logged)
+
+
+async def test_total_hours_over_400_and_a_rejection_replaced_by_the_retry(fake, real_db):  # noqa: F811
+    many = [{"key": k, "skill": k.title()} for k in ("javascript", "react", "a", "b", "c", "d")]
+    over = answer([module(m["skill"], hours=(30, 80)) for m in many])  # 6 × 80 = 480 h
+    fake.push(over)
+    fake.push(over)
+    with pytest.raises(LLMInvalidOutput):
+        await enrich.enrich(request(modules=many), "u1")
+    record = await real_db["llm_usage"].find_one({"status": "invalid_output"}, sort=[("_id", -1)])
+    assert record["reject_reason"] == ["hours_out_of_range"]
+    fake.push(answer([module("JavaScript")]))  # a module dropped, then a valid answer
+    fake.push(answer())
+    out = await enrich.enrich(request(user_skills=["Git"]), "u1")
+    assert [m["skill"] for m in out["modules"]] == ["JavaScript", "React"]
+    ok = await real_db["llm_usage"].find_one({"status": "ok"}, sort=[("_id", -1)])
+    assert ok["attempts"] == 2 and ok["reject_reason"] == ["module_set_mismatch"]
+    fake.push(answer())
+    await enrich.enrich(request(user_skills=["Docker"]), "u1")
+    clean = await real_db["llm_usage"].find_one({"status": "ok"}, sort=[("_id", -1)])
+    assert "reject_reason" not in clean
 
 
 async def test_free_only_drops_paid_and_paid_is_labelled(fake):
