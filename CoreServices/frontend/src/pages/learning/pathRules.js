@@ -57,6 +57,28 @@ export const freshnessText = (f) => {
   return f.profileChanged ? 'Your skills have changed since this path was made.' : 'The career data has been updated since this path was made.';
 };
 
+// The AI-details status line: what actually happened to the modules' AI details (empty when every module has them).
+const REASON = { LLM_TIMEOUT: ' (the AI took too long)', LLM_UNAVAILABLE: ' (the AI service did not answer)',
+  LLM_RATE_LIMITED: ' (the AI service is busy)' };
+const modulesText = (n) => `${n} module${n === 1 ? '' : 's'}`;
+export const aiStatusView = (path) => {
+  const modules = path?.modules || [];
+  const pending = modules.filter((m) => m.aiStatus === 'pending').length;
+  const failed = modules.filter((m) => m.aiStatus === 'failed').length;
+  const code = path?.enrichment?.code;
+  if (pending) return { kind: 'pending', text: `Getting AI details for ${modulesText(pending)}…`, retry: false };
+  if (!failed) return { kind: 'done', text: '', retry: false };
+  if (code === 'LLM_DISABLED') return { kind: 'off', text: 'AI details are switched off right now; the modules and their order are complete.', retry: false };
+  if (code === 'LLM_QUOTA_EXCEEDED') return { kind: 'quota', text: `AI details for ${modulesText(failed)} are missing: you have used today's AI requests. Try again tomorrow.`, retry: true };
+  return { kind: 'failed', text: `AI details for ${modulesText(failed)} failed${REASON[code] || ''}.`, retry: true };
+};
+
+// A module's estimate: the LLM's hours whenever it gave them, otherwise why there is none.
+export const moduleHoursText = (module) => {
+  if (module?.hours?.min) return hoursText(module.hours);
+  return module?.aiStatus === 'pending' ? 'Estimating hours…' : 'Estimated hours not available (AI details missing)';
+};
+
 export const errorView = (error) => {
   switch (error?.code) {
     case 'AI_CONSENT_REQUIRED':
@@ -77,6 +99,8 @@ export const errorView = (error) => {
       return { kind: 'choice', title: 'Your choice is no longer offered', message: 'Create a new path for this career to choose again.' };
     case 'SUGGESTION_UNAVAILABLE':
       return { kind: 'suggestion', title: 'No new suggestion right now', message: 'Please try again later.' };
+    case 'NOTHING_TO_RETRY':
+      return { kind: 'done', title: 'Nothing to retry', message: 'These modules already have their AI details.' };
     case 'MORE_LIMIT':
       return { kind: 'limit', title: 'This module has 10 resources', message: 'That is the most a module can list.' };
     default:

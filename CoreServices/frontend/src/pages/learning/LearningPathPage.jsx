@@ -5,14 +5,15 @@ import Navbar from '../../components/Navbar.jsx';
 import AiConsentDialog from '../../components/ai/AiConsentDialog.jsx';
 import { aiService } from '../../services/aiService.js';
 import { learningPathService } from '../../services/learningPathService.js';
-import { STATUS_VIEW, errorView, freshnessText, hoursText, moreText, progressText, timeline, weeksText } from './pathRules.js';
+import { STATUS_VIEW, aiStatusView, errorView, freshnessText, moduleHoursText, moreText, progressText, timeline, weeksText } from './pathRules.js';
 
 // Module 6 (FR8.2–FR8.8): one saved learning path — progress, the week-by-week timeline, the modules in order with
 // their status, and a details panel (why, sub-topics, practice project, estimated hours, AI recommendations with a
 // search link per platform). Completing a module adds the skill to the profile as "completed in your learning path
 // (not verified)", which refreshes the career matches. Each resource takes a thumbs up / down; "Suggest another resource"
 // asks the AI for one not shown yet; when the profile or the career data changed, a banner offers "Regenerate".
-// AI actions need the current consent — the notice appears and the action is repeated after "Agree".
+// AI actions need the current consent — the notice appears and the action is repeated after "Agree". AI details are
+// per module: while the automatic retry runs the page polls; modules that still lack them get "Retry AI details".
 
 function Recommendation({ rec, vote, busy, onVote }) {
   return (
@@ -47,7 +48,7 @@ function Recommendation({ rec, vote, busy, onVote }) {
 
 const MAX_RECOMMENDATIONS = 10;
 
-function ModuleDetails({ module, votes, busy, onStatus, onVote, onMore }) {
+function ModuleDetails({ module, votes, busy, onStatus, onVote, onMore, onRetry }) {
   return (
     <section className="card p-5 space-y-3" aria-label={`${module.skill} details`} data-testid="module-details">
       <h3 className="font-semibold text-slate-900">{module.order}. {module.skill}</h3>
@@ -61,7 +62,14 @@ function ModuleDetails({ module, votes, busy, onStatus, onVote, onMore }) {
           <ol className="list-decimal list-inside text-sm text-slate-700">{module.subtopics.map((s) => <li key={s}>{s}</li>)}</ol></div>
       )}
       {module.project && <p className="text-sm text-slate-700"><strong>Practice project:</strong> {module.project}</p>}
-      <p className="text-xs text-slate-500">{hoursText(module.hours)}</p>
+      {module.aiStatus === 'pending' && <p className="text-xs text-slate-500" role="status">Getting AI details for this module…</p>}
+      {module.aiStatus === 'failed' && (
+        <p className="text-xs text-amber-800 flex items-center gap-2" data-testid="module-ai-failed">
+          AI details for this module failed.
+          <button type="button" className="text-indigo-700 underline" disabled={busy} onClick={onRetry}>Retry AI details</button>
+        </p>
+      )}
+      <p className="text-xs text-slate-500" data-testid="module-hours">{moduleHoursText(module)}</p>
       {module.recommendations?.length > 0 && (
         <div><h4 className="text-xs font-semibold uppercase text-slate-500">Resources</h4>
           <ul className="space-y-2 mt-1">{module.recommendations.map((r) => (
@@ -100,6 +108,7 @@ export default function LearningPathPage() {
   const [error, setError] = useState(null);
   const [freshness, setFreshness] = useState(null);
   const [consent, setConsent] = useState(null); // { data, retry } while the AI notice is open
+  const [polls, setPolls] = useState(0);
 
   useEffect(() => {
     learningPathService.get(id)
@@ -107,6 +116,16 @@ export default function LearningPathPage() {
       .catch((err) => setState({ kind: 'error', view: errorView(err) }));
     learningPathService.freshness(id).then(setFreshness).catch(() => setFreshness(null));
   }, [id]);
+
+  // While the automatic retry is running (modules "pending"), reload every 4 s, at most 15 times.
+  const pending = Boolean(state.path?.modules.some((m) => m.aiStatus === 'pending'));
+  useEffect(() => {
+    if (!pending || polls >= 15) return undefined;
+    const timer = setTimeout(() => {
+      learningPathService.get(id).then((path) => setState({ kind: 'ready', path })).catch(() => {}).finally(() => setPolls((n) => n + 1));
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [pending, polls, id]);
 
   // Runs one change; the answer is the updated path. AI_CONSENT_REQUIRED opens the notice and repeats it after "Agree".
   const run = async (action, after) => {
@@ -125,7 +144,8 @@ export default function LearningPathPage() {
   const setStatus = (key, status) => run(() => learningPathService.setStatus(id, key, status));
   const vote = (key, title, value) => run(() => learningPathService.vote(id, key, title, value));
   const more = (key) => run(() => learningPathService.more(id, key));
-  const regenerate = () => run(() => learningPathService.regenerate(id), () => setFreshness(null));
+  const regenerate = () => run(() => learningPathService.regenerate(id), () => { setFreshness(null); setPolls(0); });
+  const retryDetails = (keys) => run(() => learningPathService.enrich(id, keys));
   const agree = async () => {
     setBusy(true);
     try {
@@ -145,6 +165,7 @@ export default function LearningPathPage() {
   const weeks = path ? timeline(path.modules, path.preferences?.hoursPerWeek) : [];
   const votes = new Map((path?.feedback || []).filter((f) => f.moduleKey === selected).map((f) => [f.title, f.vote]));
   const stale = freshnessText(freshness);
+  const ai = aiStatusView(path);
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
@@ -168,9 +189,11 @@ export default function LearningPathPage() {
               <p className="text-sm text-slate-600" data-testid="path-progress">
                 {progressText(path.progress)}{weeksText(path.modules, path.preferences?.hoursPerWeek) && ` · ${weeksText(path.modules, path.preferences.hoursPerWeek)}`}
               </p>
-              {path.enrichment?.status !== 'enriched' && (
-                <p className="text-xs text-amber-800 bg-amber-50 rounded p-2" data-testid="no-enrichment">
-                  AI descriptions and resources are not available for this path right now; the modules and their order are complete.
+              {ai.text && (
+                <p className={`text-xs rounded p-2 flex items-center gap-2 ${ai.kind === 'pending' ? 'text-slate-600 bg-slate-100' : 'text-amber-800 bg-amber-50'}`}
+                  role="status" data-testid="ai-status">
+                  <span>{ai.text}</span>
+                  {ai.retry && <button type="button" className="text-indigo-700 underline" disabled={busy} onClick={() => retryDetails()}>Retry</button>}
                 </p>
               )}
               {stale && (
@@ -210,7 +233,8 @@ export default function LearningPathPage() {
                 )}
               </div>
               {module && <ModuleDetails module={module} votes={votes} busy={busy} onStatus={(status) => setStatus(module.key, status)}
-                onVote={(title, value) => vote(module.key, title, value)} onMore={() => more(module.key)} />}
+                onVote={(title, value) => vote(module.key, title, value)} onMore={() => more(module.key)}
+                onRetry={() => retryDetails([module.key])} />}
             </div>
           </>
         )}

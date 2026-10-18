@@ -7,7 +7,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 // Module 6 Part 5: the learning-path pages and the setup dialog. Part 6: feedback, more, regenerate.
 vi.mock('../../services/learningPathService.js', () => ({
   learningPathService: { list: vi.fn(), get: vi.fn(), create: vi.fn(), setStatus: vi.fn(), remove: vi.fn(),
-    freshness: vi.fn(), regenerate: vi.fn(), vote: vi.fn(), more: vi.fn() },
+    freshness: vi.fn(), regenerate: vi.fn(), vote: vi.fn(), more: vi.fn(), enrich: vi.fn() },
 }));
 vi.mock('../../services/aiService.js', () => ({ aiService: { giveConsent: vi.fn() } }));
 vi.mock('../../components/Navbar.jsx', () => ({ default: () => <nav data-testid="navbar" /> }));
@@ -95,13 +95,48 @@ describe('LearningPathPage', () => {
     expect(screen.getByTestId('path-progress').textContent).toContain('1 of 2 modules completed (50%)');
   });
 
-  test('a path without enrichment says so and still shows its modules', async () => {
-    learningPathService.get.mockResolvedValue({ ...PATH, enrichment: { status: 'unavailable' },
-      modules: PATH.modules.map(({ why, subtopics, project, hours, recommendations, ...m }) => m) });
+  test('a path without AI details says what failed and still shows its modules', async () => {
+    learningPathService.get.mockResolvedValue({ ...PATH, enrichment: { status: 'failed', code: 'LLM_INVALID_OUTPUT' },
+      modules: PATH.modules.map(({ why, subtopics, project, hours, recommendations, ...m }) => ({ ...m, aiStatus: 'failed' })) });
     renderAt('/learning-paths/p1', <LearningPathPage />, '/learning-paths/:id');
-    expect(await screen.findByTestId('no-enrichment')).toBeTruthy();
+    expect((await screen.findByTestId('ai-status')).textContent).toBe('AI details for 2 modules failed.Retry');
     expect(screen.getAllByTestId('module-row')).toHaveLength(2);
     expect(screen.queryByTestId('timeline')).toBeNull();
+    expect(screen.getByTestId('module-hours').textContent).toBe('Estimated hours not available (AI details missing)');
+  });
+
+  test('partial AI details: filled modules show their estimate; "Retry AI details" retries just the failed module', async () => {
+    const user = userEvent.setup();
+    const { why, subtopics, project, hours, recommendations, ...bare } = PATH.modules[1];
+    const partial = { ...PATH, enrichment: { status: 'partial', code: 'LLM_INVALID_OUTPUT' },
+      modules: [{ ...PATH.modules[0], aiStatus: 'enriched' }, { ...bare, aiStatus: 'failed' }] };
+    learningPathService.get.mockResolvedValue(partial);
+    learningPathService.enrich.mockResolvedValue({ ...PATH, modules: PATH.modules.map((m) => ({ ...m, aiStatus: 'enriched' })) });
+    renderAt('/learning-paths/p1', <LearningPathPage />, '/learning-paths/:id');
+    expect((await screen.findByTestId('ai-status')).textContent).toContain('AI details for 1 module failed.');
+    expect(screen.getByTestId('module-hours').textContent).toBe('8–12 h (estimated)');
+    await user.click(screen.getAllByTestId('module-row')[1]);
+    await user.click(within(screen.getByTestId('module-ai-failed')).getByRole('button', { name: 'Retry AI details' }));
+    expect(learningPathService.enrich).toHaveBeenCalledWith('p1', ['react']);
+    await waitFor(() => expect(screen.queryByTestId('ai-status')).toBeNull());
+    expect(screen.getByTestId('module-hours').textContent).toBe('4–8 h (estimated)');
+  });
+
+  test('while the automatic retry runs the page says so and reloads until the details arrive', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      const { why, subtopics, project, hours, recommendations, ...bare } = PATH.modules[1];
+      learningPathService.get
+        .mockResolvedValueOnce({ ...PATH, enrichment: { status: 'partial' }, modules: [{ ...PATH.modules[0], aiStatus: 'enriched' }, { ...bare, aiStatus: 'pending' }] })
+        .mockResolvedValue({ ...PATH, modules: PATH.modules.map((m) => ({ ...m, aiStatus: 'enriched' })) });
+      renderAt('/learning-paths/p1', <LearningPathPage />, '/learning-paths/:id');
+      expect((await screen.findByTestId('ai-status')).textContent).toBe('Getting AI details for 1 module…');
+      await vi.advanceTimersByTimeAsync(4100);
+      await waitFor(() => expect(screen.queryByTestId('ai-status')).toBeNull());
+      expect(learningPathService.get).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

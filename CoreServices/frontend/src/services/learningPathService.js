@@ -33,6 +33,8 @@ export const learningPathService = {
   vote: (id, key, title, vote) =>
     call('POST', `/${encodeURIComponent(id)}/modules/${encodeURIComponent(key)}/feedback`, { title, vote }, 'Could not save your feedback'),
   more: (id, key) => call('POST', `/${encodeURIComponent(id)}/modules/${encodeURIComponent(key)}/more`, {}, 'Could not suggest another resource'),
+  // "Retry AI details" for the given modules (default: every module without them)
+  enrich: (id, keys) => call('POST', `/${encodeURIComponent(id)}/enrich`, keys ? { keys } : {}, 'Could not get the AI details'),
   remove: (id) => call('DELETE', `/${encodeURIComponent(id)}`, undefined, 'Could not delete the learning path'),
 };
 

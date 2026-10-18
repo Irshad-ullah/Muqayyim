@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { errorView, freshnessText, hoursText, moreText, progressText, timeline, weeksText } from './pathRules.js';
+import { aiStatusView, errorView, freshnessText, hoursText, moduleHoursText, moreText, progressText, timeline, weeksText } from './pathRules.js';
 
 const m = (key, min, max) => ({ key, skill: key.toUpperCase(), hours: { min, max } });
 
@@ -32,4 +32,18 @@ test('the regenerate banner says what changed, and nothing when current or unkno
   assert.equal(freshnessText({ stale: false }), '');
   assert.equal(freshnessText(null), '');
   assert.equal(errorView({ code: 'SUGGESTION_UNAVAILABLE' }).kind, 'suggestion');
+});
+
+test('the AI-details status line says what happened; estimates are never blank when the LLM gave them', () => {
+  const path = (statuses, code = '') => ({ enrichment: { code }, modules: statuses.map((aiStatus, i) => ({ key: `m${i}`, aiStatus })) });
+  assert.deepEqual(aiStatusView(path(['enriched', 'enriched'])), { kind: 'done', text: '', retry: false });
+  assert.equal(aiStatusView(path(['enriched', 'pending'])).text, 'Getting AI details for 1 module…');
+  assert.deepEqual(aiStatusView(path(['failed', 'enriched', 'failed'], 'LLM_INVALID_OUTPUT')),
+    { kind: 'failed', text: 'AI details for 2 modules failed.', retry: true });
+  assert.equal(aiStatusView(path(['failed'], 'LLM_TIMEOUT')).text, 'AI details for 1 module failed (the AI took too long).');
+  assert.equal(aiStatusView(path(['failed'], 'LLM_DISABLED')).retry, false);
+  assert.match(aiStatusView(path(['failed'], 'LLM_QUOTA_EXCEEDED')).text, /used today's AI requests/);
+  assert.equal(moduleHoursText({ hours: { min: 4, max: 8 }, aiStatus: 'enriched' }), '4–8 h (estimated)');
+  assert.equal(moduleHoursText({ aiStatus: 'pending' }), 'Estimating hours…');
+  assert.equal(moduleHoursText({ aiStatus: 'failed' }), 'Estimated hours not available (AI details missing)');
 });
