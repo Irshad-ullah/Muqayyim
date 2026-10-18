@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { countsText, errorView, matchesFilters, relatedHint, skillNote, visibleResults } from './careerRules.js';
+import { countsText, errorView, foundLabel, fromLabel, matchesFilters, relatedHint, skillNote, visibleResults } from './careerRules.js';
 
 const r = (id, score, extra = {}) => ({
   profession_id: id, title: id, score, matched: 0, category: 'Development', source: 'onet',
@@ -73,4 +73,9 @@ test('Module 5.2: related hints are suggestions on missing skills only; counts d
   const r = { matched: 2, related: 0, missing: 3 };
   assert.equal(countsText(r, 'exact'), '2 held, 3 missing');
   assert.equal(countsText({ ...r, related: 1 }, 'related'), '2 held, 1 related, 3 missing');
+});
+
+test('Module 6: learning-path skills are labelled as not verified', () => {
+  assert.equal(foundLabel('learning'), 'completed in your learning path (not verified)');
+  assert.equal(fromLabel('learning'), 'your learning path (not verified)');
 });

@@ -1,10 +1,11 @@
 import React, { useId, useState } from 'react';
 import { CheckCircle2, CircleDashed, GraduationCap, Info, Lightbulb, XCircle } from 'lucide-react';
 import { ESCO_NOTE, SOURCE_NAMES, countsText, formatScore, relatedHint, skillNote } from './careerRules.js';
+import GeneratePathDialog from '../learning/GeneratePathDialog.jsx';
 
 // Details of one career (FR7.4–FR7.7): required skills marked held / related / missing (icon +
 // text, never colour alone), optional skills, the explanation, the sources with attribution, and
-// "Generate learning path" (Module 6, coming soon) with the gap count.
+// "Generate learning path" (Module 6) with the gap count.
 
 const ICONS = { matched: CheckCircle2, related: CircleDashed, missing: XCircle };
 const TONES = { matched: 'text-emerald-700', related: 'text-amber-700', missing: 'text-rose-700' };
@@ -116,6 +117,7 @@ function MemberSection({ member, merged, scoringMode }) {
 }
 
 export default function CareerDetails({ detail }) {
+  const [generating, setGenerating] = useState(false);
   const merged = detail.members.length > 1;
   const gaps = new Set(detail.members.flatMap((m) => m.gaps));
   return (
@@ -139,10 +141,15 @@ export default function CareerDetails({ detail }) {
         <p className="text-sm text-slate-700">
           <strong>{gaps.size}</strong> skill{gaps.size === 1 ? '' : 's'} to learn for this career
         </p>
-        <button type="button" className="btn-secondary text-sm inline-flex items-center gap-2" disabled aria-disabled="true">
-          <GraduationCap className="w-4 h-4" aria-hidden="true" /> Generate learning path (coming soon)
+        <button type="button" className="btn-primary text-sm inline-flex items-center gap-2" disabled={gaps.size === 0}
+          onClick={() => setGenerating(true)}>
+          <GraduationCap className="w-4 h-4" aria-hidden="true" /> Generate learning path
         </button>
       </div>
+      {generating && (
+        <GeneratePathDialog professionId={detail.profession_id} title={detail.title} onClose={() => setGenerating(false)}
+          member={detail.members.find((m) => m.profession_id === detail.profession_id) || detail.members[0]} />
+      )}
 
       {detail.members.map((member, i) => (
         <React.Fragment key={member.profession_id}>

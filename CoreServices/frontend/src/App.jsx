@@ -16,6 +16,8 @@ import ProfileBuilderPage from './pages/ProfileBuilderPage.jsx';
 import ViewProfilePage from './pages/ViewProfilePage.jsx';
 import CVGeneratorPage from './pages/CVGeneratorPage.jsx';
 import CareerMatchesPage from './pages/CareerMatchesPage.jsx';
+import LearningPathsPage from './pages/LearningPathsPage.jsx';
+import LearningPathPage from './pages/learning/LearningPathPage.jsx';
 
 // Admin pages
 import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx';
@@ -108,6 +110,8 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/learning-paths" element={<ProtectedRoute><LearningPathsPage /></ProtectedRoute>} />
+      <Route path="/learning-paths/:id" element={<ProtectedRoute><LearningPathPage /></ProtectedRoute>} />
 
       {/* Module 4 — CV Generator (new CV, or reopen a saved one by id) */}
       {['/cv-generator', '/cv-generator/:id'].map((path) => (

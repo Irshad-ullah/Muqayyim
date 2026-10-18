@@ -185,6 +185,11 @@ export default function CareerMatchesPage() {
 
           {state.kind === 'ready' && data && (
             <>
+              {data.unverified_skill_count > 0 && (
+                <p className="text-xs text-slate-600" role="note" data-testid="unverified-note">
+                  These matches include {data.unverified_skill_count} unverified skill{data.unverified_skill_count === 1 ? '' : 's'} from your completed learning modules.
+                </p>
+              )}
               {data.low_match && (
                 <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="note" data-testid="low-match">
                   Your current skills don&apos;t closely match the IT careers in our database (best match {formatScore(data.best_score)}).

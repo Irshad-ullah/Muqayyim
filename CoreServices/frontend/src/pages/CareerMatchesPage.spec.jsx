@@ -220,9 +220,25 @@ describe('Career Matching — details', () => {
     expect(attributions).toEqual([ONET, ESCO]);
     expect(within(details).getByText('O*NET list')).toBeTruthy();
     expect(within(details).getByText('ESCO list')).toBeTruthy();
-    const learn = within(details).getByRole('button', { name: /Generate learning path \(coming soon\)/ });
-    expect(learn.disabled).toBe(true);
     expect(details.textContent).toMatch(/1 skill to learn/);
+  });
+
+  test('Module 6: "Generate learning path" is enabled and opens the setup dialog; unverified learning skills are noted', async () => {
+    const user = userEvent.setup();
+    careerMatchService.getMatches.mockResolvedValue(ready({ unverified_skill_count: 2 }));
+    renderPage();
+    expect((await screen.findByTestId('unverified-note')).textContent).toContain('include 2 unverified skills');
+    const details = await screen.findByTestId('career-details');
+    const learn = within(details).getByRole('button', { name: /Generate learning path/ });
+    expect(learn.disabled).toBe(false);
+    await user.click(learn);
+    expect(screen.getByTestId('generate-path-dialog').textContent).toContain('Learning path for Software Developers');
+  });
+
+  test('no unverified note without learning skills', async () => {
+    renderPage();
+    await screen.findByTestId('career-details');
+    expect(screen.queryByTestId('unverified-note')).toBeNull();
   });
 
   test('skill rows say held / related / missing in words, and name the skill behind a related credit', async () => {

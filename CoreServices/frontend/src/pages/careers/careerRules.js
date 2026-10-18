@@ -48,10 +48,11 @@ export const STATUS_VIEW = {
   missing: { label: 'Missing', symbol: '✗' },
 };
 
-const FROM = { manual: 'your profile', cv: 'your uploaded CV', github: 'your GitHub repositories' };
+const FROM = { manual: 'your profile', cv: 'your uploaded CV', github: 'your GitHub repositories', learning: 'your learning path (not verified)' };
 export const fromLabel = (source) => FROM[source] || 'your profile';
 // Where a held skill was found, in words ("found in your uploaded CV").
-const FOUND = { manual: 'listed in your profile', cv: 'found in your uploaded CV', github: 'found in your GitHub repositories' };
+const FOUND = { manual: 'listed in your profile', cv: 'found in your uploaded CV', github: 'found in your GitHub repositories',
+  learning: 'completed in your learning path (not verified)' };
 export const foundLabel = (source) => FOUND[source] || 'listed in your profile';
 
 // One required / optional skill row → the text shown next to its icon (never colour alone).

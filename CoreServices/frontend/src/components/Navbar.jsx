@@ -13,6 +13,7 @@ import {
   Compass,
   Menu,
   X,
+  GraduationCap,
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -42,6 +43,7 @@ export default function Navbar() {
     { to: '/profile-builder', label: 'Profile Builder',  icon: PenSquare },
     { to: '/cv-generator',    label: 'CV Generator',     icon: FileText },
     { to: '/career-matches',  label: 'Career Matches',   icon: Compass },
+    { to: '/learning-paths',  label: 'Learning Paths',   icon: GraduationCap },
     { to: '/profile',         label: 'Account',          icon: User },
   ];
 
