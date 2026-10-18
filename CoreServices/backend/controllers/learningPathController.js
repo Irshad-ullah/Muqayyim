@@ -17,6 +17,9 @@ import { handleServerError } from '../utils/serverError.js';
 // POST   /api/learning-paths/:id/regenerate            { preferences? } rebuild; module progress kept by skill
 // POST   /api/learning-paths/:id/modules/:key/feedback { title, vote: 'up' | 'down' | null } on one recommendation
 // POST   /api/learning-paths/:id/modules/:key/more     "Suggest another resource" (LLM, needs consent)
+// POST   /api/learning-paths/:id/enrich                { keys? } "Retry AI details" for modules without them (needs consent)
+// AI details per module (aiStatus): modules the LLM answer did not cover validly are retried ONCE automatically in the
+// background (not counted against the user's daily AI quota); what still fails gets a "Retry AI details" button.
 // The user id comes only from the verified JWT. Creating a path needs the current AI consent (the notice includes
 // "your skills and learning preferences, to build learning paths"). The structure is deterministic (AIServices);
 // the enrichment is the LLM's — if it is unavailable or rejected, the path is still saved without it.
@@ -29,6 +32,8 @@ const COSTS = ['free', 'include_paid'];
 const STATUSES = ['not_started', 'in_progress', 'completed'];
 export const MAX_RECOMMENDATIONS = 10; // per module, after "Suggest another resource"
 const VOTES = ['up', 'down'];
+// Enrichment failures worth one automatic retry (not: the LLM switched off, or the user's quota used up).
+const RETRYABLE = new Set(['LLM_INVALID_OUTPUT', 'LLM_TIMEOUT', 'LLM_UNAVAILABLE', 'LLM_RATE_LIMITED']);
 
 const unavailable = (res) => res.status(503).json({ success: false, code: 'LEARNING_UNAVAILABLE',
   message: 'Learning paths are temporarily unavailable. Please try again shortly.' });
@@ -76,13 +81,15 @@ const fromRecommendation = (r) => ({
   searchUrl: r.search_url, searchLabel: r.search_label, label: r.label,
 });
 
+const detailsOf = (e) => ({ why: e.why, subtopics: e.subtopics, project: e.project, hours: { min: e.hours.min, max: e.hours.max },
+  recommendations: e.recommendations.map(fromRecommendation), aiStatus: 'enriched' });
+
 // The enrichment by module key, and its prerequisite order (validated by AIServices).
 export const applyEnrichment = (modules, enrichment) => {
   const byKey = new Map(enrichment.modules.map((m) => [m.key, m]));
   const enriched = modules.map((m) => {
     const e = byKey.get(m.key);
-    return e ? { ...m, why: e.why, subtopics: e.subtopics, project: e.project, hours: { min: e.hours.min, max: e.hours.max },
-      recommendations: e.recommendations.map(fromRecommendation) } : m;
+    return e ? { ...m, ...detailsOf(e) } : m;
   });
   const order = enrichment.order || [];
   const prereqs = new Map();
@@ -101,10 +108,34 @@ export const progressOf = (path) => {
     percent: total ? Math.round((100 * completed) / total) : 0 };
 };
 
+// Paths saved before aiStatus existed: a module with a description is enriched, one without has failed.
+const aiStatusOf = (m) => m.aiStatus || (m.why ? 'enriched' : 'failed');
+
 const view = (doc) => {
   const path = doc.toObject ? doc.toObject() : doc;
   const { _id, userId, __v, ...rest } = path;
-  return { id: String(_id), ...rest, progress: progressOf(path) };
+  const modules = path.modules.map((m) => ({ ...m, aiStatus: aiStatusOf(m) }));
+  return { id: String(_id), ...rest, modules, progress: progressOf(path) };
+};
+
+const enrichmentRequest = (title, modules, profile, preferences, automatic) => ({
+  role_title: title,
+  modules: modules.map((m) => ({ key: m.key, skill: m.skill })),
+  user_skills: mergedSkills(profile).map((x) => x.name).slice(0, 300),
+  preferences: { cost: preferences.cost, hours_per_week: preferences.hoursPerWeek },
+  ...(automatic ? { automatic_retry: true } : {}),
+});
+
+const totalHoursOf = (modules) => {
+  const timed = modules.filter((m) => m.hours?.max);
+  return timed.length ? { min: timed.reduce((n, m) => n + m.hours.min, 0), max: timed.reduce((n, m) => n + m.hours.max, 0) } : undefined;
+};
+
+// Path-level status from its modules: all enriched, some (partial), or none (keeps the failure status and code).
+const pathStatus = (modules, fallback) => {
+  const enriched = modules.filter((m) => aiStatusOf(m) === 'enriched').length;
+  if (modules.length && enriched === modules.length) return 'enriched';
+  return enriched ? 'partial' : fallback;
 };
 
 const summary = (doc) => {
@@ -144,27 +175,33 @@ export const buildPath = async (req, { professionId, choices, preferences }) => 
     .map((m) => (learned.has(m.skill.toLowerCase()) ? { ...m, status: 'completed', completedAt: new Date() } : m));
   let enrichment = { status: 'unavailable' };
   let totalHours;
+  let retryKeys = [];
   if (modules.length) {
+    let code;
     try {
-      const ai = await requestEnrichment(req.user.userId, {
-        role_title: s.title,
-        modules: modules.map((m) => ({ key: m.key, skill: m.skill })),
-        user_skills: mergedSkills(profile).map((x) => x.name).slice(0, 300),
-        preferences: { cost: preferences.cost, hours_per_week: preferences.hoursPerWeek },
-      }, req);
+      const ai = await requestEnrichment(req.user.userId, enrichmentRequest(s.title, modules, profile, preferences, false), req);
       if (ai.status === 200 && ai.data?.success) {
         const e = ai.data.data;
-        modules = applyEnrichment(modules, e);
-        totalHours = { min: e.total_hours.min, max: e.total_hours.max };
-        enrichment = { status: 'enriched', prompt: e.usage?.prompt, model: e.usage?.model, cached: Boolean(e.usage?.cached) };
+        retryKeys = e.failed || [];
+        modules = applyEnrichment(modules, e).map((m) => (retryKeys.includes(m.key) ? { ...m, aiStatus: 'pending' } : m));
+        totalHours = totalHoursOf(modules);
+        enrichment = { status: retryKeys.length ? 'partial' : 'enriched', code: retryKeys.length ? 'LLM_INVALID_OUTPUT' : '',
+          prompt: e.usage?.prompt, model: e.usage?.model, cached: Boolean(e.usage?.cached) };
       } else {
-        enrichment = { status: ai.data?.code === 'LLM_INVALID_OUTPUT' ? 'failed' : 'unavailable', code: ai.data?.code || '' };
+        code = ai.data?.code || 'LLM_UNAVAILABLE';
       }
     } catch {
-      enrichment = { status: 'unavailable', code: 'LLM_UNAVAILABLE' };
+      code = 'LLM_UNAVAILABLE';
+    }
+    if (code) {
+      const retry = RETRYABLE.has(code);
+      retryKeys = retry ? modules.map((m) => m.key) : [];
+      modules = modules.map((m) => ({ ...m, aiStatus: retry ? 'pending' : 'failed' }));
+      enrichment = { status: code === 'LLM_INVALID_OUTPUT' ? 'failed' : 'unavailable', code };
     }
   }
   return {
+    retryKeys,
     fields: {
       professionId, title: s.title, source: s.source, sourceVersion: s.source_version || '', matchScore: s.match_score,
       preferences, choices, modules, more: s.more, totalHours, enrichment,
@@ -196,6 +233,7 @@ export const createPath = guarded('Could not create the learning path', async (r
   if (built.error === 'unavailable') return unavailable(res);
   if (built.error) return passThrough(res, built.ai);
   const path = await LearningPath.create({ userId: req.user.userId, ...built.fields });
+  scheduleRetry(path._id, req.user.userId, built.retryKeys);
   return res.status(201).json({ success: true, data: view(path) });
 });
 
@@ -299,6 +337,7 @@ export const regeneratePath = guarded('Could not regenerate the learning path', 
   });
   path.set(built.fields);
   await path.save();
+  scheduleRetry(path._id, req.user.userId, built.retryKeys);
   return res.json({ success: true, data: view(path) });
 });
 
@@ -352,4 +391,69 @@ export const suggestMore = guarded('Could not suggest another resource', async (
   module.recommendations.push(...added);
   await path.save();
   return res.json({ success: true, data: view(path), added: added.length });
+});
+
+// ─── AI details retry (automatic once in the background, or "Retry AI details") ─────────────────────────────────
+// Fills the modules the LLM covers validly; the rest become "failed". The path is re-read, so a status change made
+// meanwhile is kept. automatic: the user's daily AI quota is not used.
+export const retryDetails = async (pathId, userId, keys, { automatic = false, req } = {}) => {
+  const path = await LearningPath.findOne({ _id: pathId, userId });
+  if (!path) return null;
+  const targets = path.modules.filter((m) => keys.includes(m.key));
+  if (!targets.length) return path;
+  const profile = await Profile.findOne({ userId }).select('skills').lean();
+  let e = null;
+  let code = '';
+  try {
+    const ai = await requestEnrichment(userId, enrichmentRequest(path.title, targets, profile, path.preferences, automatic), req);
+    if (ai.status === 200 && ai.data?.success) e = ai.data.data;
+    else code = ai.data?.code || 'LLM_UNAVAILABLE';
+  } catch {
+    code = 'LLM_UNAVAILABLE';
+  }
+  const byKey = new Map((e?.modules || []).map((m) => [m.key, m]));
+  for (const module of targets) {
+    const details = byKey.get(module.key);
+    if (details) Object.assign(module, detailsOf(details));
+    else module.aiStatus = 'failed';
+  }
+  const status = pathStatus(path.modules, path.enrichment?.status === 'partial' ? 'failed' : (path.enrichment?.status || 'failed'));
+  path.enrichment = { ...(path.enrichment?.toObject ? path.enrichment.toObject() : path.enrichment), status,
+    code: status === 'enriched' ? '' : (code || 'LLM_INVALID_OUTPUT'),
+    ...(e?.usage ? { prompt: e.usage.prompt, model: e.usage.model, cached: Boolean(e.usage.cached) } : {}) };
+  path.totalHours = totalHoursOf(path.modules);
+  await path.save();
+  return path;
+};
+
+const pendingRetries = new Set();
+const scheduleRetry = (pathId, userId, keys) => {
+  if (!keys?.length) return;
+  const job = retryDetails(pathId, userId, keys, { automatic: true })
+    .catch(async () => {  // never leave modules "pending"
+      await LearningPath.updateOne({ _id: pathId }, { $set: { 'modules.$[m].aiStatus': 'failed' } },
+        { arrayFilters: [{ 'm.key': { $in: keys }, 'm.aiStatus': 'pending' }] }).catch(() => {});
+    })
+    .finally(() => pendingRetries.delete(job));
+  pendingRetries.add(job);
+};
+
+// Tests: wait for the background retries.
+export const flushLearningRetries = async () => {
+  while (pendingRetries.size) await Promise.allSettled([...pendingRetries]);
+};
+
+export const retryEnrichment = guarded('Could not get the AI details', async (req, res) => {
+  const path = await ownPath(req);
+  if (!path) return notFound(res);
+  const open = path.modules.filter((m) => aiStatusOf(m) !== 'enriched').map((m) => m.key);
+  const asked = Array.isArray(req.body?.keys) ? req.body.keys.filter((k) => typeof k === 'string') : open;
+  const keys = asked.filter((k) => open.includes(k));
+  if (!keys.length) {
+    return res.status(400).json({ success: false, code: 'NOTHING_TO_RETRY', message: 'These modules already have their AI details.' });
+  }
+  const user = await User.findById(req.user.userId).select('aiConsent').lean();
+  if (!hasConsent(user)) return consentRequired(res, user, 'Please agree to the AI processing notice to get the AI details.');
+  const updated = await retryDetails(path._id, req.user.userId, keys, { req });
+  return res.json({ success: true, data: view(updated) });
 });

@@ -9,6 +9,7 @@ import './authMocks.js';
 // at most 5, ownership, module status, completion → the skill in the profile as "learning" (pushed to AIServices,
 // removed again when undone, never wiped by a profile save), validation and AI error pass-through.
 // Part 6: freshness ("Regenerate?"), regenerate keeping progress, feedback on resources, "Suggest another resource".
+// AI details per module: partial answers, one automatic background retry (no user quota), "Retry AI details".
 
 process.env.EMBEDDING_SYNC_RETRY_DELAYS_MS = '0';
 
@@ -17,6 +18,7 @@ const { default: User } = await import('../backend/models/User.js');
 const { default: Profile } = await import('../backend/models/Profile.js');
 const { default: LearningPath } = await import('../backend/models/LearningPath.js');
 const { flushEmbeddingSync } = await import('../backend/services/skillEmbeddingSync.js');
+const { flushLearningRetries } = await import('../backend/controllers/learningPathController.js');
 const { AI_CONSENT_VERSION, AI_CONSENT_TEXT } = await import('../backend/constants/aiConsent.js');
 
 const STRUCTURE = {
@@ -42,7 +44,7 @@ const ENRICHMENT = {
   order: ['javascript', 'react', 'jest'],
   prerequisites: { accepted: [['javascript', 'react']], rejected: [] },
   total_hours: { min: 30, max: 60, label: 'estimated' },
-  usage: { cached: false, prompt: 'learning_path@v3', model: 'fake' },
+  usage: { cached: false, prompt: 'learning_path@v4', model: 'fake' },
 };
 
 const ai = { calls: [], structure: null, enrich: null, state: null, more: null, up: true };
@@ -55,7 +57,10 @@ const server = http.createServer((req, res) => {
     if (!ai.up) return req.socket.destroy();
     const json = (status, body) => { res.writeHead(status, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(body)); };
     if (req.url === '/internal/learning/structure') return json(...(ai.structure || [200, { success: true, data: STRUCTURE }]));
-    if (req.url === '/internal/llm/learning-enrich') return json(...(ai.enrich || [200, { success: true, data: ENRICHMENT }]));
+    if (req.url === '/internal/llm/learning-enrich') {
+      const answer = typeof ai.enrich === 'function' ? ai.enrich(call.body) : ai.enrich;
+      return json(...(answer || [200, { success: true, data: ENRICHMENT }]));
+    }
     if (req.url === '/internal/learning/state') return json(...(ai.state || [200, { success: true, data: { skills_hash: 'sh1', dataset_hash: 'dh1' } }]));
     if (req.url === '/internal/llm/learning-more') {
       return json(...(ai.more || [200, { success: true, data: { recommendations: [recommendation('React course'), recommendation('React deep dive', false)], usage: {} } }]));
@@ -89,6 +94,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
+  await flushLearningRetries();
   Object.assign(ai, { calls: [], structure: null, enrich: null, state: null, more: null, up: true });
   await LearningPath.deleteMany({});
   await consent(alice);
@@ -115,7 +121,7 @@ describe('create', () => {
     expect(path.modules.map((m) => m.order)).toEqual([1, 2, 3]);
     expect(path.modules[1]).toMatchObject({ quickWin: true, hint: { skill: 'Vue.js' }, prerequisites: ['javascript'], status: 'not_started' });
     expect(path.modules[0].recommendations[0]).toMatchObject({ searchLabel: 'Find on YouTube', label: 'AI recommendation' });
-    expect(path).toMatchObject({ enrichment: { status: 'enriched', prompt: 'learning_path@v3' }, more: { count: 2 },
+    expect(path).toMatchObject({ enrichment: { status: 'enriched', prompt: 'learning_path@v4' }, more: { count: 2 },
       totalHours: { min: 30, max: 60 }, progress: { total: 3, completed: 0, percent: 0 } });
     const [structureCall, enrichCall] = ai.calls;
     expect(structureCall.headers['x-user-id']).toBe(String(alice._id));
@@ -278,5 +284,79 @@ describe('Part 6: freshness, regenerate, feedback, more', () => {
     const recs = Array.from({ length: 10 }, (_, i) => ({ platform: 'YouTube', title: `R${i}`, free: true }));
     await LearningPath.updateOne({ _id: id, 'modules.key': 'react' }, { $set: { 'modules.$.recommendations': recs } });
     expect((await more()).body.code).toBe('MORE_LIMIT');
+  });
+});
+
+describe('AI details per module: partial answers, automatic retry, "Retry AI details"', () => {
+  const partial = (keys) => {
+    const modules = ENRICHMENT.modules.filter((m) => keys.includes(m.key));
+    return [200, { success: true, data: { ...ENRICHMENT, modules,
+      failed: STRUCTURE.modules.map((m) => m.key).filter((k) => !keys.includes(k)) } }];
+  };
+  const enrichCalls = () => ai.calls.filter((c) => c.path === '/internal/llm/learning-enrich');
+
+  test('valid modules are kept; the failed one is retried once in the background (no user quota) and filled', async () => {
+    ai.enrich = (body) => (body.automatic_retry ? partial(['jest']) : partial(['react', 'javascript']));
+    const { body } = await create();
+    const path = body.data;
+    expect(path.enrichment).toMatchObject({ status: 'partial' });
+    expect(path.modules.map((m) => [m.key, m.aiStatus])).toEqual([['javascript', 'enriched'], ['react', 'enriched'], ['jest', 'pending']]);
+    expect(path.modules[0].hours).toEqual({ min: 10, max: 20 });
+    expect(path.totalHours).toEqual({ min: 20, max: 40 });
+    await flushLearningRetries();
+    const retry = enrichCalls()[1].body;
+    expect(retry).toMatchObject({ automatic_retry: true, modules: [{ key: 'jest', skill: 'Jest' }] });
+    expect(enrichCalls()).toHaveLength(2); // once only
+    const after = (await as(request(app).get(`/api/learning-paths/${path.id}`))).body.data;
+    expect(after.modules.find((m) => m.key === 'jest')).toMatchObject({ aiStatus: 'enriched', why: 'Jest matters.', hours: { min: 10, max: 20 } });
+    expect(after.enrichment.status).toBe('enriched');
+    expect(after.totalHours).toEqual({ min: 30, max: 60 });
+  });
+
+  test('a module that still fails is marked failed; "Retry AI details" retries just it (counted, consent)', async () => {
+    ai.enrich = (body) => (body.automatic_retry ? [502, { success: false, code: 'LLM_INVALID_OUTPUT' }] : partial(['react', 'javascript']));
+    const { body } = await create();
+    await flushLearningRetries();
+    const id = body.data.id;
+    const failed = (await as(request(app).get(`/api/learning-paths/${id}`))).body.data;
+    expect(failed.modules.find((m) => m.key === 'jest').aiStatus).toBe('failed');
+    expect(failed.enrichment).toMatchObject({ status: 'partial', code: 'LLM_INVALID_OUTPUT' });
+    ai.enrich = () => partial(['jest']);
+    const res = await as(request(app).post(`/api/learning-paths/${id}/enrich`)).send({ keys: ['jest'] });
+    expect(res.status).toBe(200);
+    expect(res.body.data.modules.every((m) => m.aiStatus === 'enriched')).toBe(true);
+    expect(res.body.data.enrichment.status).toBe('enriched');
+    expect(enrichCalls().at(-1).body.automatic_retry).toBeUndefined();
+    expect((await as(request(app).post(`/api/learning-paths/${id}/enrich`)).send({})).body.code).toBe('NOTHING_TO_RETRY');
+    await User.updateOne({ _id: alice._id }, { $set: { 'aiConsent.version': '2026-10-17' } });
+    await LearningPath.updateOne({ _id: id, 'modules.key': 'jest' }, { $set: { 'modules.$.aiStatus': 'failed' } });
+    expect((await as(request(app).post(`/api/learning-paths/${id}/enrich`)).send({})).body.code).toBe('AI_CONSENT_REQUIRED');
+    expect((await as(request(app).post(`/api/learning-paths/${id}/enrich`), bob).send({})).status).toBe(404);
+  });
+
+  test('a whole failed answer is retried in the background; the LLM switched off is not', async () => {
+    ai.enrich = (body) => (body.automatic_retry ? [200, { success: true, data: ENRICHMENT }] : [502, { success: false, code: 'LLM_INVALID_OUTPUT' }]);
+    const { body } = await create();
+    expect(body.data.modules.every((m) => m.aiStatus === 'pending')).toBe(true);
+    expect(body.data.enrichment).toMatchObject({ status: 'failed', code: 'LLM_INVALID_OUTPUT' });
+    await flushLearningRetries();
+    const filled = (await as(request(app).get(`/api/learning-paths/${body.data.id}`))).body.data;
+    expect(filled.modules.every((m) => m.aiStatus === 'enriched' && m.why)).toBe(true);
+    expect(filled.enrichment).toMatchObject({ status: 'enriched', code: '' });
+    await LearningPath.deleteMany({});
+    ai.calls = [];
+    ai.enrich = [503, { success: false, code: 'LLM_DISABLED' }];
+    const off = await create();
+    await flushLearningRetries();
+    expect(off.body.data.modules.every((m) => m.aiStatus === 'failed')).toBe(true);
+    expect(off.body.data.enrichment).toMatchObject({ status: 'unavailable', code: 'LLM_DISABLED' });
+    expect(enrichCalls()).toHaveLength(1);
+  });
+
+  test('paths saved before AI statuses existed: modules without details show as failed', async () => {
+    const legacy = await LearningPath.create({ userId: alice._id, professionId: 'curated:old', title: 'Old',
+      enrichment: { status: 'failed', code: 'LLM_INVALID_OUTPUT' }, modules: [{ key: 'git', skill: 'Git', order: 1 }] });
+    const got = (await as(request(app).get(`/api/learning-paths/${legacy._id}`))).body.data;
+    expect(got.modules[0].aiStatus).toBe('failed');
   });
 });

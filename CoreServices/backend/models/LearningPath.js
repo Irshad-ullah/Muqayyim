@@ -31,6 +31,8 @@ const moduleSchema = new Schema({
   hours: { min: Number, max: Number },
   recommendations: { type: [recommendationSchema], default: [] },
   status: { type: String, enum: ['not_started', 'in_progress', 'completed'], default: 'not_started' },
+  // AI details of this module: enriched, pending (the automatic retry is running) or failed ("Retry AI details").
+  aiStatus: { type: String, enum: ['enriched', 'pending', 'failed'] },
   startedAt: Date,
   completedAt: Date,
 }, { _id: false });
@@ -51,7 +53,7 @@ const learningPathSchema = new Schema({
   more: { count: { type: Number, default: 0 }, skills: { type: [String], default: [] } },
   totalHours: { min: Number, max: Number },
   enrichment: {
-    status: { type: String, enum: ['enriched', 'unavailable', 'failed'], default: 'unavailable' },
+    status: { type: String, enum: ['enriched', 'partial', 'unavailable', 'failed'], default: 'unavailable' },
     code: str(60), prompt: str(60), model: str(80), cached: Boolean,
   },
   snapshot: { skillsHash: str(80), datasetHash: str(80), scoringMode: str(20), algorithm: str(40) },
