@@ -7,7 +7,7 @@ import { learningPathService } from '../../services/learningPathService.js';
 import { errorView } from './pathRules.js';
 
 // Module 6 (FR7.7 / FR8.1): set up a learning path for one career — the alternative to learn for each any-of
-// requirement, language, free or paid resources, hours per week. Creating needs the current AI consent; when the
+// requirement, free or paid resources, hours per week (resources are in English). Creating needs the current AI consent; when the
 // server asks for it, the consent dialog appears and the request is repeated after "Agree".
 
 export const groupsOf = (member) => (member?.required || [])
@@ -21,7 +21,7 @@ export default function GeneratePathDialog({ professionId, title, member, onClos
   const navigate = useNavigate();
   const groups = groupsOf(member);
   const [choices, setChoices] = useState(() => Object.fromEntries(groups.map((g) => [g.key, keyOf(g.alternatives[0])])));
-  const [preferences, setPreferences] = useState({ language: 'English', cost: 'free', hoursPerWeek: 5 });
+  const [preferences, setPreferences] = useState({ cost: 'free', hoursPerWeek: 5 });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const [consent, setConsent] = useState(null);
@@ -75,13 +75,7 @@ export default function GeneratePathDialog({ professionId, title, member, onClos
             ))}
           </fieldset>
         )}
-        <div className="grid grid-cols-3 gap-3">
-          <label className="text-sm text-slate-600">Language
-            <select className="input-field mt-1" value={preferences.language} onChange={(e) => setPreferences({ ...preferences, language: e.target.value })}>
-              <option value="English">English</option>
-              <option value="Urdu-Hindi">Urdu-Hindi</option>
-            </select>
-          </label>
+        <div className="grid grid-cols-2 gap-3">
           <label className="text-sm text-slate-600">Resources
             <select className="input-field mt-1" value={preferences.cost} onChange={(e) => setPreferences({ ...preferences, cost: e.target.value })}>
               <option value="free">Free only</option>

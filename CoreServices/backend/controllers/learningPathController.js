@@ -25,7 +25,6 @@ export const MAX_PATHS = 5;
 const PROFESSION_ID = /^(onet|esco|curated|manual):[A-Za-z0-9._-]{1,100}$/;
 const PASS_THROUGH = new Set(['PROFESSION_NOT_FOUND', 'INVALID_CHOICE', 'EMBEDDINGS_PENDING', 'MODEL_LOADING',
   'INDEX_BUILDING', 'NO_PROFESSIONS', 'MATCHING_UNAVAILABLE']);
-const LANGUAGES = ['English', 'Urdu-Hindi'];
 const COSTS = ['free', 'include_paid'];
 const STATUSES = ['not_started', 'in_progress', 'completed'];
 export const MAX_RECOMMENDATIONS = 10; // per module, after "Suggest another resource"
@@ -45,11 +44,10 @@ const passThrough = (res, ai) => {
 
 const validPreferences = (p = {}) => {
   const preferences = {
-    language: p.language ?? 'English',
     cost: p.cost ?? 'free',
     hoursPerWeek: p.hoursPerWeek ?? 5,
   };
-  if (!LANGUAGES.includes(preferences.language) || !COSTS.includes(preferences.cost)
+  if (!COSTS.includes(preferences.cost)
       || !Number.isInteger(preferences.hoursPerWeek) || preferences.hoursPerWeek < 1 || preferences.hoursPerWeek > 60) {
     return null;
   }
@@ -75,7 +73,7 @@ const fromStructure = (m) => ({
 
 const fromRecommendation = (r) => ({
   platform: r.platform, title: r.title, instructor: r.instructor || '', description: r.description || '', free: r.free,
-  language: r.language, searchUrl: r.search_url, searchLabel: r.search_label, label: r.label,
+  searchUrl: r.search_url, searchLabel: r.search_label, label: r.label,
 });
 
 // The enrichment by module key, and its prerequisite order (validated by AIServices).
@@ -152,7 +150,7 @@ export const buildPath = async (req, { professionId, choices, preferences }) => 
         role_title: s.title,
         modules: modules.map((m) => ({ key: m.key, skill: m.skill })),
         user_skills: mergedSkills(profile).map((x) => x.name).slice(0, 300),
-        preferences: { language: preferences.language, cost: preferences.cost, hours_per_week: preferences.hoursPerWeek },
+        preferences: { cost: preferences.cost, hours_per_week: preferences.hoursPerWeek },
       }, req);
       if (ai.status === 200 && ai.data?.success) {
         const e = ai.data.data;
@@ -339,7 +337,7 @@ export const suggestMore = guarded('Could not suggest another resource', async (
   try {
     ai = await requestMore(req.user.userId, {
       role_title: path.title, skill: module.skill, exclude_titles: module.recommendations.map((r) => r.title).slice(0, 30),
-      preferences: { language: path.preferences.language, cost: path.preferences.cost, hours_per_week: path.preferences.hoursPerWeek },
+      preferences: { cost: path.preferences.cost, hours_per_week: path.preferences.hoursPerWeek },
     }, req);
   } catch {
     ai = null;

@@ -25,7 +25,7 @@ function Recommendation({ rec, vote, busy, onVote }) {
       <div className="mt-2 flex items-center justify-between gap-2 flex-wrap">
         <span className={`text-[11px] rounded px-1.5 py-0.5 ${rec.free ? 'bg-violet-50 text-violet-800' : 'bg-amber-50 text-amber-800'}`}
           data-testid="rec-label">
-          <Sparkles className="inline w-3 h-3 mr-1" aria-hidden="true" />{rec.label} · {rec.free ? 'free' : 'paid'} · {rec.language}
+          <Sparkles className="inline w-3 h-3 mr-1" aria-hidden="true" />{rec.label} · {rec.free ? 'free' : 'paid'}
         </span>
         <span className="inline-flex items-center gap-2">
           <button type="button" aria-label={`Helpful: ${rec.title}`} aria-pressed={vote === 'up'} disabled={busy}

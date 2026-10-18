@@ -18,11 +18,11 @@ const { default: LearningPathsPage } = await import('../LearningPathsPage.jsx');
 const { default: LearningPathPage } = await import('./LearningPathPage.jsx');
 const { default: GeneratePathDialog } = await import('./GeneratePathDialog.jsx');
 
-const rec = (title, free = true) => ({ platform: 'YouTube', title, instructor: 'Net Ninja', description: 'Course.', free, language: 'English',
+const rec = (title, free = true) => ({ platform: 'YouTube', title, instructor: 'Net Ninja', description: 'Course.', free,
   searchUrl: `https://www.youtube.com/results?search_query=${encodeURIComponent(title)}`, searchLabel: 'Find on YouTube',
   label: free ? 'AI recommendation' : 'AI recommendation, check before buying' });
 const PATH = {
-  id: 'p1', title: 'Frontend Developer', source: 'curated', preferences: { language: 'English', cost: 'include_paid', hoursPerWeek: 6 },
+  id: 'p1', title: 'Frontend Developer', source: 'curated', preferences: { cost: 'include_paid', hoursPerWeek: 6 },
   enrichment: { status: 'enriched' }, more: { count: 2, skills: ['Git', 'Figma'] },
   progress: { total: 2, completed: 0, inProgress: 0, percent: 0 },
   modules: [
@@ -178,7 +178,7 @@ describe('GeneratePathDialog', () => {
     aiService.giveConsent.mockResolvedValue({ granted: true });
     renderAt('/careers', <GeneratePathDialog professionId="curated:frontend-developer" title="Frontend Developer" member={member} onClose={vi.fn()} />, '/careers');
     await user.selectOptions(screen.getByLabelText('React / Angular'), 'angular');
-    await user.selectOptions(screen.getByLabelText('Language'), 'Urdu-Hindi');
+    expect(screen.queryByLabelText('Language')).toBeNull(); // English only
     await user.selectOptions(screen.getByLabelText('Resources'), 'include_paid');
     await user.click(screen.getByRole('button', { name: 'Create learning path' }));
     expect(await screen.findByTestId('ai-consent-text')).toBeTruthy();
@@ -187,7 +187,7 @@ describe('GeneratePathDialog', () => {
     await waitFor(() => expect(screen.getByTestId('opened-path')).toBeTruthy());
     expect(aiService.giveConsent).toHaveBeenCalledWith('2026-10-18');
     expect(learningPathService.create).toHaveBeenLastCalledWith({ professionId: 'curated:frontend-developer', choices: { react: 'angular' },
-      preferences: { language: 'Urdu-Hindi', cost: 'include_paid', hoursPerWeek: 5 } });
+      preferences: { cost: 'include_paid', hoursPerWeek: 5 } });
   });
 
   test('shows the reason when a path cannot be created', async () => {

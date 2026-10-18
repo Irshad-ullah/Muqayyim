@@ -1,10 +1,10 @@
 """
 Learning path enrichment (Module 6) with the shared LLM client (consent checked by Core; quota, cache, delimited data
-blocks, usage records as for every feature). Prompt files learning_path@v1 and learning_more@v1.
+blocks, usage records as for every feature). Prompt files learning_path@v2 and learning_more@v2.
 
-Sent to the model: the role title, the ordered module skills, the user's skill NAMES and the preferences (language,
-free only / include paid). Nothing else (no profile text, no contact details). The cache key contains the prompt text,
-so it includes the preferences.
+Sent to the model: the role title, the ordered module skills, the user's skill NAMES and the cost preference (free
+only / include paid). Nothing else (no profile text, no contact details). Resources are in English only. The cache key
+contains the prompt text, so it includes the cost preference.
 
 Validation (an invalid answer gets the client's one corrective retry, then LLMInvalidOutput — Core then keeps the path
 without enrichment):
@@ -31,7 +31,6 @@ from app.services.llm.prompts import data_block
 
 FEATURE, MORE_FEATURE = "learning_path", "learning_more"
 PLATFORMS = ("YouTube", "Coursera", "Udemy", "freeCodeCamp", "edX", "Official docs")
-LANGUAGES = ("English", "Urdu-Hindi")
 MIN_HOURS, MAX_HOURS, MAX_TOTAL_HOURS = 2, 80, 400
 URL = re.compile(r"(https?://|ftp://|www\.|\b[a-z0-9-]+\.(?:com|org|net|io|dev|edu|gov|co|ai|app|ly|me|tv|info|uk|pk|in)\b)", re.I)
 SEARCH = {
@@ -61,7 +60,6 @@ class Recommendation(_Strict):
     instructor: str = Field("", max_length=100)
     description: str = Field("", max_length=300)
     free: bool
-    language: Literal[LANGUAGES]  # type: ignore[valid-type]
 
     @field_validator("title", "instructor", "description")
     @classmethod
@@ -120,7 +118,6 @@ class MoreRecommendations(_Strict):
 
 
 class Preferences(_Strict):
-    language: Literal[LANGUAGES] = "English"  # type: ignore[valid-type]
     cost: Literal["free", "include_paid"] = "free"
     hours_per_week: int = Field(5, ge=1, le=60)
 
@@ -166,7 +163,6 @@ async def enrich(request: EnrichRequest, user_id: str) -> dict:
     module_keys = [str(m.get("key") or normalise_skill(m.get("skill", ""))[0]) for m in request.modules]
     names = [str(m.get("skill") or "") for m in request.modules]
     values = {
-        "language": request.preferences.language,
         "cost_rule": cost_rule(request.preferences),
         "role": data_block("role", {"title": request.role_title}),
         "modules": data_block("modules", [{"skill": n} for n in names]),
@@ -200,7 +196,6 @@ async def enrich(request: EnrichRequest, user_id: str) -> dict:
 
 async def more(request: MoreRequest, user_id: str) -> dict:
     values = {
-        "language": request.preferences.language,
         "cost_rule": cost_rule(request.preferences),
         "role": data_block("role", {"title": request.role_title}),
         "skill": data_block("skill", {"skill": request.skill}),

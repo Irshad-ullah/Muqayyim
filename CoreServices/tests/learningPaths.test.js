@@ -34,7 +34,7 @@ const STRUCTURE = {
   snapshot: { skills_hash: 'sh1', dataset_hash: 'dh1', scoring_mode: 'exact', algorithm: 'learning-structure@1' },
 };
 const recommendation = (title, free = true) => ({ platform: 'YouTube', title, instructor: 'Someone', description: 'd', free,
-  language: 'English', search_url: `https://www.youtube.com/results?search_query=${encodeURIComponent(title)}`,
+  search_url: `https://www.youtube.com/results?search_query=${encodeURIComponent(title)}`,
   search_label: 'Find on YouTube', label: free ? 'AI recommendation' : 'AI recommendation, check before buying' });
 const ENRICHMENT = {
   modules: STRUCTURE.modules.map((m) => ({ key: m.key, skill: m.skill, why: `${m.skill} matters.`, subtopics: ['a', 'b', 'c'],
@@ -42,7 +42,7 @@ const ENRICHMENT = {
   order: ['javascript', 'react', 'jest'],
   prerequisites: { accepted: [['javascript', 'react']], rejected: [] },
   total_hours: { min: 30, max: 60, label: 'estimated' },
-  usage: { cached: false, prompt: 'learning_path@v1', model: 'fake' },
+  usage: { cached: false, prompt: 'learning_path@v2', model: 'fake' },
 };
 
 const ai = { calls: [], structure: null, enrich: null, state: null, more: null, up: true };
@@ -69,7 +69,7 @@ let alice; let bob;
 const sign = (u) => jwt.sign({ userId: String(u._id), id: String(u._id), role: u.role }, process.env.JWT_SECRET);
 const as = (r, user = alice) => r.set('Authorization', `Bearer ${sign(user)}`);
 const create = (body = {}) => as(request(app).post('/api/learning-paths')).send({ professionId: 'curated:frontend-developer',
-  preferences: { language: 'English', cost: 'free', hoursPerWeek: 6 }, ...body });
+  preferences: { cost: 'free', hoursPerWeek: 6 }, ...body });
 const consent = (user) => User.updateOne({ _id: user._id }, { $set: { aiConsent: { granted: true, version: AI_CONSENT_VERSION, provider: 'Google Gemini' } } });
 
 beforeAll(async () => {
@@ -115,13 +115,13 @@ describe('create', () => {
     expect(path.modules.map((m) => m.order)).toEqual([1, 2, 3]);
     expect(path.modules[1]).toMatchObject({ quickWin: true, hint: { skill: 'Vue.js' }, prerequisites: ['javascript'], status: 'not_started' });
     expect(path.modules[0].recommendations[0]).toMatchObject({ searchLabel: 'Find on YouTube', label: 'AI recommendation' });
-    expect(path).toMatchObject({ enrichment: { status: 'enriched', prompt: 'learning_path@v1' }, more: { count: 2 },
+    expect(path).toMatchObject({ enrichment: { status: 'enriched', prompt: 'learning_path@v2' }, more: { count: 2 },
       totalHours: { min: 30, max: 60 }, progress: { total: 3, completed: 0, percent: 0 } });
     const [structureCall, enrichCall] = ai.calls;
     expect(structureCall.headers['x-user-id']).toBe(String(alice._id));
     expect(structureCall.body).toEqual({ profession_id: 'curated:frontend-developer', choices: { react: 'react' } });
     expect(enrichCall.body).toEqual({ role_title: 'Frontend Developer', modules: STRUCTURE.modules.map((m) => ({ key: m.key, skill: m.skill })),
-      user_skills: ['HTML', 'CSS', 'Vue.js'], preferences: { language: 'English', cost: 'free', hours_per_week: 6 } });
+      user_skills: ['HTML', 'CSS', 'Vue.js'], preferences: { cost: 'free', hours_per_week: 6 } });
   });
 
   test('an unavailable or rejected enrichment still saves the structure', async () => {
@@ -144,7 +144,7 @@ describe('create', () => {
 
   test('validation and AI errors', async () => {
     expect((await create({ professionId: 'other:x' })).status).toBe(400);
-    expect((await create({ preferences: { language: 'French' } })).status).toBe(400);
+    expect((await create({ preferences: { cost: 'cheap' } })).status).toBe(400);
     expect((await create({ preferences: { hoursPerWeek: 0 } })).status).toBe(400);
     expect((await create({ choices: ['x'] })).status).toBe(400);
     ai.structure = [404, { success: false, code: 'PROFESSION_NOT_FOUND', message: 'That career was not found.' }];
@@ -227,10 +227,10 @@ describe('Part 6: freshness, regenerate, feedback, more', () => {
     ai.structure = [200, { success: true, data: { ...STRUCTURE, modules: STRUCTURE.modules.slice(0, 2), match_score: 55,
       snapshot: { ...STRUCTURE.snapshot, skills_hash: 'sh2' } } }];
     ai.enrich = [503, { success: false, code: 'LLM_DISABLED' }];
-    const res = await as(request(app).post(url(id, '/regenerate'))).send({ preferences: { language: 'Urdu-Hindi' } });
+    const res = await as(request(app).post(url(id, '/regenerate'))).send({ preferences: { cost: 'include_paid' } });
     expect(res.status).toBe(200);
     expect(res.body.data.modules.map((m) => [m.key, m.status])).toEqual([['react', 'not_started'], ['javascript', 'in_progress']]);
-    expect(res.body.data).toMatchObject({ id, matchScore: 55, snapshot: { skillsHash: 'sh2' }, preferences: { language: 'Urdu-Hindi', hoursPerWeek: 6 },
+    expect(res.body.data).toMatchObject({ id, matchScore: 55, snapshot: { skillsHash: 'sh2' }, preferences: { cost: 'include_paid', hoursPerWeek: 6 },
       feedback: [{ moduleKey: 'react', title: 'React course', vote: 'up' }] });
     expect(ai.calls[0].body).toEqual({ profession_id: 'curated:frontend-developer', choices: { react: 'react' } });
     expect(await LearningPath.countDocuments({ userId: alice._id })).toBe(1);
@@ -260,7 +260,7 @@ describe('Part 6: freshness, regenerate, feedback, more', () => {
   });
 
   test('suggest another resource adds only new titles, sends the shown titles, and handles consent, failure and the cap', async () => {
-    const { body } = await create({ preferences: { language: 'English', cost: 'include_paid', hoursPerWeek: 6 } });
+    const { body } = await create({ preferences: { cost: 'include_paid', hoursPerWeek: 6 } });
     const id = body.data.id;
     const more = () => as(request(app).post(url(id, '/modules/react/more'))).send({});
     const res = await more();
@@ -269,13 +269,13 @@ describe('Part 6: freshness, regenerate, feedback, more', () => {
     expect(res.body.data.modules.find((m) => m.key === 'react').recommendations.map((r) => r.title)).toEqual(['React course', 'React deep dive']);
     const call = ai.calls.find((c) => c.path === '/internal/llm/learning-more');
     expect(call.body).toEqual({ role_title: 'Frontend Developer', skill: 'React', exclude_titles: ['React course'],
-      preferences: { language: 'English', cost: 'include_paid', hours_per_week: 6 } });
+      preferences: { cost: 'include_paid', hours_per_week: 6 } });
     ai.more = [502, { success: false, code: 'LLM_INVALID_OUTPUT' }];
     expect((await more()).body.code).toBe('SUGGESTION_UNAVAILABLE');
     await User.updateOne({ _id: alice._id }, { $set: { 'aiConsent.version': '2026-10-17' } });
     expect((await more()).body.code).toBe('AI_CONSENT_REQUIRED');
     await consent(alice);
-    const recs = Array.from({ length: 10 }, (_, i) => ({ platform: 'YouTube', title: `R${i}`, free: true, language: 'English' }));
+    const recs = Array.from({ length: 10 }, (_, i) => ({ platform: 'YouTube', title: `R${i}`, free: true }));
     await LearningPath.updateOne({ _id: id, 'modules.key': 'react' }, { $set: { 'modules.$.recommendations': recs } });
     expect((await more()).body.code).toBe('MORE_LIMIT');
   });

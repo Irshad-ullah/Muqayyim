@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 // Module 6 (FR8.1–FR8.9): a saved learning path for one career match. The structure (modules, order, tiers, quick
 // wins) comes from AIServices' deterministic planner; the enrichment (why, sub-topics, project, estimated hours,
-// AI recommendations with search links built by AIServices) from the LLM, when available. A path is saved and never
+// AI recommendations with search links built by AIServices; English only) from the LLM, when available. A path is saved and never
 // regenerated on view; `snapshot` lets the page offer "Regenerate?" when the profile or the career data changed.
 
 const { Schema } = mongoose;
@@ -10,7 +10,7 @@ const str = (max) => ({ type: String, default: '', maxlength: max });
 
 const recommendationSchema = new Schema({
   platform: str(40), title: str(160), instructor: str(100), description: str(300),
-  free: { type: Boolean, default: true }, language: str(20),
+  free: { type: Boolean, default: true },
   searchUrl: str(600), searchLabel: str(60), label: str(80),
 }, { _id: false });
 
@@ -43,7 +43,6 @@ const learningPathSchema = new Schema({
   sourceVersion: str(60),
   matchScore: Number,
   preferences: {
-    language: { type: String, enum: ['English', 'Urdu-Hindi'], default: 'English' },
     cost: { type: String, enum: ['free', 'include_paid'], default: 'free' },
     hoursPerWeek: { type: Number, min: 1, max: 60, default: 5 },
   },

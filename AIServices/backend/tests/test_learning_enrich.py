@@ -23,7 +23,7 @@ MODULES = [{"key": "javascript", "skill": "JavaScript"}, {"key": "react", "skill
 
 def rec(title="React Course for Beginners", platform="YouTube", free=True, instructor="freeCodeCamp"):
     return {"platform": platform, "title": title, "instructor": instructor, "description": "A full course.",
-            "free": free, "language": "English"}
+            "free": free}
 
 
 def module(skill, hours=(10, 20), recs=None, **over):
@@ -41,7 +41,7 @@ def answer(modules=None, prerequisites=None):
 
 def request(**over):
     body = {"role_title": "Frontend Developer", "modules": MODULES, "user_skills": ["HTML", "CSS"],
-            "preferences": {"language": "English", "cost": "free", "hours_per_week": 6}}
+            "preferences": {"cost": "free", "hours_per_week": 6}}
     body.update(over)
     return enrich.EnrichRequest.model_validate(body)
 
@@ -68,14 +68,14 @@ async def test_enrichment_with_links_built_by_our_code(fake):
     assert first["recommendations"][1]["search_url"].startswith("https://duckduckgo.com/?q=JavaScript+The+Official+Tutorial")
     assert out["total_hours"] == {"min": 20, "max": 40, "label": "estimated"}
     assert out["prerequisites"]["accepted"] == [["javascript", "react"]]
-    assert out["usage"]["prompt"] == "learning_path@v1"
+    assert out["usage"]["prompt"] == "learning_path@v2"
 
 
 async def test_only_role_modules_skill_names_and_preferences_are_sent(fake):
     fake.push(answer())
     await enrich.enrich(request(user_skills=["HTML", "Ayesha Raza", "CSS"]), "u1")
     sent = fake.sent_text
-    for kept in ("Frontend Developer", '"JavaScript"', '"React"', '"CSS"', "Prefer resources in English",
+    for kept in ("Frontend Developer", '"JavaScript"', '"React"', '"CSS"', "Recommend English-language resources only",
                  "Recommend only free resources"):
         assert kept in sent, kept
     assert "<<<DATA modules>>>" in sent and "<<<DATA known_skills>>>" in sent and "<<<DATA role>>>" in sent
@@ -106,10 +106,10 @@ async def test_free_only_drops_paid_and_paid_is_labelled(fake):
     free_only = await enrich.enrich(request(), "u1")
     assert [r["title"] for r in free_only["modules"][0]["recommendations"]] == ["React Course for Beginners"]
     fake.push(answer([module("JavaScript", recs=mixed), module("React")]))
-    paid_ok = await enrich.enrich(request(preferences={"language": "Urdu-Hindi", "cost": "include_paid", "hours_per_week": 4}), "u1")
+    paid_ok = await enrich.enrich(request(preferences={"cost": "include_paid", "hours_per_week": 4}), "u1")
     paid = paid_ok["modules"][0]["recommendations"][0]
     assert paid["label"] == "AI recommendation, check before buying" and paid["search_label"] == "Find on Udemy"
-    assert "Prefer resources in Urdu-Hindi" in fake.sent_text
+    assert "Recommend English-language resources only" in fake.sent_text
 
 
 async def test_the_cache_key_includes_the_preferences(fake):
@@ -118,7 +118,7 @@ async def test_the_cache_key_includes_the_preferences(fake):
     again = await enrich.enrich(request(), "u1")  # same preferences → cache, no provider call
     assert again["usage"]["cached"] is True and len(fake.requests) == 1
     fake.push(answer())
-    other = await enrich.enrich(request(preferences={"language": "English", "cost": "include_paid", "hours_per_week": 6}), "u1")
+    other = await enrich.enrich(request(preferences={"cost": "include_paid", "hours_per_week": 6}), "u1")
     assert other["usage"]["cached"] is False and len(fake.requests) == 2 and first["modules"] == again["modules"]
 
 
