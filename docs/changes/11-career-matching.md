@@ -301,6 +301,55 @@ that users never list as such. Without a curated description, such a phrase coul
 - Frontend: `src/pages/careers/careerRules.js`, `src/pages/admin/taxonomy/{ProfessionsTab,PreviewPublishTab}.jsx`;
   specs alongside.
 
+## Module 5.2 — curated modern roles replace ESCO; exact / alias / any-of scoring (adopted 2026-10-17)
+
+**Why.**
+- **Vague ESCO phrases.** 1,319 required ESCO skills were label phrases with no named alternative.
+- **The background diagnosis.** Related credit was 66–90 % false matches (`eval/curated_roles/results/background_diagnosis.md`).
+- **B vs B2.** Removing the 0.5 related credit kept every hit mark and took the chef to 0 %
+  (`eval/curated_roles/results/b2_compare.md`).
+
+**What changed.**
+- **Curated roles.** 19 roles (`AIServices/data/curated/modern_roles_v1.json`, v1.0.0, METHOD.md) were imported as source
+  `curated` through the taxonomy pipeline: snapshot `20261017T175232-ac8f0dc7` first; the published file is
+  `app/data/curated_roles.json`.
+- **Skill list.** 17 aliases and 27 new skills, so every curated skill is in the list.
+- **ESCO.** Retired through the pipeline: snapshot `20261017T175306-b356abae` first; all ESCO roles inactive, reason
+  "retired: replaced by curated modern roles v1". `esco_skills`, the ESCO import code and the role map stay, dormant.
+- **Scoring (`systemconfigs` `matching.related_credit = false`).** Credit is 1.0 for an exact key, alias or any-of
+  alternative, otherwise 0. Related pairs are shown only as hints on a role's missing skills.
+- **Career pages.** Curated roles are labelled "Industry".
+
+**Official re-run** (production code, after the import; `eval/career_matching/results/module5.2_*`):
+
+| Set | Top-3 | Top-5 | Other |
+|---|---|---|---|
+| Old 8 | 7/7 | 7/7 | chef best 0 % |
+| New 6 (not blind) | 6/6 | 6/6 | |
+| 10 test CVs (not blind) | 10/10 | 10/10 | expected family #1 for 7 |
+| Background (B2 metric) | | | chef 0 %, web 0 %: PASS (ratio n/a); legacy related rate 5.4 % / 18.5 % |
+
+- **Same as a sandbox B2 run on the same dataset.** All 24 profiles are identical.
+- **Different from the original sandbox B2 in 5 profiles' match %.** The skill-list additions unify spellings (e.g. the
+  Android CV's MVVM, OWASP Top 10, BigQuery). CV 06's first acceptable role moved from #2 to #3, still a top-3 hit.
+
+**Limitations.**
+- The curated roles were AI-assisted, with traceable evidence per requirement (METHOD.md), and the team review
+  (`review.csv`) is still pending.
+- The test CVs and the new 6 profiles are not blind, and the samples are small (7 + 6 + 10).
+- The background metric was redefined for B2 before it was run.
+- Without related credit, O\*NET roles score lower than before.
+- In legacy mode the chef's related-credit rate is 5.4 % (> 5 %).
+- **Testing:** the full suite was not re-run after the interruption. The new tests passed individually, and manual testing
+  by a project team member passed.
+
+**How to undo.**
+- **Re-enable ESCO:** restore a snapshot (admin History tab → Restore, or `POST /internal/admin/taxonomy/snapshots/{id}/restore`).
+  - `20261017T175232-ac8f0dc7` returns to the state before Module 5.2: O\*NET + ESCO, no curated roles.
+  - `20261017T175306-b356abae` re-enables ESCO and keeps the curated roles.
+- **Legacy scoring:** set `matching.related_credit` to `true` on the admin Configuration page. Career matches are
+  recomputed, because the mode is part of the cache key.
+
 ## Suggested SDS text
 
 | Section | Add or replace |

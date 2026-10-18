@@ -995,3 +995,33 @@ New test files and tests:
   "one of Kotlin, Java, Python or Swift".
 - `run_eval.py` with relative `--out` / `--profiles` paths wrote under `AIServices/backend/` (the script changes
   directory). The stray folder was deleted and the run repeated with absolute paths.
+
+## Module 5.2 — curated modern roles replace ESCO; exact / alias / any-of scoring (recorded)
+
+**Date:** 2026-10-17/18 · commits `721ee99` … (see `git log`) · note: `docs/changes/11-career-matching.md` (Module 5.2)
+
+- **Automated tests: the full suite was not re-run after the interruption.** The 2026-10-17 22:58 run is marked
+  "INTERRUPTED. Not counted": the laptop slept and the AI suite timed out.
+- **The new and changed tests passed individually:**
+  - AI: `test_curated_skill_list.py` 23, `test_curated_import.py` 7, `test_scoring_modes.py` 5, `test_matching.py` 22,
+    `test_esco_role_map.py` 11, the taxonomy and profession suites (193), and `test_background_credit_rate.py` (slow) 1
+    passed;
+  - Core: `careerMatches.test.js` 18;
+  - frontend: careers, admin taxonomy and career-page specs (68 Vitest + 12 node, then 20 + 7 after the label change).
+- **New test files:**
+  - `test_curated_skill_list.py`: skill-list additions;
+  - `test_curated_import.py`: validation failure, preview, publish, rollback, restore, CLI, ESCO retirement and
+    re-enabling by restore;
+  - `test_scoring_modes.py`: both modes, hints scoped to the role, the mode header, cache invalidation on a mode or
+    dataset change.
+- **Manual steps on the real data:**
+  - backup `~/.muqayyim/taxonomy/manual-backup-2026-10-17-m52-adopt` (ai_db, data and index files, core `systemconfigs`);
+  - curated import: published, snapshot `20261017T175232-ac8f0dc7`, 19 roles, 231 requirements, post-checks OK;
+  - ESCO retirement: published, snapshot `20261017T175306-b356abae`, 100 roles retired, 49 active, post-checks OK;
+  - official re-run: old 8 top-3 7/7, top-5 7/7, chef 0 %; new 6 6/6 · 6/6; test CVs 10/10 · 10/10 (not blind);
+    background PASS (0 % / 0 %; legacy 5.4 % / 18.5 %). Identical to a sandbox B2 run on the same dataset.
+- **Manual testing by a project team member passed.**
+- **Problems found and fixed:**
+  - the skill-list script re-indented `skill_aliases.json` (now written with the editor's writer);
+  - the slow background test asserted the legacy rate (it now asserts the B2 metric and records 5.4 %);
+  - the sandbox comparison script needed explicit modes once production had them.
