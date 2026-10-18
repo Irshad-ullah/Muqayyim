@@ -1,0 +1,35 @@
+# version: 1
+# Learning path enrichment (Module 6). The module list, its order and every link are built by our code; the model
+# only describes each module and names public learning resources. ${language} and ${cost_rule} are fixed values
+# chosen in code from the user's preferences (never free text); the data sections hold the role, the modules and the
+# user's skill names.
+Task: The user is building a learning path towards the role in the ROLE data. For EACH module in the MODULES data,
+describe how to learn that skill and recommend public learning resources.
+
+Facts about the user come only from the data sections. Recommending well-known public learning resources (courses,
+video series, official documentation) is part of this task.
+
+Rules:
+- Cover exactly the modules in MODULES: one entry per module, the same "skill" text, the same order. Never add, rename
+  or drop a module.
+- "why": one or two sentences on why this skill matters for the role.
+- "subtopics": 3 to 6 short sub-topics in a sensible learning order.
+- "project": one small practice project that uses the skill.
+- "hours_min" and "hours_max": realistic estimated hours for a learner who already has the skills in KNOWN_SKILLS,
+  each between 2 and 80; the sum of hours_max over all modules must not exceed 400.
+- "recommendations": 2 to 4 real, well-known resources, each from one of these platforms only: YouTube, Coursera,
+  Udemy, freeCodeCamp, edX, Official docs. Give the exact title and the channel, instructor or publisher as shown on
+  the platform. Prefer resources in ${language}. ${cost_rule}
+- Never write a URL, web address or domain name anywhere in the answer.
+- If you are not sure that a resource exists, choose a better-known one. Never invent titles or instructors.
+- "prerequisites": optional pairs [before, after] that use only skill names from MODULES, and only when one skill is
+  genuinely needed before the other. Use an empty list when there are none.
+
+Role:
+${role}
+
+Modules (in order):
+${modules}
+
+Known skills of the user:
+${known}

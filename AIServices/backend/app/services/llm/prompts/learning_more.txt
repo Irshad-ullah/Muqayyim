@@ -1,0 +1,22 @@
+# version: 1
+# "Suggest another resource" for one learning-path module (Module 6). ${language} and ${cost_rule} are fixed values
+# chosen in code; the data sections hold the role, the skill and the titles already shown.
+Task: Recommend public learning resources for the skill in the SKILL data, for a learner working towards the role in
+the ROLE data. Recommending well-known public learning resources is part of this task.
+
+Rules:
+- "recommendations": 2 to 4 real, well-known resources, each from one of these platforms only: YouTube, Coursera,
+  Udemy, freeCodeCamp, edX, Official docs. Give the exact title and the channel, instructor or publisher as shown on
+  the platform. Prefer resources in ${language}. ${cost_rule}
+- Do not repeat any title from the ALREADY_SHOWN data.
+- Never write a URL, web address or domain name anywhere in the answer.
+- If you are not sure that a resource exists, choose a better-known one. Never invent titles or instructors.
+
+Role:
+${role}
+
+Skill:
+${skill}
+
+Already shown:
+${shown}

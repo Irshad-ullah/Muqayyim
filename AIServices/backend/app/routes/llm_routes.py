@@ -8,6 +8,9 @@ Internal LLM routes (12), called by CoreServices only (X-Internal-Key; never pro
                                      (consent withdrawn or account deleted)
   POST   /internal/llm/cv-assist     X-User-Id: CV assist (Module 4) — suggestion + truthfulness flags.
                                      Core checks consent and builds the facts; contact fields are refused.
+  POST   /internal/llm/learning-enrich   X-User-Id: learning path enrichment (Module 6) — why, sub-topics, project,
+                                     hours and recommendations per module; links built by our code. Core checks consent.
+  POST   /internal/llm/learning-more     X-User-Id: "Suggest another resource" for one module (Module 6).
 """
 
 import re
@@ -21,6 +24,7 @@ from app.config.settings import settings
 from app.middleware.internal_auth import require_internal_key
 from app.services.llm import client as llm_client
 from app.services.llm import limits, usage
+from app.services.learning import enrich as learning_enrich
 from app.services.llm.errors import LLMError
 from app.services.cv_assist import service as cv_assist
 
@@ -89,5 +93,29 @@ async def cv_assist_route(body: cv_assist.AssistRequest, user_id: Optional[str] 
         return _error(422, "VALIDATION_ERROR", "An entry is required for experience and project assistance")
     try:
         return {"success": True, "data": await cv_assist.assist(body, user_id)}
+    except LLMError as exc:
+        return llm_error(exc)
+
+
+@router.post("/learning-enrich")
+async def learning_enrich_route(body: learning_enrich.EnrichRequest, user_id: Optional[str] = Header(default=None, alias="X-User-Id")):
+    if not user_id or not USER_ID.match(user_id):
+        return _error(400, "INVALID_USER_ID", "X-User-Id (set by CoreServices) is required")
+    if get_database() is None:
+        return _error(503, "DATABASE_UNAVAILABLE", "Database not available")
+    try:
+        return {"success": True, "data": await learning_enrich.enrich(body, user_id)}
+    except LLMError as exc:
+        return llm_error(exc)
+
+
+@router.post("/learning-more")
+async def learning_more_route(body: learning_enrich.MoreRequest, user_id: Optional[str] = Header(default=None, alias="X-User-Id")):
+    if not user_id or not USER_ID.match(user_id):
+        return _error(400, "INVALID_USER_ID", "X-User-Id (set by CoreServices) is required")
+    if get_database() is None:
+        return _error(503, "DATABASE_UNAVAILABLE", "Database not available")
+    try:
+        return {"success": True, "data": await learning_enrich.more(body, user_id)}
     except LLMError as exc:
         return llm_error(exc)
