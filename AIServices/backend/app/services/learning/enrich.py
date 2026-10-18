@@ -1,6 +1,6 @@
 """
 Learning path enrichment (Module 6) with the shared LLM client (consent checked by Core; quota, cache, delimited data
-blocks, usage records as for every feature). Prompt files learning_path@v2 and learning_more@v2.
+blocks, usage records as for every feature). Prompt files learning_path@v3 and learning_more@v3.
 
 Sent to the model: the role title, the ordered module skills, the user's skill NAMES and the cost preference (free
 only / include paid). Nothing else (no profile text, no contact details). Resources are in English only. The cache key
@@ -32,14 +32,13 @@ from app.services.llm.errors import LLMInvalidOutput
 from app.services.llm.prompts import data_block
 
 FEATURE, MORE_FEATURE = "learning_path", "learning_more"
-PLATFORMS = ("YouTube", "Coursera", "Udemy", "freeCodeCamp", "edX", "Official docs")
+PLATFORMS = ("YouTube", "Coursera", "Udemy", "edX", "Official docs")  # freeCodeCamp removed: its search links did not work (manual review)
 MIN_HOURS, MAX_HOURS, MAX_TOTAL_HOURS = 2, 80, 400
 URL = re.compile(r"(https?://|ftp://|www\.|\b[a-z0-9-]+\.(?:com|org|net|io|dev|edu|gov|co|ai|app|ly|me|tv|info|uk|pk|in)\b)", re.I)
 SEARCH = {
     "YouTube": "https://www.youtube.com/results?search_query={q}",
     "Coursera": "https://www.coursera.org/search?query={q}",
     "Udemy": "https://www.udemy.com/courses/search/?q={q}",
-    "freeCodeCamp": "https://www.freecodecamp.org/news/search?query={q}",
     "edX": "https://www.edx.org/search?q={q}",
     "Official docs": "https://duckduckgo.com/?q={q}",
 }

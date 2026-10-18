@@ -42,7 +42,7 @@ const ENRICHMENT = {
   order: ['javascript', 'react', 'jest'],
   prerequisites: { accepted: [['javascript', 'react']], rejected: [] },
   total_hours: { min: 30, max: 60, label: 'estimated' },
-  usage: { cached: false, prompt: 'learning_path@v2', model: 'fake' },
+  usage: { cached: false, prompt: 'learning_path@v3', model: 'fake' },
 };
 
 const ai = { calls: [], structure: null, enrich: null, state: null, more: null, up: true };
@@ -115,7 +115,7 @@ describe('create', () => {
     expect(path.modules.map((m) => m.order)).toEqual([1, 2, 3]);
     expect(path.modules[1]).toMatchObject({ quickWin: true, hint: { skill: 'Vue.js' }, prerequisites: ['javascript'], status: 'not_started' });
     expect(path.modules[0].recommendations[0]).toMatchObject({ searchLabel: 'Find on YouTube', label: 'AI recommendation' });
-    expect(path).toMatchObject({ enrichment: { status: 'enriched', prompt: 'learning_path@v2' }, more: { count: 2 },
+    expect(path).toMatchObject({ enrichment: { status: 'enriched', prompt: 'learning_path@v3' }, more: { count: 2 },
       totalHours: { min: 30, max: 60 }, progress: { total: 3, completed: 0, percent: 0 } });
     const [structureCall, enrichCall] = ai.calls;
     expect(structureCall.headers['x-user-id']).toBe(String(alice._id));

@@ -68,7 +68,7 @@ async def test_enrichment_with_links_built_by_our_code(fake):
     assert first["recommendations"][1]["search_url"].startswith("https://duckduckgo.com/?q=JavaScript+The+Official+Tutorial")
     assert out["total_hours"] == {"min": 20, "max": 40, "label": "estimated"}
     assert out["prerequisites"]["accepted"] == [["javascript", "react"]]
-    assert out["usage"]["prompt"] == "learning_path@v2"
+    assert out["usage"]["prompt"] == "learning_path@v3"
 
 
 async def test_only_role_modules_skill_names_and_preferences_are_sent(fake):
@@ -90,6 +90,7 @@ async def test_only_role_modules_skill_names_and_preferences_are_sent(fake):
     (answer([module("JavaScript", hours=(20, 10)), module("React")]), "hours_out_of_range"),                # min > max
     (answer([module(s, hours=(30, 80)) for s in ("JavaScript", "React", "a", "b", "c", "d")]), "module_set_mismatch"),
     (answer([module("JavaScript", recs=[rec(platform="Pluralsight"), rec()]), module("React")]), "schema"),  # not allowed
+    (answer([module("JavaScript", recs=[rec(platform="freeCodeCamp"), rec()]), module("React")]), "schema"),  # removed
     (answer([module("JavaScript")]), "module_set_mismatch"),                                                 # dropped
     (answer([module("JavaScript"), module("React"), module("Docker")]), "module_set_mismatch"),              # added
     (answer([module("JavaScript"), module("Vue.js")]), "module_set_mismatch"),                               # renamed

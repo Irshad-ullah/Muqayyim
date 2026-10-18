@@ -1,8 +1,8 @@
-# version: 2
+# version: 3
 # Learning path enrichment (Module 6). The module list, its order and every link are built by our code; the model
 # only describes each module and names public learning resources (English only). ${cost_rule} is a fixed value
 # chosen in code from the user's cost preference (never free text); the data sections hold the role, the modules and
-# the user's skill names. v2: the language preference was removed (English only).
+# the user's skill names. v2: the language preference was removed (English only). v3: freeCodeCamp removed from the platforms.
 Task: The user is building a learning path towards the role in the ROLE data. For EACH module in the MODULES data,
 describe how to learn that skill and recommend public learning resources.
 
@@ -18,7 +18,7 @@ Rules:
 - "hours_min" and "hours_max": realistic estimated hours for a learner who already has the skills in KNOWN_SKILLS,
   each between 2 and 80; the sum of hours_max over all modules must not exceed 400.
 - "recommendations": 2 to 4 real, well-known resources, each from one of these platforms only: YouTube, Coursera,
-  Udemy, freeCodeCamp, edX, Official docs. Give the exact title and the channel, instructor or publisher as shown on
+  Udemy, edX, Official docs. Give the exact title and the channel, instructor or publisher as shown on
   the platform. Recommend English-language resources only. ${cost_rule}
 - Never write a URL, web address or domain name anywhere in the answer.
 - If you are not sure that a resource exists, choose a better-known one. Never invent titles or instructors.
