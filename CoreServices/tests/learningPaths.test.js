@@ -8,6 +8,7 @@ import './authMocks.js';
 // enrichment order and prerequisites applied), saved without enrichment when the LLM fails, one path per career and
 // at most 5, ownership, module status, completion → the skill in the profile as "learning" (pushed to AIServices,
 // removed again when undone, never wiped by a profile save), validation and AI error pass-through.
+// Part 6: freshness ("Regenerate?"), regenerate keeping progress, feedback on resources, "Suggest another resource".
 
 process.env.EMBEDDING_SYNC_RETRY_DELAYS_MS = '0';
 
@@ -44,7 +45,7 @@ const ENRICHMENT = {
   usage: { cached: false, prompt: 'learning_path@v1', model: 'fake' },
 };
 
-const ai = { calls: [], structure: null, enrich: null, up: true };
+const ai = { calls: [], structure: null, enrich: null, state: null, more: null, up: true };
 const server = http.createServer((req, res) => {
   const chunks = [];
   req.on('data', (c) => chunks.push(c));
@@ -55,6 +56,10 @@ const server = http.createServer((req, res) => {
     const json = (status, body) => { res.writeHead(status, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(body)); };
     if (req.url === '/internal/learning/structure') return json(...(ai.structure || [200, { success: true, data: STRUCTURE }]));
     if (req.url === '/internal/llm/learning-enrich') return json(...(ai.enrich || [200, { success: true, data: ENRICHMENT }]));
+    if (req.url === '/internal/learning/state') return json(...(ai.state || [200, { success: true, data: { skills_hash: 'sh1', dataset_hash: 'dh1' } }]));
+    if (req.url === '/internal/llm/learning-more') {
+      return json(...(ai.more || [200, { success: true, data: { recommendations: [recommendation('React course'), recommendation('React deep dive', false)], usage: {} } }]));
+    }
     if (req.url.startsWith('/internal/embeddings/users/')) return json(200, { success: true });
     return json(404, { success: false });
   });
@@ -84,7 +89,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  Object.assign(ai, { calls: [], structure: null, enrich: null, up: true });
+  Object.assign(ai, { calls: [], structure: null, enrich: null, state: null, more: null, up: true });
   await LearningPath.deleteMany({});
   await consent(alice);
 });
@@ -193,5 +198,85 @@ describe('reading, ownership and progress', () => {
     expect((await as(request(app).patch(`/api/learning-paths/${body.data.id}/modules/jest`)).send({ status: 'done' })).status).toBe(400);
     expect((await as(request(app).patch(`/api/learning-paths/${body.data.id}/modules/nope`)).send({ status: 'completed' })).status).toBe(404);
     expect((await as(request(app).delete(`/api/learning-paths/${body.data.id}`))).status).toBe(200);
+  });
+});
+
+describe('Part 6: freshness, regenerate, feedback, more', () => {
+  const url = (id, rest = '') => `/api/learning-paths/${id}${rest}`;
+
+  test('freshness compares the snapshot with AIServices\' current hashes; unknown when AI is unreachable', async () => {
+    const { body } = await create();
+    const id = body.data.id;
+    expect((await as(request(app).get(url(id, '/freshness')))).body.data)
+      .toEqual({ available: true, stale: false, profileChanged: false, dataChanged: false });
+    ai.state = [200, { success: true, data: { skills_hash: 'sh2', dataset_hash: 'dh1' } }];
+    expect((await as(request(app).get(url(id, '/freshness')))).body.data).toMatchObject({ stale: true, profileChanged: true, dataChanged: false });
+    ai.state = [200, { success: true, data: { skills_hash: 'sh1', dataset_hash: 'dh2' } }];
+    expect((await as(request(app).get(url(id, '/freshness')))).body.data).toMatchObject({ stale: true, dataChanged: true });
+    ai.up = false;
+    expect((await as(request(app).get(url(id, '/freshness')))).body.data).toMatchObject({ available: false, stale: false });
+    expect((await as(request(app).get(url(id, '/freshness')), bob)).status).toBe(404);
+  });
+
+  test('regenerate rebuilds with the saved choices, keeps module progress and feedback, may change preferences', async () => {
+    const { body } = await create({ choices: { react: 'react' } });
+    const id = body.data.id;
+    await as(request(app).patch(url(id, '/modules/javascript'))).send({ status: 'in_progress' });
+    await as(request(app).post(url(id, '/modules/react/feedback'))).send({ title: 'React course', vote: 'up' });
+    ai.calls = [];
+    ai.structure = [200, { success: true, data: { ...STRUCTURE, modules: STRUCTURE.modules.slice(0, 2), match_score: 55,
+      snapshot: { ...STRUCTURE.snapshot, skills_hash: 'sh2' } } }];
+    ai.enrich = [503, { success: false, code: 'LLM_DISABLED' }];
+    const res = await as(request(app).post(url(id, '/regenerate'))).send({ preferences: { language: 'Urdu-Hindi' } });
+    expect(res.status).toBe(200);
+    expect(res.body.data.modules.map((m) => [m.key, m.status])).toEqual([['react', 'not_started'], ['javascript', 'in_progress']]);
+    expect(res.body.data).toMatchObject({ id, matchScore: 55, snapshot: { skillsHash: 'sh2' }, preferences: { language: 'Urdu-Hindi', hoursPerWeek: 6 },
+      feedback: [{ moduleKey: 'react', title: 'React course', vote: 'up' }] });
+    expect(ai.calls[0].body).toEqual({ profession_id: 'curated:frontend-developer', choices: { react: 'react' } });
+    expect(await LearningPath.countDocuments({ userId: alice._id })).toBe(1);
+    await User.updateOne({ _id: alice._id }, { $set: { 'aiConsent.version': '2026-10-17' } });
+    expect((await as(request(app).post(url(id, '/regenerate'))).send({})).body.code).toBe('AI_CONSENT_REQUIRED');
+  });
+
+  test('a module already completed as a learning skill starts as completed in a new path', async () => {
+    await Profile.updateOne({ userId: alice._id }, { $set: { 'skills.learning': ['JavaScript'] } });
+    const { body } = await create();
+    expect(body.data.modules.find((m) => m.key === 'javascript').status).toBe('completed');
+    expect(body.data.progress.completed).toBe(1);
+    await Profile.updateOne({ userId: alice._id }, { $set: { 'skills.learning': [] } });
+  });
+
+  test('feedback: one vote per resource, changeable and removable; unknown resource or vote rejected', async () => {
+    const { body } = await create();
+    const id = body.data.id;
+    const vote = (v, title = 'React course') => as(request(app).post(url(id, '/modules/react/feedback'))).send({ title, vote: v });
+    expect((await vote('up')).body.data.feedback).toMatchObject([{ moduleKey: 'react', title: 'React course', vote: 'up' }]);
+    expect((await vote('down')).body.data.feedback).toMatchObject([{ vote: 'down' }]);
+    expect((await vote(null)).body.data.feedback).toEqual([]);
+    expect((await vote('maybe')).status).toBe(400);
+    expect((await vote('up', 'Not shown')).body.code).toBe('RESOURCE_NOT_FOUND');
+    expect((await as(request(app).post(url(id, '/modules/nope/feedback'))).send({ title: 'x', vote: 'up' })).body.code).toBe('MODULE_NOT_FOUND');
+    expect((await as(request(app).post(url(id, '/modules/react/feedback')), bob).send({ title: 'React course', vote: 'up' })).status).toBe(404);
+  });
+
+  test('suggest another resource adds only new titles, sends the shown titles, and handles consent, failure and the cap', async () => {
+    const { body } = await create({ preferences: { language: 'English', cost: 'include_paid', hoursPerWeek: 6 } });
+    const id = body.data.id;
+    const more = () => as(request(app).post(url(id, '/modules/react/more'))).send({});
+    const res = await more();
+    expect(res.status).toBe(200);
+    expect(res.body.added).toBe(1);
+    expect(res.body.data.modules.find((m) => m.key === 'react').recommendations.map((r) => r.title)).toEqual(['React course', 'React deep dive']);
+    const call = ai.calls.find((c) => c.path === '/internal/llm/learning-more');
+    expect(call.body).toEqual({ role_title: 'Frontend Developer', skill: 'React', exclude_titles: ['React course'],
+      preferences: { language: 'English', cost: 'include_paid', hours_per_week: 6 } });
+    ai.more = [502, { success: false, code: 'LLM_INVALID_OUTPUT' }];
+    expect((await more()).body.code).toBe('SUGGESTION_UNAVAILABLE');
+    await User.updateOne({ _id: alice._id }, { $set: { 'aiConsent.version': '2026-10-17' } });
+    expect((await more()).body.code).toBe('AI_CONSENT_REQUIRED');
+    await consent(alice);
+    const recs = Array.from({ length: 10 }, (_, i) => ({ platform: 'YouTube', title: `R${i}`, free: true, language: 'English' }));
+    await LearningPath.updateOne({ _id: id, 'modules.key': 'react' }, { $set: { 'modules.$.recommendations': recs } });
+    expect((await more()).body.code).toBe('MORE_LIMIT');
   });
 });

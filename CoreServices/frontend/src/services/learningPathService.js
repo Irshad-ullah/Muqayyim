@@ -26,6 +26,13 @@ export const learningPathService = {
   create: (request) => call('POST', '', request, 'Could not create the learning path'),
   setStatus: (id, key, status) =>
     call('PATCH', `/${encodeURIComponent(id)}/modules/${encodeURIComponent(key)}`, { status }, 'Could not update the module'),
+  freshness: (id) => call('GET', `/${encodeURIComponent(id)}/freshness`, undefined, 'Could not check the learning path'),
+  regenerate: (id, preferences) => call('POST', `/${encodeURIComponent(id)}/regenerate`, preferences ? { preferences } : {},
+    'Could not regenerate the learning path'),
+  // vote: 'up' | 'down' | null (take back)
+  vote: (id, key, title, vote) =>
+    call('POST', `/${encodeURIComponent(id)}/modules/${encodeURIComponent(key)}/feedback`, { title, vote }, 'Could not save your feedback'),
+  more: (id, key) => call('POST', `/${encodeURIComponent(id)}/modules/${encodeURIComponent(key)}/more`, {}, 'Could not suggest another resource'),
   remove: (id) => call('DELETE', `/${encodeURIComponent(id)}`, undefined, 'Could not delete the learning path'),
 };
 

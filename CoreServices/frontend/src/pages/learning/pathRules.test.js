@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { errorView, hoursText, moreText, progressText, timeline, weeksText } from './pathRules.js';
+import { errorView, freshnessText, hoursText, moreText, progressText, timeline, weeksText } from './pathRules.js';
 
 const m = (key, min, max) => ({ key, skill: key.toUpperCase(), hours: { min, max } });
 
@@ -23,4 +23,13 @@ test('labels: estimated hours, progress, the 8-module cap and errors', () => {
   assert.equal(moreText({ count: 0 }), '');
   assert.equal(errorView({ code: 'PATH_LIMIT' }).kind, 'limit');
   assert.equal(errorView(new Error('KeyError')).kind, 'error');
+});
+
+test('the regenerate banner says what changed, and nothing when current or unknown', () => {
+  assert.equal(freshnessText({ stale: true, profileChanged: true, dataChanged: false }), 'Your skills have changed since this path was made.');
+  assert.equal(freshnessText({ stale: true, profileChanged: false, dataChanged: true }), 'The career data has been updated since this path was made.');
+  assert.match(freshnessText({ stale: true, profileChanged: true, dataChanged: true }), /skills and the career data/);
+  assert.equal(freshnessText({ stale: false }), '');
+  assert.equal(freshnessText(null), '');
+  assert.equal(errorView({ code: 'SUGGESTION_UNAVAILABLE' }).kind, 'suggestion');
 });

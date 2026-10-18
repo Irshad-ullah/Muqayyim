@@ -4,9 +4,10 @@ import { cleanup, render, screen, waitFor, within } from '@testing-library/react
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-// Module 6 Part 5: the learning-path pages and the setup dialog.
+// Module 6 Part 5: the learning-path pages and the setup dialog. Part 6: feedback, more, regenerate.
 vi.mock('../../services/learningPathService.js', () => ({
-  learningPathService: { list: vi.fn(), get: vi.fn(), create: vi.fn(), setStatus: vi.fn(), remove: vi.fn() },
+  learningPathService: { list: vi.fn(), get: vi.fn(), create: vi.fn(), setStatus: vi.fn(), remove: vi.fn(),
+    freshness: vi.fn(), regenerate: vi.fn(), vote: vi.fn(), more: vi.fn() },
 }));
 vi.mock('../../services/aiService.js', () => ({ aiService: { giveConsent: vi.fn() } }));
 vi.mock('../../components/Navbar.jsx', () => ({ default: () => <nav data-testid="navbar" /> }));
@@ -32,7 +33,10 @@ const PATH = {
   ],
 };
 
-beforeEach(() => vi.clearAllMocks());
+beforeEach(() => {
+  vi.clearAllMocks();
+  learningPathService.freshness.mockResolvedValue({ available: true, stale: false, profileChanged: false, dataChanged: false });
+});
 afterEach(cleanup);
 
 const renderAt = (path, element, route) => render(
@@ -98,6 +102,64 @@ describe('LearningPathPage', () => {
     expect(await screen.findByTestId('no-enrichment')).toBeTruthy();
     expect(screen.getAllByTestId('module-row')).toHaveLength(2);
     expect(screen.queryByTestId('timeline')).toBeNull();
+  });
+});
+
+describe('LearningPathPage — Part 6', () => {
+  test('thumbs up / down on a resource: pressed state from the saved feedback; clicking again takes it back', async () => {
+    const user = userEvent.setup();
+    learningPathService.get.mockResolvedValue({ ...PATH, feedback: [{ moduleKey: 'javascript', title: 'JS Course', vote: 'up' }] });
+    learningPathService.vote.mockResolvedValueOnce({ ...PATH, feedback: [] })
+      .mockResolvedValueOnce({ ...PATH, feedback: [{ moduleKey: 'javascript', title: 'JS Bootcamp', vote: 'down' }] });
+    renderAt('/learning-paths/p1', <LearningPathPage />, '/learning-paths/:id');
+    const up = await screen.findByRole('button', { name: 'Helpful: JS Course' });
+    expect(up.getAttribute('aria-pressed')).toBe('true');
+    await user.click(up);
+    expect(learningPathService.vote).toHaveBeenLastCalledWith('p1', 'javascript', 'JS Course', null);
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Helpful: JS Course' }).getAttribute('aria-pressed')).toBe('false'));
+    await user.click(screen.getByRole('button', { name: 'Not helpful: JS Bootcamp' }));
+    expect(learningPathService.vote).toHaveBeenLastCalledWith('p1', 'javascript', 'JS Bootcamp', 'down');
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Not helpful: JS Bootcamp' }).getAttribute('aria-pressed')).toBe('true'));
+  });
+
+  test('"Suggest another resource" asks for consent when needed, then adds the new resource', async () => {
+    const user = userEvent.setup();
+    learningPathService.get.mockResolvedValue(PATH);
+    const withMore = { ...PATH, modules: [{ ...PATH.modules[0], recommendations: [...PATH.modules[0].recommendations, rec('JS Deep Dive')] }, PATH.modules[1]] };
+    learningPathService.more
+      .mockRejectedValueOnce(Object.assign(new Error('x'), { code: 'AI_CONSENT_REQUIRED', data: { text: 'Notice…', currentVersion: '2026-10-18' } }))
+      .mockResolvedValueOnce(withMore);
+    aiService.giveConsent.mockResolvedValue({ granted: true });
+    renderAt('/learning-paths/p1', <LearningPathPage />, '/learning-paths/:id');
+    await user.click(await screen.findByRole('button', { name: /Suggest another resource/ }));
+    await user.click(await screen.findByRole('button', { name: /Agree/ }));
+    await waitFor(() => expect(within(screen.getByTestId('module-details')).getAllByTestId('recommendation')).toHaveLength(3));
+    expect(aiService.giveConsent).toHaveBeenCalledWith('2026-10-18');
+    expect(learningPathService.more).toHaveBeenCalledTimes(2);
+    learningPathService.more.mockRejectedValueOnce(Object.assign(new Error('x'), { code: 'SUGGESTION_UNAVAILABLE' }));
+    await user.click(screen.getByRole('button', { name: /Suggest another resource/ }));
+    expect((await screen.findByRole('alert')).textContent).toContain('No new suggestion right now');
+  });
+
+  test('the regenerate banner shows when the path is stale and goes away after regenerating', async () => {
+    const user = userEvent.setup();
+    learningPathService.get.mockResolvedValue(PATH);
+    learningPathService.freshness.mockResolvedValue({ available: true, stale: true, profileChanged: true, dataChanged: false });
+    learningPathService.regenerate.mockResolvedValue({ ...PATH, title: 'Frontend Developer' });
+    renderAt('/learning-paths/p1', <LearningPathPage />, '/learning-paths/:id');
+    const banner = await screen.findByTestId('regenerate-banner');
+    expect(banner.textContent).toContain('Your skills have changed since this path was made.');
+    await user.click(within(banner).getByRole('button', { name: /Regenerate/ }));
+    expect(learningPathService.regenerate).toHaveBeenCalledWith('p1');
+    await waitFor(() => expect(screen.queryByTestId('regenerate-banner')).toBeNull());
+  });
+
+  test('no banner when the path is current or the check is unavailable', async () => {
+    learningPathService.get.mockResolvedValue(PATH);
+    learningPathService.freshness.mockRejectedValue(new Error('down'));
+    renderAt('/learning-paths/p1', <LearningPathPage />, '/learning-paths/:id');
+    await screen.findAllByTestId('module-row');
+    expect(screen.queryByTestId('regenerate-banner')).toBeNull();
   });
 });
 

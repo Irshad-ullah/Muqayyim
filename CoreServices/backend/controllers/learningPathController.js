@@ -4,7 +4,7 @@ import Profile from '../models/Profile.js';
 import User from '../models/User.js';
 import { consentView, hasConsent } from './aiController.js';
 import { mergedSkills, syncSkillsIfChanged } from '../services/skillEmbeddingSync.js';
-import { requestEnrichment, requestStructure } from '../services/aiLearningClient.js';
+import { requestEnrichment, requestMore, requestState, requestStructure } from '../services/aiLearningClient.js';
 import { handleServerError } from '../utils/serverError.js';
 
 // ─── Learning paths (Module 6, FR8.1–FR8.9) ──────────────────────────────────
@@ -13,6 +13,10 @@ import { handleServerError } from '../utils/serverError.js';
 // GET    /api/learning-paths/:id                   one path
 // PATCH  /api/learning-paths/:id/modules/:key      { status } — completing adds the skill to the profile (learning)
 // DELETE /api/learning-paths/:id
+// GET    /api/learning-paths/:id/freshness             { available, stale, profileChanged, dataChanged } (the "Regenerate?" check)
+// POST   /api/learning-paths/:id/regenerate            { preferences? } rebuild; module progress kept by skill
+// POST   /api/learning-paths/:id/modules/:key/feedback { title, vote: 'up' | 'down' | null } on one recommendation
+// POST   /api/learning-paths/:id/modules/:key/more     "Suggest another resource" (LLM, needs consent)
 // The user id comes only from the verified JWT. Creating a path needs the current AI consent (the notice includes
 // "your skills and learning preferences, to build learning paths"). The structure is deterministic (AIServices);
 // the enrichment is the LLM's — if it is unavailable or rejected, the path is still saved without it.
@@ -24,6 +28,8 @@ const PASS_THROUGH = new Set(['PROFESSION_NOT_FOUND', 'INVALID_CHOICE', 'EMBEDDI
 const LANGUAGES = ['English', 'Urdu-Hindi'];
 const COSTS = ['free', 'include_paid'];
 const STATUSES = ['not_started', 'in_progress', 'completed'];
+export const MAX_RECOMMENDATIONS = 10; // per module, after "Suggest another resource"
+const VOTES = ['up', 'down'];
 
 const unavailable = (res) => res.status(503).json({ success: false, code: 'LEARNING_UNAVAILABLE',
   message: 'Learning paths are temporarily unavailable. Please try again shortly.' });
@@ -133,11 +139,14 @@ export const buildPath = async (req, { professionId, choices, preferences }) => 
   }
   if (structure.status !== 200 || !structure.data?.success) return { error: 'ai', ai: structure };
   const s = structure.data.data;
-  let modules = s.modules.map(fromStructure);
+  // A module whose skill was already completed in another path (a learning skill) starts as completed.
+  const profile = await Profile.findOne({ userId: req.user.userId }).select('skills').lean();
+  const learned = new Set((profile?.skills?.learning || []).map((x) => x.toLowerCase()));
+  let modules = s.modules.map(fromStructure)
+    .map((m) => (learned.has(m.skill.toLowerCase()) ? { ...m, status: 'completed', completedAt: new Date() } : m));
   let enrichment = { status: 'unavailable' };
   let totalHours;
   if (modules.length) {
-    const profile = await Profile.findOne({ userId: req.user.userId }).select('skills').lean();
     try {
       const ai = await requestEnrichment(req.user.userId, {
         role_title: s.title,
@@ -192,6 +201,11 @@ export const createPath = guarded('Could not create the learning path', async (r
   return res.status(201).json({ success: true, data: view(path) });
 });
 
+const consentRequired = (res, user, message) => res.status(403).json({ success: false, code: 'AI_CONSENT_REQUIRED',
+  message, data: consentView(user) });
+const notFound = (res) => res.status(404).json({ success: false, code: 'PATH_NOT_FOUND', message: 'Learning path not found.' });
+const noModule = (res) => res.status(404).json({ success: false, code: 'MODULE_NOT_FOUND', message: 'Module not found.' });
+
 export const listPaths = guarded('Could not load your learning paths', async (req, res) => {
   const paths = await LearningPath.find({ userId: req.user.userId }).sort({ updatedAt: -1 });
   return res.json({ success: true, data: paths.map(summary), limit: MAX_PATHS });
@@ -245,4 +259,99 @@ export const deletePath = guarded('Could not delete the learning path', async (r
   const result = await LearningPath.deleteOne({ _id: req.params.id, userId: req.user.userId });
   if (!result.deletedCount) return res.status(404).json({ success: false, code: 'PATH_NOT_FOUND', message: 'Learning path not found.' });
   return res.json({ success: true });
+});
+
+// The path's snapshot against the user's verified skills and the career data now. Learning skills are not part of
+// it (AIServices builds paths from verified skills), so completing modules never makes a path stale.
+export const getFreshness = guarded('Could not check the learning path', async (req, res) => {
+  const path = await ownPath(req);
+  if (!path) return notFound(res);
+  let state;
+  try {
+    state = await requestState(req.user.userId, req);
+  } catch {
+    state = null;
+  }
+  if (state?.status !== 200 || !state.data?.success) {
+    return res.json({ success: true, data: { available: false, stale: false, profileChanged: false, dataChanged: false } });
+  }
+  const profileChanged = state.data.data.skills_hash !== path.snapshot?.skillsHash;
+  const dataChanged = state.data.data.dataset_hash !== path.snapshot?.datasetHash;
+  return res.json({ success: true, data: { available: true, stale: profileChanged || dataChanged, profileChanged, dataChanged } });
+});
+
+// Rebuild with the saved choices (and the saved or new preferences). A module that is still in the path keeps its
+// status and dates; feedback is kept.
+export const regeneratePath = guarded('Could not regenerate the learning path', async (req, res) => {
+  const path = await ownPath(req);
+  if (!path) return notFound(res);
+  const saved = path.preferences?.toObject ? path.preferences.toObject() : path.preferences;
+  const preferences = validPreferences({ ...saved, ...(req.body?.preferences || {}) });
+  if (!preferences) return res.status(400).json({ success: false, code: 'VALIDATION_ERROR', message: 'Choose valid preferences.' });
+  const user = await User.findById(req.user.userId).select('aiConsent').lean();
+  if (!hasConsent(user)) return consentRequired(res, user, 'Please agree to the AI processing notice to rebuild this learning path.');
+  const built = await buildPath(req, { professionId: path.professionId, choices: path.choices || {}, preferences });
+  if (built.error === 'unavailable') return unavailable(res);
+  if (built.error) return passThrough(res, built.ai);
+  const before = new Map(path.modules.map((m) => [m.key, m]));
+  built.fields.modules = built.fields.modules.map((m) => {
+    const old = before.get(m.key);
+    return old && old.status !== 'not_started'
+      ? { ...m, status: old.status, startedAt: old.startedAt, completedAt: old.completedAt } : m;
+  });
+  path.set(built.fields);
+  await path.save();
+  return res.json({ success: true, data: view(path) });
+});
+
+// Thumbs up / down on one recommendation (vote null takes it back). One vote per recommendation.
+export const setFeedback = guarded('Could not save your feedback', async (req, res) => {
+  const { title, vote } = req.body || {};
+  if (typeof title !== 'string' || !(vote === null || VOTES.includes(vote))) {
+    return res.status(400).json({ success: false, code: 'VALIDATION_ERROR', message: 'Choose a resource and a vote.' });
+  }
+  const path = await ownPath(req);
+  if (!path) return notFound(res);
+  const module = path.modules.find((m) => m.key === req.params.key);
+  if (!module) return noModule(res);
+  if (!module.recommendations.some((r) => r.title === title)) {
+    return res.status(404).json({ success: false, code: 'RESOURCE_NOT_FOUND', message: 'Resource not found.' });
+  }
+  path.feedback = path.feedback.filter((f) => !(f.moduleKey === module.key && f.title === title));
+  if (vote) path.feedback.push({ moduleKey: module.key, title, vote, at: new Date() });
+  await path.save();
+  return res.json({ success: true, data: view(path) });
+});
+
+// "Suggest another resource": the LLM proposes resources not shown yet (AIServices excludes the titles and builds the
+// search links); they are added to the module, up to MAX_RECOMMENDATIONS.
+export const suggestMore = guarded('Could not suggest another resource', async (req, res) => {
+  const path = await ownPath(req);
+  if (!path) return notFound(res);
+  const module = path.modules.find((m) => m.key === req.params.key);
+  if (!module) return noModule(res);
+  if (module.recommendations.length >= MAX_RECOMMENDATIONS) {
+    return res.status(409).json({ success: false, code: 'MORE_LIMIT', message: `A module can list at most ${MAX_RECOMMENDATIONS} resources.` });
+  }
+  const user = await User.findById(req.user.userId).select('aiConsent').lean();
+  if (!hasConsent(user)) return consentRequired(res, user, 'Please agree to the AI processing notice to get more suggestions.');
+  let ai;
+  try {
+    ai = await requestMore(req.user.userId, {
+      role_title: path.title, skill: module.skill, exclude_titles: module.recommendations.map((r) => r.title).slice(0, 30),
+      preferences: { language: path.preferences.language, cost: path.preferences.cost, hours_per_week: path.preferences.hoursPerWeek },
+    }, req);
+  } catch {
+    ai = null;
+  }
+  if (ai?.status !== 200 || !ai.data?.success) {
+    return res.status(503).json({ success: false, code: 'SUGGESTION_UNAVAILABLE',
+      message: 'No new suggestion is available right now. Please try again later.' });
+  }
+  const shown = new Set(module.recommendations.map((r) => r.title.toLowerCase()));
+  const fresh = ai.data.data.recommendations.map(fromRecommendation).filter((r) => !shown.has(r.title.toLowerCase()));
+  const added = fresh.slice(0, MAX_RECOMMENDATIONS - module.recommendations.length);
+  module.recommendations.push(...added);
+  await path.save();
+  return res.json({ success: true, data: view(path), added: added.length });
 });

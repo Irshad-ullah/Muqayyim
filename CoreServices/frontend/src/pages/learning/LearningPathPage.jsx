@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, ExternalLink, Sparkles, Zap } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ExternalLink, Plus, RefreshCw, Sparkles, ThumbsDown, ThumbsUp, Zap } from 'lucide-react';
 import Navbar from '../../components/Navbar.jsx';
+import AiConsentDialog from '../../components/ai/AiConsentDialog.jsx';
+import { aiService } from '../../services/aiService.js';
 import { learningPathService } from '../../services/learningPathService.js';
-import { STATUS_VIEW, errorView, hoursText, moreText, progressText, timeline, weeksText } from './pathRules.js';
+import { STATUS_VIEW, errorView, freshnessText, hoursText, moreText, progressText, timeline, weeksText } from './pathRules.js';
 
 // Module 6 (FR8.2–FR8.8): one saved learning path — progress, the week-by-week timeline, the modules in order with
 // their status, and a details panel (why, sub-topics, practice project, estimated hours, AI recommendations with a
 // search link per platform). Completing a module adds the skill to the profile as "completed in your learning path
-// (not verified)", which refreshes the career matches.
+// (not verified)", which refreshes the career matches. Each resource takes a thumbs up / down; "Suggest another resource"
+// asks the AI for one not shown yet; when the profile or the career data changed, a banner offers "Regenerate".
+// AI actions need the current consent — the notice appears and the action is repeated after "Agree".
 
-function Recommendation({ rec }) {
+function Recommendation({ rec, vote, busy, onVote }) {
   return (
     <li className="rounded-lg border border-slate-200 p-3 text-sm" data-testid="recommendation">
       <div className="flex items-center justify-between gap-2">
@@ -23,15 +27,27 @@ function Recommendation({ rec }) {
           data-testid="rec-label">
           <Sparkles className="inline w-3 h-3 mr-1" aria-hidden="true" />{rec.label} · {rec.free ? 'free' : 'paid'} · {rec.language}
         </span>
-        <a href={rec.searchUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-700 inline-flex items-center gap-1">
-          {rec.searchLabel} <ExternalLink className="w-3 h-3" aria-hidden="true" />
-        </a>
+        <span className="inline-flex items-center gap-2">
+          <button type="button" aria-label={`Helpful: ${rec.title}`} aria-pressed={vote === 'up'} disabled={busy}
+            onClick={() => onVote(vote === 'up' ? null : 'up')} className={vote === 'up' ? 'text-emerald-600' : 'text-slate-400 hover:text-slate-600'}>
+            <ThumbsUp className="w-4 h-4" aria-hidden="true" />
+          </button>
+          <button type="button" aria-label={`Not helpful: ${rec.title}`} aria-pressed={vote === 'down'} disabled={busy}
+            onClick={() => onVote(vote === 'down' ? null : 'down')} className={vote === 'down' ? 'text-red-600' : 'text-slate-400 hover:text-slate-600'}>
+            <ThumbsDown className="w-4 h-4" aria-hidden="true" />
+          </button>
+          <a href={rec.searchUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-700 inline-flex items-center gap-1">
+            {rec.searchLabel} <ExternalLink className="w-3 h-3" aria-hidden="true" />
+          </a>
+        </span>
       </div>
     </li>
   );
 }
 
-function ModuleDetails({ module, busy, onStatus }) {
+const MAX_RECOMMENDATIONS = 10;
+
+function ModuleDetails({ module, votes, busy, onStatus, onVote, onMore }) {
   return (
     <section className="card p-5 space-y-3" aria-label={`${module.skill} details`} data-testid="module-details">
       <h3 className="font-semibold text-slate-900">{module.order}. {module.skill}</h3>
@@ -48,7 +64,14 @@ function ModuleDetails({ module, busy, onStatus }) {
       <p className="text-xs text-slate-500">{hoursText(module.hours)}</p>
       {module.recommendations?.length > 0 && (
         <div><h4 className="text-xs font-semibold uppercase text-slate-500">Resources</h4>
-          <ul className="space-y-2 mt-1">{module.recommendations.map((r) => <Recommendation key={r.title} rec={r} />)}</ul></div>
+          <ul className="space-y-2 mt-1">{module.recommendations.map((r) => (
+            <Recommendation key={r.title} rec={r} vote={votes.get(r.title)} busy={busy} onVote={(vote) => onVote(r.title, vote)} />
+          ))}</ul></div>
+      )}
+      {(module.recommendations?.length || 0) < MAX_RECOMMENDATIONS && (
+        <button type="button" className="text-xs text-indigo-700 inline-flex items-center gap-1" disabled={busy} onClick={onMore}>
+          <Plus className="w-3 h-3" aria-hidden="true" /> Suggest another resource
+        </button>
       )}
       <div className="flex gap-2 flex-wrap">
         {module.status !== 'in_progress' && module.status !== 'completed' && (
@@ -75,21 +98,44 @@ export default function LearningPathPage() {
   const [selected, setSelected] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const [freshness, setFreshness] = useState(null);
+  const [consent, setConsent] = useState(null); // { data, retry } while the AI notice is open
 
   useEffect(() => {
     learningPathService.get(id)
       .then((path) => { setState({ kind: 'ready', path }); setSelected(path.modules[0]?.key || null); })
       .catch((err) => setState({ kind: 'error', view: errorView(err) }));
+    learningPathService.freshness(id).then(setFreshness).catch(() => setFreshness(null));
   }, [id]);
 
-  const setStatus = async (key, status) => {
+  // Runs one change; the answer is the updated path. AI_CONSENT_REQUIRED opens the notice and repeats it after "Agree".
+  const run = async (action, after) => {
     setBusy(true);
     setError(null);
     try {
-      setState({ kind: 'ready', path: await learningPathService.setStatus(id, key, status) });
+      setState({ kind: 'ready', path: await action() });
+      after?.();
     } catch (err) {
-      setError(errorView(err));
+      if (err.code === 'AI_CONSENT_REQUIRED') setConsent({ data: err.data, retry: () => run(action, after) });
+      else setError(errorView(err));
     } finally {
+      setBusy(false);
+    }
+  };
+  const setStatus = (key, status) => run(() => learningPathService.setStatus(id, key, status));
+  const vote = (key, title, value) => run(() => learningPathService.vote(id, key, title, value));
+  const more = (key) => run(() => learningPathService.more(id, key));
+  const regenerate = () => run(() => learningPathService.regenerate(id), () => setFreshness(null));
+  const agree = async () => {
+    setBusy(true);
+    try {
+      await aiService.giveConsent(consent.data.currentVersion);
+      const { retry } = consent;
+      setConsent(null);
+      await retry();
+    } catch (err) {
+      setConsent(null);
+      setError(errorView(err));
       setBusy(false);
     }
   };
@@ -97,9 +143,12 @@ export default function LearningPathPage() {
   const path = state.path;
   const module = path?.modules.find((m) => m.key === selected);
   const weeks = path ? timeline(path.modules, path.preferences?.hoursPerWeek) : [];
+  const votes = new Map((path?.feedback || []).filter((f) => f.moduleKey === selected).map((f) => [f.title, f.vote]));
+  const stale = freshnessText(freshness);
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
+      {consent && <AiConsentDialog consent={consent.data} busy={busy} onAgree={agree} onNotNow={() => setConsent(null)} />}
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-5">
         <div className="flex gap-4 text-sm">
           <Link to="/dashboard" className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-700">
@@ -123,6 +172,14 @@ export default function LearningPathPage() {
                 <p className="text-xs text-amber-800 bg-amber-50 rounded p-2" data-testid="no-enrichment">
                   AI descriptions and resources are not available for this path right now; the modules and their order are complete.
                 </p>
+              )}
+              {stale && (
+                <div className="flex items-center justify-between gap-3 text-sm text-sky-900 bg-sky-50 rounded p-3" role="status" data-testid="regenerate-banner">
+                  <span>{stale} Regenerate the path? Your progress on modules that stay is kept.</span>
+                  <button type="button" className="btn-secondary text-sm inline-flex items-center gap-1" disabled={busy} onClick={regenerate}>
+                    <RefreshCw className="w-4 h-4" aria-hidden="true" /> Regenerate
+                  </button>
+                </div>
               )}
               {moreText(path.more) && <p className="text-xs text-slate-500" data-testid="more-skills">{moreText(path.more)}</p>}
             </header>
@@ -152,7 +209,8 @@ export default function LearningPathPage() {
                   </section>
                 )}
               </div>
-              {module && <ModuleDetails module={module} busy={busy} onStatus={(status) => setStatus(module.key, status)} />}
+              {module && <ModuleDetails module={module} votes={votes} busy={busy} onStatus={(status) => setStatus(module.key, status)}
+                onVote={(title, value) => vote(module.key, title, value)} onMore={() => more(module.key)} />}
             </div>
           </>
         )}

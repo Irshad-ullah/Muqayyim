@@ -50,6 +50,13 @@ export const progressText = (progress) =>
 export const moreText = (more) =>
   more?.count ? `${more.count} more skill${more.count === 1 ? '' : 's'} — create the next path after this one` : '';
 
+// The "Regenerate?" banner: why the path may be out of date (empty when it is current or unknown).
+export const freshnessText = (f) => {
+  if (!f?.stale) return '';
+  if (f.profileChanged && f.dataChanged) return 'Your skills and the career data have changed since this path was made.';
+  return f.profileChanged ? 'Your skills have changed since this path was made.' : 'The career data has been updated since this path was made.';
+};
+
 export const errorView = (error) => {
   switch (error?.code) {
     case 'AI_CONSENT_REQUIRED':
@@ -66,6 +73,12 @@ export const errorView = (error) => {
       return { kind: 'not_found', title: 'Career not found', message: 'This career is no longer available.' };
     case 'PATH_NOT_FOUND':
       return { kind: 'not_found', title: 'Learning path not found', message: 'It may have been deleted.' };
+    case 'INVALID_CHOICE':
+      return { kind: 'choice', title: 'Your choice is no longer offered', message: 'Create a new path for this career to choose again.' };
+    case 'SUGGESTION_UNAVAILABLE':
+      return { kind: 'suggestion', title: 'No new suggestion right now', message: 'Please try again later.' };
+    case 'MORE_LIMIT':
+      return { kind: 'limit', title: 'This module has 10 resources', message: 'That is the most a module can list.' };
     default:
       return { kind: 'error', title: 'Something went wrong', message: 'The learning path could not be loaded or created. Please try again.' };
   }

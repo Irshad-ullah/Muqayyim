@@ -160,3 +160,28 @@ async def test_learning_skills_count_and_are_reported_as_unverified(matching_db,
     row = detail["members"][0]["required"][0]
     assert row["status"] == "matched" and row["via"]["source"] == "learning"
     assert "your learning path (not verified)" in " ".join(detail["members"][0]["explanation"])
+
+
+# ── Part 6: paths use verified skills only; the state endpoint gives the hashes for "Regenerate?" ─────────────────
+async def test_paths_use_verified_skills_and_state_reports_the_hashes(client, matching_db, stub):
+    from app.services.embeddings.user_profiles import upsert_user_skills
+    from app.services.learning import structure
+
+    await upsert_user_skills("u8", [{"name": "React", "source": "cv"}], embedder=stub, db=matching_db)
+    async with client as c:
+        h = {**KEY, "X-User-Id": "u8"}
+        first = (await c.post("/internal/learning/structure", json={"profession_id": "manual:web"}, headers=h)).json()["data"]
+        state = (await c.get("/internal/learning/state", headers=h)).json()["data"]
+        assert state == {"skills_hash": first["snapshot"]["skills_hash"], "dataset_hash": first["snapshot"]["dataset_hash"]}
+        # completing a module (a learning skill) changes neither the path nor the hash
+        await upsert_user_skills("u8", [{"name": "React", "source": "cv"}, {"name": "Vue.js", "source": "learning"}],
+                                 embedder=stub, db=matching_db)
+        again = (await c.post("/internal/learning/structure", json={"profession_id": "manual:web"}, headers=h)).json()["data"]
+        assert [m["skill"] for m in again["modules"]] == [m["skill"] for m in first["modules"]]
+        assert (await c.get("/internal/learning/state", headers=h)).json()["data"] == state
+        # a verified profile change does
+        await upsert_user_skills("u8", [{"name": "React", "source": "cv"}, {"name": "Excel", "source": "manual"}],
+                                 embedder=stub, db=matching_db)
+        assert (await c.get("/internal/learning/state", headers=h)).json()["data"]["skills_hash"] != state["skills_hash"]
+        assert (await c.get("/internal/learning/state", headers=KEY)).json()["code"] == "INVALID_USER_ID"
+    assert structure.verified({"a": {"source": "cv"}, "b": {"source": "learning"}}) == {"a": {"source": "cv"}}

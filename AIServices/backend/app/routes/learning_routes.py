@@ -4,6 +4,10 @@ Internal learning-path routes (Module 6), called only by CoreServices' /api/lear
 
   POST /internal/learning/structure   {profession_id, choices?: {requirement key: alternative key},
                                        prerequisites?: [[before, after], ...]} → the deterministic path structure
+  GET  /internal/learning/state       → {skills_hash, dataset_hash} now, for Core's "Regenerate?" check
+
+Paths are built from the user's verified skills (not those added by completing learning modules, see
+structure.verified).
 
 Errors: 400 INVALID_USER_ID, 404 PROFESSION_NOT_FOUND, 422 INVALID_CHOICE, 503 as in career matching
 (EMBEDDINGS_PENDING / MODEL_LOADING / INDEX_BUILDING / NO_PROFESSIONS / MATCHING_UNAVAILABLE).
@@ -42,7 +46,9 @@ async def build_structure(body: StructureRequest, user_id: Optional[str] = Heade
     if db is None:
         return error(503, "MATCHING_UNAVAILABLE")
     try:
-        owned = await service.user_skills(user_id, db)
+        owned = structure.verified(await service.user_skills(user_id, db))
+        if not owned:
+            raise service.NoSkills(user_id)
         data = await structure.build(owned, body.profession_id, db, body.choices, body.prerequisites)
     except (service.NoSkills, structure.ProfessionNotFound):
         return error(404, "PROFESSION_NOT_FOUND")
@@ -51,3 +57,20 @@ async def build_structure(body: StructureRequest, user_id: Optional[str] = Heade
     except (EmbeddingsPending, IndexUnavailable, ThresholdUnavailable) as exc:
         return unavailable(exc)
     return {"success": True, "data": data}
+
+
+@router.get("/state")
+async def current_state(user_id: Optional[str] = Header(default=None, alias="X-User-Id")):
+    if not user_id or not USER_ID.match(user_id):
+        return bad_user()
+    db = get_database()
+    if db is None:
+        return error(503, "MATCHING_UNAVAILABLE")
+    try:
+        owned = structure.verified(await service.user_skills(user_id, db))
+    except service.NoSkills:
+        owned = {}
+    except EmbeddingsPending as exc:
+        return unavailable(exc)
+    return {"success": True, "data": {"skills_hash": structure.skills_hash(owned),
+                                      "dataset_hash": await structure.dataset_hash(db)}}
