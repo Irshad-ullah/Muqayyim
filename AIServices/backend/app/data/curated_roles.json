@@ -1,0 +1,4156 @@
+{
+  "dataset": "muqayyim-curated-modern-roles",
+  "version": "1.0.0",
+  "created": "2026-10-17",
+  "status": "1.0.0 - adopted in Module 5.2 (2026-10-17); per-requirement team review (review.csv) still pending",
+  "method": "Roles chosen where O*NET IT occupations have no specific equivalent and at least one independent source describes the role. Skill evidence: R=listed in that role's roadmap.sh roadmap; S=used by >=10% of professional developers (SO 2025); P=listed for that role in a Pakistan in-demand jobs guide; C=named in an official certification outline. importance=essential when evidence comes from >=2 different source types, else optional. Alternatives (e.g. React or Angular) form one requirement satisfied by any member (any_of). Skills must be mapped to Muqayyim skill keys before import; from_onet is computed locally from O*NET software_skills.csv.",
+  "sources": {
+    "R": "roadmap.sh role roadmap (github.com/kamranahmedse/developer-roadmap, commit 2584fbd)",
+    "S": "Stack Overflow Developer Survey 2025, professional developers, >=10% usage",
+    "P": "Qureos: Most In-Demand Tech Jobs in Pakistan (skills listed per role)",
+    "C:AZ400": "Microsoft AZ-400 DevOps Engineer study guide, skills measured",
+    "C:PMLE": "Google Cloud Professional ML Engineer exam guide v4.0",
+    "C:GUX": "Google UX Design Professional Certificate (Coursera), skills and tools listed",
+    "C:GDA": "Google Data Analytics Professional Certificate (Coursera), skills and tools listed",
+    "C:APPLE": "Apple Develop in Swift curriculum guide",
+    "C:SRE": "Google, Site Reliability Engineering book, table of contents (sre.google)",
+    "O": "O*NET technology skills of the related occupation (computed locally from software_skills.csv; not yet applied)"
+  },
+  "roles": [
+    {
+      "id": "frontend-developer",
+      "title": "Frontend Developer",
+      "family": "Web",
+      "description": "Builds the user-facing part of web applications: interfaces, interactivity, performance and accessibility in the browser.",
+      "related_onet_code": "15-1254.00",
+      "evidence_roadmaps": [
+        "frontend"
+      ],
+      "required_skills": [
+        {
+          "skill": "HTML",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "frontend:html"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "HTML"
+          ],
+          "from_onet": [
+            "Hypertext markup language HTML"
+          ]
+        },
+        {
+          "skill": "CSS",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "frontend:css"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "CSS"
+          ],
+          "from_onet": [
+            "Cascading style sheets CSS"
+          ]
+        },
+        {
+          "skill": "JavaScript",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "frontend:javascript"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "JavaScript"
+          ],
+          "from_onet": [
+            "JavaScript"
+          ]
+        },
+        {
+          "skill": "TypeScript",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "frontend:type-checkers"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "TypeScript"
+          ],
+          "from_onet": [
+            "TypeScript"
+          ]
+        },
+        {
+          "skill": "React / Angular",
+          "any_of": [
+            "React",
+            "Angular"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "frontend:react",
+            "frontend:angular"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Google Angular",
+            "React"
+          ]
+        },
+        {
+          "skill": "Next.js",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "frontend:nextjs"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Next.js"
+          ]
+        },
+        {
+          "skill": "Tailwind CSS",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "frontend:tailwind"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Tailwind CSS"
+          ]
+        },
+        {
+          "skill": "Vite",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "frontend:vite"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Vite"
+          ]
+        },
+        {
+          "skill": "npm",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "frontend:npm"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "npm"
+          ]
+        },
+        {
+          "skill": "Git",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "frontend:git"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Git"
+          ],
+          "from_onet": [
+            "Git"
+          ]
+        },
+        {
+          "skill": "Jest",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "frontend:jest"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Jest"
+          ],
+          "from_onet": [
+            "Jest"
+          ]
+        },
+        {
+          "skill": "Cypress",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "frontend:cypress"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Cypress"
+          ]
+        },
+        {
+          "skill": "Web accessibility",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "frontend:accessibility"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Web accessibility"
+          ]
+        },
+        {
+          "skill": "REST APIs",
+          "kind": "practice",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "frontend:web-apis"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "REST APIs"
+          ],
+          "from_onet": [
+            "RESTful API"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "backend-developer",
+      "title": "Backend Developer",
+      "family": "Web",
+      "description": "Builds server-side application logic, APIs, data storage and integrations that power web and mobile apps.",
+      "related_onet_code": "15-1252.00",
+      "evidence_roadmaps": [
+        "backend"
+      ],
+      "required_skills": [
+        {
+          "skill": "Python / Java / Node.js / Go",
+          "any_of": [
+            "Python",
+            "Java",
+            "Node.js",
+            "Go"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "backend:python",
+            "backend:java",
+            "backend:javascript",
+            "backend:go"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Go",
+            "Node.js",
+            "Oracle Java",
+            "Python"
+          ]
+        },
+        {
+          "skill": "SQL",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "backend:relational-databases"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "SQL"
+          ],
+          "from_onet": [
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "skill": "PostgreSQL / MySQL / MongoDB",
+          "any_of": [
+            "PostgreSQL",
+            "MySQL",
+            "MongoDB"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "backend:postgresql",
+            "backend:mysql",
+            "backend:mongodb"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "MongoDB",
+            "MySQL",
+            "PostgreSQL"
+          ]
+        },
+        {
+          "skill": "Redis",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "backend:redis"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Redis"
+          ],
+          "from_onet": [
+            "Redis"
+          ]
+        },
+        {
+          "skill": "REST APIs",
+          "kind": "practice",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "backend:rest"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "REST APIs"
+          ],
+          "from_onet": [
+            "RESTful API"
+          ]
+        },
+        {
+          "skill": "JSON Web Token (JWT)",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "backend:jwt"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "JSON Web Token (JWT)"
+          ]
+        },
+        {
+          "skill": "Docker",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "backend:lxc"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
+            "Docker"
+          ]
+        },
+        {
+          "skill": "Git",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "backend:git"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Git"
+          ],
+          "from_onet": [
+            "Git"
+          ]
+        },
+        {
+          "skill": "Unit testing",
+          "kind": "practice",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "backend:unit-testing"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Unit testing"
+          ],
+          "from_onet": [
+            "Unit testing software"
+          ]
+        },
+        {
+          "skill": "Apache Kafka",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "backend:kafka"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Apache Kafka"
+          ],
+          "from_onet": [
+            "Apache Kafka"
+          ]
+        },
+        {
+          "skill": "Microservices",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "backend:microservices"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Microservices"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "full-stack-developer",
+      "title": "Full-Stack Developer",
+      "family": "Web",
+      "description": "Builds complete web applications across frontend, backend, database and deployment.",
+      "related_onet_code": "15-1254.00",
+      "evidence_roadmaps": [
+        "full-stack"
+      ],
+      "required_skills": [
+        {
+          "skill": "HTML",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "full-stack:html"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "HTML"
+          ],
+          "from_onet": [
+            "Hypertext markup language HTML"
+          ]
+        },
+        {
+          "skill": "CSS",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "full-stack:css"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "CSS"
+          ],
+          "from_onet": [
+            "Cascading style sheets CSS"
+          ]
+        },
+        {
+          "skill": "JavaScript",
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "full-stack:javascript"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "JavaScript"
+          ],
+          "from_onet": [
+            "JavaScript"
+          ]
+        },
+        {
+          "skill": "React",
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "full-stack:react"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "React"
+          ],
+          "from_onet": [
+            "React"
+          ]
+        },
+        {
+          "skill": "Node.js",
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "full-stack:nodejs"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Node.js"
+          ],
+          "from_onet": [
+            "Node.js"
+          ]
+        },
+        {
+          "skill": "npm",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "full-stack:npm"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "npm"
+          ]
+        },
+        {
+          "skill": "PostgreSQL / SQL",
+          "any_of": [
+            "PostgreSQL",
+            "SQL"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "full-stack:postgresql"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "PostgreSQL",
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "skill": "Redis",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "full-stack:redis"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Redis"
+          ],
+          "from_onet": [
+            "Redis"
+          ]
+        },
+        {
+          "skill": "REST APIs",
+          "kind": "practice",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "full-stack:restful-apis"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "REST APIs"
+          ],
+          "from_onet": [
+            "RESTful API"
+          ]
+        },
+        {
+          "skill": "JSON Web Token (JWT)",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "full-stack:jwt-auth"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "JSON Web Token (JWT)"
+          ]
+        },
+        {
+          "skill": "Tailwind CSS",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "full-stack:tailwind-css"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Tailwind CSS"
+          ]
+        },
+        {
+          "skill": "Git",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "full-stack:git"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Git"
+          ],
+          "from_onet": [
+            "Git"
+          ]
+        },
+        {
+          "skill": "GitHub Actions",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "full-stack:github-actions"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "GitHub Actions"
+          ]
+        },
+        {
+          "skill": "Linux",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "full-stack:linux-basics"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Linux"
+          ],
+          "from_onet": [
+            "Linux",
+            "UNIX"
+          ]
+        },
+        {
+          "skill": "Amazon Web Services (AWS)",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "full-stack:basic-aws-services"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Amazon Web Services (AWS)"
+          ],
+          "from_onet": [
+            "Amazon Web Services AWS software"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wordpress-developer",
+      "title": "WordPress Developer",
+      "family": "Web",
+      "description": "Builds and maintains websites on WordPress: custom themes, plugins, performance and security.",
+      "related_onet_code": "15-1254.00",
+      "evidence_roadmaps": [
+        "wordpress"
+      ],
+      "required_skills": [
+        {
+          "skill": "WordPress",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "wordpress:what-is-a-cms"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "WordPress"
+          ],
+          "from_onet": [
+            "WordPress"
+          ]
+        },
+        {
+          "skill": "PHP",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "wordpress:php"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "PHP"
+          ],
+          "from_onet": [
+            "PHP"
+          ]
+        },
+        {
+          "skill": "HTML",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "wordpress:html"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "HTML"
+          ],
+          "from_onet": [
+            "Hypertext markup language HTML"
+          ]
+        },
+        {
+          "skill": "CSS",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "wordpress:css"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "CSS"
+          ],
+          "from_onet": [
+            "Cascading style sheets CSS"
+          ]
+        },
+        {
+          "skill": "JavaScript",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "wordpress:javascript"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "JavaScript"
+          ],
+          "from_onet": [
+            "JavaScript"
+          ]
+        },
+        {
+          "skill": "MySQL",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "wordpress:sql"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "MySQL"
+          ],
+          "from_onet": [
+            "MySQL"
+          ]
+        },
+        {
+          "skill": "WordPress theme development",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "wordpress:themes"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "WordPress theme development"
+          ]
+        },
+        {
+          "skill": "WordPress plugin development",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "wordpress:plugins"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "WordPress plugin development"
+          ]
+        },
+        {
+          "skill": "WordPress REST API",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "wordpress:wordpress-rest-api"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "WordPress REST API"
+          ]
+        },
+        {
+          "skill": "Gutenberg block editor",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "wordpress:block-editor"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Gutenberg block editor"
+          ]
+        },
+        {
+          "skill": "WP-CLI",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "wordpress:wp-cli"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "WP-CLI"
+          ]
+        },
+        {
+          "skill": "PHP Composer",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "wordpress:composer"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "PHP Composer"
+          ]
+        },
+        {
+          "skill": "Search engine optimization (SEO)",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "wordpress:basics-of-seo"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Search engine optimization (SEO)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "android-developer",
+      "title": "Android Developer",
+      "family": "Mobile",
+      "description": "Builds native Android apps, from UI and architecture to data storage, testing and Google Play release.",
+      "related_onet_code": "15-1252.00",
+      "evidence_roadmaps": [
+        "android"
+      ],
+      "required_skills": [
+        {
+          "skill": "Kotlin / Java",
+          "any_of": [
+            "Kotlin",
+            "Java"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "android:kotlin",
+            "android:java"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Kotlin",
+            "Oracle Java"
+          ]
+        },
+        {
+          "skill": "Android SDK",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "android:app-components"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Android SDK"
+          ]
+        },
+        {
+          "skill": "Jetpack Compose",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "android:jetpack-compose"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Jetpack Compose"
+          ]
+        },
+        {
+          "skill": "Android Studio",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "android:development-ide"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Android Studio"
+          ]
+        },
+        {
+          "skill": "Gradle",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "android:what-is-and-how-to-use-gradle"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Gradle"
+          ],
+          "from_onet": [
+            "Gradle"
+          ]
+        },
+        {
+          "skill": "Kotlin Coroutines",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "android:coroutines"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Kotlin Coroutines"
+          ]
+        },
+        {
+          "skill": "MVVM architecture",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "android:mvvm"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "MVVM architecture"
+          ]
+        },
+        {
+          "skill": "Room",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "android:room-database"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Room"
+          ]
+        },
+        {
+          "skill": "Retrofit",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "android:retro"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Retrofit"
+          ]
+        },
+        {
+          "skill": "Hilt",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "android:hilt"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Hilt"
+          ]
+        },
+        {
+          "skill": "Firebase",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "android:firestore",
+            "android:crashlytics"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Firebase"
+          ]
+        },
+        {
+          "skill": "JUnit",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "android:junit"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "JUnit"
+          ],
+          "from_onet": [
+            "JUnit"
+          ]
+        },
+        {
+          "skill": "Espresso",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "android:espresso"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Espresso"
+          ]
+        },
+        {
+          "skill": "Git",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "android:git"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Git"
+          ],
+          "from_onet": [
+            "Git"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ios-developer",
+      "title": "iOS Developer",
+      "family": "Mobile",
+      "description": "Builds native iPhone and iPad apps with Swift, Apple frameworks and App Store distribution.",
+      "related_onet_code": "15-1252.00",
+      "evidence_roadmaps": [
+        "ios"
+      ],
+      "required_skills": [
+        {
+          "skill": "Swift",
+          "kind": "tool",
+          "evidence": [
+            "C:APPLE",
+            "P",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "ios:swift-basics"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Swift"
+          ],
+          "from_onet": [
+            "Swift"
+          ]
+        },
+        {
+          "skill": "SwiftUI / UIKit",
+          "any_of": [
+            "SwiftUI",
+            "UIKit"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "C:APPLE",
+            "R"
+          ],
+          "roadmap_topics": [
+            "ios:swiftui",
+            "ios:uikit"
+          ],
+          "importance": "essential"
+        },
+        {
+          "skill": "Xcode",
+          "kind": "tool",
+          "evidence": [
+            "C:APPLE",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "ios:xcode"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Xcode"
+          ],
+          "from_onet": [
+            "Xcode"
+          ]
+        },
+        {
+          "skill": "Core Data",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ios:core-data"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Core Data"
+          ]
+        },
+        {
+          "skill": "Combine Framework",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ios:combine"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Combine Framework"
+          ]
+        },
+        {
+          "skill": "Swift concurrency (async/await)",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ios:async--await"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Swift concurrency (async/await)"
+          ]
+        },
+        {
+          "skill": "URLSession",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ios:urlsession"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "URLSession"
+          ]
+        },
+        {
+          "skill": "XCTest",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ios:xctest"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "XCTest"
+          ]
+        },
+        {
+          "skill": "Swift Package Manager",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ios:swift-package-manager"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Swift Package Manager"
+          ]
+        },
+        {
+          "skill": "MVVM architecture",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ios:mvvm"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "MVVM architecture"
+          ]
+        },
+        {
+          "skill": "Objective-C",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "ios:objective-c"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Objective-C"
+          ],
+          "from_onet": [
+            "Objective C"
+          ]
+        },
+        {
+          "skill": "TestFlight",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ios:testflight"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "TestFlight"
+          ]
+        },
+        {
+          "skill": "Git",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "ios:git"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Git"
+          ],
+          "from_onet": [
+            "Git"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cross-platform-mobile-developer",
+      "title": "Cross-Platform Mobile Developer",
+      "family": "Mobile",
+      "description": "Builds apps for Android and iOS from one codebase using Flutter or React Native.",
+      "related_onet_code": "15-1252.00",
+      "evidence_roadmaps": [
+        "flutter",
+        "react-native"
+      ],
+      "required_skills": [
+        {
+          "skill": "Flutter / React Native",
+          "any_of": [
+            "Flutter",
+            "React Native"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "flutter:widgets",
+            "react-native:what-is-react-native"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "React Native"
+          ]
+        },
+        {
+          "skill": "Dart / JavaScript",
+          "any_of": [
+            "Dart",
+            "JavaScript"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "flutter:basics-of-dart",
+            "react-native:javascript-basics"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "JavaScript"
+          ]
+        },
+        {
+          "skill": "Expo",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "react-native:expo"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Expo"
+          ]
+        },
+        {
+          "skill": "Firebase",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "flutter:firebase"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Firebase"
+          ]
+        },
+        {
+          "skill": "Bloc / Provider / Riverpod",
+          "any_of": [
+            "Bloc",
+            "Provider",
+            "Riverpod"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "flutter:bloc",
+            "flutter:provider",
+            "flutter:riverpod"
+          ],
+          "importance": "optional"
+        },
+        {
+          "skill": "REST APIs",
+          "kind": "practice",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "flutter:restful-apis"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "REST APIs"
+          ],
+          "from_onet": [
+            "RESTful API"
+          ]
+        },
+        {
+          "skill": "SQLite",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "flutter:sqlite"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "SQLite"
+          ]
+        },
+        {
+          "skill": "Push notifications",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "flutter:push-notifications",
+            "react-native:push-notifications"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Push notifications"
+          ]
+        },
+        {
+          "skill": "Jest",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "react-native:jest"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Jest"
+          ]
+        },
+        {
+          "skill": "Git",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "flutter:git"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Git"
+          ],
+          "from_onet": [
+            "Git"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "devops-engineer",
+      "title": "DevOps Engineer",
+      "family": "Cloud and Infrastructure",
+      "description": "Automates building, testing, deploying and running software: CI/CD pipelines, infrastructure as code, containers and monitoring.",
+      "related_onet_code": "15-1244.00",
+      "evidence_roadmaps": [
+        "devops"
+      ],
+      "required_skills": [
+        {
+          "skill": "Linux",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:ubuntu--debian"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Linux"
+          ],
+          "from_onet": [
+            "Linux",
+            "UNIX"
+          ]
+        },
+        {
+          "skill": "Python / Bash",
+          "any_of": [
+            "Python",
+            "Bash"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:python",
+            "devops:bash"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Bash",
+            "Python"
+          ]
+        },
+        {
+          "skill": "Git",
+          "kind": "tool",
+          "evidence": [
+            "C:AZ400",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:git"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Git"
+          ],
+          "from_onet": [
+            "Git"
+          ]
+        },
+        {
+          "skill": "Docker",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:docker"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
+            "Docker"
+          ]
+        },
+        {
+          "skill": "Kubernetes",
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "devops:kubernetes"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Kubernetes"
+          ]
+        },
+        {
+          "skill": "Terraform",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "devops:terraform"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Terraform"
+          ]
+        },
+        {
+          "skill": "Ansible",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:ansible"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Ansible"
+          ],
+          "from_onet": [
+            "Ansible software"
+          ]
+        },
+        {
+          "skill": "Jenkins / GitHub Actions / GitLab CI",
+          "any_of": [
+            "Jenkins",
+            "GitHub Actions",
+            "GitLab CI"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "C:AZ400",
+            "P",
+            "R"
+          ],
+          "roadmap_topics": [
+            "devops:jenkins",
+            "devops:github-actions",
+            "devops:gitlab-ci"
+          ],
+          "importance": "essential"
+        },
+        {
+          "skill": "Amazon Web Services (AWS)",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:aws"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Amazon Web Services (AWS)"
+          ],
+          "from_onet": [
+            "Amazon Web Services AWS software"
+          ]
+        },
+        {
+          "skill": "Prometheus",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devops:prometheus"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Prometheus"
+          ]
+        },
+        {
+          "skill": "Grafana",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devops:grafana"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Grafana"
+          ]
+        },
+        {
+          "skill": "Nginx",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devops:nginx"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Nginx"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cloud-engineer",
+      "title": "Cloud Engineer",
+      "family": "Cloud and Infrastructure",
+      "description": "Designs, builds and operates infrastructure on public cloud platforms such as AWS, Azure and Google Cloud.",
+      "related_onet_code": "15-1241.00",
+      "evidence_roadmaps": [
+        "aws",
+        "devops"
+      ],
+      "required_skills": [
+        {
+          "skill": "Amazon Web Services (AWS) / Microsoft Azure / Google Cloud",
+          "any_of": [
+            "Amazon Web Services (AWS)",
+            "Microsoft Azure",
+            "Google Cloud"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:aws",
+            "devops:azure",
+            "devops:google-cloud"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Amazon Web Services AWS software",
+            "Microsoft Azure software"
+          ]
+        },
+        {
+          "skill": "Amazon EC2",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "aws:ec2"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Amazon EC2"
+          ],
+          "from_onet": [
+            "Amazon Elastic Compute Cloud EC2"
+          ]
+        },
+        {
+          "skill": "Amazon S3",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "aws:s3"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Amazon S3"
+          ],
+          "from_onet": [
+            "Amazon Simple Storage Service S3"
+          ]
+        },
+        {
+          "skill": "AWS IAM",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "aws:iam"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "AWS IAM"
+          ]
+        },
+        {
+          "skill": "Amazon VPC",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "aws:vpc"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Amazon VPC"
+          ]
+        },
+        {
+          "skill": "AWS Lambda",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "aws:lambda",
+            "devops:aws-lambda"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "AWS Lambda"
+          ]
+        },
+        {
+          "skill": "Terraform / AWS CloudFormation",
+          "any_of": [
+            "Terraform",
+            "AWS CloudFormation"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:terraform",
+            "devops:cloudformation"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Amazon Web Services AWS CloudFormation",
+            "IBM Terraform"
+          ]
+        },
+        {
+          "skill": "Docker",
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:docker"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
+            "Docker"
+          ]
+        },
+        {
+          "skill": "Kubernetes",
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "devops:kubernetes"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Kubernetes"
+          ]
+        },
+        {
+          "skill": "Linux",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:ubuntu--debian"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Linux"
+          ],
+          "from_onet": [
+            "Linux",
+            "UNIX"
+          ]
+        },
+        {
+          "skill": "Python",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:python"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Python"
+          ],
+          "from_onet": [
+            "Python"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "site-reliability-engineer",
+      "title": "Site Reliability Engineer",
+      "family": "Cloud and Infrastructure",
+      "description": "Keeps production systems reliable and fast through monitoring, incident response, automation and capacity planning.",
+      "related_onet_code": "15-1244.00",
+      "evidence_roadmaps": [
+        "devops"
+      ],
+      "required_skills": [
+        {
+          "skill": "Linux",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:ubuntu--debian"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Linux"
+          ],
+          "from_onet": [
+            "Linux",
+            "UNIX"
+          ]
+        },
+        {
+          "skill": "Python / Go",
+          "any_of": [
+            "Python",
+            "Go"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:python",
+            "devops:go"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Go",
+            "Python"
+          ]
+        },
+        {
+          "skill": "Bash",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:bash"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Bash"
+          ],
+          "from_onet": [
+            "Bash"
+          ]
+        },
+        {
+          "skill": "Kubernetes",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "devops:kubernetes"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Kubernetes"
+          ]
+        },
+        {
+          "skill": "Docker",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:docker"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
+            "Docker"
+          ]
+        },
+        {
+          "skill": "Prometheus",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devops:prometheus"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Prometheus"
+          ]
+        },
+        {
+          "skill": "Grafana",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devops:grafana"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Grafana"
+          ]
+        },
+        {
+          "skill": "OpenTelemetry",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devops:opentelemetry"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "OpenTelemetry"
+          ]
+        },
+        {
+          "skill": "Elastic Stack (ELK)",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devops:elastic-stack"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Elastic Stack (ELK)"
+          ],
+          "from_onet": [
+            "Elasticsearch"
+          ]
+        },
+        {
+          "skill": "Terraform",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "devops:terraform"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Terraform"
+          ]
+        },
+        {
+          "skill": "Incident response",
+          "kind": "practice",
+          "evidence": [
+            "C:SRE"
+          ],
+          "roadmap_topics": [],
+          "importance": "optional",
+          "any_of": [
+            "Incident response"
+          ]
+        },
+        {
+          "skill": "Load balancing",
+          "kind": "practice",
+          "evidence": [
+            "C:SRE",
+            "R"
+          ],
+          "roadmap_topics": [
+            "devops:load-balancer"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Load balancing"
+          ]
+        },
+        {
+          "skill": "Service level objectives (SLOs)",
+          "kind": "practice",
+          "evidence": [
+            "C:SRE"
+          ],
+          "roadmap_topics": [],
+          "importance": "optional",
+          "any_of": [
+            "Service level objectives (SLOs)"
+          ]
+        },
+        {
+          "skill": "Networking (TCP/IP, DNS, HTTP)",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devops:dns",
+            "devops:http"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Networking (TCP/IP, DNS, HTTP)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "devsecops-engineer",
+      "title": "DevSecOps Engineer",
+      "family": "Cloud and Infrastructure",
+      "description": "Builds security into the software delivery pipeline: secure CI/CD, container and cloud security, scanning and threat modelling.",
+      "related_onet_code": "15-1299.05",
+      "evidence_roadmaps": [
+        "devsecops"
+      ],
+      "required_skills": [
+        {
+          "skill": "Docker",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devsecops:docker"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
+            "Docker"
+          ]
+        },
+        {
+          "skill": "Kubernetes",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devsecops:kubernetes"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Kubernetes"
+          ],
+          "from_onet": [
+            "Kubernetes"
+          ]
+        },
+        {
+          "skill": "Container security",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devsecops:container-security",
+            "devsecops:image-scanning"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Container security"
+          ],
+          "merged_from": [
+            "Container image scanning"
+          ]
+        },
+        {
+          "skill": "Software supply chain security (SBOM)",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devsecops:sboms",
+            "devsecops:supply-chain-security"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Software supply chain security (SBOM)"
+          ]
+        },
+        {
+          "skill": "OWASP Top 10",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devsecops:owasp-top-10"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "OWASP Top 10"
+          ]
+        },
+        {
+          "skill": "Threat modeling",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devsecops:threat-modeling"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Threat modeling"
+          ]
+        },
+        {
+          "skill": "Burp Suite",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devsecops:burp-suite"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Burp Suite"
+          ]
+        },
+        {
+          "skill": "Nessus",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devsecops:nessus"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Nessus"
+          ],
+          "from_onet": [
+            "Tenable Nessus"
+          ]
+        },
+        {
+          "skill": "SIEM",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devsecops:siem"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "SIEM"
+          ]
+        },
+        {
+          "skill": "Identity and access management (IAM)",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devsecops:iam"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Identity and access management (IAM)"
+          ]
+        },
+        {
+          "skill": "Python",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devsecops:python"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Python"
+          ],
+          "from_onet": [
+            "Python"
+          ]
+        },
+        {
+          "skill": "Bash",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "devsecops:bash"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Bash"
+          ],
+          "from_onet": [
+            "Bash"
+          ]
+        },
+        {
+          "skill": "Secure coding",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "devsecops:secure-coding"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Secure coding"
+          ]
+        },
+        {
+          "skill": "GitHub Actions",
+          "kind": "tool",
+          "evidence": [
+            "C:AZ400"
+          ],
+          "roadmap_topics": [],
+          "importance": "optional",
+          "any_of": [
+            "GitHub Actions"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data-engineer",
+      "title": "Data Engineer",
+      "family": "Data and AI",
+      "description": "Builds and maintains data pipelines, warehouses and lakes that collect, clean and serve data for analytics and machine learning.",
+      "related_onet_code": "15-1243.01",
+      "evidence_roadmaps": [
+        "data-engineer"
+      ],
+      "required_skills": [
+        {
+          "skill": "Python",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "data-engineer:python"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Python"
+          ],
+          "from_onet": [
+            "Python"
+          ]
+        },
+        {
+          "skill": "SQL",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "data-engineer:learn-sql"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "SQL"
+          ],
+          "from_onet": [
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "skill": "Apache Spark / Databricks",
+          "any_of": [
+            "Apache Spark",
+            "Databricks"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "data-engineer:apache-spark",
+            "data-engineer:databricks-delta-lake"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Apache Spark"
+          ]
+        },
+        {
+          "skill": "Apache Airflow",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "data-engineer:apache-airflow"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Apache Airflow"
+          ]
+        },
+        {
+          "skill": "Apache Kafka",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "data-engineer:apache-kafka"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Apache Kafka"
+          ],
+          "from_onet": [
+            "Apache Kafka"
+          ]
+        },
+        {
+          "skill": "dbt",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "data-engineer:dbt"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "dbt"
+          ]
+        },
+        {
+          "skill": "Google BigQuery / Amazon Redshift / Snowflake",
+          "any_of": [
+            "Google BigQuery",
+            "Amazon Redshift",
+            "Snowflake"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "data-engineer:google-bigquery",
+            "data-engineer:amazon-redshift",
+            "data-engineer:snowflake"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Amazon Redshift"
+          ]
+        },
+        {
+          "skill": "PostgreSQL",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "data-engineer:postgresql"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "PostgreSQL"
+          ],
+          "from_onet": [
+            "PostgreSQL"
+          ]
+        },
+        {
+          "skill": "Apache Hadoop",
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "R"
+          ],
+          "roadmap_topics": [
+            "data-engineer:apache-hadoop-yarn",
+            "data-engineer:hdfs"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Apache Hadoop"
+          ]
+        },
+        {
+          "skill": "Docker",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "data-engineer:docker"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Docker"
+          ]
+        },
+        {
+          "skill": "Data modeling",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "data-engineer:data-modelling-techniques"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Data modeling"
+          ]
+        },
+        {
+          "skill": "ETL",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "data-engineer:etl-vs-reverse-etl"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "ETL"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "data-analyst",
+      "title": "Data Analyst",
+      "family": "Data and AI",
+      "description": "Collects, cleans and analyses data and presents findings through reports and dashboards to support decisions.",
+      "related_onet_code": "15-2051.01",
+      "evidence_roadmaps": [
+        "data-analyst"
+      ],
+      "required_skills": [
+        {
+          "skill": "SQL",
+          "kind": "tool",
+          "evidence": [
+            "C:GDA",
+            "P",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "SQL"
+          ],
+          "from_onet": [
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "skill": "Microsoft Excel",
+          "kind": "tool",
+          "evidence": [
+            "C:GDA",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "data-analyst:analysis--reporting-with-excel",
+            "data-analyst:pivot-tables"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Microsoft Excel"
+          ],
+          "from_onet": [
+            "Microsoft Excel"
+          ]
+        },
+        {
+          "skill": "Python / R",
+          "any_of": [
+            "Python",
+            "R"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "C:GDA",
+            "P",
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "data-analyst:learn-a-programming-lang",
+            "data-analyst:r"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Python",
+            "R"
+          ]
+        },
+        {
+          "skill": "pandas",
+          "kind": "tool",
+          "evidence": [
+            "C:GDA",
+            "R"
+          ],
+          "roadmap_topics": [
+            "data-analyst:pandas"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "pandas"
+          ]
+        },
+        {
+          "skill": "Power BI / Tableau",
+          "any_of": [
+            "Power BI",
+            "Tableau"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "C:GDA",
+            "P",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "data-analyst:power-bi",
+            "data-analyst:tableau"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Microsoft Power BI",
+            "Tableau"
+          ]
+        },
+        {
+          "skill": "Matplotlib / Seaborn",
+          "any_of": [
+            "Matplotlib",
+            "Seaborn"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "data-analyst:matplotlib",
+            "data-analyst:seaborn"
+          ],
+          "importance": "optional"
+        },
+        {
+          "skill": "Statistics",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "data-analyst:statistical-analysis",
+            "data-analyst:hypothesis-testing"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Statistics"
+          ]
+        },
+        {
+          "skill": "Data cleaning",
+          "kind": "practice",
+          "evidence": [
+            "C:GDA",
+            "R"
+          ],
+          "roadmap_topics": [
+            "data-analyst:data-cleanup",
+            "data-analyst:handling-missing-data"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Data cleaning"
+          ]
+        },
+        {
+          "skill": "Data visualization",
+          "kind": "practice",
+          "evidence": [
+            "C:GDA",
+            "R"
+          ],
+          "roadmap_topics": [
+            "data-analyst:data-visualisation"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Data visualization"
+          ]
+        },
+        {
+          "skill": "Regression analysis",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "data-analyst:regression"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Regression analysis"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "machine-learning-engineer",
+      "title": "Machine Learning Engineer",
+      "family": "Data and AI",
+      "description": "Designs, trains, evaluates and deploys machine learning and deep learning models into products.",
+      "related_onet_code": "15-2051.00",
+      "evidence_roadmaps": [
+        "machine-learning"
+      ],
+      "required_skills": [
+        {
+          "skill": "Python",
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "P",
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "machine-learning:python"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Python"
+          ],
+          "from_onet": [
+            "Python"
+          ]
+        },
+        {
+          "skill": "NumPy",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "machine-learning:numpy"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "NumPy"
+          ],
+          "from_onet": [
+            "NumPy"
+          ]
+        },
+        {
+          "skill": "pandas",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "machine-learning:pandas"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "pandas"
+          ],
+          "from_onet": [
+            "pandas"
+          ]
+        },
+        {
+          "skill": "scikit-learn",
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "machine-learning:scikit-learn"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "scikit-learn"
+          ],
+          "from_onet": [
+            "Scikit-learn"
+          ]
+        },
+        {
+          "skill": "TensorFlow / PyTorch / Keras",
+          "any_of": [
+            "TensorFlow",
+            "PyTorch",
+            "Keras"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "P",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "machine-learning:tensorflow",
+            "machine-learning:pytorch",
+            "machine-learning:keras"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Keras",
+            "PyTorch",
+            "TensorFlow"
+          ]
+        },
+        {
+          "skill": "XGBoost",
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "machine-learning:gradient-boosting-machines"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "XGBoost"
+          ],
+          "from_onet": [
+            "XGBoost"
+          ]
+        },
+        {
+          "skill": "Deep learning",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "machine-learning:deep-learning-architectures"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Deep learning"
+          ]
+        },
+        {
+          "skill": "Natural language processing",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "machine-learning:natural-language-processing"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Natural language processing"
+          ]
+        },
+        {
+          "skill": "Computer vision",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "machine-learning:image-classification",
+            "machine-learning:convolutional-neural-network"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Computer vision"
+          ]
+        },
+        {
+          "skill": "Feature engineering",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "machine-learning:feature-engineering"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Feature engineering"
+          ]
+        },
+        {
+          "skill": "Model evaluation",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "machine-learning:metrics-to-evaluate"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Model evaluation"
+          ]
+        },
+        {
+          "skill": "Statistics",
+          "kind": "practice",
+          "evidence": [
+            "P",
+            "R"
+          ],
+          "roadmap_topics": [
+            "machine-learning:statistics"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Statistics"
+          ]
+        },
+        {
+          "skill": "Jupyter",
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "O"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "Jupyter"
+          ],
+          "from_onet": [
+            "Jupyter software"
+          ]
+        },
+        {
+          "skill": "Docker",
+          "kind": "tool",
+          "evidence": [
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
+            "Docker"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mlops-engineer",
+      "title": "MLOps Engineer",
+      "family": "Data and AI",
+      "description": "Automates training, deployment and monitoring of machine learning models in production.",
+      "related_onet_code": "15-2051.00",
+      "evidence_roadmaps": [
+        "mlops"
+      ],
+      "required_skills": [
+        {
+          "skill": "Python",
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "mlops:python"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Python"
+          ],
+          "from_onet": [
+            "Python"
+          ]
+        },
+        {
+          "skill": "Docker",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "mlops:containerization"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Docker"
+          ],
+          "from_onet": [
+            "Docker"
+          ]
+        },
+        {
+          "skill": "Kubernetes",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "mlops:kubernetes"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Kubernetes"
+          ],
+          "from_onet": [
+            "Kubernetes"
+          ]
+        },
+        {
+          "skill": "MLflow / Kubeflow",
+          "any_of": [
+            "MLflow",
+            "Kubeflow"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "mlops:mlflow",
+            "mlops:kubeflow"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Kubeflow",
+            "Mlflow"
+          ]
+        },
+        {
+          "skill": "Apache Airflow",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "mlops:airflow"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Apache Airflow"
+          ],
+          "from_onet": [
+            "Apache Airflow"
+          ]
+        },
+        {
+          "skill": "DVC",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "mlops:dvc"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "DVC"
+          ]
+        },
+        {
+          "skill": "Jenkins / GitHub Actions",
+          "any_of": [
+            "Jenkins",
+            "GitHub Actions"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "mlops:jenkins",
+            "mlops:github-actions"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Jenkins CI"
+          ]
+        },
+        {
+          "skill": "Terraform",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "mlops:terraform"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Terraform"
+          ]
+        },
+        {
+          "skill": "Prometheus",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "mlops:prometheus"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Prometheus"
+          ]
+        },
+        {
+          "skill": "PyTorch / TensorFlow / scikit-learn",
+          "any_of": [
+            "PyTorch",
+            "TensorFlow",
+            "scikit-learn"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "mlops:pytorch",
+            "mlops:tensorflow",
+            "mlops:scikit-learn"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "PyTorch",
+            "Scikit-learn",
+            "TensorFlow"
+          ]
+        },
+        {
+          "skill": "Apache Spark",
+          "kind": "tool",
+          "evidence": [
+            "C:PMLE",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "mlops:spark"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Apache Spark"
+          ],
+          "from_onet": [
+            "Apache Spark",
+            "PySpark"
+          ]
+        },
+        {
+          "skill": "Git",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "mlops:git"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Git"
+          ],
+          "from_onet": [
+            "Git"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ai-engineer",
+      "title": "AI Engineer (LLM Applications)",
+      "family": "Data and AI",
+      "description": "Builds applications on top of large language models: prompting, retrieval-augmented generation, agents, evaluation and integration with LLM APIs.",
+      "related_onet_code": "15-1252.00",
+      "evidence_roadmaps": [
+        "ai-engineer"
+      ],
+      "required_skills": [
+        {
+          "skill": "Python",
+          "kind": "tool",
+          "evidence": [
+            "P",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "Python"
+          ],
+          "from_onet": [
+            "Python"
+          ]
+        },
+        {
+          "skill": "Large language models (LLMs)",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "ai-engineer:large-language-model-llm"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Large language models (LLMs)"
+          ]
+        },
+        {
+          "skill": "Prompt engineering",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ai-engineer:prompt-engineering"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Prompt engineering"
+          ]
+        },
+        {
+          "skill": "Retrieval-augmented generation (RAG)",
+          "kind": "practice",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "ai-engineer:rag"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Retrieval-augmented generation (RAG)"
+          ]
+        },
+        {
+          "skill": "Embeddings",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ai-engineer:embeddings"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Embeddings"
+          ]
+        },
+        {
+          "skill": "Vector databases",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ai-engineer:pinecone",
+            "ai-engineer:chroma",
+            "ai-engineer:qdrant",
+            "ai-engineer:faiss"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Vector databases"
+          ]
+        },
+        {
+          "skill": "LangChain / LlamaIndex",
+          "any_of": [
+            "LangChain",
+            "LlamaIndex"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ai-engineer:langchain",
+            "ai-engineer:llama-index"
+          ],
+          "importance": "optional"
+        },
+        {
+          "skill": "OpenAI API / Google Gemini API / Ollama / Hugging Face",
+          "any_of": [
+            "OpenAI API",
+            "Google Gemini API",
+            "Ollama",
+            "Hugging Face"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S"
+          ],
+          "roadmap_topics": [
+            "ai-engineer:openai-response-api",
+            "ai-engineer:open-ai-embeddings-api",
+            "ai-engineer:google-gemini-api",
+            "ai-engineer:ollama",
+            "ai-engineer:hugging-face"
+          ],
+          "importance": "essential"
+        },
+        {
+          "skill": "AI agents",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ai-engineer:ai-agents"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "AI agents"
+          ]
+        },
+        {
+          "skill": "Fine-tuning",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ai-engineer:fine-tuning"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Fine-tuning"
+          ]
+        },
+        {
+          "skill": "LLM evaluation",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ai-engineer:llm-evaluations"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "LLM evaluation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ui-ux-designer",
+      "title": "UI/UX Designer",
+      "family": "Design and Product",
+      "description": "Researches user needs and designs usable, attractive interfaces for web and mobile products, from wireframes to tested prototypes.",
+      "related_onet_code": "15-1255.00",
+      "evidence_roadmaps": [
+        "ux-design",
+        "product-design"
+      ],
+      "required_skills": [
+        {
+          "skill": "Figma / Adobe XD / Sketch",
+          "any_of": [
+            "Figma",
+            "Adobe XD",
+            "Sketch"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "C:GUX",
+            "P",
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "ux-design:figma",
+            "product-design:figma-dev-mode",
+            "ux-design:adobe-xd",
+            "ux-design:sketch"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Adobe XD",
+            "Figma"
+          ]
+        },
+        {
+          "skill": "Wireframing",
+          "kind": "practice",
+          "evidence": [
+            "C:GUX",
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-design:wireframing"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Wireframing"
+          ]
+        },
+        {
+          "skill": "Prototyping",
+          "kind": "practice",
+          "evidence": [
+            "C:GUX",
+            "P",
+            "R"
+          ],
+          "roadmap_topics": [
+            "ux-design:prototyping",
+            "product-design:prototyping"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Prototyping"
+          ]
+        },
+        {
+          "skill": "User research",
+          "kind": "practice",
+          "evidence": [
+            "C:GUX",
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-design:interviews",
+            "product-design:contextual-inquiry"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "User research"
+          ]
+        },
+        {
+          "skill": "Usability testing",
+          "kind": "practice",
+          "evidence": [
+            "C:GUX",
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-design:usability-testing"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Usability testing"
+          ]
+        },
+        {
+          "skill": "User personas",
+          "kind": "practice",
+          "evidence": [
+            "C:GUX",
+            "R"
+          ],
+          "roadmap_topics": [
+            "ux-design:create-user-personas",
+            "product-design:personas"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "User personas"
+          ]
+        },
+        {
+          "skill": "Design systems",
+          "kind": "practice",
+          "evidence": [
+            "C:GUX",
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-design:design-systems"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Design systems"
+          ]
+        },
+        {
+          "skill": "Information architecture",
+          "kind": "practice",
+          "evidence": [
+            "C:GUX",
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-design:information-architecture"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Information architecture"
+          ]
+        },
+        {
+          "skill": "Typography",
+          "kind": "practice",
+          "evidence": [
+            "C:GUX",
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-design:typography"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Typography"
+          ]
+        },
+        {
+          "skill": "A/B testing",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-design:ab-testing",
+            "ux-design:incremental-ab-testing"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "A/B testing"
+          ]
+        },
+        {
+          "skill": "Web accessibility",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-design:accessibility-testing"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Web accessibility"
+          ]
+        },
+        {
+          "skill": "Balsamiq",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "ux-design:balsamiq"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Balsamiq"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "product-manager",
+      "title": "Product Manager (Software)",
+      "family": "Design and Product",
+      "description": "Decides what a software product should do and why: discovery, roadmap, prioritisation, metrics and working with engineering and design.",
+      "related_onet_code": "15-1299.09",
+      "evidence_roadmaps": [
+        "product-manager"
+      ],
+      "required_skills": [
+        {
+          "skill": "Agile / Scrum / Kanban",
+          "any_of": [
+            "Agile",
+            "Scrum",
+            "Kanban"
+          ],
+          "kind": "practice",
+          "evidence": [
+            "P",
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-manager:agile-methodology",
+            "product-manager:scrum-basics",
+            "product-manager:kanban-basics"
+          ],
+          "importance": "essential"
+        },
+        {
+          "skill": "Jira",
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "product-manager:jira"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Jira"
+          ],
+          "from_onet": [
+            "Atlassian JIRA"
+          ]
+        },
+        {
+          "skill": "Product roadmapping",
+          "kind": "practice",
+          "evidence": [
+            "P",
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-manager:creating-a-roadmap",
+            "product-manager:product-roadmap"
+          ],
+          "importance": "essential",
+          "any_of": [
+            "Product roadmapping"
+          ]
+        },
+        {
+          "skill": "Product requirements documents",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-manager:product-requirements"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Product requirements documents"
+          ]
+        },
+        {
+          "skill": "User stories",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-manager:job-stories"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "User stories"
+          ]
+        },
+        {
+          "skill": "A/B testing",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-manager:ab-testing"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "A/B testing"
+          ]
+        },
+        {
+          "skill": "Product analytics",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-manager:analytics-tools",
+            "product-manager:cohort-analysis"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Product analytics"
+          ]
+        },
+        {
+          "skill": "Amplitude",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-manager:amplitude"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Amplitude"
+          ]
+        },
+        {
+          "skill": "SQL",
+          "kind": "tool",
+          "evidence": [
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [],
+          "importance": "essential",
+          "any_of": [
+            "SQL"
+          ],
+          "from_onet": [
+            "Structured query language SQL"
+          ]
+        },
+        {
+          "skill": "Market analysis",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-manager:market-analysis",
+            "product-manager:competitive-analysis"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Market analysis"
+          ]
+        },
+        {
+          "skill": "Prioritization frameworks (RICE, MoSCoW)",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "product-manager:prioritization-techniques"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Prioritization frameworks (RICE, MoSCoW)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "game-developer",
+      "title": "Game Developer",
+      "family": "Games",
+      "description": "Programs video games: gameplay, physics, graphics and engines, usually with Unity or Unreal Engine.",
+      "related_onet_code": "15-1255.01",
+      "evidence_roadmaps": [
+        "game-developer"
+      ],
+      "required_skills": [
+        {
+          "skill": "Unity / Unreal Engine / Godot",
+          "any_of": [
+            "Unity",
+            "Unreal Engine",
+            "Godot"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "game-developer:unity-3d",
+            "game-developer:unreal-engine",
+            "game-developer:godot"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Unity Technologies Unity",
+            "Unreal Technology Unreal Engine"
+          ]
+        },
+        {
+          "skill": "C# / C++",
+          "any_of": [
+            "C#",
+            "C++"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "S",
+            "O"
+          ],
+          "roadmap_topics": [
+            "game-developer:cc"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "C#",
+            "C++"
+          ]
+        },
+        {
+          "skill": "Game physics",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "game-developer:game-physics"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Game physics"
+          ]
+        },
+        {
+          "skill": "Game AI",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "game-developer:game-ai"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Game AI"
+          ]
+        },
+        {
+          "skill": "Linear algebra for games",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "game-developer:game-mathematics",
+            "game-developer:linear-algebra"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Linear algebra for games"
+          ]
+        },
+        {
+          "skill": "Shaders (HLSL/GLSL)",
+          "kind": "tool",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "game-developer:shader",
+            "game-developer:hlsl",
+            "game-developer:glsl"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Shaders (HLSL/GLSL)"
+          ]
+        },
+        {
+          "skill": "OpenGL / Vulkan / DirectX",
+          "any_of": [
+            "OpenGL",
+            "Vulkan",
+            "DirectX"
+          ],
+          "kind": "tool",
+          "evidence": [
+            "R",
+            "O"
+          ],
+          "roadmap_topics": [
+            "game-developer:opengl",
+            "game-developer:vulkan",
+            "game-developer:directx"
+          ],
+          "importance": "essential",
+          "from_onet": [
+            "Microsoft DirectX",
+            "OpenGL"
+          ]
+        },
+        {
+          "skill": "Collision detection",
+          "kind": "practice",
+          "evidence": [
+            "R"
+          ],
+          "roadmap_topics": [
+            "game-developer:collision-detection"
+          ],
+          "importance": "optional",
+          "any_of": [
+            "Collision detection"
+          ]
+        }
+      ]
+    }
+  ],
+  "onet_evidence": "O applied 2026-10-17 by eval/curated_roles/add_onet_evidence.py from data/raw/onet/software_skills.csv (related_onet_code; importer cleaning + skill keys)",
+  "skill_list_note": "Module 5.2 adoption (2026-10-17): every any_of skill is in the Muqayyim skill list (eval/curated_roles/apply_skill_proposals.py); 'Container image scanning' merged into 'Container security'; 'Composer' / 'Combine' renamed to 'PHP Composer' / 'Combine Framework'."
+}
