@@ -27,7 +27,7 @@ attribution, and the gap list that Module 6 will turn into a learning path ("Gen
 | FR7.4 required skills held / gaps | Required and optional skills with held / related / missing (icon and words) | FE `CareerMatchesPage.spec.jsx` (details) |
 | FR7.5 explanation | Template-based sentences from the breakdown and the user's skill sources (no LLM) | AI `test_matching.py` (explanations); FE (details) |
 | FR7.6 view details | `GET /api/career-matches/:professionId`; the details panel | Core `careerMatches.test.js`; FE (details) |
-| FR7.7 learning path for missing skills | The gap list per career is stored (`career_matches.gaps`) and shown; button disabled "coming soon" | AI `test_matching.py` (gaps); FE (learning-path button) |
+| FR7.7 learning path for missing skills | The gap list per career is stored (`career_matches.gaps`) and shown; since Module 6 the button opens the learning-path setup (see `13-learning-paths.md`) | AI `test_matching.py` (gaps); FE `CareerMatchesPage.spec.jsx` (Module 6) |
 | FR7.8 sort / filter by % and category | In the browser: sort by % or title; filter by category, source, minimum % | FE `careerRules.test.js`, `CareerMatchesPage.spec.jsx` |
 | FR7.9 back to the dashboard | Always-visible link; navbar and dashboard entries | FE `CareerMatchesPage.spec.jsx` |
 | FR7.10 clear errors, no sensitive details | Distinct codes (EMBEDDINGS_PENDING, MODEL_LOADING, INDEX_BUILDING, NO_PROFESSIONS → 503 + Retry-After; MATCHING_UNAVAILABLE 503; MATCHING_TIMEOUT 504; PROFESSION_NOT_FOUND 404) and safe messages; logs hold a user-id hash only | AI / Core / FE tests; manual log scan (Part 2) |

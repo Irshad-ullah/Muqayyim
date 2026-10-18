@@ -1,0 +1,70 @@
+{
+  "run_id": "2026-10-18T163339-91512af",
+  "started_utc": "2026-10-18T11:33:39.637756+00:00",
+  "started_local": "2026-10-18 16:33 Pakistan Standard Time",
+  "duration_s": 44.2,
+  "git": {
+    "commit": "91512af",
+    "commit_full": "91512af635525307e41582da2c7c1ceb8462dea2",
+    "branch": "main",
+    "subject": "Fix test_curated_import: start before any curated publish (no dataset file)",
+    "clean": false,
+    "changed_files": 10
+  },
+  "environment": {
+    "os": "Windows 11 (10.0.26200)",
+    "python": "3.14.4",
+    "node": "v24.11.1",
+    "npm": "11.6.2",
+    "mongodb": "8.2.5",
+    "python_packages": {
+      "torch": "2.14.1+cpu",
+      "sentence-transformers": "6.1.0",
+      "faiss-cpu": "1.15.1",
+      "numpy": "2.4.4",
+      "fastapi": "0.136.1",
+      "pymongo": "4.17.0",
+      "motor": "3.7.1",
+      "pytest": "9.0.3",
+      "spacy": "3.8.13"
+    },
+    "node_packages": {
+      "core:express": "4.22.1",
+      "core:jest": "29.7.0",
+      "core:mongoose": "7.8.9",
+      "gateway:express": "4.22.1",
+      "gateway:jest": "29.7.0",
+      "gateway:http-proxy-middleware": "2.0.9",
+      "frontend:react": "18.3.1",
+      "frontend:vite": "5.4.21",
+      "frontend:vitest": "2.1.9"
+    },
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "embedding_text_mode": "description",
+    "related_threshold": 0.73
+  },
+  "suites": [
+    {
+      "name": "ai-slow",
+      "label": "AIServices pytest -m slow (real model)",
+      "command": "-p no:warnings -p no:cacheprovider -m slow",
+      "exit_code": 0,
+      "wall_s": 44.2,
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "xfailed": 2,
+        "xpassed": 0,
+        "errors": 0,
+        "deselected": 666
+      },
+      "duration_s": 36.77,
+      "summary": "2 passed, 666 deselected, 2 xfailed in 36.77s",
+      "status": "passed"
+    }
+  ],
+  "passed": true,
+  "known_expected_failures": "ai-slow: React↔Python (0.776) and Redux↔Redis (0.744) are strict xfails (docs/changes/09a2-embedding-model-selection.md)",
+  "raw_logs": "docs/testing/runs/raw/2026-10-18T163339-91512af"
+}

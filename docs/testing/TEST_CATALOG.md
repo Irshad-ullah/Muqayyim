@@ -109,6 +109,27 @@ properties with no single SRS id.
 | Official evaluation: old 8 (official) and new 6 (not blind), plus background check | `eval/career_matching/run_eval.py` (`--profiles`), `results/module5.1_{old8,new6}/` | evaluation (real data) | 2026-10-17: old top-3 7/7, top-5 7/7, chef 15.0 %; new top-5 6/6; background 3.2 % vs 12.9 % PASS; all 14 profiles identical to the sandbox |
 | Mapping precision (user spot check of 40 random mapped entries) | `eval/esco_phrase_mapping/spot_check.csv` | manual | 40 / 40 (Wilson 95 % lower bound ≈ 91 %) |
 
+## Module 6 — learning paths (FR7.7, FR8.1–FR8.9; done 2026-10-18)
+
+| Requirement | Tests | Type | Status |
+|---|---|---|---|
+| Structure: missing required rows, chosen any-of alternative, cap 8 essential first, quick wins, nearest-neighbour order | AI `test_learning_structure.py::test_tiers_then_quick_wins_then_nearest_neighbours`, `::test_without_vectors_the_role_order_is_kept`, `::test_any_of_choice_and_invalid_choices`, `::test_build_from_a_career_match`, `::test_cap_of_eight_modules_essential_first` | unit + integration | pass |
+| Prerequisites validated (pair, in path, not self, duplicate, cycle) and applied by a minimal reorder | AI `test_learning_structure.py::test_prerequisite_validation_rules`, `::test_prerequisites_move_only_what_must_move` | unit | pass |
+| Internal structure / state routes (X-Internal-Key, X-User-Id, errors); not reachable through the gateway | AI `test_learning_structure.py::test_route`; Gateway `aiRoute.test.js` (`/internal/learning/*` blocked, `/api/learning-paths` proxied) | integration | pass |
+| Paths and their snapshot use profile skills only (CV, profile, GitHub); learning skills count in the match % and are reported as unverified | AI `test_learning_structure.py::test_paths_use_profile_skills_and_state_reports_the_hashes`, `::test_learning_skills_count_and_are_reported_as_unverified` | integration | pass |
+| Enrichment: links built by our code, only role / module / skill names / cost preference sent, English only, cache follows the cost preference | AI `test_learning_enrich.py::test_enrichment_with_links_built_by_our_code`, `::test_only_role_modules_skill_names_and_preferences_are_sent`, `::test_the_cache_key_includes_the_preferences` | unit | pass |
+| **security** — 0 URLs from the LLM; hours 2–80, total ≤ 400; platforms only YouTube / Coursera / Udemy / edX / Official docs (freeCodeCamp rejected); module set = path set | AI `test_learning_enrich.py::test_invalid_outputs_never_reach_a_path` (13 cases), `::test_total_hours_over_400_and_a_rejection_replaced_by_the_retry` | unit | pass |
+| Rejection-reason logging: failed check names only (never content) in the log and `llm_usage.reject_reason` | AI `test_learning_enrich.py::test_invalid_outputs_never_reach_a_path`, `::test_total_hours_over_400_and_a_rejection_replaced_by_the_retry` | integration | pass |
+| Free-only drops paid; paid labelled "AI recommendation, check before buying"; "Suggest another resource" excludes shown titles | AI `test_learning_enrich.py::test_free_only_drops_paid_and_paid_is_labelled`, `::test_suggest_another_resource`, `::test_routes` | unit + integration | pass |
+| Core: consent (bumped notice), create, saved without enrichment on LLM failure, one per career / max 5, validation, AI errors hidden | Core `learningPaths.test.js` (consent; create) | integration | pass |
+| Core: ownership, module status, completion → learning skill → AI refresh, undo, never wiped by a profile save | Core `learningPaths.test.js` (reading, ownership and progress) | integration | pass |
+| Core: freshness, regenerate keeping progress and feedback, completed learning skill starts completed, feedback, suggest more (consent, failure, cap 10) | Core `learningPaths.test.js` (Part 6) | integration | pass |
+| UI: list, path page (order, status, timeline, labels, search links, no-enrichment note), completion, setup dialog with consent retry, errors | FE `LearningPaths.spec.jsx`; `pathRules.test.js` | component + unit | pass |
+| UI: 👍 / 👎, "Suggest another resource" with consent, Regenerate banner | FE `LearningPaths.spec.jsx` (Part 6); `pathRules.test.js` (banner text) | component + unit | pass |
+| Career Matches: Generate button enabled, "includes N unverified skills"; learning wording | FE `CareerMatchesPage.spec.jsx` (Module 6); `careerRules.test.js` (Module 6) | component + unit | pass |
+| Structure evaluation rules 1–5 | `AIServices/eval/learning_paths/run_structure_eval.py` | evaluation (real data) | 2026-10-18: 24 / 24 |
+| Manual review of real-Gemini paths (rule 9) | `AIServices/eval/learning_paths/manual_review.csv`, `summarise_manual_review.py` | manual | 2026-10-18: 23 recommendations, 5 paths — exists 82.6 %, relevant 87.0 % (without freeCodeCamp 90.5 % / 95.2 %); hours plausible not recorded |
+
 ## Module 10 — admin
 
 | Requirement | Tests | Type | Status |
@@ -196,3 +217,5 @@ properties with no single SRS id.
 | Mixed threshold 0.61 (rejected) | 09b2 Part 4 | real role skills, web vs chef profile | 60.4 % vs 60.8 % credited → rejected |
 | Background credit check | `AIServices/eval/background_credit_rate.py` | real index, chef vs web profile | 3.0 % vs 12.2 % → pass; 2026-10-16 (130 roles): 3.2 % vs 12.9 % → pass |
 | Role-skill description coverage | `AIServices/eval/role_skill_coverage.py` | real professions | distinct 12.0 % → 20.2 %, occurrences 25.9 % → 38.2 % |
+| Learning-path structure (Module 6) | `AIServices/eval/learning_paths/results/structure_eval.md` | 24 profiles, best match each | all 5 rules hold for 24 / 24 |
+| Learning-path manual review (Module 6) | `AIServices/eval/learning_paths/results/manual_review_summary.md` | 23 recommendations, 5 paths, real Gemini | exists 82.6 %, relevant 87.0 %; without freeCodeCamp 90.5 % / 95.2 %; hours not recorded |

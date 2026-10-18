@@ -272,3 +272,28 @@ Result: **INTERRUPTED. Not counted** (the laptop slept during the run: the AI su
 | Frontend node --test + Vitest | ✅ 151 passed (41 node + 110 Vitest), 0 failed | 119.6 s | `node --test: pass 41, fail 0 (0.3s) \| Vitest: 110 passed (110) (119.2s)` |
 
 Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).
+
+## 2026-10-18 16:26 Pakistan Standard Time · `91512af` (main, 1 uncommitted change(s))
+
+Commit: Fix test_curated_import: start before any curated publish (no dataset file)  
+Result: **PASS** · total time 412 s
+
+| Suite | Result | Duration | Summary line |
+|---|---|---|---|
+| AIServices pytest | ✅ 664 passed, 0 failed, 1 skipped, 5 deselected | 214.1 s | `664 passed, 1 skipped, 5 deselected in 214.09s (0:03:34)` |
+| CoreServices Jest | ✅ 306 passed, 0 failed | 124.5 s | `Tests: 306 passed, 306 total \| Test Suites: 23 passed, 23 total` |
+| API Gateway Jest | ✅ 82 passed, 0 failed | 8.6 s | `Tests: 82 passed, 82 total \| Test Suites: 11 passed, 11 total` |
+| Frontend node --test + Vitest | ✅ 167 passed (45 node + 122 Vitest), 0 failed | 51.1 s | `node --test: pass 45, fail 0 (0.7s) \| Vitest: 122 passed (122) (50.4s)` |
+
+Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).
+
+## 2026-10-18 16:33 Pakistan Standard Time · `91512af` (main, 10 uncommitted change(s))
+
+Commit: Fix test_curated_import: start before any curated publish (no dataset file)  
+Result: **PASS** · total time 44 s
+
+| Suite | Result | Duration | Summary line |
+|---|---|---|---|
+| AIServices pytest -m slow (real model) | ✅ 2 passed, 0 failed, 2 xfailed, 666 deselected | 36.8 s | `2 passed, 666 deselected, 2 xfailed in 36.77s` |
+
+Environment: Windows 11 (10.0.26200); Python 3.14.4; Node v24.11.1; MongoDB 8.2.5; torch 2.14.1+cpu, sentence-transformers 6.1.0, faiss-cpu 1.15.1; embedding model `BAAI/bge-small-en-v1.5` (description text, related threshold 0.73).

@@ -9,7 +9,8 @@ Gemini (free tier), default model `gemini-3.5-flash-lite`.
 | 1 | Shared LLM client in AIServices | **done** |
 | 2 | CV generator: consent, server-built facts, CV assist, truthfulness post-check, review step | **done** |
 | 3 | Target-role tailoring, admin usage view | later |
-| — | Modules 6–8 (learning paths, quizzes, interviews) use the client when they are built | later |
+| — | Module 6 learning paths use the client (see `13-learning-paths.md`); rejected JSON answers are logged by check name (`llm_usage.reject_reason`) | **done** |
+| — | Modules 7–8 (quizzes, interviews) use the client when they are built | later |
 
 ## Inventory (Step 0)
 
@@ -18,7 +19,7 @@ Gemini (free tier), default model `gemini-3.5-flash-lite`.
 | M4 CV generator (FE-1, FR6.1; BO-2) | `cvgen/CvEditor.jsx` (Generate / Improve on summary, experience, projects), `AiAssistButton.jsx`, `services/cvAssistService.js` | built with a disabled stub | Rephrase / organise / improve wording of the user's own facts; review before saving | Part 2 |
 | M4 target-role tailoring (BO-2) | — | not built | Emphasise held skills a chosen career needs; never adds skills | Part 3 (later) |
 | ATS check | `cvgen/templates.js`, `CvDocument.jsx` | ATS-safe layout only; no FR | Not an LLM task (deterministic keyword check) | proposal |
-| M6 learning paths (FR8.2, SI-3.3) | `careers/CareerDetails.jsx` (button "coming soon"); `career_matches.gaps` | not built | Roadmap for the stored gaps | when M6 is built |
+| M6 learning paths (FR8.2, SI-3.3) | `careers/CareerDetails.jsx` (button "coming soon"); `career_matches.gaps` | built (13) | Describes each module, suggests resources (links built by our code) | Module 6 |
 | M7 skill verification (FE-2, FR9.2/9.5/9.7, SI-3.1) | — | not built | Generate and grade quizzes, follow-ups | when M7 is built |
 | M8 mock interview (FR10.2/10.6/10.8, SI-3.2) | Core `adminInterviewController.js` (manual question bank) | not built | Questions, answer analysis, feedback report | when M8 is built |
 | M9 readiness (FR11.6) | — | not built | (mostly deterministic) | later |

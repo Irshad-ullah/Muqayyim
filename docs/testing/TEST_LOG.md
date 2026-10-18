@@ -1025,3 +1025,63 @@ New test files and tests:
   - the skill-list script re-indented `skill_aliases.json` (now written with the editor's writer);
   - the slow background test asserted the legacy rate (it now asserts the B2 metric and records 5.4 %);
   - the sandbox comparison script needed explicit modes once production had them.
+
+## Module 6 — learning paths (FR7.7, FR8.1–FR8.9)
+
+**Date:** 2026-10-18 · commits `30c38c5` … (see `docs/changes/13-learning-paths.md`) · test runs
+`2026-10-18T162627-91512af` (ai, core, gateway, frontend) and `2026-10-18T163339-91512af` (ai-slow)
+
+- **Automated tests (full run, all passed):**
+  - AI 664 passed, 1 skipped, 5 deselected;
+  - AI slow 2 passed, 2 xfailed (the strict xfails listed above);
+  - Core 306 passed;
+  - Gateway 82 passed;
+  - frontend 167 passed (45 node + 122 Vitest).
+- **New test files:**
+  - AI `test_learning_structure.py`: structure, prerequisites, cap, routes, profile-skills-only snapshot and state;
+  - AI `test_learning_enrich.py`: enrichment validation (URLs, hours, platforms, module set), links built by our code,
+    labels, free-only filter, cache, "Suggest another resource", rejection-reason logging;
+  - Core `learningPaths.test.js`: consent, create, limits, ownership, completion → profile, freshness, regenerate,
+    feedback, suggest more;
+  - FE `pages/learning/LearningPaths.spec.jsx`: list, path page, completion, setup dialog with consent, Part 6 UI;
+  - FE `pages/learning/pathRules.test.js`: timeline, labels, errors, banner text.
+- **Changed tests:** Core `aiAssist.test.js` (consent text), `profileValidation.test.js` (`learning: []`); Gateway
+  `aiRoute.test.js` (learning-path proxy); FE `CareerMatchesPage.spec.jsx`, `careerRules.test.js` (Module 6);
+  AI `test_curated_import.py` (clean start, see below).
+- **Evaluation (structure, rules 1–5):** 24 / 24 profiles pass every rule (`AIServices/eval/learning_paths/results/`).
+- **Manual check with real Gemini (rule 9), 2026-10-18:**
+  - backups first: mongodump of ai_db to `~/.muqayyim/backups/m6-part7-20261018T152457` and `m6-part7b-20261018T155456`;
+  - sample: **23 recommendations, 5 paths** (DevOps Engineer, Android Developer, Data Analyst, UI/UX Designer, Backend
+    Developer) from 5 test-CV profiles, English, "include paid"; 8 Gemini calls in total;
+  - reviewers: project team members (roles only; the reviewer column was left empty, so who reviewed which row is not
+    recorded); review date 2026-10-18;
+  - results (`manual_review.csv`, `results/manual_review_summary.md`):
+
+    | Scope | Exists | Relevant | Hours plausible |
+    |---|---|---|---|
+    | All 23 | 19 / 23 (82.6 %) | 20 / 23 (87.0 %) | not recorded |
+    | DevOps Engineer | 2 / 3 (66.7 %) | 2 / 3 (66.7 %) | not recorded |
+    | Android Developer | 4 / 4 (100 %) | 4 / 4 (100 %) | not recorded |
+    | UI/UX Designer | 5 / 6 (83.3 %) | 6 / 6 (100 %) | not recorded |
+    | Backend Developer | 3 / 4 (75.0 %) | 3 / 4 (75.0 %) | not recorded |
+    | Data Analyst | 5 / 6 (83.3 %) | 5 / 6 (83.3 %) | not recorded |
+    | Without the 2 freeCodeCamp rows (21) | 19 / 21 (90.5 %) | 20 / 21 (95.2 %) | not recorded |
+
+  - limitations: small sample (each path 1–3 modules); recommendations depend on the LLM's knowledge cutoff; hours
+    are LLM estimates and were not checked.
+- **Problems found by testing, with their fixes:**
+  - **Urdu-Hindi:** the Urdu-Hindi path (Data Analyst) was rejected by validation on both attempts; the English paths
+    passed. Decision: English only — the option was removed from the UI, the API, the schema and the prompts (v2)
+    (`5666172`); the rejected path was dropped from the review set and Data Analyst was generated again in English.
+  - **No rejection reason was available,** so the client now logs and stores the names of the failed checks only
+    (`llm_usage.reject_reason`: `not_json`, `url_found`, `hours_out_of_range`, `module_set_mismatch`, `schema`)
+    (`18e8970`). The re-generated path passed on the first attempt; no rejection reasons were seen after the change.
+  - **freeCodeCamp:** both freeCodeCamp recommendations were marked not found / not relevant (the search links did not
+    work), so freeCodeCamp was removed from the platforms (prompts v3, `34f1df8`).
+  - **Excel turned "10-25" hours into dates** in the review file; hours are now written as "10 to 25 h", and the
+    review file is merged, never overwritten.
+  - **Completing a module would have marked its path stale** (the skills hash changed): paths and their snapshot now
+    use profile skills only (`c9daf2f`).
+  - **`test_curated_import.py` (2 tests) failed since `330424c`,** which committed `app/data/curated_roles.json`: the
+    shared fixture copied it, so rollback / restore rightly restored it. The test was wrong, not the code; the tests
+    now start with no curated dataset file (`91512af`).
