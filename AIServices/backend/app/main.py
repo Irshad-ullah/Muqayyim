@@ -28,6 +28,7 @@ from app.routes.internal_logs_routes import router as internal_logs_router
 from app.routes.profession_routes import router as profession_router
 from app.routes.taxonomy_routes import router as taxonomy_router
 from app.routes.matching_routes import router as matching_router
+from app.routes.learning_routes import router as learning_router
 from app.routes.llm_routes import router as llm_router
 from app.services.taxonomy.heartbeat import run_heartbeat
 from app.services.taxonomy.jobs import ensure_job_indexes
@@ -224,6 +225,7 @@ app.include_router(internal_logs_router)  # admin log view, via CoreServices
 app.include_router(profession_router)  # Module 10 FE-4 professions + role-skill index, via CoreServices
 app.include_router(taxonomy_router)  # Module 10 FE-4 / FR12.5 admin taxonomy jobs, via CoreServices
 app.include_router(matching_router)  # Module 5 career matching, via CoreServices
+app.include_router(learning_router)  # Module 6 learning paths, via CoreServices
 app.include_router(llm_router)  # 12: LLM status, usage, user-data deletion, via CoreServices
 
 
