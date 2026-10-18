@@ -68,7 +68,7 @@ async def test_enrichment_with_links_built_by_our_code(fake):
     assert first["recommendations"][1]["search_url"].startswith("https://duckduckgo.com/?q=JavaScript+The+Official+Tutorial")
     assert out["total_hours"] == {"min": 20, "max": 40, "label": "estimated"}
     assert out["prerequisites"]["accepted"] == [["javascript", "react"]]
-    assert out["usage"]["prompt"] == "learning_path@v3"
+    assert out["usage"]["prompt"] == "learning_path@v4"
 
 
 async def test_only_role_modules_skill_names_and_preferences_are_sent(fake):
@@ -84,7 +84,7 @@ async def test_only_role_modules_skill_names_and_preferences_are_sent(fake):
 @pytest.mark.parametrize("bad, reason", [
     (answer([module("JavaScript", why="Read https://react.dev first."), module("React")]), "url_found"),    # URL in text
     (answer([module("JavaScript", recs=[rec(title="Visit www.example.com"), rec()]), module("React")]), "url_found"),
-    (answer([module("JavaScript", recs=[rec(instructor="freecodecamp.org"), rec()]), module("React")]), "url_found"),
+    (answer([module("JavaScript", recs=[rec(instructor="codecademy.com"), rec()]), module("React")]), "url_found"),
     (answer([module("JavaScript", hours=(1, 20)), module("React")]), "hours_out_of_range"),                 # below 2 h
     (answer([module("JavaScript", hours=(10, 90)), module("React")]), "hours_out_of_range"),                # above 80 h
     (answer([module("JavaScript", hours=(20, 10)), module("React")]), "hours_out_of_range"),                # min > max
@@ -98,15 +98,30 @@ async def test_only_role_modules_skill_names_and_preferences_are_sent(fake):
     ("Here is your path!", "not_json"),
 ])
 async def test_invalid_outputs_never_reach_a_path(fake, real_db, caplog, bad, reason):  # noqa: F811
+    """An invalid module never reaches a path: the corrective retry first; then valid modules are kept and the invalid
+    ones listed as failed (usage "partial"), or, with nothing valid, invalid output. Logs name the checks only."""
     fake.push(bad)
     fake.push(bad)  # the corrective retry gets the same answer
-    with caplog.at_level("WARNING", logger="app.services.llm.client"), pytest.raises(LLMInvalidOutput):
-        await enrich.enrich(request(), "u1")
-    record = await real_db["llm_usage"].find_one({"feature": "learning_path", "status": "invalid_output"}, sort=[("_id", -1)])
+    with caplog.at_level("WARNING", logger="app.services.llm.client"):
+        try:
+            out = await enrich.enrich(request(), "u1")
+        except LLMInvalidOutput:
+            out = None
+    record = await real_db["llm_usage"].find_one({"feature": "learning_path"}, sort=[("_id", -1)])
     assert reason in record["reject_reason"] and record["attempts"] == 2
+    if out is None:
+        assert record["status"] == "invalid_output"
+    else:
+        assert record["status"] == "partial"
+        kept = {m["key"] for m in out["modules"]}
+        assert kept <= {"javascript", "react"} and set(out["failed"]) == {"javascript", "react"} - kept
+        text = json.dumps(out)
+        for content in ("react.dev", "example.com", "codecademy", "Pluralsight", '"platform": "freeCodeCamp"', "Docker", "Vue.js"):
+            assert content not in text, content
+        assert all(2 <= m["hours"]["min"] <= m["hours"]["max"] <= 80 for m in out["modules"])
     logged = [r.getMessage() for r in caplog.records if "rejected" in r.getMessage()]
-    assert len(logged) == 2 and all(f"checks=" in m and reason in m for m in logged)
-    for content in ("react.dev", "example.com", "Pluralsight", "Docker", "Here is your path"):  # names only, no content
+    assert len(logged) == 2 and all("checks=" in m and reason in m for m in logged)
+    for content in ("react.dev", "example.com", "codecademy", "Pluralsight", "Docker", "Here is your path"):  # names only
         assert not any(content in m for m in logged)
 
 
@@ -115,14 +130,15 @@ async def test_total_hours_over_400_and_a_rejection_replaced_by_the_retry(fake, 
     over = answer([module(m["skill"], hours=(30, 80)) for m in many])  # 6 × 80 = 480 h
     fake.push(over)
     fake.push(over)
-    with pytest.raises(LLMInvalidOutput):
-        await enrich.enrich(request(modules=many), "u1")
-    record = await real_db["llm_usage"].find_one({"status": "invalid_output"}, sort=[("_id", -1)])
-    assert record["reject_reason"] == ["hours_out_of_range"]
+    out = await enrich.enrich(request(modules=many), "u1")
+    assert [m["key"] for m in out["modules"]] == ["javascript", "react", "a", "b", "c"] and out["failed"] == ["d"]
+    assert out["total_hours"]["max"] == 400  # the total still holds
+    record = await real_db["llm_usage"].find_one({"feature": "learning_path"}, sort=[("_id", -1)])
+    assert record["status"] == "partial" and record["reject_reason"] == ["hours_out_of_range"]
     fake.push(answer([module("JavaScript")]))  # a module dropped, then a valid answer
     fake.push(answer())
     out = await enrich.enrich(request(user_skills=["Git"]), "u1")
-    assert [m["skill"] for m in out["modules"]] == ["JavaScript", "React"]
+    assert [m["skill"] for m in out["modules"]] == ["JavaScript", "React"] and out["failed"] == []
     ok = await real_db["llm_usage"].find_one({"status": "ok"}, sort=[("_id", -1)])
     assert ok["attempts"] == 2 and ok["reject_reason"] == ["module_set_mismatch"]
     fake.push(answer())
@@ -179,10 +195,53 @@ async def test_routes(fake, monkeypatch):
         fake.push(answer())
         ok = await c.post("/internal/llm/learning-enrich", json=body, headers=headers)
         assert ok.status_code == 200 and ok.json()["data"]["modules"][0]["skill"] == "JavaScript"
-        fake.push(answer([module("JavaScript")]))
-        fake.push(answer([module("JavaScript")]))
+        fake.push("not json")
+        fake.push("still not json")
         # (hours per week is not sent to the model — the timeline is ours — so another skill list makes a new prompt)
         bad = await c.post("/internal/llm/learning-enrich", json={**body, "user_skills": ["HTML"]}, headers=headers)
         assert bad.status_code == 502 and bad.json()["code"] == "LLM_INVALID_OUTPUT"
         assert (await c.post("/internal/llm/learning-enrich", json=body, headers={"X-Internal-Key": "k-learn"})).status_code == 400
         assert (await c.post("/internal/llm/learning-enrich", json={**body, "profile": {"email": "x"}}, headers=headers)).status_code == 422
+
+
+# ── names that look like domains; partial answers; the background retry and the quota ─────────────────────────────
+async def test_channel_and_publisher_names_that_look_like_domains_pass(fake):
+    names = [rec(instructor="freeCodeCamp.org"), rec("Deep Learning Specialization", "Coursera", instructor="DeepLearning.AI"),
+             rec("ASP.NET Core MVC", "Udemy", free=False, instructor="Socket.IO fan")]
+    fake.push(answer([module("JavaScript", recs=names[:2]), module("React", recs=names[1:])]))
+    out = await enrich.enrich(request(preferences={"cost": "include_paid", "hours_per_week": 6}), "u1")
+    assert out["failed"] == [] and out["modules"][0]["recommendations"][0]["instructor"] == "freeCodeCamp.org"
+    assert enrich.URL.search(enrich.KNOWN_NAMES.sub(" ", "see freeCodeCamp.org.com")) is not None  # still a domain
+
+
+async def test_a_partial_answer_keeps_the_valid_modules(fake, real_db):  # noqa: F811
+    bad_react = module("React", recs=[rec(instructor="react.dev"), rec()])
+    fake.push(answer([module("JavaScript"), bad_react], prerequisites=[["JavaScript", "React"]]))
+    fake.push(answer([module("JavaScript"), bad_react, module("Docker")], prerequisites=[["JavaScript", "React"]]))
+    out = await enrich.enrich(request(user_skills=["Sass"]), "u1")
+    assert [m["key"] for m in out["modules"]] == ["javascript"] and out["failed"] == ["react"]
+    assert out["total_hours"] == {"min": 10, "max": 20, "label": "estimated"}
+    assert out["prerequisites"]["accepted"] == [["javascript", "react"]]
+    record = await real_db["llm_usage"].find_one({"feature": "learning_path"}, sort=[("_id", -1)])
+    assert record["status"] == "partial" and "url_found" in record["reject_reason"]
+    assert "react.dev" not in fake.requests[-1].prompt  # the corrective retry names the check, not the content
+    assert "web address or domain name" in fake.requests[-1].prompt
+    # nothing valid at all → invalid output
+    fake.push(answer([bad_react]))
+    fake.push("not json")
+    with pytest.raises(LLMInvalidOutput):
+        await enrich.enrich(request(user_skills=["Less"]), "u1")
+
+
+async def test_the_automatic_retry_does_not_use_the_users_daily_quota(fake, real_db, monkeypatch):  # noqa: F811
+    from app.services.llm.errors import LLMQuotaExceeded
+
+    monkeypatch.setattr(settings, "LLM_USER_DAILY_QUOTA", 1)
+    fake.push(answer())
+    await enrich.enrich(request(user_skills=["A"]), "u-quota")
+    fake.push(answer([module("React")]))
+    retry = request(modules=[{"key": "react", "skill": "React"}], user_skills=["B"], automatic_retry=True)
+    assert [m["key"] for m in (await enrich.enrich(retry, "u-quota"))["modules"]] == ["react"]
+    fake.push(answer())
+    with pytest.raises(LLMQuotaExceeded):  # a user-requested call is still counted
+        await enrich.enrich(request(user_skills=["C"]), "u-quota")

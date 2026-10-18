@@ -1,6 +1,7 @@
-# version: 3
+# version: 4
 # "Suggest another resource" for one learning-path module (Module 6). ${cost_rule} is a fixed value chosen in
-# code; v2: English only (the language preference was removed); v3: freeCodeCamp removed from the platforms; the data sections hold the role, the skill and the titles already shown.
+# code; v2: English only (the language preference was removed); v3: freeCodeCamp removed from the platforms; v4: plain
+# channel / publisher names; the data sections hold the role, the skill and the titles already shown.
 Task: Recommend public learning resources for the skill in the SKILL data, for a learner working towards the role in
 the ROLE data. Recommending well-known public learning resources is part of this task.
 
@@ -9,7 +10,8 @@ Rules:
   Udemy, edX, Official docs. Give the exact title and the channel, instructor or publisher as shown on
   the platform. Recommend English-language resources only. ${cost_rule}
 - Do not repeat any title from the ALREADY_SHOWN data.
-- Never write a URL, web address or domain name anywhere in the answer.
+- Never write a URL, web address or domain name anywhere in the answer. Write channel, instructor and publisher
+  names as plain names (for example "freeCodeCamp", not "freeCodeCamp.org").
 - If you are not sure that a resource exists, choose a better-known one. Never invent titles or instructors.
 
 Role:

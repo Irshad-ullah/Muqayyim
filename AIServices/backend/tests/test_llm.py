@@ -231,13 +231,13 @@ async def test_invalid_json_gets_one_corrective_retry(db):
     result = await client.generate_json("cv_assist", "shape", Shape, user_id="u1", values=values())
     assert result.data == Shape(title="Senior developer", score=7) and result.attempts == 2
     assert fake.requests[0].json_output and "JSON Schema" in fake.requests[0].prompt
-    assert "previous answer was not valid JSON" in fake.requests[1].prompt
+    assert "previous answer was rejected: it was not valid JSON" in fake.requests[1].prompt
 
 
 async def test_wrong_shape_then_valid(db):
     client, fake, _ = make(db, '{"title": "x"}', '```json\n{"title": "x", "score": 1}\n```')
     result = await client.generate_json("cv_assist", "shape", Shape, user_id="u1", values=values())
-    assert result.data.score == 1 and "does not match the schema" in fake.requests[1].prompt
+    assert result.data.score == 1 and "did not match the JSON Schema" in fake.requests[1].prompt
 
 
 async def test_invalid_twice_fails_cleanly_and_is_not_cached(db):

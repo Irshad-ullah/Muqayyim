@@ -1,7 +1,7 @@
 """
 Per-call LLM usage records (12): ai_db.llm_usage, for the admin dashboard and cost visibility.
 One document per feature call: feature, user reference (hash), provider, model, prompt version,
-status (ok / cached / disabled / rate_limited / quota_exceeded / timeout / unavailable /
+status (ok / partial / cached / disabled / rate_limited / quota_exceeded / timeout / unavailable /
 invalid_output), provider attempts, input / output tokens and latency, and reject_reason: the names
 of the validation checks a JSON answer failed (e.g. ["url_found"]; on an ok call, those of the answer the corrective
 retry replaced). Prompts and responses are NEVER stored here (they can contain personal data). Kept for 365 days.

@@ -17,7 +17,12 @@ message; nothing else escapes. Logs: feature, a 12-character user hash, status, 
 Rejected JSON answers are logged and recorded (usage reject_reason) by the NAMES of the failed checks only, never
 their content: "not_json", a named check raised by the schema as a PydanticCustomError (NAMED_CHECKS), or "schema"
 for any other shape problem. A schema can take a validation context (generate_json(validation_context=…)), e.g. the
-modules an answer must cover.
+modules an answer must cover. The corrective retry names the failed checks (names only).
+
+Partial answers: with generate_json(salvage=LooseSchema), an answer that still fails the strict schema after the
+corrective retry is parsed with the loose schema instead; the result has partial=True, the usage status is "partial"
+(with reject_reason) and it is never cached — the feature validates the parts itself and keeps the valid ones.
+count_user_quota=False (an automatic retry the user did not ask for) takes a global slot but not the user's quota.
 """
 
 import asyncio
@@ -45,6 +50,13 @@ logger = logging.getLogger(__name__)
 MAX_BACKOFF_S = 8.0
 MAX_RETRY_WAIT_S = 20.0  # a provider asking to wait longer is reported as rate limited instead
 NAMED_CHECKS = frozenset({"url_found", "hours_out_of_range", "module_set_mismatch"})
+CHECK_HINTS = {  # what the corrective retry tells the model (no content of its answer)
+    "not_json": "it was not valid JSON",
+    "url_found": "it contained a web address or domain name (write channel and publisher names without .com, .org etc.)",
+    "hours_out_of_range": "hours were outside the allowed range",
+    "module_set_mismatch": "it did not cover exactly the modules in MODULES, once each, with the same skill text",
+    "schema": "it did not match the JSON Schema",
+}
 
 
 @dataclass
@@ -52,6 +64,8 @@ class LLMResult:
     text: str
     data: Any = None  # the validated schema instance for generate_json
     cached: bool = False
+    partial: bool = False  # data is the salvage schema's instance (generate_json(salvage=…))
+    reject_reason: Optional[List[str]] = None
     input_tokens: int = 0
     output_tokens: int = 0
     latency_ms: int = 0
@@ -123,9 +137,10 @@ class LLMClient:
 
     async def generate_json(self, feature: str, prompt_name: str, schema: Type[BaseModel], *, user_id: Optional[str],
                             values: Optional[dict] = None, max_output_tokens: Optional[int] = None,
-                            temperature: float = 0.2, validation_context: Optional[dict] = None) -> LLMResult:
+                            temperature: float = 0.2, validation_context: Optional[dict] = None,
+                            salvage: Optional[Type[BaseModel]] = None, count_user_quota: bool = True) -> LLMResult:
         return await self._run(feature, prompt_name, user_id, values or {}, schema, max_output_tokens, temperature,
-                               validation_context)
+                               validation_context, salvage, count_user_quota)
 
     # ── internals ─────────────────────────────────────────────────────────────
     async def _record(self, feature, user, prompt_ref, status, attempts=0, input_tokens=0, output_tokens=0, latency_ms=0,
@@ -172,7 +187,7 @@ class LLMClient:
         return (len(request.system) + len(request.prompt)) // 4 + request.max_output_tokens
 
     async def _run(self, feature, prompt_name, user_id, values, schema, max_output_tokens, temperature,
-                   context=None) -> LLMResult:
+                   context=None, salvage=None, count_user_quota=True) -> LLMResult:
         template = load(prompt_name)
         user = cache.user_ref(user_id)
         if not self.enabled:
@@ -194,6 +209,7 @@ class LLMClient:
         request = LLMRequest(system=system, prompt=prompt, json_output=schema is not None, temperature=temperature,
                              max_output_tokens=max_output_tokens or settings.LLM_MAX_OUTPUT_TOKENS)
         state = {"attempts": 0, "taken": [], "rejected": []}
+        partial = False
 
         def rejected(exc: Exception) -> None:
             names = reject_reasons(exc)
@@ -203,7 +219,7 @@ class LLMClient:
         started = time.perf_counter()
         tokens_in = tokens_out = 0
         try:
-            first = await limits.acquire(self.db, user, self._estimate(request), self._clock())
+            first = await limits.acquire(self.db, user if count_user_quota else None, self._estimate(request), self._clock())
             state["taken"].append(first)
             response = await self._call(request, feature, user, template.ref, state)
             tokens_in, tokens_out = response.input_tokens, response.output_tokens
@@ -213,11 +229,12 @@ class LLMClient:
                     data = parse_json(text, schema, context)
                 except (ValueError, ValidationError) as exc:
                     rejected(exc)
-                    problem = "not valid JSON" if not isinstance(exc, ValidationError) else \
-                        f"JSON that does not match the schema ({exc.error_count()} problem(s))"
+                    problem = "; ".join(CHECK_HINTS[n] for n in reject_reasons(exc))
                     retry = LLMRequest(system=system, json_output=True, temperature=temperature,
                                        max_output_tokens=request.max_output_tokens,
-                                       prompt=prompt + f"\n\nYour previous answer was {problem}. Return only the JSON object.")
+                                       prompt=prompt + f"\n\nYour previous answer was rejected: {problem}. "
+                                                       "Return only the corrected JSON object.")
+                    first_text = text
                     response = await self._call(retry, feature, user, template.ref, state)
                     tokens_in += response.input_tokens
                     tokens_out += response.output_tokens
@@ -226,7 +243,10 @@ class LLMClient:
                         data = parse_json(text, schema, context)
                     except (ValueError, ValidationError) as again:
                         rejected(again)
-                        raise LLMInvalidOutput()
+                        data = self._salvage(salvage, (text, first_text), context)
+                        if data is None:
+                            raise LLMInvalidOutput()
+                        partial = True
         except LLMError as exc:
             status = {"LLM_RATE_LIMITED": "rate_limited", "LLM_QUOTA_EXCEEDED": "quota_exceeded", "LLM_TIMEOUT": "timeout",
                       "LLM_INVALID_OUTPUT": "invalid_output"}.get(exc.code, "unavailable")
@@ -236,11 +256,25 @@ class LLMClient:
         latency = round((time.perf_counter() - started) * 1000)
         if state["taken"]:
             await limits.adjust_tokens(self.db, state["taken"][0], tokens_in + tokens_out)
-        await cache.put(self.db, key, user, feature, text)
-        await self._record(feature, user, template.ref, "ok", state["attempts"], tokens_in, tokens_out, latency,
-                           state["rejected"] or None)
+        if not partial:  # a partial answer is never cached (a cache hit is parsed with the strict schema)
+            await cache.put(self.db, key, user, feature, text)
+        await self._record(feature, user, template.ref, "partial" if partial else "ok", state["attempts"], tokens_in,
+                           tokens_out, latency, state["rejected"] or None)
         return LLMResult(text=text, data=data, input_tokens=tokens_in, output_tokens=tokens_out, latency_ms=latency,
-                         attempts=state["attempts"], model=response.model or model, prompt_ref=template.ref)
+                         attempts=state["attempts"], model=response.model or model, prompt_ref=template.ref,
+                         partial=partial, reject_reason=state["rejected"] or None)
+
+    @staticmethod
+    def _salvage(schema, texts, context):
+        """The first of the answers (latest first) that parses with the loose salvage schema, or None."""
+        if schema is None:
+            return None
+        for text in texts:
+            try:
+                return parse_json(text, schema, context)
+            except (ValueError, ValidationError):
+                continue
+        return None
 
 
 _client: Optional[LLMClient] = None
