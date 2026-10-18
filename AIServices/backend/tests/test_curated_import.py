@@ -19,6 +19,16 @@ from tests.test_taxonomy_publish import checks, db, previewed  # noqa: F401 — 
 FIXTURE = Path(__file__).parent / "fixtures" / "curated" / "modern_roles_v1.json"
 
 
+@pytest.fixture(autouse=True)
+def before_any_curated_import(request):
+    """These tests start where the test database starts: before any curated publish, so with no curated dataset file.
+    The shared `db` fixture copies the live data files, which include app/data/curated_roles.json since it was
+    committed (330424c); without this, rollback / restore rightly put that copy back and the tests saw it."""
+    if "db" in request.fixturenames:
+        request.getfixturevalue("db")  # the temporary DATA_DIR is set up first
+        (snapshots.DATA_DIR / curated.FILE_NAME).unlink(missing_ok=True)
+
+
 class Upload:
     def __init__(self, data: bytes):
         self.buffer = io.BytesIO(data)
