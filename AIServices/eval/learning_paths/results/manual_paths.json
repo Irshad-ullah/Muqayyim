@@ -1,0 +1,908 @@
+{
+ "paths": [
+  {
+   "profile": "cv04_devops",
+   "profession_id": "curated:devops-engineer",
+   "title": "DevOps Engineer",
+   "match": 90.0,
+   "preferences": {
+    "cost": "include_paid",
+    "hours_per_week": 6
+   },
+   "structure": {
+    "profession_id": "curated:devops-engineer",
+    "title": "DevOps Engineer",
+    "source": "curated",
+    "source_version": "curated v1.0.0",
+    "match_score": 90.0,
+    "modules": [
+     {
+      "requirement_key": "linux",
+      "requirement": "Linux",
+      "key": "linux",
+      "skill": "Linux",
+      "alternatives": [],
+      "tier": "essential",
+      "quick_win": true,
+      "hint": {
+       "skill": "Bash",
+       "similarity": 0.821
+      },
+      "prerequisites": [],
+      "order": 1
+     }
+    ],
+    "more": {
+     "count": 0,
+     "skills": []
+    },
+    "prerequisites": {
+     "accepted": [],
+     "rejected": []
+    },
+    "snapshot": {
+     "skills_hash": "43db6341e36876381f43bdd517ef6153c9fe2aecc1dca7414a5ea76a77872ad2",
+     "dataset_hash": "e03170fad4bcf57663be8b657f636a9c344cfca62c56ae30ef0e78afbd32cf9e",
+     "scoring_mode": "exact",
+     "algorithm": "learning-structure@1"
+    }
+   },
+   "enrichment": {
+    "modules": [
+     {
+      "key": "linux",
+      "skill": "Linux",
+      "why": "Linux is the foundational operating system for most cloud environments, containers, and orchestration tools used in DevOps. Mastering it is essential for configuring servers, troubleshooting failures, and managing system resources.",
+      "subtopics": [
+       "Filesystem hierarchy and permissions",
+       "Process management and system monitoring",
+       "Package management and service configuration",
+       "Shell scripting and text manipulation"
+      ],
+      "project": "Build a basic system health monitoring script in Linux that logs CPU, memory, and disk usage to a file, and configure it to run periodically using cron.",
+      "hours": {
+       "min": 10,
+       "max": 25,
+       "label": "estimated"
+      },
+      "recommendations": [
+       {
+        "platform": "YouTube",
+        "title": "Linux for Beginners",
+        "instructor": "NetworkChuck",
+        "description": "An engaging beginner-friendly introduction to Linux commands and system navigation.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://www.youtube.com/results?search_query=Linux+for+Beginners+NetworkChuck",
+        "search_label": "Find on YouTube",
+        "label": "AI recommendation"
+       },
+       {
+        "platform": "Coursera",
+        "title": "The Linux Command Line",
+        "instructor": "Linux Foundation",
+        "description": "Comprehensive course covering essential Linux command line operations.",
+        "free": false,
+        "language": "English",
+        "search_url": "https://www.coursera.org/search?query=The+Linux+Command+Line+Linux+Foundation",
+        "search_label": "Find on Coursera",
+        "label": "AI recommendation, check before buying"
+       },
+       {
+        "platform": "freeCodeCamp",
+        "title": "Linux Command Line Full Course",
+        "instructor": "freeCodeCamp",
+        "description": "A thorough walkthrough of Linux basics and command line utilities.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://www.freecodecamp.org/news/search?query=Linux+Command+Line+Full+Course+freeCodeCamp",
+        "search_label": "Find on freeCodeCamp",
+        "label": "AI recommendation"
+       }
+      ]
+     }
+    ],
+    "order": [
+     "linux"
+    ],
+    "prerequisites": {
+     "accepted": [],
+     "rejected": []
+    },
+    "total_hours": {
+     "min": 10,
+     "max": 25,
+     "label": "estimated"
+    },
+    "usage": {
+     "cached": false,
+     "input_tokens": 1459,
+     "output_tokens": 389,
+     "latency_ms": 3010,
+     "model": "gemini-3.5-flash-lite",
+     "prompt": "learning_path@v1"
+    }
+   },
+   "error": null
+  },
+  {
+   "profile": "cv05_android",
+   "profession_id": "curated:android-developer",
+   "title": "Android Developer",
+   "match": 80.0,
+   "preferences": {
+    "cost": "include_paid",
+    "hours_per_week": 6
+   },
+   "structure": {
+    "profession_id": "curated:android-developer",
+    "title": "Android Developer",
+    "source": "curated",
+    "source_version": "curated v1.0.0",
+    "match_score": 80.0,
+    "modules": [
+     {
+      "requirement_key": "junit",
+      "requirement": "JUnit",
+      "key": "junit",
+      "skill": "JUnit",
+      "alternatives": [],
+      "tier": "essential",
+      "quick_win": true,
+      "hint": {
+       "skill": "Unit Testing",
+       "similarity": 0.825
+      },
+      "prerequisites": [],
+      "order": 1
+     },
+     {
+      "requirement_key": "kotlin coroutines",
+      "requirement": "Kotlin Coroutines",
+      "key": "kotlin coroutines",
+      "skill": "Kotlin Coroutines",
+      "alternatives": [],
+      "tier": "optional",
+      "quick_win": true,
+      "hint": {
+       "skill": "Kotlin",
+       "similarity": 0.861
+      },
+      "prerequisites": [],
+      "order": 2
+     }
+    ],
+    "more": {
+     "count": 0,
+     "skills": []
+    },
+    "prerequisites": {
+     "accepted": [],
+     "rejected": []
+    },
+    "snapshot": {
+     "skills_hash": "45c88e41677f45032f379819133a2aff2d10d661d5a40198589ffff47c2f03b6",
+     "dataset_hash": "e03170fad4bcf57663be8b657f636a9c344cfca62c56ae30ef0e78afbd32cf9e",
+     "scoring_mode": "exact",
+     "algorithm": "learning-structure@1"
+    }
+   },
+   "enrichment": {
+    "modules": [
+     {
+      "key": "junit",
+      "skill": "JUnit",
+      "why": "JUnit is fundamental for writing reliable, automated unit tests to verify the correctness of Android application logic. It helps catch bugs early in the development lifecycle and ensures code maintainability.",
+      "subtopics": [
+       "Introduction to unit testing",
+       "Writing assertions",
+       "Mocking dependencies",
+       "Testing ViewModels"
+      ],
+      "project": "Write unit tests for a ViewModel in an Android application to verify state changes and business logic.",
+      "hours": {
+       "min": 5,
+       "max": 15,
+       "label": "estimated"
+      },
+      "recommendations": [
+       {
+        "platform": "Official docs",
+        "title": "Test your app",
+        "instructor": "Android Developers",
+        "description": "Comprehensive official documentation on testing Android applications using JUnit and other tools.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://duckduckgo.com/?q=JUnit+Test+your+app+official+documentation",
+        "search_label": "Find on Official docs",
+        "label": "AI recommendation"
+       },
+       {
+        "platform": "Coursera",
+        "title": "Android App Development",
+        "instructor": "Google",
+        "description": "Learn Android development concepts including testing fundamentals.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://www.coursera.org/search?query=Android+App+Development+Google",
+        "search_label": "Find on Coursera",
+        "label": "AI recommendation"
+       }
+      ]
+     },
+     {
+      "key": "kotlin coroutines",
+      "skill": "Kotlin Coroutines",
+      "why": "Kotlin Coroutines simplify asynchronous programming by writing non-blocking code that remains sequential and easy to read. They are essential for handling background tasks like network requests and database operations without freezing the UI.",
+      "subtopics": [
+       "Suspending functions",
+       "Coroutine scopes and contexts",
+       "Dispatchers",
+       "Flow and asynchronous streams"
+      ],
+      "project": "Implement a background data fetch from a REST API using coroutines and display the results in a Jetpack Compose UI.",
+      "hours": {
+       "min": 10,
+       "max": 25,
+       "label": "estimated"
+      },
+      "recommendations": [
+       {
+        "platform": "Official docs",
+        "title": "Kotlin coroutines on Android",
+        "instructor": "Android Developers",
+        "description": "Official guide on using coroutines to manage background threads in Android.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://duckduckgo.com/?q=Kotlin+Coroutines+Kotlin+coroutines+on+Android+official+documentation",
+        "search_label": "Find on Official docs",
+        "label": "AI recommendation"
+       },
+       {
+        "platform": "YouTube",
+        "title": "Kotlin Coroutines Android Tutorial",
+        "instructor": "Philipp Lackner",
+        "description": "Practical video tutorials on implementing coroutines and flows in Android apps.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://www.youtube.com/results?search_query=Kotlin+Coroutines+Android+Tutorial+Philipp+Lackner",
+        "search_label": "Find on YouTube",
+        "label": "AI recommendation"
+       }
+      ]
+     }
+    ],
+    "order": [
+     "junit",
+     "kotlin coroutines"
+    ],
+    "prerequisites": {
+     "accepted": [],
+     "rejected": []
+    },
+    "total_hours": {
+     "min": 15,
+     "max": 40,
+     "label": "estimated"
+    },
+    "usage": {
+     "cached": false,
+     "input_tokens": 1460,
+     "output_tokens": 593,
+     "latency_ms": 3301,
+     "model": "gemini-3.5-flash-lite",
+     "prompt": "learning_path@v1"
+    }
+   },
+   "error": null
+  },
+  {
+   "profile": "cv03_data_scientist",
+   "profession_id": "curated:data-analyst",
+   "title": "Data Analyst",
+   "match": 70.0,
+   "preferences": {
+    "cost": "include_paid",
+    "hours_per_week": 6
+   },
+   "structure": {
+    "profession_id": "curated:data-analyst",
+    "title": "Data Analyst",
+    "source": "curated",
+    "source_version": "curated v1.0.0",
+    "match_score": 70.0,
+    "modules": [
+     {
+      "requirement_key": "excel",
+      "requirement": "Excel",
+      "key": "excel",
+      "skill": "Excel",
+      "alternatives": [],
+      "tier": "essential",
+      "quick_win": true,
+      "hint": {
+       "skill": "Pandas",
+       "similarity": 0.842
+      },
+      "prerequisites": [],
+      "order": 1
+     },
+     {
+      "requirement_key": "data cleaning",
+      "requirement": "Data Cleaning",
+      "key": "data cleaning",
+      "skill": "Data Cleaning",
+      "alternatives": [],
+      "tier": "essential",
+      "quick_win": true,
+      "hint": {
+       "skill": "Pandas",
+       "similarity": 0.787
+      },
+      "prerequisites": [],
+      "order": 2
+     },
+     {
+      "requirement_key": "regression analysis",
+      "requirement": "Regression Analysis",
+      "key": "regression analysis",
+      "skill": "Regression Analysis",
+      "alternatives": [],
+      "tier": "optional",
+      "quick_win": true,
+      "hint": {
+       "skill": "Statistics",
+       "similarity": 0.886
+      },
+      "prerequisites": [],
+      "order": 3
+     }
+    ],
+    "more": {
+     "count": 0,
+     "skills": []
+    },
+    "prerequisites": {
+     "accepted": [],
+     "rejected": []
+    },
+    "snapshot": {
+     "skills_hash": "62df2a53706fb5b705ceafab9a8ef719e38e837372bfb5d02c3f83a62e260f55",
+     "dataset_hash": "e03170fad4bcf57663be8b657f636a9c344cfca62c56ae30ef0e78afbd32cf9e",
+     "scoring_mode": "exact",
+     "algorithm": "learning-structure@1"
+    }
+   },
+   "enrichment": {
+    "modules": [
+     {
+      "key": "excel",
+      "skill": "Excel",
+      "why": "Excel is an essential tool for rapid data exploration, quick calculations, and communicating insights to stakeholders who prefer tabular reports.",
+      "subtopics": [
+       "Basic formulas and functions",
+       "Pivot tables and charts",
+       "VLOOKUP and XLOOKUP",
+       "Data validation and conditional formatting"
+      ],
+      "project": "Build an interactive sales dashboard using pivot tables, charts, and slicers from a provided transaction dataset.",
+      "hours": {
+       "min": 10,
+       "max": 25,
+       "label": "estimated"
+      },
+      "recommendations": [
+       {
+        "platform": "Coursera",
+        "title": "Excel Skills for Business",
+        "instructor": "Macquarie University",
+        "description": "Comprehensive series covering spreadsheets from beginner to advanced levels.",
+        "free": false,
+        "search_url": "https://www.coursera.org/search?query=Excel+Skills+for+Business+Macquarie+University",
+        "search_label": "Find on Coursera",
+        "label": "AI recommendation, check before buying"
+       },
+       {
+        "platform": "Udemy",
+        "title": "Microsoft Excel - Excel from Beginner to Advanced",
+        "instructor": "Kyle Pew",
+        "description": "Learn Excel formulas, charts, pivot tables, and advanced data analysis features.",
+        "free": false,
+        "search_url": "https://www.udemy.com/courses/search/?q=Microsoft+Excel+-+Excel+from+Beginner+to+Advanced+Kyle+Pew",
+        "search_label": "Find on Udemy",
+        "label": "AI recommendation, check before buying"
+       }
+      ]
+     },
+     {
+      "key": "data cleaning",
+      "skill": "Data Cleaning",
+      "why": "Data cleaning ensures that downstream analysis and reporting are built on accurate, reliable, and consistent information.",
+      "subtopics": [
+       "Handling missing values and duplicates",
+       "Standardizing text and date formats",
+       "Detecting and treating outliers",
+       "Merging and reshaping datasets"
+      ],
+      "project": "Take a messy customer dataset with inconsistent date formats and missing entries, and clean it thoroughly.",
+      "hours": {
+       "min": 10,
+       "max": 25,
+       "label": "estimated"
+      },
+      "recommendations": [
+       {
+        "platform": "freeCodeCamp",
+        "title": "Data Analysis with Python Course",
+        "instructor": "freeCodeCamp",
+        "description": "Learn how to clean and analyze data using Python libraries.",
+        "free": true,
+        "search_url": "https://www.freecodecamp.org/news/search?query=Data+Analysis+with+Python+Course+freeCodeCamp",
+        "search_label": "Find on freeCodeCamp",
+        "label": "AI recommendation"
+       },
+       {
+        "platform": "Coursera",
+        "title": "Cleaning Data with R",
+        "instructor": "DataCamp",
+        "description": "Practical methods for cleaning and preparing data frames in R.",
+        "free": false,
+        "search_url": "https://www.coursera.org/search?query=Cleaning+Data+with+R+DataCamp",
+        "search_label": "Find on Coursera",
+        "label": "AI recommendation, check before buying"
+       }
+      ]
+     },
+     {
+      "key": "regression analysis",
+      "skill": "Regression Analysis",
+      "why": "Regression analysis allows a data analyst to model relationships between variables and forecast future trends.",
+      "subtopics": [
+       "Simple linear regression",
+       "Multiple linear regression",
+       "Evaluating model fit and residuals",
+       "Logistic regression basics"
+      ],
+      "project": "Build a multiple regression model to predict housing prices based on features like square footage and location.",
+      "hours": {
+       "min": 15,
+       "max": 30,
+       "label": "estimated"
+      },
+      "recommendations": [
+       {
+        "platform": "Coursera",
+        "title": "Regression Models",
+        "instructor": "Johns Hopkins University",
+        "description": "Learn regression analysis techniques, focusing on applications using R.",
+        "free": false,
+        "search_url": "https://www.coursera.org/search?query=Regression+Models+Johns+Hopkins+University",
+        "search_label": "Find on Coursera",
+        "label": "AI recommendation, check before buying"
+       },
+       {
+        "platform": "YouTube",
+        "title": "StatQuest: Linear Regression",
+        "instructor": "Josh Starmer",
+        "description": "Clear, visual explanations of linear regression concepts and interpretation.",
+        "free": true,
+        "search_url": "https://www.youtube.com/results?search_query=StatQuest%3A+Linear+Regression+Josh+Starmer",
+        "search_label": "Find on YouTube",
+        "label": "AI recommendation"
+       }
+      ]
+     }
+    ],
+    "order": [
+     "excel",
+     "data cleaning",
+     "regression analysis"
+    ],
+    "prerequisites": {
+     "accepted": [
+      [
+       "excel",
+       "data cleaning"
+      ],
+      [
+       "data cleaning",
+       "regression analysis"
+      ]
+     ],
+     "rejected": []
+    },
+    "total_hours": {
+     "min": 35,
+     "max": 80,
+     "label": "estimated"
+    },
+    "usage": {
+     "cached": true,
+     "input_tokens": 0,
+     "output_tokens": 0,
+     "latency_ms": 0,
+     "model": "gemini-3.5-flash-lite",
+     "prompt": "learning_path@v2"
+    }
+   },
+   "error": null
+  },
+  {
+   "profile": "cv09_uiux",
+   "profession_id": "curated:ui-ux-designer",
+   "title": "UI/UX Designer",
+   "match": 80.0,
+   "preferences": {
+    "cost": "include_paid",
+    "hours_per_week": 6
+   },
+   "structure": {
+    "profession_id": "curated:ui-ux-designer",
+    "title": "UI/UX Designer",
+    "source": "curated",
+    "source_version": "curated v1.0.0",
+    "match_score": 80.0,
+    "modules": [
+     {
+      "requirement_key": "typography",
+      "requirement": "Typography",
+      "key": "typography",
+      "skill": "Typography",
+      "alternatives": [],
+      "tier": "essential",
+      "quick_win": true,
+      "hint": {
+       "skill": "Figma",
+       "similarity": 0.758
+      },
+      "prerequisites": [],
+      "order": 1
+     },
+     {
+      "requirement_key": "a/b testing",
+      "requirement": "A/B Testing",
+      "key": "a/b testing",
+      "skill": "A/B Testing",
+      "alternatives": [],
+      "tier": "optional",
+      "quick_win": false,
+      "hint": null,
+      "prerequisites": [],
+      "order": 2
+     }
+    ],
+    "more": {
+     "count": 0,
+     "skills": []
+    },
+    "prerequisites": {
+     "accepted": [],
+     "rejected": []
+    },
+    "snapshot": {
+     "skills_hash": "02f7a19ef5b36038f4925cd388aff659ea19e847aad2a556c41215cd6fefbeee",
+     "dataset_hash": "e03170fad4bcf57663be8b657f636a9c344cfca62c56ae30ef0e78afbd32cf9e",
+     "scoring_mode": "exact",
+     "algorithm": "learning-structure@1"
+    }
+   },
+   "enrichment": {
+    "modules": [
+     {
+      "key": "typography",
+      "skill": "Typography",
+      "why": "Typography is fundamental to UI/UX design because it dictates readability, hierarchy, and emotional tone within digital interfaces. Mastering type choices and scaling ensures that users can easily digest content and navigate applications effectively.",
+      "subtopics": [
+       "Type classification and anatomy",
+       "Readability and legibility in digital screens",
+       "Establishing typographic hierarchy",
+       "Responsive typography and scale",
+       "Pairing typefaces effectively"
+      ],
+      "project": "Design a typographic scale and style guide for a mobile news reading application, ensuring optimal readability across different screen sizes.",
+      "hours": {
+       "min": 5,
+       "max": 15,
+       "label": "estimated"
+      },
+      "recommendations": [
+       {
+        "platform": "Coursera",
+        "title": "Fundamentals of Graphic Design",
+        "instructor": "California Institute of the Arts",
+        "description": "Learn the core principles of graphic design, including typography, image making, and composition.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://www.coursera.org/search?query=Fundamentals+of+Graphic+Design+California+Institute+of+the+Arts",
+        "search_label": "Find on Coursera",
+        "label": "AI recommendation"
+       },
+       {
+        "platform": "YouTube",
+        "title": "Typography Tutorial - Rules for Designing Text",
+        "instructor": "DesignCourse",
+        "description": "A comprehensive video guide covering essential rules for pairing fonts, spacing, and setting text.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://www.youtube.com/results?search_query=Typography+Tutorial+-+Rules+for+Designing+Text+DesignCourse",
+        "search_label": "Find on YouTube",
+        "label": "AI recommendation"
+       },
+       {
+        "platform": "Udemy",
+        "title": "The Ultimate Guide to Typography in UI Design",
+        "instructor": "Daniel Walter Scott",
+        "description": "Practical course focused specifically on using typography correctly in user interface designs.",
+        "free": false,
+        "language": "English",
+        "search_url": "https://www.udemy.com/courses/search/?q=The+Ultimate+Guide+to+Typography+in+UI+Design+Daniel+Walter+Scott",
+        "search_label": "Find on Udemy",
+        "label": "AI recommendation, check before buying"
+       }
+      ]
+     },
+     {
+      "key": "a/b testing",
+      "skill": "A/B Testing",
+      "why": "A/B testing allows UI/UX designers to validate design decisions using quantitative user behavior data rather than assumptions. It helps optimize conversion rates and improve overall user experience through iterative, data-backed experiments.",
+      "subtopics": [
+       "Formulating hypotheses for design variants",
+       "Defining key performance indicators and metrics",
+       "Setting up split tests and sample sizes",
+       "Analyzing quantitative experiment results",
+       "Applying findings to iterative design improvements"
+      ],
+      "project": "Create two variations of a landing page checkout button and define a plan to measure conversion rates and analyze user behavior.",
+      "hours": {
+       "min": 10,
+       "max": 25,
+       "label": "estimated"
+      },
+      "recommendations": [
+       {
+        "platform": "Coursera",
+        "title": "UX Design: From Concept to Prototype",
+        "instructor": "Google",
+        "description": "Covers user testing, evaluating designs, and planning research strategies including split testing.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://www.coursera.org/search?query=UX+Design%3A+From+Concept+to+Prototype+Google",
+        "search_label": "Find on Coursera",
+        "label": "AI recommendation"
+       },
+       {
+        "platform": "Udemy",
+        "title": "Conversion Rate Optimization (CRO) and A/B Testing",
+        "instructor": "Andre Morys",
+        "description": "Learn how to optimize digital products and user journeys using systematic A/B testing methodologies.",
+        "free": false,
+        "language": "English",
+        "search_url": "https://www.udemy.com/courses/search/?q=Conversion+Rate+Optimization+%28CRO%29+and+A%2FB+Testing+Andre+Morys",
+        "search_label": "Find on Udemy",
+        "label": "AI recommendation, check before buying"
+       },
+       {
+        "platform": "YouTube",
+        "title": "Introduction to A/B Testing for UX",
+        "instructor": "NN/g Nielsen Norman Group",
+        "description": "Insights and methodologies on how usability professionals conduct valid quantitative experiments.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://www.youtube.com/results?search_query=Introduction+to+A%2FB+Testing+for+UX+NN%2Fg+Nielsen+Norman+Group",
+        "search_label": "Find on YouTube",
+        "label": "AI recommendation"
+       }
+      ]
+     }
+    ],
+    "order": [
+     "typography",
+     "a/b testing"
+    ],
+    "prerequisites": {
+     "accepted": [],
+     "rejected": []
+    },
+    "total_hours": {
+     "min": 15,
+     "max": 40,
+     "label": "estimated"
+    },
+    "usage": {
+     "cached": false,
+     "input_tokens": 1475,
+     "output_tokens": 825,
+     "latency_ms": 3880,
+     "model": "gemini-3.5-flash-lite",
+     "prompt": "learning_path@v1"
+    }
+   },
+   "error": null
+  },
+  {
+   "profile": "cv02_backend_java",
+   "profession_id": "curated:backend-developer",
+   "title": "Backend Developer",
+   "match": 80.0,
+   "preferences": {
+    "cost": "include_paid",
+    "hours_per_week": 6
+   },
+   "structure": {
+    "profession_id": "curated:backend-developer",
+    "title": "Backend Developer",
+    "source": "curated",
+    "source_version": "curated v1.0.0",
+    "match_score": 80.0,
+    "modules": [
+     {
+      "requirement_key": "rest apis",
+      "requirement": "REST APIs",
+      "key": "rest apis",
+      "skill": "REST APIs",
+      "alternatives": [],
+      "tier": "essential",
+      "quick_win": true,
+      "hint": {
+       "skill": "Postman",
+       "similarity": 0.896
+      },
+      "prerequisites": [],
+      "order": 1
+     },
+     {
+      "requirement_key": "jwt",
+      "requirement": "JWT",
+      "key": "jwt",
+      "skill": "JWT",
+      "alternatives": [],
+      "tier": "optional",
+      "quick_win": false,
+      "hint": null,
+      "prerequisites": [],
+      "order": 2
+     }
+    ],
+    "more": {
+     "count": 0,
+     "skills": []
+    },
+    "prerequisites": {
+     "accepted": [],
+     "rejected": []
+    },
+    "snapshot": {
+     "skills_hash": "cfdf088ab5273383d5f29c23d69729b475c426710161c1975e981217f290352d",
+     "dataset_hash": "e03170fad4bcf57663be8b657f636a9c344cfca62c56ae30ef0e78afbd32cf9e",
+     "scoring_mode": "exact",
+     "algorithm": "learning-structure@1"
+    }
+   },
+   "enrichment": {
+    "modules": [
+     {
+      "key": "rest apis",
+      "skill": "REST APIs",
+      "why": "REST APIs are the standard architectural style for communication between client applications and backend services, allowing developers to expose business logic and data securely.",
+      "subtopics": [
+       "HTTP methods and status codes",
+       "Resource naming conventions",
+       "Request and response payloads",
+       "API versioning"
+      ],
+      "project": "Build a simple inventory management API using Spring Boot that supports CRUD operations for products.",
+      "hours": {
+       "min": 5,
+       "max": 20,
+       "label": "estimated"
+      },
+      "recommendations": [
+       {
+        "platform": "Official docs",
+        "title": "Spring Boot Reference Documentation",
+        "instructor": "Spring Team",
+        "description": "Comprehensive documentation for building RESTful web services with Spring Boot.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://duckduckgo.com/?q=REST+APIs+Spring+Boot+Reference+Documentation+official+documentation",
+        "search_label": "Find on Official docs",
+        "label": "AI recommendation"
+       },
+       {
+        "platform": "Udemy",
+        "title": "RESTful Web Services with Spring Boot and Spring",
+        "instructor": "Sergey Kargopolov",
+        "description": "Learn to build production-grade REST APIs from scratch.",
+        "free": false,
+        "language": "English",
+        "search_url": "https://www.udemy.com/courses/search/?q=RESTful+Web+Services+with+Spring+Boot+and+Spring+Sergey+Kargopolov",
+        "search_label": "Find on Udemy",
+        "label": "AI recommendation, check before buying"
+       }
+      ]
+     },
+     {
+      "key": "jwt",
+      "skill": "JWT",
+      "why": "JSON Web Tokens provide a compact and self-contained way for securely transmitting information between parties as a JSON object, essential for stateless authentication.",
+      "subtopics": [
+       "JWT structure (Header, Payload, Signature)",
+       "Token generation and signing",
+       "Token validation and parsing",
+       "Handling token expiration"
+      ],
+      "project": "Implement token-based authentication for the inventory management API using Spring Security and JWT.",
+      "hours": {
+       "min": 4,
+       "max": 15,
+       "label": "estimated"
+      },
+      "recommendations": [
+       {
+        "platform": "YouTube",
+        "title": "Spring Boot Security and JWT tutorial",
+        "instructor": "Amigoscode",
+        "description": "Step-by-step guide on securing Spring Boot applications with JSON Web Tokens.",
+        "free": true,
+        "language": "English",
+        "search_url": "https://www.youtube.com/results?search_query=Spring+Boot+Security+and+JWT+tutorial+Amigoscode",
+        "search_label": "Find on YouTube",
+        "label": "AI recommendation"
+       },
+       {
+        "platform": "Udemy",
+        "title": "Spring Boot Security, JWT, and OAuth2",
+        "instructor": "John Thompson",
+        "description": "Deep dive into securing modern backend architectures.",
+        "free": false,
+        "language": "English",
+        "search_url": "https://www.udemy.com/courses/search/?q=Spring+Boot+Security%2C+JWT%2C+and+OAuth2+John+Thompson",
+        "search_label": "Find on Udemy",
+        "label": "AI recommendation, check before buying"
+       }
+      ]
+     }
+    ],
+    "order": [
+     "rest apis",
+     "jwt"
+    ],
+    "prerequisites": {
+     "accepted": [
+      [
+       "rest apis",
+       "jwt"
+      ]
+     ],
+     "rejected": []
+    },
+    "total_hours": {
+     "min": 9,
+     "max": 35,
+     "label": "estimated"
+    },
+    "usage": {
+     "cached": false,
+     "input_tokens": 2958,
+     "output_tokens": 1211,
+     "latency_ms": 6653,
+     "model": "gemini-3.5-flash-lite",
+     "prompt": "learning_path@v1"
+    }
+   },
+   "error": null
+  }
+ ],
+ "rows": 23,
+ "gemini_calls_this_run": 0,
+ "gemini_calls_total": 8,
+ "this_run_usage": [
+  {
+   "prompt": "learning_path@v2",
+   "status": "cached",
+   "attempts": 0
+  }
+ ],
+ "cached_enrichments": 1,
+ "model": "gemini-3.5-flash-lite"
+}
