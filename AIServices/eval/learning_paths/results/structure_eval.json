@@ -1,0 +1,951 @@
+{
+ "profiles": [
+  {
+   "group": "old8",
+   "id": "web",
+   "label": "Web developer",
+   "role": "Frontend Developer",
+   "source": "curated",
+   "match": 66.7,
+   "modules": [
+    {
+     "skill": "Next.js",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "Vite",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "Jest",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "npm",
+     "tier": "essential",
+     "quick_win": true
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "old8",
+   "id": "backend",
+   "label": "Backend Python developer",
+   "role": "Backend Developer",
+   "source": "curated",
+   "match": 70.0,
+   "modules": [
+    {
+     "skill": "Kafka",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "Unit Testing",
+     "tier": "essential",
+     "quick_win": false
+    },
+    {
+     "skill": "JWT",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "old8",
+   "id": "data",
+   "label": "Data scientist",
+   "role": "Machine Learning Engineer",
+   "source": "curated",
+   "match": 70.0,
+   "modules": [
+    {
+     "skill": "XGBoost",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "Docker",
+     "tier": "essential",
+     "quick_win": false
+    },
+    {
+     "skill": "Deep Learning",
+     "tier": "optional",
+     "quick_win": true
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "old8",
+   "id": "devops",
+   "label": "DevOps engineer",
+   "role": "DevOps Engineer",
+   "source": "curated",
+   "match": 100.0,
+   "modules": [],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "old8",
+   "id": "mobile",
+   "label": "Mobile developer",
+   "role": "Cross-Platform Mobile Developer",
+   "source": "curated",
+   "match": 50.0,
+   "modules": [
+    {
+     "skill": "SQLite",
+     "tier": "essential",
+     "quick_win": false
+    },
+    {
+     "skill": "Expo",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Bloc",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Push Notifications",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Jest",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "old8",
+   "id": "uiux",
+   "label": "UI/UX designer",
+   "role": "UI/UX Designer",
+   "source": "curated",
+   "match": 50.0,
+   "modules": [
+    {
+     "skill": "Personas",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "Design Systems",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "Information Architecture",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "Typography",
+     "tier": "essential",
+     "quick_win": false
+    },
+    {
+     "skill": "A/B Testing",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "old8",
+   "id": "qa",
+   "label": "QA tester",
+   "role": "Computer Systems Analysts",
+   "source": "onet",
+   "match": 30.0,
+   "modules": [
+    {
+     "skill": "ServiceNow",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "SharePoint",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Power BI",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Excel",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Microsoft PowerPoint",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Microsoft Office",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "SAP",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "old8",
+   "id": "chef",
+   "label": "Chef (non-IT control)",
+   "role": "AI Engineer (LLM Applications)",
+   "source": "curated",
+   "match": 0.0,
+   "modules": [
+    {
+     "skill": "Python",
+     "tier": "essential",
+     "quick_win": false
+    },
+    {
+     "skill": "OpenAI API",
+     "tier": "essential",
+     "quick_win": false
+    },
+    {
+     "skill": "Retrieval-Augmented Generation",
+     "tier": "essential",
+     "quick_win": false
+    },
+    {
+     "skill": "Large Language Models",
+     "tier": "essential",
+     "quick_win": false
+    },
+    {
+     "skill": "Prompt Engineering",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "LangChain",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Vector Databases",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Embeddings",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 2,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "new6",
+   "id": "cloud",
+   "label": "Cloud engineer",
+   "role": "DevOps Engineer",
+   "source": "curated",
+   "match": 80.0,
+   "modules": [
+    {
+     "skill": "Jenkins",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "Prometheus",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "new6",
+   "id": "android",
+   "label": "Android developer",
+   "role": "Android Developer",
+   "source": "curated",
+   "match": 60.0,
+   "modules": [
+    {
+     "skill": "Gradle",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "JUnit",
+     "tier": "essential",
+     "quick_win": false
+    },
+    {
+     "skill": "Kotlin Coroutines",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "MVVM",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "new6",
+   "id": "data_eng",
+   "label": "Data engineer",
+   "role": "Data Engineer",
+   "source": "curated",
+   "match": 100.0,
+   "modules": [],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "new6",
+   "id": "security",
+   "label": "Security analyst",
+   "role": "Digital Forensics Analysts",
+   "source": "onet",
+   "match": 40.0,
+   "modules": [
+    {
+     "skill": "Ansible",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "AWS",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "MITRE ATT&CK",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "PowerShell",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "SQL",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "iOS Development",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "new6",
+   "id": "gamedev",
+   "label": "Game developer",
+   "role": "Video Game Designers",
+   "source": "onet",
+   "match": 40.0,
+   "modules": [
+    {
+     "skill": "Maya",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Adobe After Effects",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Adobe Photoshop",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Adobe Creative Cloud",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Adobe Illustrator",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Python",
+     "tier": "optional",
+     "quick_win": true
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "new6",
+   "id": "it_support",
+   "label": "IT support",
+   "role": "Computer Network Support Specialists",
+   "source": "onet",
+   "match": 50.0,
+   "modules": [
+    {
+     "skill": "Linux",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Windows Server",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Microsoft Outlook",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Excel",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Firewalls",
+     "tier": "optional",
+     "quick_win": true
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "testcvs",
+   "id": "cv01_frontend",
+   "label": "CV 01 Frontend developer",
+   "role": "Frontend Developer",
+   "source": "curated",
+   "match": 100.0,
+   "modules": [],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "testcvs",
+   "id": "cv02_backend_java",
+   "label": "CV 02 Backend developer (Java)",
+   "role": "Backend Developer",
+   "source": "curated",
+   "match": 80.0,
+   "modules": [
+    {
+     "skill": "REST APIs",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "JWT",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "testcvs",
+   "id": "cv03_data_scientist",
+   "label": "CV 03 Data scientist",
+   "role": "Machine Learning Engineer",
+   "source": "curated",
+   "match": 80.0,
+   "modules": [
+    {
+     "skill": "Docker",
+     "tier": "essential",
+     "quick_win": false
+    },
+    {
+     "skill": "Deep Learning",
+     "tier": "optional",
+     "quick_win": true
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "testcvs",
+   "id": "cv04_devops",
+   "label": "CV 04 DevOps engineer",
+   "role": "DevOps Engineer",
+   "source": "curated",
+   "match": 90.0,
+   "modules": [
+    {
+     "skill": "Linux",
+     "tier": "essential",
+     "quick_win": true
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "testcvs",
+   "id": "cv05_android",
+   "label": "CV 05 Android developer",
+   "role": "Android Developer",
+   "source": "curated",
+   "match": 80.0,
+   "modules": [
+    {
+     "skill": "JUnit",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "Kotlin Coroutines",
+     "tier": "optional",
+     "quick_win": true
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "testcvs",
+   "id": "cv06_security",
+   "label": "CV 06 Information security analyst",
+   "role": "DevSecOps Engineer",
+   "source": "curated",
+   "match": 40.0,
+   "modules": [
+    {
+     "skill": "Bash",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "Docker",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "Kubernetes",
+     "tier": "essential",
+     "quick_win": false
+    },
+    {
+     "skill": "Threat Modeling",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Container Security",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Software Supply Chain Security",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "testcvs",
+   "id": "cv07_dba",
+   "label": "CV 07 Database administrator",
+   "role": "Database Administrators",
+   "source": "onet",
+   "match": 24.1,
+   "modules": [
+    {
+     "skill": "AWS",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Hadoop",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Apache Spark",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Amazon Redshift",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Airflow",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Kafka",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Jira",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Git",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 14,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "testcvs",
+   "id": "cv08_qa",
+   "label": "CV 08 QA automation engineer",
+   "role": "Software Quality Assurance Analysts and Testers",
+   "source": "onet",
+   "match": 41.7,
+   "modules": [
+    {
+     "skill": "C#",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Excel",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Linux",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "GitHub",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "C++",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Microsoft Azure",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "AWS",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Microsoft Office",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 6,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "testcvs",
+   "id": "cv09_uiux",
+   "label": "CV 09 UI/UX designer",
+   "role": "UI/UX Designer",
+   "source": "curated",
+   "match": 80.0,
+   "modules": [
+    {
+     "skill": "Typography",
+     "tier": "essential",
+     "quick_win": true
+    },
+    {
+     "skill": "A/B Testing",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  },
+  {
+   "group": "testcvs",
+   "id": "cv10_network",
+   "label": "CV 10 Network / systems administrator",
+   "role": "Computer Network Support Specialists",
+   "source": "onet",
+   "match": 20.0,
+   "modules": [
+    {
+     "skill": "Linux",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "macOS",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Windows",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Microsoft Outlook",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "Firewalls",
+     "tier": "optional",
+     "quick_win": true
+    },
+    {
+     "skill": "ServiceNow",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Excel",
+     "tier": "optional",
+     "quick_win": false
+    },
+    {
+     "skill": "Microsoft Office",
+     "tier": "optional",
+     "quick_win": false
+    }
+   ],
+   "more": 0,
+   "rules": {
+    "1_module_set_equals_missing_set": true,
+    "2_tiers_in_order": true,
+    "3_quick_wins_first": true,
+    "4_deterministic": true,
+    "5_prerequisites_validated": true
+   },
+   "passed": true
+  }
+ ],
+ "passed": 24,
+ "total": 24,
+ "per_rule": {
+  "1_module_set_equals_missing_set": 24,
+  "2_tiers_in_order": 24,
+  "3_quick_wins_first": 24,
+  "4_deterministic": 24,
+  "5_prerequisites_validated": 24
+ }
+}
