@@ -10,9 +10,9 @@ export const SORTS = {
   title: { label: 'Title (A–Z)', compare: (a, b) => a.title.localeCompare(b.title) || b.score - a.score },
 };
 
-// Curated modern roles are shown as "Industry" roles (their evidence: role roadmaps, the Stack Overflow survey,
+// Curated modern roles are labelled "Curated" (their evidence: role roadmaps, the Stack Overflow survey,
 // certifications and O*NET technology skills); the admin pages keep the exact source name.
-export const SOURCE_NAMES = { onet: 'O*NET', esco: 'ESCO', curated: 'Industry', manual: 'Manual' };
+export const SOURCE_NAMES = { onet: 'O*NET', esco: 'ESCO', curated: 'Curated', manual: 'Manual' };
 
 export const sourcesOf = (result) => (result.sources?.length ? result.sources.map((s) => s.source) : [result.source]);
 export const categoriesOf = (result) => (result.categories?.length ? result.categories : [result.category || 'Other']);

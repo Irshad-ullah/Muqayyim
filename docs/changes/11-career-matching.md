@@ -318,7 +318,7 @@ that users never list as such. Without a curated description, such a phrase coul
   "retired: replaced by curated modern roles v1". `esco_skills`, the ESCO import code and the role map stay, dormant.
 - **Scoring (`systemconfigs` `matching.related_credit = false`).** Credit is 1.0 for an exact key, alias or any-of
   alternative, otherwise 0. Related pairs are shown only as hints on a role's missing skills.
-- **Career pages.** Curated roles are labelled "Industry".
+- **Career pages.** Curated roles are labelled "Curated" (with the evidence attribution line).
 
 **Official re-run** (production code, after the import; `eval/career_matching/results/module5.2_*`):
 
