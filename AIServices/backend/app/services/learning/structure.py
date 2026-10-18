@@ -187,8 +187,8 @@ def apply_prerequisites(modules: List[dict], pairs: Sequence[Tuple[str, str]]) -
     return order
 
 
-def verified(owned: Dict[str, dict]) -> Dict[str, dict]:
-    """The skills a path is built from: everything except skills added by completing learning modules. Their progress
+def profile_skills(owned: Dict[str, dict]) -> Dict[str, dict]:
+    """The profile skills a path is built from (CV, profile, GitHub): everything except skills added by completing learning modules. Their progress
     lives in the paths themselves, so completing a module neither removes it from its path nor marks the path stale."""
     return {k: v for k, v in owned.items() if v.get("source") != "learning"}
 

@@ -261,8 +261,8 @@ export const deletePath = guarded('Could not delete the learning path', async (r
   return res.json({ success: true });
 });
 
-// The path's snapshot against the user's verified skills and the career data now. Learning skills are not part of
-// it (AIServices builds paths from verified skills), so completing modules never makes a path stale.
+// The path's snapshot against the user's profile skills (CV, profile, GitHub) and the career data now. Learning skills are not part of
+// it (AIServices builds paths from profile skills), so completing modules never makes a path stale.
 export const getFreshness = guarded('Could not check the learning path', async (req, res) => {
   const path = await ownPath(req);
   if (!path) return notFound(res);
