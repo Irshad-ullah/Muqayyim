@@ -11,14 +11,14 @@ import {
   BrainCircuit,
   ArrowRight,
   Sparkles,
-  Shield,
   BarChart3,
+  GraduationCap,
 } from 'lucide-react';
 
 const features = [
-  { icon: Sparkles, text: 'AI-powered skill extraction from your CV' },
-  { icon: Shield, text: 'Secure, token-based authentication' },
-  { icon: BarChart3, text: 'Real-time CV parsing & verification' },
+  { icon: Sparkles, text: 'Skill extraction from your CV' },
+  { icon: BarChart3, text: 'Career matches with clear skill gaps' },
+  { icon: GraduationCap, text: 'Personalised learning paths' },
 ];
 
 export default function LoginPage() {
@@ -100,11 +100,10 @@ export default function LoginPage() {
         {/* Headline */}
         <div className="relative">
           <h1 className="text-4xl font-bold text-white leading-tight mb-4">
-            Smart CV<br />Intelligence<br />Platform
+            Your AI<br />Career Guide
           </h1>
           <p className="text-indigo-200 text-base leading-relaxed mb-10">
-            Automate CV parsing, extract verified skills, and accelerate your hiring decisions with
-            AI.
+            Upload your CV, see which IT careers fit you, and get a step-by-step learning path to close the gaps.
           </p>
 
           <ul className="space-y-4">

@@ -13,10 +13,8 @@ import {
   Clock,
   BrainCircuit,
   ArrowRight,
-  Zap,
-  ShieldCheck,
-  BarChart3,
   BookOpen,
+  GraduationCap,
   PenSquare,
   Eye,
   FileText,
@@ -76,23 +74,30 @@ const quickActions = [
 
 const infoCards = [
   {
-    icon: Zap,
-    title: 'AI Extraction',
-    body: 'Skills, education and experience extracted automatically using spaCy NLP.',
-    color: 'text-amber-500',
-    bg: 'bg-amber-50',
+    icon: FileUp,
+    title: '1. Upload your CV',
+    body: 'We extract your skills, education and experience automatically.',
+    color: 'text-indigo-500',
+    bg: 'bg-indigo-50',
   },
   {
-    icon: ShieldCheck,
-    title: 'Verified Data',
-    body: 'You review and confirm every detail before it becomes your verified profile.',
+    icon: PenSquare,
+    title: '2. Review your profile',
+    body: "Check and edit everything before it's saved. Add skills from GitHub or by hand.",
     color: 'text-emerald-500',
     bg: 'bg-emerald-50',
   },
   {
-    icon: BarChart3,
-    title: 'Confidence Scores',
-    body: 'Every extracted item carries a confidence score so you know what to check.',
+    icon: Compass,
+    title: '3. See career matches',
+    body: "Find which IT roles fit you, with a match % and the skills you're missing.",
+    color: 'text-amber-500',
+    bg: 'bg-amber-50',
+  },
+  {
+    icon: GraduationCap,
+    title: '4. Follow a learning path',
+    body: 'Get an ordered plan with suggested courses to close your skill gaps.',
     color: 'text-blue-500',
     bg: 'bg-blue-50',
   },
@@ -332,12 +337,12 @@ export default function DashboardPage() {
             </div>
 
             {/* How it works */}
-            <div className="lg:col-span-2 card p-6">
+            <div className="lg:col-span-2 card p-6 self-start">
               <div className="flex items-center gap-2 mb-5">
                 <BookOpen className="w-5 h-5 text-slate-400" />
                 <h2 className="text-lg font-bold text-slate-900">How MUQAYYIM works</h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {infoCards.map(({ icon: Icon, title, body, color, bg }) => (
                   <div key={title} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
                     <div className={`w-9 h-9 ${bg} rounded-lg flex items-center justify-center mb-3`}>
